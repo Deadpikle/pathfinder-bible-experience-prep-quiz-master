@@ -1,4 +1,9 @@
 <?php
+    session_start();
+
+    if (isset($_GET["error"])) {
+        $error = $_GET["error"];
+    }
 
 ?>
 
@@ -6,9 +11,14 @@
 
 <h2>Login</h2>
 
-<form action="/ajax/login-verify.php" method="post">
+<?php if (isset($error)) { ?>
+        <p class="error-message"> <?=$error?> </p>
+<?php } ?>
+
+<form action="ajax/login-access-code.php" method="post">
     <label for="access-code">Access Code: </label>
     <input type="text" name="access-code"/>
     <button>Login</button>
 </form>
+
 <?php include("footer.php") ?>
