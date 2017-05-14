@@ -1,4 +1,8 @@
-<footer>
-<p>(c) 2017</p>
-</footer>
+      
+                </main>
+            </div>  
+        <footer>
+            <p>(c) 2017</p>
+        </footer>
+    </body>
 </html>

@@ -2,7 +2,7 @@
     require_once(dirname(__FILE__)."/init.php");
 
     if ($_GET["type"] == "update") {
-        $query = 'SELECT Question, Answer, NumberPoints, IsFlagged FROM Questions WHERE QuestionID = ?';
+        $query = 'SELECT Question, Answer, NumberPoints, IsFlagged, StartVerseID, LastVerseID FROM Questions WHERE QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $question = $stmt->fetch();
@@ -20,6 +20,8 @@
         $postType = "create";
     }
 
+    $bookQuery = 'SELECT BookID, Name, NumberChapters, YearID FROM Books ORDER BY Name';
+    $books = $pdo->query($bookQuery)->fetchAll();
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -40,6 +42,15 @@
         <p>
             <label for="number-of-points">Number of Points: </label>
             <input type="number" min="0" name="number-of-points" value="<?= $numberOfPoints ?>"/>
+        </p>
+        <p>
+            <label for="book">Verse Setup </label>
+            <select name="book">
+                <option value="-1">Select a book...</option>
+                <?php foreach ($books as $book) { ?>
+                        <option value="<?=$book['BookID']?>"><?=$book["Name"]?></option>
+                <?php } ?>
+            </select>
         </p>
         <p>
             <input type="submit" value="Save"/>

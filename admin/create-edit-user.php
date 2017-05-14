@@ -32,20 +32,27 @@
     <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <p>
-            <label for="first-name">First Name: </label>
-            <input type="text" name="first-name" value="<?= $firstName ?>"/>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-textfield__label" for="first-name">First Name</label>
+                <input class="mdl-textfield__input" type="text" name="first-name" value="<?= $firstName ?>"/>
+            </div>
         </p>
         <p>
-            <label for="last-name">Last Name: </label>
-            <input type="text" name="last-name" value="<?= $lastName ?>"/>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-textfield__label" for="last-name">Last Name</label>
+                <input class="mdl-textfield__input" type="text" name="last-name" value="<?= $lastName ?>"/>
+            </div>
+        </p>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-textfield__label" for="entry-code">Entry Code</label>
+                <input class="mdl-textfield__input" type="text" name="entry-code" value="<?= $entryCode ?>"/>
+            </div>
         </p>
         <p>
-            <label for="entry-code">Entry Code: </label>
-            <input type="text" name="entry-code" value="<?= $entryCode ?>"/>
-        </p>
-        <p>
-            <label for="is-admin">Administrator? </label>
-            <input type="checkbox" name="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
+            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="is-admin">
+                <input type="checkbox" id="is-admin" name="is-admin" class="mdl-checkbox__input" <?php if ($isAdmin) { ?> checked <?php } ?> />
+                <span class="mdl-checkbox__label">Administrator?</span>
+            </label>
         </p>
         <p>
             <input type="submit" value="Save"/>
