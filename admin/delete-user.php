@@ -1,5 +1,5 @@
 <?php
-    require_once("init-admin.php");
+    require_once(dirname(__FILE__)."/init-admin.php");
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = 'DELETE FROM Users WHERE UserID = ?';
@@ -16,7 +16,7 @@
 
 ?>
 
-<?php include("../header.php"); ?>
+<?php include(dirname(__FILE__)."/../header.php"); ?>
 
 <p><a href="./view-users.php">Back</a></p>
 
@@ -30,4 +30,4 @@
     </form>
 </div>
 
-<?php include("../footer.php") ?>
+<?php include(dirname(__FILE__)."/../footer.php"); ?>

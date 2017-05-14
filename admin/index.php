@@ -1,8 +1,8 @@
 <?php
-    require_once("init-admin.php");
+    require_once(dirname(__FILE__).'/init-admin.php');
 ?>
 
-<?php include("../header.php"); ?>
+<?php include(dirname(__FILE__)."/../header.php"); ?>
 
 <h2>Admin Panel for ~<?=$_SESSION["FirstName"]?>~</h2>
 
@@ -13,4 +13,4 @@
     </ul>  
 </div>
 
-<?php include("../footer.php") ?>
+<?php include(dirname(__FILE__)."/../footer.php") ?>

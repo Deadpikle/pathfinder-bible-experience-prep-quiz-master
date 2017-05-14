@@ -1,5 +1,5 @@
 <?php
-    require_once("init-admin.php");
+    require_once(dirname(__FILE__)."/init-admin.php");
 
     if ($_GET["type"] == "update") {
         $query = 'SELECT UserID, FirstName, LastName, EntryCode, IsAdmin FROM Users WHERE UserID = ?';
@@ -24,12 +24,12 @@
 
 ?>
 
-<?php include("../header.php"); ?>
+<?php include(dirname(__FILE__)."/../header.php"); ?>
 
 <p><a href="./view-users.php">Back</a></p>
 
 <div id="edit-user">
-    <form action="save-user-edits.php?type=<?= $postType ?>" method="post">
+    <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <p>
             <label for="first-name">First Name: </label>
@@ -53,4 +53,4 @@
     </form>
 </div>
 
-<?php include("../footer.php") ?>
+<?php include(dirname(__FILE__)."/../footer.php"); ?>

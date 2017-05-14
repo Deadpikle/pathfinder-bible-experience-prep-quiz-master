@@ -1,7 +1,7 @@
 <?php
-    require_once("../init.php");
+    require_once(dirname(__FILE__)."/../init.php");
 
     if (!$_SESSION["IsAdmin"]) {
-        header("Location: ../index.php");
+        header("Location: $basePath/index.php");
     }
 ?>
