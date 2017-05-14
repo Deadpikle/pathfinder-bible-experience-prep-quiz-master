@@ -23,6 +23,7 @@
                 <th>Entry Code</th>
                 <th>Admin?</th>
                 <th>Edit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +35,10 @@
                         <td><?= $row["EntryCode"] ?></td>
                         <td><?= $row["IsAdmin"] ?></td>
                         <td><a href="create-edit-user.php?type=update&id=<?=$row['UserID'] ?>">Edit User</a></td>
+                        <td><?php if ($_SESSION["UserID"] != $row["UserID"]) { ?> 
+                                <a href="delete-user.php?id=<?=$row['UserID'] ?>">Delete User</a>
+                            <?php } ?> 
+                         </td>
                     </tr>
             <?php } ?>
         </tbody>
