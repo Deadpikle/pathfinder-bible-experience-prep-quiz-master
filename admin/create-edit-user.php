@@ -26,37 +26,29 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p class="back"><a href="./view-users.php" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">Back</a></p>
+<p><a href="./view-users.php">Back</a></p>
 
 <div id="edit-user">
     <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
-        <p class="input-container">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label class="mdl-textfield__label" for="first-name">First Name</label>
-                <input class="mdl-textfield__input" type="text" name="first-name" value="<?= $firstName ?>"/>
-            </div>
-        </p>
-        <p class="input-container">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label class="mdl-textfield__label" for="last-name">Last Name</label>
-                <input class="mdl-textfield__input" type="text" name="last-name" value="<?= $lastName ?>"/>
-            </div>
-        </p>
-        <p class="input-container">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label class="mdl-textfield__label" for="entry-code">Entry Code</label>
-                <input class="mdl-textfield__input" type="text" name="entry-code" value="<?= $entryCode ?>"/>
-            </div>
-        </p>
-        <p class="input-container">
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="is-admin">
-                <input type="checkbox" id="is-admin" name="is-admin" class="mdl-checkbox__input" <?php if ($isAdmin) { ?> checked <?php } ?> />
-                <span class="mdl-checkbox__label">Administrator?</span>
-            </label>
+        <p>
+            <label for="first-name">First Name: </label>
+            <input  type="text" name="first-name" value="<?= $firstName ?>"/>
         </p>
         <p>
-            <input class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--colored" type="submit" value="Save"/>
+            <label for="last-name">Last Name: </label>
+            <input type="text" name="last-name" value="<?= $lastName ?>"/>
+        </p>
+        <p>
+            <label for="entry-code">Entry Code: </label>
+            <input type="text" name="entry-code" value="<?= $entryCode ?>"/>
+        </p>
+        <p>
+            <label for="is-admin">Administrator? </label>
+            <input type="checkbox" name="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
+        </p>
+        <p>
+            <input type="submit" value="Save"/>
         </p>
     </form>
 </div>

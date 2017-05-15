@@ -1,6 +1,7 @@
 <?php
-    require_once(dirname(__FILE__)."/init.php");
-
+    require_once(dirname(__FILE__)."/../init.php");
+print_r($_POST);
+die();
     $params = [
         $_POST["question-text"],
         $_POST["question-answer"],

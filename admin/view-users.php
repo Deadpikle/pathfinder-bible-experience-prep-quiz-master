@@ -7,14 +7,14 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="." class="back mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">Back</a></p>
+<p><a href=".">Back</a></p>
 
 <div id="create">
-    <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--colored" href="create-edit-user.php?type=create">Add User</a>
+    <a href="create-edit-user.php?type=create">Add User</a>
 </div>
 
 <div id="users-div">
-    <table class="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+    <table>
         <thead>
             <tr>
                 <th>UserID</th>
@@ -36,7 +36,7 @@
                         <td><?= $row["IsAdmin"] ?></td>
                         <td><a href="create-edit-user.php?type=update&id=<?=$row['UserID'] ?>">Edit User</a></td>
                         <td><?php if ($_SESSION["UserID"] != $row["UserID"]) { ?> 
-                                <a class="" href="delete-user.php?id=<?=$row['UserID'] ?>">Delete User</a>
+                                <a href="delete-user.php?id=<?=$row['UserID'] ?>">Delete User</a>
                             <?php } ?> 
                          </td>
                     </tr>
