@@ -45,7 +45,7 @@
         </p>
         <p>
             <label for="book">Verse Setup </label>
-            <select name="book">
+            <select id="book" name="book">
                 <option value="-1">Select a book...</option>
                 <?php foreach ($books as $book) { ?>
                         <option value="<?=$book['BookID']?>"><?=$book["Name"]?></option>
@@ -57,5 +57,21 @@
         </p>
     </form>
 </div>
+
+<script>
+// http://stackoverflow.com/a/15965470/3938401
+$(document).ready(function(){ // ran when the document is fully loaded
+    // retrieve the jQuery wrapped dom object identified by the selector '#mySel'
+    var sel = $('#book');
+    // assign a change listener to it
+    sel.change(function(){ //inside the listener
+        // retrieve the value of the object firing the event (referenced by this)
+        var value = $(this).val();
+        // print it in the logs
+        //console.log(value); // crashes in IE, if console not open
+        // make the text of all label elements be the value 
+    }); // close the change listener
+}); // close the ready listener 
+</script>
 
 <?php include(dirname(__FILE__)."/footer.php"); ?>
