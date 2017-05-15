@@ -4,9 +4,12 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css" /> 
-        <link rel="stylesheet" href="<?=$basePath?>/css/common.css" />  
-        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+        <link rel="stylesheet" href="<?=$basePath?>/lib/mdl/material.indigo-blue.min.css" />
+        <link rel="stylesheet" href="<?=$basePath?>/css/common.css" />
+        <script defer src="<?=$basePath?>/lib/mdl/material.min.js"></script>
+        <!--getmdl-select https://github.com/CreativeIT/getmdl-select--> 
+        <link rel="stylesheet" href="<?=$basePath?>/lib/mdl-select/getmdl-select.min.css">
+        <script defer src="<?=$basePath?>/lib/mdl-select/getmdl-select.min.js"></script>
     </head>
     <body>
         <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">

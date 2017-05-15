@@ -7,7 +7,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="." class="back mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--colored">Back</a></p>
+<p><a href="." class="back mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">Back</a></p>
 
 <div id="create">
     <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--colored" href="create-edit-user.php?type=create">Add User</a>

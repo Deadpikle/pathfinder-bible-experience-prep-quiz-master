@@ -18,7 +18,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-users.php">Back</a></p>
+<p><a href="./view-users.php" class="back mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">Back</a></p>
 
 <div id="delete-user">
     <p> Are you sure you want to delete <?= $user["FirstName"] ?> <?= $user["LastName"] ?> ? </p>

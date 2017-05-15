@@ -26,7 +26,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p class="back"><a href="./view-users.php" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--colored">Back</a></p>
+<p class="back"><a href="./view-users.php" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">Back</a></p>
 
 <div id="edit-user">
     <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
