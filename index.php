@@ -11,6 +11,7 @@
 <div id="user-links">
     <ul>
         <li><a href="add-edit-question.php?type=create">Add Question</a></li>
+        <li><a href="view-questions.php">View Questions</a></li>
     </ul>  
 </div>
 
