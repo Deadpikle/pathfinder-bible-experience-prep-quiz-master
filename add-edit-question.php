@@ -38,6 +38,9 @@
     foreach ($bookData as $row) {
         if ($row["BookID"] != $lastBookID) {
             $lastBookID = $row["BookID"];
+            if ($chapter != NULL) {
+                $book["chapters"][] = $chapter;
+            }
             if ($book != NULL) {
                 $books[] = $book;
             }
@@ -46,6 +49,7 @@
                 "numberChapters" => $row["NumberChapters"],
                 "chapters" => array()
             );
+            $chapter = NULL;
         }
         if ($row["ChapterID"] != $lastChapterID) {
             $lastChapterID = $row["ChapterID"];
@@ -54,7 +58,7 @@
             }
             $chapter = array(
                 "chapterID" => $row["ChapterID"],
-                "number" => $row["VerseNumber"],
+                "number" => $row["ChapterNumber"],
                 "numberVerses" => $row["NumberVerses"],
                 "verses" => array()
             );
@@ -72,10 +76,7 @@
     $book["chapters"][] = $chapter;
     $books[] = $book;
 
-
     $bookJSON = json_encode($books);
-
-
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -103,11 +104,14 @@
         </p>
         <p>
             <label for="book">Verse Setup </label>
-            <select id="book" name="book">
-                <option value="-1">Select a book...</option>
-                <?php foreach ($books as $book) { ?>
-                        <option value="<?=$book['BookID']?>"><?=$book["Name"]?></option>
-                <?php } ?>
+            <select id="book-select" name="book">
+                <option id="book-no-selection-option" value="-1">Select a book...</option>
+            </select>
+            <select id="chapter-select" name="chapter">
+                <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
+            </select>
+            <select id="verse-select" name="verse">
+                <option id="verse-no-selection-option" value="-1">Select a verse...</option>
             </select>
         </p>
         <p>
@@ -116,24 +120,37 @@
     </form>
 </div>
 
-<script>
-// http://stackoverflow.com/a/15965470/3938401
-$(document).ready(function(){ // ran when the document is fully loaded
-    // retrieve the jQuery wrapped dom object identified by the selector '#mySel'
-    var sel = $('#book');
-    // assign a change listener to it
-    sel.change(function(){ //inside the listener
-        // retrieve the value of the object firing the event (referenced by this)
-        var value = $(this).val();
-        // print it in the logs
-        //console.log(value); // crashes in IE, if console not open
-        // make the text of all label elements be the value 
-    }); // close the change listener
+<script type="text/javascript">
+    // http://stackoverflow.com/a/15965470/3938401
+    $(document).ready(function() {
+        $('#book-select').change(function() { 
+            $('#chapter-select option').not(':first').remove();
+            var bookArrayIndex = $(this).val();
+            var book = books[bookArrayIndex];
+            var chapters = book.chapters;
+            for (var i = 0; i < chapters.length; i++) {
+                $('#chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
+            }
+        }); 
 
-    // set up the books selector
-    $('#book');
+        $('#chapter-select').change(function() { 
+            $('#verse-select option').not(':first').remove();
+            var bookArrayIndex = $('#book-select').val();
+            var chapterArrayIndex = $(this).val();
+            var chapter = books[bookArrayIndex].chapters[chapterArrayIndex];
+            var verses = chapter.verses;
+            for (var i = 0; i < verses.length; i++) {
+                $('#verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
+            }
+        });
 
-}); 
+
+        // setup the book selector
+        for (var i = 0; i < books.length; i++) {
+            $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
+        }
+
+    }); 
 </script>
 
 <?php include(dirname(__FILE__)."/footer.php"); ?>
