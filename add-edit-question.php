@@ -103,13 +103,16 @@
             <input type="number" min="0" name="number-of-points" value="<?= $numberOfPoints ?>"/>
         </p>
         <p>
-            <label for="book">Verse Setup </label>
+            <input type="hidden" id="verse-id" name="verse-id" value="-1"/>
+            <label for="book">Select Verse </label>
             <select id="book-select" name="book">
                 <option id="book-no-selection-option" value="-1">Select a book...</option>
             </select>
+            Chapter 
             <select id="chapter-select" name="chapter">
                 <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
             </select>
+            :
             <select id="verse-select" name="verse">
                 <option id="verse-no-selection-option" value="-1">Select a verse...</option>
             </select>
@@ -122,6 +125,7 @@
 
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
+    var selectedVerse = null;
     $(document).ready(function() {
         $('#book-select').change(function() { 
             $('#chapter-select option').not(':first').remove();
@@ -131,6 +135,7 @@
             for (var i = 0; i < chapters.length; i++) {
                 $('#chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
             }
+            $('#verse-id').val(-1);
         }); 
 
         $('#chapter-select').change(function() { 
@@ -142,8 +147,16 @@
             for (var i = 0; i < verses.length; i++) {
                 $('#verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
             }
+            $('#verse-id').val(-1);
         });
 
+        $('#verse-select').change(function() { 
+            var bookArrayIndex = $('#book-select').val();
+            var chapterArrayIndex = $('#chapter-select').val();
+            var verseArrayIndex = $(this).val();
+            selectedVerse = books[bookArrayIndex].chapters[chapterArrayIndex].verses[verseArrayIndex];
+            $('#verse-id').val(selectedVerse.verseID);
+        });
 
         // setup the book selector
         for (var i = 0; i < books.length; i++) {
