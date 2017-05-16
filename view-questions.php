@@ -7,6 +7,7 @@
         JOIN Verses v ON q.StartVerseID = v.VerseID
         JOIN Chapters c on v.ChapterID = c.ChapterID
         JOIN Books b ON b.BookID = c.BookID
+    ORDER BY Question, Answer, NumberPoints
     ');
 
 ?>
