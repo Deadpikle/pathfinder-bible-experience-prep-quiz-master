@@ -20,11 +20,69 @@
         $postType = "create";
     }
 
-    $bookQuery = 'SELECT BookID, Name, NumberChapters, YearID FROM Books ORDER BY Name';
-    $books = $pdo->query($bookQuery)->fetchAll();
+    $bookQuery = '
+    SELECT b.BookID, b.Name, b.NumberChapters,
+        c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses,
+        v.VerseID, v.Number AS VerseNumber
+    FROM Books b 
+        JOIN Chapters c ON b.BookID = c.BookID
+        LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
+    ORDER BY b.Name, ChapterNumber, VerseNumber';
+    $bookData = $pdo->query($bookQuery)->fetchAll();
+
+    $lastBookID = -1;
+    $lastChapterID = -1;
+    $books = array();
+    $book = NULL;
+    $chapter = NULL;
+    foreach ($bookData as $row) {
+        if ($row["BookID"] != $lastBookID) {
+            $lastBookID = $row["BookID"];
+            if ($book != NULL) {
+                $books[] = $book;
+            }
+            $book = array(
+                "name" => $row["Name"], 
+                "numberChapters" => $row["NumberChapters"],
+                "chapters" => array()
+            );
+        }
+        if ($row["ChapterID"] != $lastChapterID) {
+            $lastChapterID = $row["ChapterID"];
+            if ($chapter != NULL) {
+                $book["chapters"][] = $chapter;
+            }
+            $chapter = array(
+                "chapterID" => $row["ChapterID"],
+                "number" => $row["VerseNumber"],
+                "numberVerses" => $row["NumberVerses"],
+                "verses" => array()
+            );
+        }
+        
+        // create verse
+        $verse = array(
+            "verseID" => $row["VerseID"],
+            "number" => $row["VerseNumber"]
+        );
+        $chapter["verses"][] = $verse;
+        // echo(json_encode($chapter));
+    }
+    // wrap it up
+    $book["chapters"][] = $chapter;
+    $books[] = $book;
+
+
+    $bookJSON = json_encode($books);
+
+
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
+
+<script type="text/javascript">
+    var books = <?= json_encode($books) ?>;
+</script>
 
 <p><a href="./index.php">Back</a></p>
 
@@ -71,7 +129,11 @@ $(document).ready(function(){ // ran when the document is fully loaded
         //console.log(value); // crashes in IE, if console not open
         // make the text of all label elements be the value 
     }); // close the change listener
-}); // close the ready listener 
+
+    // set up the books selector
+    $('#book');
+
+}); 
 </script>
 
 <?php include(dirname(__FILE__)."/footer.php"); ?>
