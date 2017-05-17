@@ -6,10 +6,13 @@
 
     require_once("database.php");
 
-    $logged_in = FALSE;
-    if (!isset($_SESSION["UserID"])) {
+    $loggedIn = FALSE;
+    $isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
+    if (!isset($_SESSION["UserID"]) && !$isOnLoginPage) {
         header("Location: login.php");
     }
-    $logged_in = TRUE;
+    if (!$isOnLoginPage) {
+        $loggedIn = TRUE;
+    }
 
 ?>
