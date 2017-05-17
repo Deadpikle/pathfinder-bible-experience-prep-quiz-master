@@ -4,6 +4,9 @@
         if (!isset($_POST["is-admin"])) {
             $_POST["is-admin"] = FALSE;
         }
+        else {
+            $_POST["is-admin"] = TRUE;
+        }
         $params = [
             $_POST["first-name"],
             $_POST["last-name"],
