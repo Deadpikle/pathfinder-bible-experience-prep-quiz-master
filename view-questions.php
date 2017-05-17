@@ -27,7 +27,7 @@
 </div>
 
 <div id="users-div">
-    <table>
+    <table class="striped">
         <thead>
             <tr>
                 <th>Question</th>

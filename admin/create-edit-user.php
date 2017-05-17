@@ -44,11 +44,11 @@
             <input type="text" name="entry-code" value="<?= $entryCode ?>"/>
         </p>
         <p>
+            <input type="checkbox" name="is-admin" id="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
             <label for="is-admin">Administrator? </label>
-            <input type="checkbox" name="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
         </p>
         <p>
-            <input type="submit" value="Save"/>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
         </p>
     </form>
 </div>
