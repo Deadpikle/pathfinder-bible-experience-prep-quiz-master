@@ -2,6 +2,7 @@
     require_once(dirname(__FILE__)."/init.php");
 
     $startVerseID = -1;
+    $endVerseID = -1;
     if ($_GET["type"] == "update") {
         $query = 'SELECT Question, Answer, NumberPoints, IsFlagged, StartVerseID, EndVerseID FROM Questions WHERE QuestionID = ?';
         $stmt = $pdo->prepare($query);
@@ -226,7 +227,7 @@
             $('#end-book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
         }
 
-        if (startVerseID != -1) {
+        if (startVerseID != -1 || endVerseID != -1) {
             var didFindStart = false;
             var didFindEnd = false;
             for (var i = 0; i < books.length; i++) {
@@ -235,11 +236,11 @@
                     var chapter = book.chapters[j];
                     for (var k = 0; k < chapter.verses.length; k++) {
                         var verse = chapter.verses[k];
-                        if (verse.verseID == startVerseID) {
+                        if (startVerseID != -1 && verse.verseID == startVerseID) {
                             didFindStart = true;
                             setupInitialValue('start-', i, j, k, book, chapter, startVerseID);
                         }
-                        if (verse.verseID == endVerseID) {
+                        if (endVerseID != -1 && verse.verseID == endVerseID) {
                             didFindEnd = true;
                             setupInitialValue('end-', i, j, k, book, chapter, startVerseID);
                         }
