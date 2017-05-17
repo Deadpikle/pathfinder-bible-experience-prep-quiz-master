@@ -2,11 +2,17 @@
     require_once(dirname(__FILE__)."/init.php");
 
     $stmt = $pdo->query('
-    SELECT QuestionID, Question, Answer, NumberPoints, IsFlagged, b.Name AS Book, c.Number AS Chapter, v.Number AS Verse
+    SELECT QuestionID, Question, Answer, NumberPoints, IsFlagged, 
+        bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
+        bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse
     FROM Questions q 
-        JOIN Verses v ON q.StartVerseID = v.VerseID
-        JOIN Chapters c on v.ChapterID = c.ChapterID
-        JOIN Books b ON b.BookID = c.BookID
+        JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
+        JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
+        JOIN Books bStart ON bStart.BookID = cStart.BookID
+
+        LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
+        LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
+        LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
     ORDER BY Question, Answer, NumberPoints
     ');
 
@@ -26,7 +32,8 @@
             <tr>
                 <th>Question</th>
                 <th>Answer</th>
-                <th>Reference</th>
+                <th>Start Reference</th>
+                <th>End Reference</th>
                 <th>Number of Points</th>
                 <th>Flagged?</th>
                 <th>Edit</th>
@@ -38,7 +45,8 @@
                     <tr>
                         <td><?= $row["Question"] ?></td>
                         <td><?= $row["Answer"] ?></td>
-                        <td><?= $row["Book"] ?>&nbsp;<?= $row["Chapter"] ?>:<?= $row["Verse"] ?></td>
+                        <td><?= $row["StartBook"] ?>&nbsp;<?= $row["StartChapter"] ?>:<?= $row["StartVerse"] ?></td>
+                        <td><?= $row["EndBook"] ?>&nbsp;<?= $row["EndChapter"] ?>:<?= $row["EndVerse"] ?></td>
                         <td><?= $row["NumberPoints"] ?></td>
                         <td><?= $row["IsFlagged"] ?></td>
                         <td><a href="add-edit-question.php?type=update&id=<?=$row['QuestionID'] ?>">Edit Question</a></td>

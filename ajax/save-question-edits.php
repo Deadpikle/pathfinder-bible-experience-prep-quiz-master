@@ -7,7 +7,7 @@
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $_POST["start-verse-id"],
-        $_POST["last-verse-id"]
+        $_POST["end-verse-id"]
     ];
     if ($_GET["type"] == "update") {
         $query = '

@@ -10,7 +10,6 @@
 
 <div id="user-links">
     <ul>
-        <li><a href="add-edit-question.php?type=create">Add Question</a></li>
         <li><a href="view-questions.php">View Questions</a></li>
         <li><a href="quiz-setup.php">Quiz me!</a></li>
     </ul>  
