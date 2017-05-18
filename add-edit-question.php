@@ -112,33 +112,27 @@
             <label for="number-of-points">Number of Points: </label>
             <input type="number" min="0" name="number-of-points" value="<?= $numberOfPoints ?>"/>
         </p>
-        <div id="start-verse-div">
+        <div class="row" id="start-verse-div">
             <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-            <label> Start verse </label>
-            <select id="start-book-select" name="start-book">
+            <select class="col s4" id="start-book-select" name="start-book">
                 <option id="book-no-selection-option" value="-1">Select a book...</option>
             </select>
-            Chapter 
-            <select id="start-chapter-select" name="start-chapter">
+            <select class="col s4" id="start-chapter-select" name="start-chapter">
                 <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
             </select>
-            Verse
-            <select id="start-verse-select" name="start-verse">
+            <select class="col s4" id="start-verse-select" name="start-verse">
                 <option id="verse-no-selection-option" value="-1">Select a verse...</option>
             </select>
         </div>
-        <div id="end-verse-div">
+        <div class="row" id="end-verse-div">
             <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
-            <label> End verse </label>
-            <select id="end-book-select" name="end-book">
+            <select class="col s4" id="end-book-select" name="end-book">
                 <option id="book-no-selection-option" value="-1">Select a book...</option>
             </select>
-            Chapter 
-            <select id="end-chapter-select" name="chapter">
+            <select class="col s4" id="end-chapter-select" name="chapter">
                 <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
             </select>
-            Verse
-            <select id="end-verse-select" name="verse">
+            <select class="col s4" id="end-verse-select" name="verse">
                 <option id="verse-no-selection-option" value="-1">Select a verse...</option>
             </select>
         </div>
@@ -160,6 +154,7 @@
             for (var i = 0; i < chapters.length; i++) {
                 $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
             }
+            $('#' + prefix + 'chapter-select').material_select();
             $('#' + prefix + 'start-verse-id').val(-1);
             $('#' + prefix + 'last-verse-id').val(-1);
         }
@@ -170,6 +165,7 @@
             for (var i = 0; i < verses.length; i++) {
                 $('#' + prefix + 'verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
             }
+            $('#' + prefix + 'verse-select').material_select();
             $('#' + prefix + 'start-verse-id').val(-1);
             $('#' + prefix + 'last-verse-id').val(-1);
         }
@@ -204,12 +200,15 @@
         function setupInitialValue(prefix, i, j, k, book, chapter, verseID) {
                 // :eq looks by index, so +1 since index 0 is the 'Select a book...' etc.
                 $('#' + prefix + 'book-select option:eq(' + (i+1) + ')').prop('selected', true);
+                $('#' + prefix + 'book-select').material_select();
                 setupChapterSelectForBook(book, prefix);
                 $('#' + prefix + 'chapter-select option:eq(' + (j+1) + ')').prop('selected', true);
+                $('#' + prefix + 'chapter-select').material_select();
                 setupVerseSelectForChapter(chapter, prefix);
                 $('#' + prefix + 'verse-select option:eq(' + (k+1) + ')').prop('selected', true);
                 $('#' + prefix + 'verse-id').val(startVerseID);
                 $('#' + prefix + 'verse-id').val(startVerseID);
+                $('#' + prefix + 'verse-select').material_select();
         }
 
         setupBookSelector('start-');
@@ -226,6 +225,8 @@
             $('#start-book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
             $('#end-book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
         }
+        $('#start-book-select').material_select();
+        $('#end-book-select').material_select();
 
         if (startVerseID != -1 || endVerseID != -1) {
             var didFindStart = false;
