@@ -1,7 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
-        if (!isset($_POST["is-admin"]) || $_POST["is-admin"] == "") {
+        if (!isset($_POST["is-admin"]) || $_POST["is-admin"] == NULL) {
             $_POST["is-admin"] = FALSE;
         }
         else {
