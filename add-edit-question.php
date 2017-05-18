@@ -206,9 +206,8 @@
                 $('#' + prefix + 'chapter-select').material_select();
                 setupVerseSelectForChapter(chapter, prefix);
                 $('#' + prefix + 'verse-select option:eq(' + (k+1) + ')').prop('selected', true);
-                $('#' + prefix + 'verse-id').val(startVerseID);
-                $('#' + prefix + 'verse-id').val(startVerseID);
                 $('#' + prefix + 'verse-select').material_select();
+                $('#' + prefix + 'verse-id').val(verseID);
         }
 
         setupBookSelector('start-');
@@ -243,7 +242,7 @@
                         }
                         if (endVerseID != -1 && verse.verseID == endVerseID) {
                             didFindEnd = true;
-                            setupInitialValue('end-', i, j, k, book, chapter, startVerseID);
+                            setupInitialValue('end-', i, j, k, book, chapter, endVerseID);
                         }
                         if (didFindStart && didFindEnd) {
                             break;
