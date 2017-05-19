@@ -17,7 +17,6 @@
     <table>
         <thead>
             <tr>
-                <th>UserID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Entry Code</th>
@@ -29,7 +28,6 @@
         <tbody>
             <?php while ($row = $stmt->fetch()) { ?>
                     <tr>
-                        <td><?= $row["UserID"] ?></td>
                         <td><?= $row["FirstName"] ?></td>
                         <td><?= $row["LastName"] ?></td>
                         <td><?= $row["EntryCode"] ?></td>
