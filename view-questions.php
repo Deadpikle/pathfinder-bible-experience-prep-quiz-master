@@ -23,7 +23,7 @@
 <p><a href=".">Back</a></p>
 
 <div id="create">
-    <a href="add-edit-question.php?type=create">Add Question</a>
+    <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>
 </div>
 
 <div id="users-div">
