@@ -33,16 +33,16 @@
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="first-name" name="first-name" value="<?= $firstName ?>"/>
+                <input type="text" id="first-name" name="first-name" value="<?= $firstName ?>" required/>
                 <label for="first-name">First Name</label>
             </div>
             <div class="input-field col s12 m4">
-                <input type="text" id="last-name" name="last-name" value="<?= $lastName ?>"/>
+                <input type="text" id="last-name" name="last-name" value="<?= $lastName ?>" required/>
                 <label for="last-name">Last Name</label>
             </div>
             <div class="input-field col s12 m4">
-                <input type="text" id="entry-code" name="entry-code" value="<?= $entryCode ?>"/>
-                <label for="entry-code">Entry Code</label>
+                <input type="text" id="entry-code" name="entry-code" value="<?= $entryCode ?>" required pattern="[a-z0-9. -]+" maxlength="6"/>
+                <label for="entry-code">Entry Code (alphanumeric; maximum length 6)</label>
             </div>
         </div>
         <div class="row" style="margin-left:0px">
