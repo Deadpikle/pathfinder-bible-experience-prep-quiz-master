@@ -21,12 +21,10 @@
 <p><a href="./view-users.php">Back</a></p>
 
 <div id="delete-user">
-    <p> Are you sure you want to delete <?= $user["FirstName"] ?> <?= $user["LastName"] ?> ? </p>
+    <h4> Are you sure you want to delete <?= $user["FirstName"] ?> <?= $user["LastName"] ?>? </h4>
     <form method="post">
         <input type="hidden" name="user-id" value="<?= $_GET['id'] ?>"/>
-        <p>
-            <input type="submit" value="Delete User"/>
-        </p>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Delete User</button>
     </form>
 </div>
 
