@@ -45,11 +45,11 @@
                 <label for="entry-code">Entry Code</label>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-left:0px">
             <input type="checkbox" name="is-admin" id="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
-            <label for="is-admin">Administrator? </label>
+            <label for="is-admin">Should this user be an administrator?</label>
         </div>
-        <button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
 
