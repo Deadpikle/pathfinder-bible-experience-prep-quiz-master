@@ -23,11 +23,15 @@
                     <a href="<?=$basePath?>" class="brand-logo" style="margin-left:2em">Pathfinder Quiz Engine 2.0</a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
-                        <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                        <?php if ($_SESSION["IsAdmin"]) { ?>
+                            <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                        <?php } ?>
                         <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
-                        <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                        <?php if ($_SESSION["IsAdmin"]) { ?>
+                            <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                        <?php } ?>
                         <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                     </ul>
                 </div>

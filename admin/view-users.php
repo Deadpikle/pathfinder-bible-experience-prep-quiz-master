@@ -10,7 +10,7 @@
 <p><a href=".">Back</a></p>
 
 <div id="create">
-    <a href="create-edit-user.php?type=create">Add User</a>
+    <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
 </div>
 
 <div id="users-div">
