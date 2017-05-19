@@ -31,25 +31,25 @@
 <div id="edit-user">
     <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
-        <p>
-            <label for="first-name">First Name: </label>
-            <input  type="text" name="first-name" value="<?= $firstName ?>"/>
-        </p>
-        <p>
-            <label for="last-name">Last Name: </label>
-            <input type="text" name="last-name" value="<?= $lastName ?>"/>
-        </p>
-        <p>
-            <label for="entry-code">Entry Code: </label>
-            <input type="text" name="entry-code" value="<?= $entryCode ?>"/>
-        </p>
-        <p>
+        <div class="row">
+            <div class="input-field col s12 m4">
+                <input type="text" id="first-name" name="first-name" value="<?= $firstName ?>"/>
+                <label for="first-name">First Name</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <input type="text" id="last-name" name="last-name" value="<?= $lastName ?>"/>
+                <label for="last-name">Last Name</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <input type="text" id="entry-code" name="entry-code" value="<?= $entryCode ?>"/>
+                <label for="entry-code">Entry Code</label>
+            </div>
+        </div>
+        <div class="row">
             <input type="checkbox" name="is-admin" id="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
             <label for="is-admin">Administrator? </label>
-        </p>
-        <p>
-            <button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
-        </p>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Save</button>
     </form>
 </div>
 
