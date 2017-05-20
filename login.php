@@ -1,4 +1,5 @@
 <?php
+    // TODO: clickless reCaptcha
 
     require_once(dirname(__FILE__)."/init.php");
 
@@ -10,16 +11,20 @@
 
 <?php include("header.php"); ?>
 
-<h2>Login</h2>
+<h2>Welcome!</h2>
 
 <?php if (isset($error)) { ?>
         <p class="error-message"> <?=$error?> </p>
 <?php } ?>
 
 <form action="ajax/login-access-code.php" method="post">
-    <label for="access-code">Access Code: </label>
-    <input type="text" name="access-code"/>
-    <button>Login</button>
+    <div class="row">
+        <div class="input-field col s12 m4">
+            <input type="text" id="access-code" name="access-code" required/>
+            <label for="access-code">Access code</label>
+        </div>
+    </div>
+    <button class="btn waves-effect waves-light submit" type="submit" name="action">Login</button>
 </form>
 
 <?php include("footer.php") ?>
