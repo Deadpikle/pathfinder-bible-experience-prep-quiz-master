@@ -1,8 +1,19 @@
 <?php
+
+// TODO:
+// Require dropdowns (unsupported in safari?)
+// Error messages if server fails
+// Server needs to generate entry code on submit of new user
+// auto-select dropdown if editing user
+// don't show selectors if not website administrator
+
     require_once(dirname(__FILE__)."/init-admin.php");
 
     if ($_GET["type"] == "update") {
-        $query = 'SELECT UserID, FirstName, LastName, EntryCode, IsAdmin FROM Users WHERE UserID = ?';
+        $query = '
+            SELECT UserID, FirstName, LastName, c.ClubID AS ClubID
+            FROM Users u LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
+            WHERE UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $user = $stmt->fetch();
@@ -21,6 +32,11 @@
         $isAdmin = FALSE;
         $postType = "create";
     }
+
+    $userTypesQuery = 'SELECT UserTypeID, Name FROM UserTypes ORDER BY UserTypeID';
+    $userTypes = $pdo->query($userTypesQuery)->fetchAll();
+    $clubsQuery = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
+    $clubs = $pdo->query($clubsQuery)->fetchAll();
 
 ?>
 
@@ -41,16 +57,30 @@
                 <label for="last-name">Last Name</label>
             </div>
             <div class="input-field col s12 m4">
-                <input type="text" id="entry-code" name="entry-code" value="<?= $entryCode ?>" required pattern="[a-z0-9. -]+" maxlength="6"/>
-                <label for="entry-code">Entry Code (alphanumeric; maximum length 6)</label>
+                <select id="club-select" name="club" required>
+                    <option id="club-no-selection-option" value="">Select a club...</option>
+                    <?php foreach ($clubs as $club) { ?>
+                        <option value="<?= $club['ClubID'] ?>"><?=$club['Name']?></option>
+                    <?php } ?>
+                </select>
             </div>
         </div>
-        <div class="row" style="margin-left:0px">
-            <input type="checkbox" name="is-admin" id="is-admin" <?php if ($isAdmin) { ?> checked <?php } ?>/>
-            <label for="is-admin">Should this user be an administrator?</label>
+        <div class="row">
+            <select class="col s4" id="user-type-select" name="user-type" required>
+                <option id="user-type-no-selection-option" value="">Select a user type...</option>
+                <?php foreach ($userTypes as $userType) { ?>
+                    <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['Name']?></option>
+                <?php } ?>
+            </select>
         </div>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+</script>
 
 <?php include(dirname(__FILE__)."/../footer.php"); ?>

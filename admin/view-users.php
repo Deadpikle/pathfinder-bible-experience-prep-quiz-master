@@ -1,7 +1,9 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
 
-    $stmt = $pdo->query('SELECT UserID, FirstName, LastName, EntryCode, IsAdmin FROM Users');
+    $stmt = $pdo->query('
+        SELECT UserID, FirstName, LastName, EntryCode, c.Name AS ClubName
+        FROM Users u LEFT JOIN Clubs c ON u.ClubID = c.ClubID ');
 
 ?>
 
@@ -20,7 +22,7 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Entry Code</th>
-                <th>Admin?</th>
+                <th>Club</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -31,7 +33,7 @@
                         <td><?= $row["FirstName"] ?></td>
                         <td><?= $row["LastName"] ?></td>
                         <td><?= $row["EntryCode"] ?></td>
-                        <td><?= $row["IsAdmin"] ?></td>
+                        <td><?= $row["ClubName"] ?></td>
                         <td><a href="create-edit-user.php?type=update&id=<?=$row['UserID'] ?>">Edit User</a></td>
                         <td><?php if ($_SESSION["UserID"] != $row["UserID"]) { ?> 
                                 <a href="delete-user.php?id=<?=$row['UserID'] ?>">Delete User</a>
