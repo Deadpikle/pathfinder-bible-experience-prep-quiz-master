@@ -42,6 +42,7 @@
             <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
         </div>
     </form>
+    <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
     <ul class="browser-default sortable">
         <?php 
             $i = 0;
@@ -54,7 +55,7 @@
                         echo "</li></ul>";
                     }
                     $i++;
-                    echo "<li>Line $i<br>";
+                    echo "<li class='line' id='line-id-$lineID'>Line $i<br>";
                     echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
                     echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
                     echo "<ul class='browser-default sortable'>";
@@ -67,10 +68,10 @@
                         if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
                             $url = "http://" . $url;
                         }
-                        echo "<li><a href=\"" . $url . "\">" . $line["Text"] . "</a><br>";
+                        echo "<li class='line-item' id='item-id-$itemID'><a href=\"" . $url . "\">" . $line["Text"] . "</a><br>";
                     }
                     else {
-                        echo "<li>" . $line["Text"] . "<br>";
+                        echo "<li class='line-item' id='item-id-$itemID'>" . $line["Text"] . "<br>";
                     }
                     echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update'>edit</a>";
                     echo "&nbsp;&nbsp;";
@@ -81,11 +82,53 @@
     </ul>
 </div>
 
+<div id="saved-modal" class="modal">
+    <div class="modal-content">
+        <h4>Order saved!</h4>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-teal teal-text btn-flat">Great, thanks!</a>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#saved-modal').modal();
         sortable('.sortable', {
             forcePlaceholderSize: true,
             placeholderClass: 'teal lighten-5',
+        });
+        $('#save-sort').on("click",function() {
+            var lines = [];
+            $('.line').each(function(index, element) {
+                console.log(element.id);
+                var items = [];
+                $(element).find('.line-item').each(function(lineIndex, lineElement) {
+                    items.push({
+                        id: lineElement.id.replace('item-id-', ''),
+                        index: lineIndex
+                    });
+                });
+                var lineObj = {
+                    id: element.id.replace('line-id-', ''),
+                    index: index,
+                    items: items 
+                };
+                lines.push(lineObj)
+            });
+            $.ajax({
+                type: "POST",
+                url: "ajax/save-line-sorting.php",
+                data: {
+                    json: JSON.stringify(lines)
+                },
+                success: function(msg) {
+                    $('#saved-modal').modal('open');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(thrownError);
+                }
+            });
         });
     });
 </script>
