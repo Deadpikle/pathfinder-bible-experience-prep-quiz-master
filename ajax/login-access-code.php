@@ -20,7 +20,6 @@
         $_SESSION["LastName"] = $row["LastName"];
         $_SESSION["UserType"] = $row["UserType"];
         $_SESSION["ClubName"] = $row["ClubName"];
-        //$_SESSION["IsAdmin"] = $row["IsAdmin"];
         header("Location: ../index.php");
     }
     else {
