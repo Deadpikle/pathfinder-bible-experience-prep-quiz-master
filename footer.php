@@ -3,7 +3,7 @@
                 </div>
             </main>
         <footer class="container">
-            <p>©  2017</p>
+            <p>PBE Quiz Engine<sup>2</sup> ©  2017</p>
         </footer>
     </body>
     <script type="text/javascript">

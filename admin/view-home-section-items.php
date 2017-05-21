@@ -75,7 +75,7 @@
                     }
                     echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update'>edit</a>";
                     echo "&nbsp;&nbsp;";
-                    echo "<a href='delete-line-item.php?id=$itemID'>delete</a>";
+                    echo "<a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID'>delete</a>";
                 }
             }
         ?>
