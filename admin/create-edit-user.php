@@ -1,9 +1,7 @@
 <?php
 
 // TODO:
-// Require dropdowns (unsupported in safari?)
 // Error messages if server fails
-// auto-select dropdown if editing user
 
     require_once(dirname(__FILE__)."/init-admin.php");
 
@@ -16,10 +14,12 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $user = $stmt->fetch();
+        if ($user == NULL) {
+            die("invalid user id"); // TODO: better error
+        }
         $userID = $user["UserID"];
         $firstName = $user["FirstName"];
         $lastName = $user["LastName"];
-        $entryCode = $user["EntryCode"];
         $userTypeID = $user["UserType"];
         $clubID = $user["ClubID"];
         $postType = "update";
@@ -64,21 +64,30 @@
         <?php if ($isWebAdmin) { ?>
             <div class="row">
                 <div class="input-field col s12 m4">
-                    <select id="club-select" name="club" required>
+                    <select id="club" name="club" required>
                         <option id="club-no-selection-option" value="">Select a club...</option>
-                        <?php foreach ($clubs as $club) { ?>
-                            <option value="<?= $club['ClubID'] ?>"><?=$club['Name']?></option>
+                        <?php foreach ($clubs as $club) { 
+                                $selected = "";
+                                if ($club['ClubID'] == $clubID)
+                                    $selected = "selected";
+                        ?>
+                            <option value="<?= $club['ClubID'] ?>" <?=$selected?> ><?=$club['Name']?></option>
                         <?php } ?>
                     </select>
                 </div>
-            </div>
-            <div class="row">
-                <select class="col s4" id="user-type-select" name="user-type" required>
-                    <option id="user-type-no-selection-option" value="">Select a user type...</option>
-                    <?php foreach ($userTypes as $userType) { ?>
-                        <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['DisplayName']?></option>
-                    <?php } ?>
-                </select>
+                <div class="input-field col s12 m4">
+                    <select id="user-type" name="user-type" required>
+                        <option id="user-type-no-selection-option" value="">Select a user type...</option>
+                        <?php 
+                            foreach ($userTypes as $userType) { 
+                                $selected = "";
+                                if ($userType['UserTypeID'] == $userTypeID)
+                                    $selected = "selected";
+                        ?>
+                            <option value="<?= $userType['UserTypeID'] ?>" <?=$selected?> ><?=$userType['DisplayName']?></option>
+                        <?php } ?>
+                    </select>
+                </div>
             </div>
         <?php } ?>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
@@ -88,6 +97,19 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('select').material_select();
+        // https://github.com/Dogfalo/materialize/issues/1861 fix validate on material selectors
+        $('select[required]').css({
+            display: 'inline',
+            position: 'absolute',
+            float: 'left',
+            padding: 0,
+            margin: 0,
+            border: '1px solid rgba(255,255,255,0)',
+            height: 0, 
+            width: 0,
+            top: '2em',
+            left: '3em'
+        });
     });
 </script>
 
