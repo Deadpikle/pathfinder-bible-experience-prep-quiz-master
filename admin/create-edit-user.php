@@ -34,7 +34,6 @@
         $postType = "create";
     }
 
-    $isWebAdmin = $_SESSION["UserType"] === "WebAdmin";
     if ($isWebAdmin) {
         $userTypesQuery = 'SELECT UserTypeID, DisplayName FROM UserTypes ORDER BY UserTypeID';
         $userTypes = $pdo->query($userTypesQuery)->fetchAll();

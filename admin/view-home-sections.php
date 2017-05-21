@@ -9,8 +9,8 @@
             hil.HomeInfoLineID AS LineID,
             hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
         FROM HomeInfoSections his 
-            JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
-            JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
+            LEFT JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
+            LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
         ORDER BY SectionSortOrder, hil.SortOrder, ItemSortOrder';
     $sectionStmt = $pdo->prepare($query);
     $sectionStmt->execute([]); // will we ever need params here?
@@ -31,42 +31,57 @@
     <div id="create">
         <a class="waves-effect waves-light btn" href="create-edit-section.php?type=create">Add Section</a>
     </div>
-    <?php 
-        foreach ($sections as $section) { 
-            $sectionID = $section["SectionID"];
-            $lineID = $section["LineID"];
-            if ($lastSectionID !== $sectionID) {
-                if ($lastSectionID !== -1) {
-                    echo "</ul>";
+    <div id="page-list">
+        <?php 
+            // TODO: refactor to function for home page~
+            $isAdminPage = TRUE; // for eventual function
+            foreach ($sections as $section) { 
+                $sectionID = $section["SectionID"];
+                $lineID = $section["LineID"];
+                if ($lastSectionID !== $sectionID) {
+                    if ($lastSectionID !== -1) {
+                        echo "</ul>";
+                    }
+                    $lastSectionID = $sectionID;
+                    echo "<h5>" . $section["SectionName"] . "</h5>";
+                    if ($isAdminPage) {
+                        echo "<a class='add waves-effect waves-light btn' href='create-edit-section.php?type=create'>Edit Line Items</a>";
+                    }
+                    echo "<ul>";
                 }
-                $lastSectionID = $sectionID;
-                echo "<h5>" . $section["SectionName"] . "</h5>";
-                echo "<ul>";
-            }
-            $isFirstLineItem = FALSE;
-            if ($lastLineID !== $lineID) {
-                $isFirstLineItem = TRUE;
-                if ($lastSectionID !== -1) {
-                    echo "</li>";
+                if ($section["Text"] != NULL) {
+                    $isFirstLineItem = FALSE;
+                    if ($lastLineID !== $lineID) {
+                        $isFirstLineItem = TRUE;
+                        if ($lastLineID !== -1) {
+                            echo "</li>";
+                        }
+                        $lastLineID = $lineID;
+                        echo "<li>";
+                    }
+                    if (!$isFirstLineItem) {
+                        echo " - ";
+                    }
+                    if ($section["IsLink"]) {
+                        $url = $section["URL"];
+                        if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
+                            $url = "http://" . $url;
+                        }
+                        echo "<a href=\"" . $url . "\">" . $section["Text"] . "</a>";
+                    }
+                    else {
+                        echo $section["Text"];
+                    }
                 }
-                $lastLineID = $lineID;
-                echo "<li>";
             }
-            if (!$isFirstLineItem) {
-                echo " - ";
+            if ($lastLineID !== -1) {
+                echo "</li>";
             }
-            if ($section["IsLink"]) {
-                $url = $section["URL"];
-                if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
-                    $url = "http://" . $url;
-                }
-                echo "<a href=\"" . $url . "\">" . $section["Text"] . "</a>";
+            if ($lastSectionID !== -1) {
+                echo "</ul>";
             }
-            else {
-                echo $section["Text"];
-            }
-        }
-    ?>
+        ?>
+    </div>
 </div>
 
 <?php include(dirname(__FILE__)."/../footer.php"); ?>
