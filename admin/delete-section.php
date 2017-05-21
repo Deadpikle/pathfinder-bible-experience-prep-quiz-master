@@ -27,7 +27,7 @@
     <h4> Are you sure you want to delete <?= $section["Name"] ?>? </h4>
     <form method="post">
         <input type="hidden" name="section-id" value="<?= $_GET['id'] ?>"/>
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Delete Section</button>
+        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Section</button>
     </form>
 </div>
 
