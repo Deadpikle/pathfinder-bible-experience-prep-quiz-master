@@ -42,6 +42,7 @@
             <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
         </div>
     </form>
+    <p>You can drag and drop lines and line items to resort them.</p>
     <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
     <ul class="browser-default sortable">
         <?php 
@@ -84,10 +85,10 @@
 
 <div id="saved-modal" class="modal">
     <div class="modal-content">
-        <h4>Order saved!</h4>
+        <h4>Line order saved!</h4>
     </div>
     <div class="modal-footer">
-        <a href="#!" class="modal-action modal-close waves-effect waves-teal teal-text btn-flat">Great, thanks!</a>
+        <a href="#!" class="modal-action modal-close waves-effect waves-teal teal-text btn-flat">OK</a>
     </div>
 </div>
 
