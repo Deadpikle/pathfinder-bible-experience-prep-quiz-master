@@ -1,7 +1,7 @@
 <?php
   require_once('./test.php');
 
-  const SKIPPABLE = ['and', 'or', 'but', '.', '?', '!'];
+  const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', '.', '?', '!'];
 
   /*
    * words = verse
@@ -20,10 +20,10 @@
   function generate_question($phrase, $num_blanks) {
     $words = tokenize($phrase);
 
-    foreach ($words as $key => $word) {
-      if (!in_array($word, SKIPPABLE)) {
-        $words[$key] = '_';
-      }
+    $blank_indexes = get_blanks($words, $num_blanks);
+
+    foreach ($blank_indexes as $key) {
+      $words[$key] = '_';
     }
 
     return $words;
@@ -46,6 +46,18 @@
     }
 
     return $result;
+  }
+
+  function get_blanks($tokens, $num_blanks) {
+    $keys = array_keys($tokens);
+
+    $blankable = array_filter($keys, function ($key) use ($tokens) {
+      return !in_array($tokens[$key], SKIPPABLE);
+    });
+
+    shuffle($blankable);
+
+    return array_slice($blankable, 0, $num_blanks);
   }
 
   // #generate_question
