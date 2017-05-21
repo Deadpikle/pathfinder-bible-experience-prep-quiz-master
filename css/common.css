@@ -10,6 +10,10 @@
     padding: 0px;
 }
 
-#section-buttons {
+.section-buttons {
+    margin-left: 1.2em;
+}
+
+.section-items {
     margin-left: 1em;
 }
