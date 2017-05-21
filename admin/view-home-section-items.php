@@ -37,11 +37,9 @@
 
 <div class="lines">
     <form action="ajax/add-line.php" method="post">
-        <div class="row">
-            <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
-            <div class="input-field col s6 m4">
-                <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
-            </div>
+        <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
+        <div class="input-field col s6 m4">
+            <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
         </div>
     </form>
     <ul class="browser-default">
@@ -49,7 +47,8 @@
             $i = 0;
             foreach ($lines as $line) { 
                 $isFirstLineItem = FALSE;
-                if ($line["LineID"] != $lastLineID) {
+                $lineID = $line["LineID"];
+                if ($lineID != $lastLineID) {
                     $isFirstLineItem = TRUE;
                     if ($lastLineID !== -1) {
                         echo "</ul>";
@@ -57,18 +56,22 @@
                     $i++;
                     echo "<li>Line $i</li>";
                     echo "<ul class='browser-default'>";
-                    $lastLineID = $line["LineID"];
+                    echo "<a class='btn btn-flat teal-text' href='create-edit-line.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
+                    echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
+                    $lastLineID = $lineID;
                 }
                 // TODO: function
-                if ($line["IsLink"]) {
-                    $url = $line["URL"];
-                    if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
-                        $url = "http://" . $url;
+                if ($line["Text"] != NULL) {
+                    if ($line["IsLink"]) {
+                        $url = $line["URL"];
+                        if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
+                            $url = "http://" . $url;
+                        }
+                        echo "<li><a href=\"" . $url . "\">" . $line["Text"] . "</a></li>";
                     }
-                    echo "<li><a href=\"" . $url . "\">" . $line["Text"] . "</a></li>";
-                }
-                else {
-                    echo "<li>" . $line["Text"] . "</li>";
+                    else {
+                        echo "<li>" . $line["Text"] . "</li>";
+                    }
                 }
             }
         ?>

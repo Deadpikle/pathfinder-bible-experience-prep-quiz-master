@@ -1,20 +1,19 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
 
+    $query = 'SELECT FirstName, LastName FROM Users WHERE UserID = ?';
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$_GET["id"]]);
+    $user = $stmt->fetch();
+    if ($user == NULL) {
+        die("invalid user id"); // TODO: better error
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = 'DELETE FROM Users WHERE UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         header("Location: view-users.php");
-    }
-    else {
-        $query = 'SELECT FirstName, LastName FROM Users WHERE UserID = ?';
-        $stmt = $pdo->prepare($query);
-        $stmt->execute([$_GET["id"]]);
-        $user = $stmt->fetch();
-        if ($user == NULL) {
-            die("invalid user id"); // TODO: better error
-        }
     }
 
 ?>

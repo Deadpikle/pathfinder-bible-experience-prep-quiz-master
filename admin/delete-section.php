@@ -1,20 +1,19 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
 
+    $query = 'SELECT Name FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$_GET["id"]]);
+    $section = $stmt->fetch();
+    if ($section == NULL) {
+        die("invalid section id"); // TODO: better error
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = 'DELETE FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         header("Location: view-home-sections.php");
-    }
-    else {
-        $query = 'SELECT Name FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
-        $stmt = $pdo->prepare($query);
-        $stmt->execute([$_GET["id"]]);
-        $section = $stmt->fetch();
-        if ($section == NULL) {
-            die("invalid section id"); // TODO: better error
-        }
     }
 
 ?>
