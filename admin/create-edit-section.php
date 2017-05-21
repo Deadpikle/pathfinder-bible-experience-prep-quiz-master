@@ -36,7 +36,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-users.php">Back</a></p>
+<p><a href="./view-home-sections.php">Back</a></p>
 
 <div id="edit-user">
     <form action="ajax/save-section-edits.php?type=<?= $postType ?>" method="post">

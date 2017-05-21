@@ -9,3 +9,7 @@
 .section {
     padding: 0px;
 }
+
+#section-buttons {
+    margin-left: 1em;
+}
