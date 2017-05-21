@@ -3,6 +3,20 @@
 
   const CONJUNCTIONS = ['and', 'or', 'but'];
 
+  /*
+   * words = verse
+   * |> explode
+   *
+   * blanks = words
+   * |> get_indexes
+   * |> filter_trivial
+   * |> shuffle
+   * |> take(n)
+   *
+   * result = words
+   * |> replace(blanks)
+   * |> concat
+   */
   function generate_question($phrase, $num_blanks) {
     $words = explode(' ', $phrase);
     $result = [];
