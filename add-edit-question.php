@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Are ALL questions based on a specific verse of the Bible?
+
     require_once(dirname(__FILE__)."/init.php");
 
     $startVerseID = -1;
@@ -102,30 +105,30 @@
         <input type="hidden" name="question-id" value="<?= $_GET['id'] ?>"/>
         <div class="row">
             <div class="input-field col s12 m6">
-                <textarea id="question-text" class="materialize-textarea"><?= $questionText ?></textarea>
+                <textarea id="question-text" class="materialize-textarea" required><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div class="input-field col s12 m6">
-                <textarea id="question-answer" class="materialize-textarea"><?= $answer ?></textarea>
+                <textarea id="question-answer" class="materialize-textarea" required><?= $answer ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12 m2">
-                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>"/>
-                <label for="number-of-points">Number of Points: </label>
+                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
+                <label for="number-of-points">Number of Points</label>
             </div>
         </div>
         <div class="row" id="start-verse-div">
             <div class="input-field">
                 <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-                <select class="col s4 m2" id="start-book-select" name="start-book">
+                <select class="col s4 m2" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="-1">Select a book...</option>
                 </select>
-                <select class="col s4 m2" id="start-chapter-select" name="start-chapter">
+                <select class="col s4 m2" id="start-chapter-select" name="start-chapter" required>
                     <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
                 </select>
-                <select class="col s4 m2" id="start-verse-select" name="start-verse">
+                <select class="col s4 m2" id="start-verse-select" name="start-verse" required>
                     <option id="verse-no-selection-option" value="-1">Select a verse...</option>
                 </select>
             </div>

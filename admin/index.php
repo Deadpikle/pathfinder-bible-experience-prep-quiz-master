@@ -9,6 +9,7 @@
 <div id="admin-links">
     <ul>
         <li><a href="view-users.php">Users</a></li>
+        <li><a href="view-home-sections.php">Home Page Info</a></li>
     </ul>  
 </div>
 
