@@ -20,7 +20,7 @@
         <header class="">
             <nav>
                 <div class="nav-wrapper blue lighten-2">
-                    <a href="<?=$basePath?>" class="brand-logo" style="margin-left:2em">Pathfinder Quiz Engine 2.0</a>
+                    <a href="<?=$basePath?>" class="brand-logo" style="margin-left:2em">Pathfinder Quiz Engine</a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
                         <li><a href="<?=$basePath?>">Home</a></li>
