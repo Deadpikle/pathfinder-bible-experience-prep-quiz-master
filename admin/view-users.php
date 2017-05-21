@@ -22,19 +22,22 @@
 
 <p><a href=".">Back</a></p>
 
-<div id="create">
-    <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
-</div>
 
 <div id="users-div">
+    <?php if ($isClubAdmin) { ?>
+        <h3><?= $_SESSION["ClubName"] ?></h3>
+    <?php } ?>
+    <div id="create">
+        <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
+    </div>
     <table>
         <thead>
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Entry Code</th>
-                <th>Club</th>
                 <?php if ($isWebAdmin) { ?>
+                    <th>Club</th>
                     <th>User Type</th> <!-- TODO: only show for web admins -->
                 <?php } ?>
                 <th>Edit</th>
@@ -47,8 +50,8 @@
                         <td><?= $user["FirstName"] ?></td>
                         <td><?= $user["LastName"] ?></td>
                         <td><?= $user["EntryCode"] ?></td>
-                        <td><?= $user["ClubName"] ?></td>
                         <?php if ($isWebAdmin) { ?>
+                            <td><?= $user["ClubName"] ?></td>
                             <td><?= $user["UserTypeDisplayName"] ?></td>
                         <?php } ?>
                         <td><a href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit User</a></td>
