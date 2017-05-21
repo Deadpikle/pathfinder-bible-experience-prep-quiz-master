@@ -180,6 +180,7 @@
                 $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
             }
             $('#' + prefix + 'chapter-select').material_select();
+            $('#' + prefix + 'verse-select').material_select();
             $('#' + prefix + 'start-verse-id').val(-1);
             $('#' + prefix + 'last-verse-id').val(-1);
             fixRequiredSelectorCSS();
