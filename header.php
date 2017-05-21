@@ -21,7 +21,7 @@
     <body>
         <header class="">
             <nav>
-                <div class="nav-wrapper blue lighten-2">
+                <div class="nav-wrapper teal lighten-2">
                     <a href="<?=$basePath?>" class="brand-logo" style="margin-left:0.2em">PBE Quiz Engine<sup>2</sup></a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
