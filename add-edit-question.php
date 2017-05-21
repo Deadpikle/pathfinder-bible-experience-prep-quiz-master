@@ -4,6 +4,7 @@
 
     require_once(dirname(__FILE__)."/init.php");
 
+    $questionID = isset($_GET['id']) ? $_GET['id'] : "";
     $startVerseID = -1;
     $endVerseID = -1;
     if ($_GET["type"] == "update") {
@@ -102,14 +103,14 @@
 
 <div id="edit-question">
     <form action="ajax/save-question-edits.php?type=<?= $postType ?>" method="post">
-        <input type="hidden" name="question-id" value="<?= $_GET['id'] ?>"/>
+        <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <div class="row">
             <div class="input-field col s12 m6">
-                <textarea id="question-text" class="materialize-textarea" required><?= $questionText ?></textarea>
+                <textarea id="question-text" name="question-text" class="materialize-textarea" required><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div class="input-field col s12 m6">
-                <textarea id="question-answer" class="materialize-textarea" required><?= $answer ?></textarea>
+                <textarea id="question-answer" name="question-answer" class="materialize-textarea" required><?= $answer ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
@@ -156,6 +157,21 @@
     var selectedVerse = null;
     $(document).ready(function() {
 
+        function fixRequiredSelectorCSS() {
+            $('select[required]').css({
+                display: 'inline',
+                position: 'absolute',
+                float: 'left',
+                padding: 0,
+                margin: 0,
+                border: '1px solid rgba(255,255,255,0)',
+                height: 0, 
+                width: 0,
+                top: '2em',
+                left: '3em'
+            });
+        }
+
         function setupChapterSelectForBook(book, prefix) {
             $('#' + prefix + 'chapter-select option').not(':first').remove();
             $('#' + prefix + 'verse-select option').not(':first').remove();
@@ -166,6 +182,7 @@
             $('#' + prefix + 'chapter-select').material_select();
             $('#' + prefix + 'start-verse-id').val(-1);
             $('#' + prefix + 'last-verse-id').val(-1);
+            fixRequiredSelectorCSS();
         }
 
         function setupVerseSelectForChapter(chapter, prefix) {
@@ -177,6 +194,7 @@
             $('#' + prefix + 'verse-select').material_select();
             $('#' + prefix + 'start-verse-id').val(-1);
             $('#' + prefix + 'last-verse-id').val(-1);
+            fixRequiredSelectorCSS();
         }
 
         function setupBookSelector(prefix) {
@@ -207,16 +225,17 @@
         }
 
         function setupInitialValue(prefix, i, j, k, book, chapter, verseID) {
-                // :eq looks by index, so +1 since index 0 is the 'Select a book...' etc.
-                $('#' + prefix + 'book-select option:eq(' + (i+1) + ')').prop('selected', true);
-                $('#' + prefix + 'book-select').material_select();
-                setupChapterSelectForBook(book, prefix);
-                $('#' + prefix + 'chapter-select option:eq(' + (j+1) + ')').prop('selected', true);
-                $('#' + prefix + 'chapter-select').material_select();
-                setupVerseSelectForChapter(chapter, prefix);
-                $('#' + prefix + 'verse-select option:eq(' + (k+1) + ')').prop('selected', true);
-                $('#' + prefix + 'verse-select').material_select();
-                $('#' + prefix + 'verse-id').val(verseID);
+            // :eq looks by index, so +1 since index 0 is the 'Select a book...' etc.
+            $('#' + prefix + 'book-select option:eq(' + (i+1) + ')').prop('selected', true);
+            $('#' + prefix + 'book-select').material_select();
+            setupChapterSelectForBook(book, prefix);
+            $('#' + prefix + 'chapter-select option:eq(' + (j+1) + ')').prop('selected', true);
+            $('#' + prefix + 'chapter-select').material_select();
+            setupVerseSelectForChapter(chapter, prefix);
+            $('#' + prefix + 'verse-select option:eq(' + (k+1) + ')').prop('selected', true);
+            $('#' + prefix + 'verse-select').material_select();
+            $('#' + prefix + 'verse-id').val(verseID);
+            fixRequiredSelectorCSS();
         }
 
         setupBookSelector('start-');
@@ -266,6 +285,7 @@
                 }
             }
         }
+        fixRequiredSelectorCSS();
 
     }); 
 </script>
