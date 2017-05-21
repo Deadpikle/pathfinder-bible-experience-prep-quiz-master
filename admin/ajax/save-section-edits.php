@@ -15,7 +15,6 @@
             $stmt = $pdo->query("SELECT MAX(SortOrder) AS MaxSort FROM HomeInfoSections");
             $row = $stmt->fetch();
             $sortOrder = 1;
-            print_r($row);
             if ($row != NULL) {
                 $sortOrder = intval($row["MaxSort"]) + 1;
             }
