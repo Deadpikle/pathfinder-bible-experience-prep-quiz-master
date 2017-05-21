@@ -11,12 +11,13 @@
     $sectionID = $_GET["sectionID"];
     $lineID = $_GET["lineID"];
     if ($_GET["type"] == "update") {
+        $itemID = $_GET["itemID"];
         $query = '
             SELECT HomeInfoItemID, Text, IsLink, URL, SortOrder
             FROM HomeInfoItems hii
             WHERE HomeInfoItemID = ?';
         $stmt = $pdo->prepare($query);
-        $stmt->execute([$lineID]);
+        $stmt->execute([$itemID]);
         $lineItem = $stmt->fetch();
         if ($lineItem == NULL) {
             die("invalid line id");

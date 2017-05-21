@@ -7,7 +7,7 @@
     $query = '
         SELECT his.Name AS SectionName,
             hil.Name AS LineName, hil.SortOrder AS LineSortOrder, hil.HomeInfoLineID AS LineID,
-            hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
+            hii.HomeInfoItemID AS ItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
         FROM HomeInfoSections his 
             JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
             LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
@@ -62,6 +62,7 @@
                 }
                 // TODO: function
                 if ($line["Text"] != NULL) {
+                    $itemID = $line["ItemID"];
                     if ($line["IsLink"]) {
                         $url = $line["URL"];
                         if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
@@ -72,6 +73,9 @@
                     else {
                         echo "<li>" . $line["Text"] . "</li>";
                     }
+                    echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update'>edit</a>";
+                    echo "&nbsp;&nbsp;";
+                    echo "<a href='delete-line-item.php?id=$itemID'>delete</a>";
                 }
             }
         ?>
