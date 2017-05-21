@@ -8,8 +8,10 @@
 
 <div id="admin-links">
     <ul>
-        <li><a href="view-users.php">Users</a></li>
-        <li><a href="view-home-sections.php">Home Page Info</a></li>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-users.php">Users</a></li>
+        <?php if ($isWebAdmin) { ?>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-home-sections.php">Home Page Info</a></li>
+        <?php } ?>
     </ul>  
 </div>
 
