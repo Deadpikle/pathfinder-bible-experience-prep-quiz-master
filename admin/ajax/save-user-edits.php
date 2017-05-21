@@ -49,9 +49,11 @@
         }
         $userType = -1;
         if ($isClubAdmin) {
-            $pathfinderTypeID = 'SELECT UserTypeID FROM UserTypes WHERE Type = "Pathfinder"';
+            $pathfinderTypeID = 'SELECT UserTypeID FROM UserTypes WHERE Type = ?';
             $pathfinderStmt = $pdo->prepare($pathfinderTypeID);
-            $userTypeID = $pathfinderStmt->fetchColumn(); // pathfinder
+            $pathfinderStmt->execute(["Pathfinder"]);
+            $row = $pathfinderStmt->fetch(); 
+            $userTypeID = $row["UserTypeID"];
         }
         else {
             $userTypeID = $_POST["user-type"];

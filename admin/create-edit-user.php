@@ -3,9 +3,7 @@
 // TODO:
 // Require dropdowns (unsupported in safari?)
 // Error messages if server fails
-// Server needs to generate entry code on submit of new user
 // auto-select dropdown if editing user
-// on save, if club admin, auto set club ID and user type ID
 
     require_once(dirname(__FILE__)."/init-admin.php");
 
