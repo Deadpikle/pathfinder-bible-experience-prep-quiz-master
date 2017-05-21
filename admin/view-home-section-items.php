@@ -55,9 +55,9 @@
                     }
                     $i++;
                     echo "<li>Line $i</li>";
-                    echo "<ul class='browser-default'>";
                     echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
                     echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
+                    echo "<ul class='browser-default sortable'>";
                     $lastLineID = $lineID;
                 }
                 // TODO: function
@@ -68,19 +68,24 @@
                         if (strpos($url, 'http://') === false && strpos($url, 'https://') === false) {
                             $url = "http://" . $url;
                         }
-                        echo "<li><a href=\"" . $url . "\">" . $line["Text"] . "</a></li>";
+                        echo "<li><a href=\"" . $url . "\">" . $line["Text"] . "</a><br>";
                     }
                     else {
-                        echo "<li>" . $line["Text"] . "</li>";
+                        echo "<li>" . $line["Text"] . "<br>";
                     }
                     echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update'>edit</a>";
                     echo "&nbsp;&nbsp;";
-                    echo "<a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID'>delete</a>";
+                    echo "<a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID'>delete</a></li>";
                 }
             }
         ?>
     </ul>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        sortable('.sortable');
+    });
+</script>
 
 <?php include(dirname(__FILE__)."/../footer.php"); ?>
