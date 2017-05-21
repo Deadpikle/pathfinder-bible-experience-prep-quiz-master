@@ -1,11 +1,11 @@
 <?php
   require_once('./test.php');
 
-  const CONJUNCTIONS = ['and', 'or', 'but'];
+  const SKIPPABLE = ['and', 'or', 'but', '.', '?', '!'];
 
   /*
    * words = verse
-   * |> explode
+   * |> tokenize
    *
    * blanks = words
    * |> get_indexes
@@ -18,18 +18,28 @@
    * |> concat
    */
   function generate_question($phrase, $num_blanks) {
+    $words = tokenize($phrase);
+
+    foreach ($words as $key => $word) {
+      if (!in_array($word, SKIPPABLE)) {
+        $words[$key] = '_';
+      }
+    }
+
+    return $words;
+  }
+
+  function tokenize($phrase) {
     $words = explode(' ', $phrase);
     $result = [];
 
     foreach ($words as $word) {
       preg_match('/(\w+)( |\.|\?|!)?/', $word, $matches);
 
-      if (in_array($matches[1], CONJUNCTIONS)) {
-        $result[] = $matches[1];
-      } else {
-        $result[] = '_';
-      }
+      // The word itself
+      $result[] = $matches[1];
 
+      // and separately, the punctuation.
       if ($matches[2]) {
         $result[] = $matches[2];
       }
