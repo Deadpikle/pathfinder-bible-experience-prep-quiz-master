@@ -5,14 +5,15 @@
 // Error messages if server fails
 // Server needs to generate entry code on submit of new user
 // auto-select dropdown if editing user
-// don't show selectors if not website administrator
+// on save, if club admin, auto set club ID and user type ID
 
     require_once(dirname(__FILE__)."/init-admin.php");
 
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT UserID, FirstName, LastName, c.ClubID AS ClubID
-            FROM Users u LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
+            SELECT UserID, FirstName, LastName, ut.UserTypeID AS UserType, c.ClubID AS ClubID
+            FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
+                LEFT JOIN Clubs c ON u.ClubID = c.ClubID
             WHERE UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
@@ -21,7 +22,8 @@
         $firstName = $user["FirstName"];
         $lastName = $user["LastName"];
         $entryCode = $user["EntryCode"];
-        $isAdmin = $user["IsAdmin"];
+        $userTypeID = $user["UserType"];
+        $clubID = $user["ClubID"];
         $postType = "update";
     }
     else {
@@ -29,14 +31,18 @@
         $firstName = "";
         $lastName = "";
         $entryCode = "";
-        $isAdmin = FALSE;
+        $userTypeID = -1;
+        $clubID = -1;
         $postType = "create";
     }
 
-    $userTypesQuery = 'SELECT UserTypeID, DisplayName FROM UserTypes ORDER BY UserTypeID';
-    $userTypes = $pdo->query($userTypesQuery)->fetchAll();
-    $clubsQuery = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
-    $clubs = $pdo->query($clubsQuery)->fetchAll();
+    $isWebAdmin = $_SESSION["UserType"] === "WebAdmin";
+    if ($isWebAdmin) {
+        $userTypesQuery = 'SELECT UserTypeID, DisplayName FROM UserTypes ORDER BY UserTypeID';
+        $userTypes = $pdo->query($userTypesQuery)->fetchAll();
+        $clubsQuery = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
+        $clubs = $pdo->query($clubsQuery)->fetchAll();
+    }
 
 ?>
 
@@ -57,24 +63,26 @@
                 <label for="last-name">Last Name</label>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s12 m4">
-                <select id="club-select" name="club" required>
-                    <option id="club-no-selection-option" value="">Select a club...</option>
-                    <?php foreach ($clubs as $club) { ?>
-                        <option value="<?= $club['ClubID'] ?>"><?=$club['Name']?></option>
+        <?php if ($isWebAdmin) { ?>
+            <div class="row">
+                <div class="input-field col s12 m4">
+                    <select id="club-select" name="club" required>
+                        <option id="club-no-selection-option" value="">Select a club...</option>
+                        <?php foreach ($clubs as $club) { ?>
+                            <option value="<?= $club['ClubID'] ?>"><?=$club['Name']?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <select class="col s4" id="user-type-select" name="user-type" required>
+                    <option id="user-type-no-selection-option" value="">Select a user type...</option>
+                    <?php foreach ($userTypes as $userType) { ?>
+                        <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['DisplayName']?></option>
                     <?php } ?>
                 </select>
             </div>
-        </div>
-        <div class="row">
-            <select class="col s4" id="user-type-select" name="user-type" required>
-                <option id="user-type-no-selection-option" value="">Select a user type...</option>
-                <?php foreach ($userTypes as $userType) { ?>
-                    <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['DisplayName']?></option>
-                <?php } ?>
-            </select>
-        </div>
+        <?php } ?>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
