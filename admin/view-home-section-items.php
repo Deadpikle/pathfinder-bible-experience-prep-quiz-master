@@ -56,7 +56,7 @@
                     $i++;
                     echo "<li>Line $i</li>";
                     echo "<ul class='browser-default'>";
-                    echo "<a class='btn btn-flat teal-text' href='create-edit-line.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
+                    echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
                     echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
                     $lastLineID = $lineID;
                 }

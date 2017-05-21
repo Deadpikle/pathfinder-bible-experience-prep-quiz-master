@@ -9,26 +9,27 @@
         die("invalid user type");
     }
     $sectionID = $_GET["sectionID"];
+    $lineID = $_GET["lineID"];
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT Text, IsLink, URL, SortOrder
-            FROM HomeInfoItemIDs hii
+            SELECT HomeInfoItemID, Text, IsLink, URL, SortOrder
+            FROM HomeInfoItems hii
             WHERE HomeInfoItemID = ?';
         $stmt = $pdo->prepare($query);
-        $stmt->execute([$_GET["id"]]);
-        $section = $stmt->fetch();
-        if ($section == NULL) {
+        $stmt->execute([$lineID]);
+        $lineItem = $stmt->fetch();
+        if ($lineItem == NULL) {
             die("invalid line id");
         }
-        $lineID = $_GET["lineID"];
-        $isLink = $line["IsLink"] ? "checked" : "";
-        $text = "";
-        $URL = "";
-        $sortOrder = -1;
+        $itemID = $lineItem["HomeInfoItemID"];
+        $isLink = $lineItem["IsLink"] ? "checked" : "";
+        $text = $lineItem["Text"];
+        $URL = $lineItem["URL"];
+        $sortOrder = $lineItem["SortOrder"];
         $postType = "update";
     }
     else {
-        $lineID = "";
+        $itemID = "";
         $isLink = "";
         $text = "";
         $URL = "";
@@ -43,8 +44,10 @@
 <p><a href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
 
 <div id="edit-user">
-    <form action="ajax/save-line-edits.php?type=<?= $postType ?>" method="post">
+    <form action="ajax/save-line-item-edits.php?type=<?= $postType ?>" method="post">
+        <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
         <input type="hidden" name="line-id" value="<?= $lineID ?>"/>
+        <input type="hidden" name="item-id" value="<?= $itemID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
                 <input type="text" id="line-text" name="line-text" value="<?= $text ?>" required/>
