@@ -5,4 +5,7 @@
     if (!$canViewAdminPanel) {
         header("Location: $basePath/index.php");
     }
+
+    $isClubAdmin = $_SESSION["UserType"] === "ClubAdmin";
+    $isWebAdmin = $_SESSION["UserType"] === "WebAdmin";
 ?>
