@@ -41,12 +41,18 @@
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = $stmt->fetch()) { ?>
+            <?php 
+                while ($row = $stmt->fetch()) { 
+                    $endVerse = "";
+                    if ($row["EndBook"] != NULL) {
+                        $endVerse = $row["EndBook"] . " " . $row["EndChapter"] . ":" . $row["EndVerse"];
+                    }
+            ?>
                     <tr>
                         <td><?= $row["Question"] ?></td>
                         <td><?= $row["Answer"] ?></td>
                         <td><?= $row["StartBook"] ?>&nbsp;<?= $row["StartChapter"] ?>:<?= $row["StartVerse"] ?></td>
-                        <td><?= $row["EndBook"] ?>&nbsp;<?= $row["EndChapter"] ?>:<?= $row["EndVerse"] ?></td>
+                        <td><?= $endVerse ?></td>
                         <td><?= $row["NumberPoints"] ?></td>
                         <td><?= $row["IsFlagged"] ?></td>
                         <td><a href="add-edit-question.php?type=update&id=<?=$row['QuestionID'] ?>">Edit Question</a></td>

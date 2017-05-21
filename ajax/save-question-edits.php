@@ -1,13 +1,17 @@
 <?php
     require_once(dirname(__FILE__)."/../init.php");
     
+    $endVerseID = isset($_POST["end-verse-id"]) ? $_POST["end-verse-id"] : NULL;
+    if ($_POST["end-verse-id"] == -1 || $_POST["end-verse-id"] == NULL) {
+        $endVerseID = NULL;
+    }
     $params = [
         $_POST["question-text"],
         $_POST["question-answer"],
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $_POST["start-verse-id"],
-        $_POST["end-verse-id"]
+        $endVerseID
     ];
     if ($_GET["type"] == "update") {
         $query = '

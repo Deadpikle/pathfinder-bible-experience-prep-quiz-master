@@ -124,13 +124,13 @@
             <div class="input-field">
                 <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
                 <select class="col s4 m2" id="start-book-select" name="start-book" required>
-                    <option id="book-no-selection-option" value="-1">Select a book...</option>
+                    <option id="book-no-selection-option" value="">Select a book...</option>
                 </select>
                 <select class="col s4 m2" id="start-chapter-select" name="start-chapter" required>
-                    <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
+                    <option id="chapter-no-selection-option" value="">Select a chapter...</option>
                 </select>
                 <select class="col s4 m2" id="start-verse-select" name="start-verse" required>
-                    <option id="verse-no-selection-option" value="-1">Select a verse...</option>
+                    <option id="verse-no-selection-option" value="">Select a verse...</option>
                 </select>
             </div>
         </div>
@@ -180,9 +180,11 @@
                 $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
             }
             $('#' + prefix + 'chapter-select').material_select();
-            $('#' + prefix + 'verse-select').material_select();
-            $('#' + prefix + 'start-verse-id').val(-1);
-            $('#' + prefix + 'last-verse-id').val(-1);
+            if ($('#' + prefix + 'verse-id').val() != -1) {
+                $('#' + prefix + 'verse-select').material_select();
+            }
+            $('#' + prefix + 'verse-select').hide();
+            $('#' + prefix + 'verse-id').val(-1);
             fixRequiredSelectorCSS();
         }
 
@@ -193,8 +195,8 @@
                 $('#' + prefix + 'verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
             }
             $('#' + prefix + 'verse-select').material_select();
-            $('#' + prefix + 'start-verse-id').val(-1);
-            $('#' + prefix + 'last-verse-id').val(-1);
+            $('#' + prefix + 'verse-id').val(-1);
+            $('#' + prefix + 'verse-id').val(-1);
             fixRequiredSelectorCSS();
         }
 
