@@ -33,7 +33,7 @@
         $postType = "create";
     }
 
-    $userTypesQuery = 'SELECT UserTypeID, Name FROM UserTypes ORDER BY UserTypeID';
+    $userTypesQuery = 'SELECT UserTypeID, DisplayName FROM UserTypes ORDER BY UserTypeID';
     $userTypes = $pdo->query($userTypesQuery)->fetchAll();
     $clubsQuery = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
     $clubs = $pdo->query($clubsQuery)->fetchAll();
@@ -56,6 +56,8 @@
                 <input type="text" id="last-name" name="last-name" value="<?= $lastName ?>" required/>
                 <label for="last-name">Last Name</label>
             </div>
+        </div>
+        <div class="row">
             <div class="input-field col s12 m4">
                 <select id="club-select" name="club" required>
                     <option id="club-no-selection-option" value="">Select a club...</option>
@@ -69,7 +71,7 @@
             <select class="col s4" id="user-type-select" name="user-type" required>
                 <option id="user-type-no-selection-option" value="">Select a user type...</option>
                 <?php foreach ($userTypes as $userType) { ?>
-                    <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['Name']?></option>
+                    <option value="<?= $userType['UserTypeID'] ?>"><?=$userType['DisplayName']?></option>
                 <?php } ?>
             </select>
         </div>

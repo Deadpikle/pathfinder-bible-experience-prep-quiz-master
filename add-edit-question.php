@@ -100,45 +100,51 @@
 <div id="edit-question">
     <form action="ajax/save-question-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="question-id" value="<?= $_GET['id'] ?>"/>
-        <p>
-            <label for="question-text">Question: </label>
-            <textarea name="question-text"><?= $questionText ?></textarea>
-        </p>
-        <p>
-            <label for="question-answer">Answer: </label>
-            <textarea type="text" name="question-answer"><?= $answer ?></textarea>
-        </p>
-        <p>
-            <label for="number-of-points">Number of Points: </label>
-            <input type="number" min="0" name="number-of-points" value="<?= $numberOfPoints ?>"/>
-        </p>
+        <div class="row">
+            <div class="input-field col s12 m6">
+                <textarea id="question-text" class="materialize-textarea"><?= $questionText ?></textarea>
+                <label for="question-text">Question</label>
+            </div>
+            <div class="input-field col s12 m6">
+                <textarea id="question-answer" class="materialize-textarea"><?= $answer ?></textarea>
+                <label for="question-answer">Answer</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m2">
+                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>"/>
+                <label for="number-of-points">Number of Points: </label>
+            </div>
+        </div>
         <div class="row" id="start-verse-div">
-            <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-            <select class="col s4" id="start-book-select" name="start-book">
-                <option id="book-no-selection-option" value="-1">Select a book...</option>
-            </select>
-            <select class="col s4" id="start-chapter-select" name="start-chapter">
-                <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
-            </select>
-            <select class="col s4" id="start-verse-select" name="start-verse">
-                <option id="verse-no-selection-option" value="-1">Select a verse...</option>
-            </select>
+            <div class="input-field">
+                <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
+                <select class="col s4 m2" id="start-book-select" name="start-book">
+                    <option id="book-no-selection-option" value="-1">Select a book...</option>
+                </select>
+                <select class="col s4 m2" id="start-chapter-select" name="start-chapter">
+                    <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
+                </select>
+                <select class="col s4 m2" id="start-verse-select" name="start-verse">
+                    <option id="verse-no-selection-option" value="-1">Select a verse...</option>
+                </select>
+            </div>
         </div>
         <div class="row" id="end-verse-div">
-            <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
-            <select class="col s4" id="end-book-select" name="end-book">
-                <option id="book-no-selection-option" value="-1">Select a book...</option>
-            </select>
-            <select class="col s4" id="end-chapter-select" name="chapter">
-                <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
-            </select>
-            <select class="col s4" id="end-verse-select" name="verse">
-                <option id="verse-no-selection-option" value="-1">Select a verse...</option>
-            </select>
+            <div class="input-field">
+                <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
+                <select class="col s4 m2" id="end-book-select" name="end-book">
+                    <option id="book-no-selection-option" value="-1">Select a book...</option>
+                </select>
+                <select class="col s4 m2" id="end-chapter-select" name="chapter">
+                    <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
+                </select>
+                <select class="col s4 m2" id="end-verse-select" name="verse">
+                    <option id="verse-no-selection-option" value="-1">Select a verse...</option>
+                </select>
+            </div>
         </div>
-        <p>
-            <input type="submit" value="Save"/>
-        </p>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
 
