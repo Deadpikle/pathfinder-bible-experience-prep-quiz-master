@@ -26,7 +26,30 @@
       $words[$key] = '_';
     }
 
-    return $words;
+    return condense($words);
+  }
+
+  function condense($tokens) {
+    $result = [];
+    $acc = '';
+
+    foreach ($tokens as $token) {
+      if ($token == '_') {
+        if ($acc) {
+          $result[] = $acc;
+          $acc = '';
+        }
+        $result[] = $token;
+      } else {
+        $acc = $acc ? ($acc . ' ' . $token) : $token;
+      }
+    }
+
+    if ($acc) {
+      $result[] = $acc;
+    }
+
+    return $result;
   }
 
   function tokenize($phrase) {
@@ -77,6 +100,9 @@
 
     // ignores conjunctions
     $t->equal(generate_question("Fred and Harry.", 2), ['_', 'and', '_', '.']);
+
+    // Condenses consecutive trivial tokens
+    $t->equal(generate_question("This is a pen.", 2), ['_', 'is a', '_', '.']);
 
     $t->print_results();
   }
