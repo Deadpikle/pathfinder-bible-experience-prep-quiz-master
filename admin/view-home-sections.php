@@ -34,8 +34,6 @@
         <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
         <div class="sortable">
             <?php 
-                // TODO: refactor to function for home page~
-                //$isAdminPage = TRUE; // for eventual function
                 output_home_sections($sections, TRUE);
             ?>
         </div>

@@ -28,7 +28,9 @@
                 $lastSectionID = $sectionID;
                 echo "<div class='sortable-item' id='section-$lastSectionID'>";
                 echo "<h5>" . $section["SectionName"] . "</h5>";
+                $extraULClass = "";
                 if ($isAdminPage) {
+                    $extraULClass = "browser-default";
                     echo "<div class='section-buttons'>";
                         echo "<div class='row'>";
                             echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='create-edit-section.php?type=update&id=$sectionID'>Edit Section Name</a>";
@@ -37,7 +39,7 @@
                         echo "</div>";
                     echo "</div>";
                 }
-                echo "<ul class='section-items'>";
+                echo "<ul class='section-items $extraULClass'>";
             }
             if ($section["Text"] != NULL) {
                 $isFirstLineItem = FALSE;
