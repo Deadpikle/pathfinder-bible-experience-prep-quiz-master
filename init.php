@@ -5,6 +5,7 @@
     session_start();
 
     require_once("database.php");
+    require_once("functions.php");
 
     $loggedIn = FALSE;
     $isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
