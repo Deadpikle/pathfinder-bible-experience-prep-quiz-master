@@ -28,6 +28,10 @@
         $postType = "create";
     }
 
+    if ($endVerseID == NULL) {
+        $endVerseID = -1;
+    }
+
     // TODO: refactor to a function
     // Load all book, chapter, and verse information
     $bookQuery = '
@@ -121,6 +125,7 @@
             </div>
         </div>
         <div class="row" id="start-verse-div">
+            <p class="section-info">Start Reference (if question covers more than 1 verse)</p>
             <div class="input-field">
                 <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
                 <select class="col s4 m2" id="start-book-select" name="start-book" required>
@@ -135,6 +140,7 @@
             </div>
         </div>
         <div class="row" id="end-verse-div">
+            <p class="section-info">End Reference (if question covers more than 1 verse)</p>
             <div class="input-field">
                 <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
                 <select class="col s4 m2" id="end-book-select" name="end-book">
@@ -175,27 +181,29 @@
         function setupChapterSelectForBook(book, prefix) {
             $('#' + prefix + 'chapter-select option').not(':first').remove();
             $('#' + prefix + 'verse-select option').not(':first').remove();
-            var chapters = book.chapters;
-            for (var i = 0; i < chapters.length; i++) {
-                $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
+            if (typeof book !== 'undefined') {
+                var chapters = book.chapters;
+                for (var i = 0; i < chapters.length; i++) {
+                    $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
+                }
             }
             $('#' + prefix + 'chapter-select').material_select();
             if ($('#' + prefix + 'verse-id').val() != -1) {
                 $('#' + prefix + 'verse-select').material_select();
             }
-            $('#' + prefix + 'verse-select').hide();
             $('#' + prefix + 'verse-id').val(-1);
             fixRequiredSelectorCSS();
         }
 
         function setupVerseSelectForChapter(chapter, prefix) {
             $('#' + prefix + 'verse-select option').not(':first').remove();
-            var verses = chapter.verses;
-            for (var i = 0; i < verses.length; i++) {
-                $('#' + prefix + 'verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
+            if (typeof chapter !== 'undefined') {
+                var verses = chapter.verses;
+                for (var i = 0; i < verses.length; i++) {
+                    $('#' + prefix + 'verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
+                }
             }
             $('#' + prefix + 'verse-select').material_select();
-            $('#' + prefix + 'verse-id').val(-1);
             $('#' + prefix + 'verse-id').val(-1);
             fixRequiredSelectorCSS();
         }
@@ -205,6 +213,7 @@
                 var bookArrayIndex = $(this).val();
                 var book = books[bookArrayIndex];
                 setupChapterSelectForBook(book, prefix);
+                $('#' + prefix + 'verse-id').val(-1);
             }); 
         }
 
@@ -214,6 +223,7 @@
                 var chapterArrayIndex = $(this).val();
                 var chapter = books[bookArrayIndex].chapters[chapterArrayIndex];
                 setupVerseSelectForChapter(chapter, prefix);
+                $('#' + prefix + 'verse-id').val(-1);
             });
         }
 
