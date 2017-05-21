@@ -24,14 +24,24 @@
 <p><a href=".">Back</a></p>
 
 
-<div id="users-div">
-    <?php if ($isClubAdmin) { ?>
-        <h5><?= $_SESSION["ClubName"] ?></h5>
-    <?php } ?>
-    <div id="create">
-        <a class="waves-effect waves-light btn" href="create-edit-section.php?type=create">Add Section</a>
+<div id="sections-div">
+    <div class="section" id="create">
+        <h5>Create Section</h5>
+        <form action="ajax/save-section-edits.php?type=create" method="post">
+            <div class="row">
+                <div class="input-field col s6 m4">
+                    <input type="text" id="section-name" name="section-name" value="" required/>
+                    <label for="section-name">Section Name</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Create Section</button>
+                </div>
+            </div>
+        </form>
     </div>
-    <div id="page-list">
+    <div class="divider"></div>
+    <div class="section" id="section-list">
+        <h5>Modify Sections</h5>
         <?php 
             // TODO: refactor to function for home page~
             $isAdminPage = TRUE; // for eventual function
@@ -45,7 +55,9 @@
                     $lastSectionID = $sectionID;
                     echo "<h5>" . $section["SectionName"] . "</h5>";
                     if ($isAdminPage) {
-                        echo "<a class='add waves-effect waves-light btn' href='create-edit-section.php?type=create'>Edit Line Items</a>";
+                        echo "<a class='add ' href='create-edit-section.php?type=update&id=$sectionID'>Edit Section Name</a>";
+                        echo "<a class='add ' href='create-edit-section.php?type=create'>Edit Line Items</a>";
+                        echo "<a class='add ' href='delete-section.php?id=$sectionID'>Delete Section</a>";
                     }
                     echo "<ul>";
                 }
@@ -72,6 +84,13 @@
                     else {
                         echo $section["Text"];
                     }
+                }
+                else {
+                    // make sure we finish off the last line item
+                    if ($lastLineID !== -1) {
+                        echo "</li>";
+                    }
+                    $lastLineID = -1;
                 }
             }
             if ($lastLineID !== -1) {
