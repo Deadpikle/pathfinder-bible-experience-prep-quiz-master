@@ -9,13 +9,13 @@
 
 <div id="user-links">
     <div class="row">
-        <div class="col s3">
+        <div class="col s4">
             <ul>
-                <li><a href="view-questions.php">View Questions</a></li>
-                <li><a href="quiz-setup.php">Quiz me!</a></li>
-            </ul>  
+                <li><a class='btn  waves-effect waves-light' href="view-questions.php">Questions</a></li>
+                <li><a class='btn  waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
+            </ul>
         </div>
-        <div class="col s9">
+        <div class="col s8">
             <?php output_home_sections($sections, FALSE); ?>
         </div>
     </div>
