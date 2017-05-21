@@ -42,7 +42,7 @@
             <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
         </div>
     </form>
-    <ul class="browser-default">
+    <ul class="browser-default sortable">
         <?php 
             $i = 0;
             foreach ($lines as $line) { 
@@ -51,16 +51,15 @@
                 if ($lineID != $lastLineID) {
                     $isFirstLineItem = TRUE;
                     if ($lastLineID !== -1) {
-                        echo "</ul>";
+                        echo "</li></ul>";
                     }
                     $i++;
-                    echo "<li>Line $i</li>";
+                    echo "<li>Line $i<br>";
                     echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
                     echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
                     echo "<ul class='browser-default sortable'>";
                     $lastLineID = $lineID;
                 }
-                // TODO: function
                 if ($line["Text"] != NULL) {
                     $itemID = $line["ItemID"];
                     if ($line["IsLink"]) {
@@ -84,7 +83,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        sortable('.sortable');
+        sortable('.sortable', {
+            forcePlaceholderSize: true,
+            placeholderClass: 'teal lighten-5',
+        });
     });
 </script>
 
