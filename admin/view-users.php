@@ -30,7 +30,7 @@
     <div id="create">
         <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
     </div>
-    <table>
+    <table class="striped">
         <thead>
             <tr>
                 <th>First Name</th>
