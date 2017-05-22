@@ -20,7 +20,7 @@
 <form action="ajax/login-access-code.php" method="post">
     <div class="row">
         <div class="input-field col s12 m4">
-            <input type="text" id="access-code" name="access-code" required/>
+            <input type="password" id="access-code" name="access-code" required/>
             <label for="access-code">Access code</label>
         </div>
     </div>
