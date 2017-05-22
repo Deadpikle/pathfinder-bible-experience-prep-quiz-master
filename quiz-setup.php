@@ -6,6 +6,8 @@
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
+<p><a href="./view-questions.php">Back</a></p>
+
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
 </div>
