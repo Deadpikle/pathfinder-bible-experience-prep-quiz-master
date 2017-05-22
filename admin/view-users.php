@@ -22,6 +22,7 @@
 
 <p><a href=".">Back</a></p>
 
+<p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
 
 <div id="users-div">
     <?php if ($isClubAdmin) { ?>
