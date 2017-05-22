@@ -4,7 +4,7 @@
     if ($isClubAdmin) {
         header("Location: index.php");
     }
-    $query = 'SELECT ClubID, Name FROM Clubs';
+    $query = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
     $clubs = $stmt->fetchAll();
@@ -18,7 +18,7 @@
 <div id="users-div">
     <div class="section" id="create">
         <h5>Create Club</h5>
-        <form action="ajax/save-section-edits.php?type=create" method="post">
+        <form action="ajax/save-club-edits.php?type=create" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
                     <input type="text" id="club-name" name="club-name" value="" required/>

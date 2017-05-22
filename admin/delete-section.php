@@ -23,7 +23,7 @@
 
 <p><a href="./view-sections.php">Back</a></p>
 
-<div id="delete-sectoin">
+<div id="delete-section">
     <h4> Are you sure you want to delete <?= $section["Name"] ?>? </h4>
     <form method="post">
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
