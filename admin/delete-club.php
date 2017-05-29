@@ -24,7 +24,7 @@
 <p><a href="./view-clubs.php">Back</a></p>
 
 <div id="delete-club">
-    <h4> Are you sure you want to delete <?= $club["Name"] ?>? </h4>
+    <h4> Are you sure you want to delete <?= $club["Name"] ?>? Any users who belong to this club will need to be reassigned to another club by a website administrator.</h4>
     <form method="post">
         <input type="hidden" name="club-id" value="<?= $clubID ?>"/>
         <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Club</button>
