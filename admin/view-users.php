@@ -8,11 +8,11 @@
         $params[] = $_SESSION["ClubID"];
     }
     $query = '
-        SELECT UserID, FirstName, LastName, EntryCode, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName
+        SELECT UserID, Username, EntryCode, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
         ' . $whereClause . '
-        ORDER BY LastName, FirstName';
+        ORDER BY Username';
     $userStmt = $pdo->prepare($query);
     $userStmt->execute($params);
     $users = $userStmt->fetchAll();
@@ -34,8 +34,7 @@
     <table class="striped">
         <thead>
             <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Username</th>
                 <th>Entry Code</th>
                 <?php if ($isWebAdmin) { ?>
                     <th>Club</th>
@@ -48,8 +47,7 @@
         <tbody>
             <?php foreach ($users as $user) { ?>
                     <tr>
-                        <td><?= $user["FirstName"] ?></td>
-                        <td><?= $user["LastName"] ?></td>
+                        <td><?= $user["Username"] ?></td>
                         <td><?= $user["EntryCode"] ?></td>
                         <?php if ($isWebAdmin) { ?>
                             <td><?= $user["ClubName"] ?></td>

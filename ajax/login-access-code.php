@@ -4,7 +4,7 @@
     require_once("../database.php");
 
     $query = '
-        SELECT UserID, FirstName, LastName, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName
+        SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID
         WHERE EntryCode = ?';
@@ -16,8 +16,7 @@
     if ($row = $stmt->fetch()) {
         // Login success!
         $_SESSION["UserID"] = $row["UserID"];
-        $_SESSION["FirstName"] = $row["FirstName"];
-        $_SESSION["LastName"] = $row["LastName"];
+        $_SESSION["Username"] = $row["Username"];
         $_SESSION["UserType"] = $row["UserType"];
         if ($row["ClubID"] != NULL) {
             $_SESSION["ClubID"] = $row["ClubID"];

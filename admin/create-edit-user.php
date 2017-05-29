@@ -7,7 +7,7 @@
 
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT UserID, FirstName, LastName, ut.UserTypeID AS UserType, c.ClubID AS ClubID
+            SELECT UserID, Username, ut.UserTypeID AS UserType, c.ClubID AS ClubID
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID
             WHERE UserID = ?';
@@ -18,16 +18,14 @@
             die("invalid user id"); // TODO: better error
         }
         $userID = $user["UserID"];
-        $firstName = $user["FirstName"];
-        $lastName = $user["LastName"];
+        $username = $user["Username"];
         $userTypeID = $user["UserType"];
         $clubID = $user["ClubID"];
         $postType = "update";
     }
     else {
         $userID = "";
-        $firstName = "";
-        $lastName = "";
+        $username = "";
         $entryCode = "";
         $userTypeID = -1;
         $clubID = -1;
@@ -52,12 +50,8 @@
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="first-name" name="first-name" value="<?= $firstName ?>" required/>
-                <label for="first-name">First Name</label>
-            </div>
-            <div class="input-field col s12 m4">
-                <input type="text" id="last-name" name="last-name" value="<?= $lastName ?>" required/>
-                <label for="last-name">Last Name</label>
+                <input type="text" id="username" name="username" value="<?= $username ?>" required/>
+                <label for="first-name">Username</label>
             </div>
         </div>
         <?php if ($isWebAdmin) { ?>

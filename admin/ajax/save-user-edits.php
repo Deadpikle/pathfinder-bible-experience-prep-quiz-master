@@ -60,22 +60,22 @@
         }
 
         $params = [
-            $_POST["first-name"],
-            $_POST["last-name"],
+            $_POST["username"],
             $userTypeID,
             $clubID
         ];
         if ($_GET["type"] == "update") {
             $query = '
-                UPDATE Users SET FirstName = ?, LastName = ?, UserTypeID = ?, ClubID = ? WHERE UserID = ?
+                UPDATE Users SET Username = ?, UserTypeID = ?, ClubID = ? WHERE UserID = ?
             ';
             $params[] = $_POST["user-id"];
         }
         else if ($_GET["type"] == "create") {
             $entryCode = get_entry_code($pdo);
             $params[] = $entryCode;
+            $params[] = $_SESSION["UserID"];
             $query = '
-                INSERT INTO Users (FirstName, LastName, UserTypeID, ClubID, EntryCode) VALUES (?, ?, ?, ?, ?)
+                INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID) VALUES (?, ?, ?, ?, ?)
             ';
         }
         else {

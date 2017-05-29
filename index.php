@@ -5,7 +5,7 @@
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
-<h3>Welcome back, <?=$_SESSION["FirstName"]?>!</h3>
+<h3>Welcome back, <?=$_SESSION["Username"]?>!</h3>
 
 <div id="user-links">
     <div class="row">
