@@ -22,6 +22,7 @@
         $userTypeID = $user["UserType"];
         $clubID = $user["ClubID"];
         $postType = "update";
+        $titleString = "Edit";
     }
     else {
         $userID = "";
@@ -30,6 +31,7 @@
         $userTypeID = -1;
         $clubID = -1;
         $postType = "create";
+        $titleString = "Create";
     }
 
     if ($isWebAdmin) {
@@ -45,15 +47,18 @@
 
 <p><a href="./view-users.php">Back</a></p>
 
+<h4><?= $titleString ?> User</h4>
+
 <div id="edit-user">
     <form action="ajax/save-user-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="username" name="username" value="<?= $username ?>" required/>
+                <input type="text" id="username" name="username" value="<?= $username ?>" required data-length="50"/>
                 <label for="first-name">Username</label>
             </div>
         </div>
+        <p>Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any data on users for our website, but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
         <?php if ($isWebAdmin) { ?>
             <div class="row">
                 <div class="input-field col s12 m4">
