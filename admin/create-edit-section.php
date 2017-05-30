@@ -24,12 +24,14 @@
         $sectionName = $section["Name"];
         $sortOrder = $section["SortOrder"];
         $postType = "update";
+        $titleString = "Edit";
     }
     else {
         $sectionID = "";
         $sectionName = "";
         $sortOrder = -1;
         $postType = "create";
+        $titleString = "Create";
     }
 
 ?>
@@ -37,6 +39,8 @@
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
 <p><a href="./view-home-sections.php">Back</a></p>
+
+<h4><?= $titleString ?> Section</h4>
 
 <div id="edit-user">
     <form action="ajax/save-section-edits.php?type=<?= $postType ?>" method="post">

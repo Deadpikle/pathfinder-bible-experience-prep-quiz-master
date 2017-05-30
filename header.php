@@ -5,6 +5,7 @@
 
 <html>
     <head>
+        <title>PBE Quiz Engine</title>
         <link rel="stylesheet" href="<?=$basePath?>/css/normalize.css" />
 
         <!--Import Google Icon Font-->

@@ -28,6 +28,7 @@
         $URL = $lineItem["URL"];
         $sortOrder = $lineItem["SortOrder"];
         $postType = "update";
+        $titleString = "Edit";
     }
     else {
         $itemID = "";
@@ -36,6 +37,7 @@
         $URL = "";
         $sortOrder = -1;
         $postType = "create";
+        $titleString = "Create";
     }
 
 ?>
@@ -44,7 +46,9 @@
 
 <p><a href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
 
-<div id="edit-user">
+<h4><?= $titleString ?> Line Item</h4>
+
+<div id="edit-line-item">
     <form action="ajax/save-line-item-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
         <input type="hidden" name="line-id" value="<?= $lineID ?>"/>

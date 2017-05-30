@@ -23,11 +23,13 @@
         $clubID = $_GET["id"];
         $clubName = $club["Name"];
         $postType = "update";
+        $titleString = "Edit";
     }
     else {
         $clubID = "";
         $clubName = "";
         $postType = "create";
+        $titleString = "Create";
     }
 
 ?>
@@ -36,7 +38,9 @@
 
 <p><a href="./view-clubs.php">Back</a></p>
 
-<div id="edit-user">
+<h4><?= $titleString ?> Line Item</h4>
+
+<div id="edit-club">
     <form action="ajax/save-club-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="club-id" value="<?= $clubID ?>"/>
         <div class="row">
