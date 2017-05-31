@@ -5,7 +5,7 @@
     $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
 
     $query = '
-        SELECT c.Name 
+        SELECT c.Name, c.URL 
         FROM Users u JOIN Clubs c ON u.ClubID = c.ClubID
         WHERE LastLoginDate > ?
         ORDER BY c.Name';
@@ -24,8 +24,14 @@
 
 <div id="active-clubs">
     <ul class="browser-default">
-        <?php foreach ($clubs as $club) { ?>
-            <li><?= $club["Name"] ?></li>
+        <?php 
+            foreach ($clubs as $club) { 
+                if ($club["URL"] != NULL) {
+        ?>
+                    <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a></li>
+            <?php } else { ?>
+                    <li><?= $club["Name"] ?></li>
+            <?php } ?>
         <?php } ?>
     </ul>
 </div>
