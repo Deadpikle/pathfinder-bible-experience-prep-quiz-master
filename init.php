@@ -9,10 +9,12 @@
 
     $loggedIn = FALSE;
     $isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
-    if (!isset($_SESSION["UserID"]) && !$isOnLoginPage) {
+    $isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
+    $isUserIDSessionSet = isset($_SESSION["UserID"]);
+    if (!isset($_SESSION["UserID"]) && !$isOnLoginPage && !$isOnOtherNonLoginPage) {
         header("Location: login.php");
     }
-    if (!$isOnLoginPage) {
+    if ($isUserIDSessionSet) {
         $loggedIn = TRUE;
     }
 

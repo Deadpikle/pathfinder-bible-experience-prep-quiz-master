@@ -33,6 +33,9 @@
                             <?php if ($canViewAdminPanel) { ?>
                                 <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
                             <?php } ?>
+                        <?php } ?>
+                        <li><a href="<?=$basePath?>/about.php">About</a></li>
+                        <?php if ($isLoggedIn) { ?>
                             <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                         <?php } ?>
                     </ul>
