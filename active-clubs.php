@@ -18,6 +18,8 @@
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
+<p><a href=".">Back</a></p>
+
 <h3>Active Pathfinder Clubs</h3>
 
 <p>Here is a list of Pathfinder clubs that have been active on this website within the last 30 days:</p>
