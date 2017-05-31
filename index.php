@@ -13,6 +13,7 @@
             <ul>
                 <li class="home-buttons"><a class='btn  waves-effect waves-light' href="view-questions.php">Questions</a></li>
                 <li class="home-buttons"><a class='btn  waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
+                <li class="home-buttons"><a class='btn  waves-effect waves-light' href="active-clubs.php">Clubs</a></li>
             </ul>
         </div>
         <div class="col s8">
