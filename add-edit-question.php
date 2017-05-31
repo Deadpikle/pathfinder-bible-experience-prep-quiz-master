@@ -110,11 +110,11 @@
         <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <div class="row">
             <div class="input-field col s12 m6">
-                <textarea id="question-text" name="question-text" class="materialize-textarea" required><?= $questionText ?></textarea>
+                <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div class="input-field col s12 m6">
-                <textarea id="question-answer" name="question-answer" class="materialize-textarea" required><?= $answer ?></textarea>
+                <textarea id="question-answer" name="question-answer" class="materialize-textarea" required data-length="3000"><?= $answer ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
