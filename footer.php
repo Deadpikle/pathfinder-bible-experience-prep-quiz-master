@@ -3,7 +3,7 @@
                 </div>
             </main>
         <footer class="container">
-            <p>PBE Quiz Engine<sup>2</sup> ©  2017 -- <a class="" href="about.php">View info about this website</a></p>
+            <p><a class="" href="<?=$basePath?>/about.php">PBE Quiz Engine<sup>2</sup></a> © 2017</p>
         </footer>
     </body>
     <script type="text/javascript">
