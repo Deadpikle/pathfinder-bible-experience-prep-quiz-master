@@ -29,26 +29,26 @@
                     <ul class="right hide-on-med-and-down">
                         <?php if ($isLoggedIn) { ?>
                             <li><a href="<?=$basePath?>">Home</a></li>
-                            <li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li>
-                            <?php if ($canViewAdminPanel) { ?>
-                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
-                            <?php } ?>
+                            <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                         <?php } ?>
                         <li><a href="<?=$basePath?>/about.php">About</a></li>
                         <?php if ($isLoggedIn) { ?>
+                            <?php if ($canViewAdminPanel) { ?>
+                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                            <?php } ?>
                             <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                         <?php } ?>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
                         <?php if ($isLoggedIn) { ?>
                             <li><a href="<?=$basePath?>">Home</a></li>
-                            <li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li>
-                            <?php if ($canViewAdminPanel) { ?>
-                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
-                            <?php } ?>
+                            <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                         <?php } ?>
                         <li><a href="<?=$basePath?>/about.php">About</a></li>
                         <?php if ($isLoggedIn) { ?>
+                            <?php if ($canViewAdminPanel) { ?>
+                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                            <?php } ?>
                             <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                         <?php } ?>
                     </ul>
