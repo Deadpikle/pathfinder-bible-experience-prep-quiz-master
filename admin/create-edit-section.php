@@ -47,7 +47,7 @@
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="section-name" name="section-name" value="<?= $sectionName ?>" required/>
+                <input type="text" id="section-name" name="section-name" value="<?= $sectionName ?>" required data-length="150"/>
                 <label for="section-name">Section Name</label>
             </div>
         </div>

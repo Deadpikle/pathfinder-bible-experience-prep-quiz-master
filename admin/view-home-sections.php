@@ -18,7 +18,7 @@
         <form action="ajax/save-section-edits.php?type=create" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
-                    <input type="text" id="section-name" name="section-name" value="" required/>
+                    <input type="text" id="section-name" name="section-name" value="" required data-length="150"/>
                     <label for="section-name">Section Name</label>
                 </div>
                 <div class="input-field col s6 m4">
