@@ -4,7 +4,7 @@
     if ($isClubAdmin) {
         header("Location: index.php");
     }
-    $query = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
+    $query = 'SELECT ClubID, Name, URL FROM Clubs ORDER BY Name';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
     $clubs = $stmt->fetchAll();
@@ -20,11 +20,15 @@
         <h5>Create Club</h5>
         <form action="ajax/save-club-edits.php?type=create" method="post">
             <div class="row">
-                <div class="input-field col s6 m4">
+                <div class="input-field col s4 m4">
                     <input type="text" id="club-name" name="club-name" value="" required/>
-                    <label for="section-name">Club Name</label>
+                    <label for="club-name">Club Name</label>
                 </div>
-                <div class="input-field col s6 m4">
+                <div class="input-field col s4 m4">
+                    <input type="url" id="club-url" name="club-url" value="" required/>
+                    <label for="club-url">Website or Facebook URL</label>
+                </div>
+                <div class="input-field col s4 m4">
                     <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Create Club</button>
                 </div>
             </div>
@@ -35,6 +39,7 @@
         <thead>
             <tr>
                 <th>Club Name</th>
+                <th>URL</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -43,6 +48,7 @@
             <?php foreach ($clubs as $club) { ?>
                     <tr>
                         <td><?= $club["Name"] ?></td>
+                        <td><?= $club["URL"] ?></td>
                         <td><a href="create-edit-club.php?type=update&id=<?=$club['ClubID'] ?>">Edit Club</a></td>
                         <td><a href="delete-club.php?id=<?=$club['ClubID'] ?>">Delete Club</a></td>
                     </tr>

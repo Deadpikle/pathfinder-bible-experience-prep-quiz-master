@@ -11,7 +11,7 @@
 
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT ClubID, Name
+            SELECT ClubID, Name, URL
             FROM Clubs
             WHERE ClubID = ?';
         $stmt = $pdo->prepare($query);
@@ -22,12 +22,14 @@
         }
         $clubID = $_GET["id"];
         $clubName = $club["Name"];
+        $url = $club["URL"];
         $postType = "update";
         $titleString = "Edit";
     }
     else {
         $clubID = "";
         $clubName = "";
+        $url = "";
         $postType = "create";
         $titleString = "Create";
     }
@@ -47,6 +49,10 @@
             <div class="input-field col s12 m4">
                 <input type="text" id="club-name" name="club-name" value="<?= $clubName ?>" required/>
                 <label for="club-name">Club Name</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <input type="url" id="club-url" name="club-url" value="<?= $url ?>"/>
+                <label for="club-url">Website or Facebook URL</label>
             </div>
         </div>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
