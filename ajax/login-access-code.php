@@ -15,6 +15,14 @@
     $stmt->execute($params);
     if ($row = $stmt->fetch()) {
         // Login success!
+        // Update the database
+        $updateQuery = 'UPDATE Users SET LastLoginDate = ? WHERE UserID = ' . $row["UserID"];
+        $statement = $pdo->prepare($updateQuery);
+        $params = [
+            date("Y-m-d H:i:s")
+        ];
+        $statement->execute($params);
+        // Update the session
         $_SESSION["UserID"] = $row["UserID"];
         $_SESSION["Username"] = $row["Username"];
         $_SESSION["UserType"] = $row["UserType"];
