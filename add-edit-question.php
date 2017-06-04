@@ -19,6 +19,7 @@
         $startVerseID = $question["StartVerseID"];
         $endVerseID = $question["EndVerseID"];
         $postType = "update";
+        $titleString = "Edit";
     }
     else {
         $questionText = "";
@@ -26,6 +27,7 @@
         $numberOfPoints = "";
         $isFlagged = FALSE;
         $postType = "create";
+        $titleString = "Create";
     }
 
     if ($endVerseID == NULL) {
@@ -105,10 +107,13 @@
 
 <p><a href="./view-questions.php">Back</a></p>
 
+<h4><?= $titleString ?> Question</h4>
+
 <div id="edit-question">
     <form action="ajax/save-question-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <div class="row">
+            <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>

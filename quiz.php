@@ -193,7 +193,7 @@
         function showQuestionAtCurrentIndex() {
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
-            //nextQuestion.disabled = true;
+            nextQuestion.disabled = true;
             flagQuestion.disabled = false;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
