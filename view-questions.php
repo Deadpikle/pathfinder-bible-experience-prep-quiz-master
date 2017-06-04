@@ -14,7 +14,7 @@
 
 <div id="display-types" class="row">
     <div class="col s12"> 
-        <a id="all-questions" class="btn-flat teal white-text">All Questions</a>
+        <a id="all-questions" class="btn-flat blue white-text">All Questions</a>
         <a id="recently-added-questions" class="btn-flat waves-effect waves-teal">Recently Added</a>
         <a id="flagged-questions" class="btn-flat waves-effect waves-teal">Flagged</a>
     </div>
@@ -102,7 +102,7 @@
         }
 
         function setQuestionTypeSelectorSelected(element) {
-            $(element).attr("class", "btn-flat teal white-text");
+            $(element).attr("class", "btn-flat blue white-text");
         }
 
         function resetQuestionTypeSelectorClasses() {
