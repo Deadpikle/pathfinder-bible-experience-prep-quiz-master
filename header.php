@@ -21,37 +21,39 @@
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
     </head>
     <body>
-        <header class="">
+        <header>
             <nav>
                 <div class="nav-wrapper teal lighten-2">
-                    <a href="<?=$basePath?>" class="brand-logo" style="margin-left:0.2em">PBE Quiz Engine<sup>2</sup></a>
-                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                    <ul class="right hide-on-med-and-down">
-                        <?php if ($isLoggedIn) { ?>
-                            <li><a href="<?=$basePath?>">Home</a></li>
-                            <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
-                        <?php } ?>
-                        <li><a href="<?=$basePath?>/about.php">About</a></li>
-                        <?php if ($isLoggedIn) { ?>
-                            <?php if ($canViewAdminPanel) { ?>
-                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                    <div class="container">
+                        <a href="<?=$basePath?>" class="brand-logo">PBE Quiz Engine<sup>2</sup></a>
+                        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                        <ul class="right hide-on-med-and-down">
+                            <?php if ($isLoggedIn) { ?>
+                                <li><a href="<?=$basePath?>">Home</a></li>
+                                <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
-                        <?php } ?>
-                    </ul>
-                    <ul class="side-nav" id="mobile-demo">
-                        <?php if ($isLoggedIn) { ?>
-                            <li><a href="<?=$basePath?>">Home</a></li>
-                            <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
-                        <?php } ?>
-                        <li><a href="<?=$basePath?>/about.php">About</a></li>
-                        <?php if ($isLoggedIn) { ?>
-                            <?php if ($canViewAdminPanel) { ?>
-                                <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                            <li><a href="<?=$basePath?>/about.php">About</a></li>
+                            <?php if ($isLoggedIn) { ?>
+                                <?php if ($canViewAdminPanel) { ?>
+                                    <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                <?php } ?>
+                                <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
-                            <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
-                        <?php } ?>
-                    </ul>
+                        </ul>
+                        <ul class="side-nav" id="mobile-demo">
+                            <?php if ($isLoggedIn) { ?>
+                                <li><a href="<?=$basePath?>">Home</a></li>
+                                <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
+                            <?php } ?>
+                            <li><a href="<?=$basePath?>/about.php">About</a></li>
+                            <?php if ($isLoggedIn) { ?>
+                                <?php if ($canViewAdminPanel) { ?>
+                                    <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                <?php } ?>
+                                <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
                 </div>
             </nav>
         </header>
