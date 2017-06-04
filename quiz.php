@@ -1,5 +1,8 @@
 <?php
+    // TODO: upload wrong/right answer status
+
     require_once(dirname(__FILE__)."/init.php");
+
     if (!isset($_POST["max-questions"]) || !isset($_POST["max-points"]) || !isset($_POST["question-types"]) || !isset($_POST["order"])) {
         header("Location: quiz-setup.php");
     }    
@@ -138,12 +141,14 @@
 
         function checkUserAnswer() {
             var answer = $("#quiz-answer").val();
+            checkAnswer.disabled = true;
             if (answer == currentQuestion.answer) {
                 $correctAnswerText.show();
                 $incorrectAnswerText.hide();
             }
             else {
                 $correctAnswerText.hide();
+                $incorrectAnswerText.html("Sorry, that's not the correct answer. The correct answer is: " + currentQuestion.answer + "." );
                 $incorrectAnswerText.show();
             }
         }
@@ -205,6 +210,7 @@
             flagQuestion.disabled = false;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
+            checkAnswer.disabled = false;
             currentQuestion = questions[currentQuestionIndex];
             displayQuestion(currentQuestion);
         }
