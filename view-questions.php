@@ -1,6 +1,5 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
-
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -112,30 +111,28 @@
                 $(flagged).attr("class", "btn-flat waves-effect waves-teal");
         }
 
+        function questionTypeSelectorClicked(loadType, element) {
+            if (currentlyLoadedType != loadType) {
+                resetQuestionTypeSelectorClasses();
+                setQuestionTypeSelectorSelected(element);
+                loadQuestions(loadType);
+            }
+        }
+
         var all = document.getElementById('all-questions');
         var recent = document.getElementById('recently-added-questions');
         var flagged = document.getElementById('flagged-questions');
 
         all.addEventListener('click', function() {
-            if (currentlyLoadedType != "all") {
-                resetQuestionTypeSelectorClasses();
-                setQuestionTypeSelectorSelected(all);
-                loadQuestions("all");
-            }
+            questionTypeSelectorClicked("all", all);
         }, false);
+        
         recent.addEventListener('click', function() {
-            if (currentlyLoadedType != "recent") {
-                resetQuestionTypeSelectorClasses();
-                setQuestionTypeSelectorSelected(recent);
-                loadQuestions("recent");
-            }
+            questionTypeSelectorClicked("recent", recent);
         }, false);
+
         flagged.addEventListener('click', function() {
-            if (currentlyLoadedType != "flagged") {
-                resetQuestionTypeSelectorClasses();
-                setQuestionTypeSelectorSelected(flagged);
-                loadQuestions("flagged");
-            }
+            questionTypeSelectorClicked("flagged", flagged);
         }, false);
 
         $("#questions").hide();
