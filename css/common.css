@@ -40,10 +40,15 @@ main {
     margin-left: 0.65em;
 }
 
+.divider {
+    margin: 1em;
+}
+
 #table-controls {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 0.5em;
 }
 
 #loading-bar {
