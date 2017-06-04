@@ -24,40 +24,40 @@
 
 <div id="take-quiz">
     <h4>Quiz Me!</h4>
-</div>
-
-<div id="loading-quiz">
-    <h4 class="center-align">Generating quiz...</h4>
-    <div id="loading-bar" class="preloader-wrapper active">
-        <div class="spinner-layer spinner-blue-only">
-            <div class="circle-clipper left">
-                <div class="circle"></div>
-            </div>
-            <div class="gap-patch">
-                <div class="circle"></div>
-            </div>
-            <div class="circle-clipper right">
-                <div class="circle"></div>
+    <div id="loading-quiz">
+        <h4 class="center-align">Generating quiz...</h4>
+        <div id="loading-bar" class="preloader-wrapper active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div id="take-quiz">
-    <h5 id="question-text">Question:</h5>
-    <div class="row">
-        <div class="input-field col s12 m6">
-            <input type="text" id="quiz-answer" name="quiz-answer" required/>
-            <label for="quiz-answer">Answer</label>
-        </div>
-            <div class="input-field col s6 m6">
-                <button id="check-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Check answer</button>
+    <div id="take-quiz">
+        <h5 id="question-text">Question text will be here</h5>
+        <div class="row">
+            <div class="input-field col s12 m6">
+                <input type="text" id="quiz-answer" name="quiz-answer" required/>
+                <label for="quiz-answer">Answer</label>
             </div>
+                <div class="input-field col s6 m6">
+                    <button id="check-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Check answer</button>
+                </div>
+        </div>
+        <p id="question-result-correct">That's the right answer! Good job!</p>
+        <p id="question-result-wrong">Sorry, that's not the correct answer.</p>
+        <p id="question-flagged">Question successfully flagged!</p>
+        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves">Flag question</button>
+        <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
     </div>
-    <p id="question-result-correct">That's the right answer! Good job!</p>
-    <p id="question-result-wrong">Sorry, that's not the correct answer.</p>
-    <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves">Flag question</button>
-    <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
 </div>
 
 <script type="text/javascript">
@@ -72,10 +72,31 @@
         var flagQuestion = document.getElementById('flag-question');
 
         flagQuestion.addEventListener('click', function() {
-            // TODO: allow for flagging a question
+            $.ajax({
+                type: "POST",
+                url: "ajax/flag-question.php",
+                data: {
+                    questionID: currentQuestion.id
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        // successfully flagged
+                        flagQuestion.disabled = true;
+                        $("#question-flagged").show();
+                    }
+                    else {
+                        // 
+                        alert("Error flagging question: " + response);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert("Unable to flag question. Please make sure you are connected to the internet or try again later.");
+                }
+            });
         }, false);
 
         function loadQuiz() {
+            $("#take-quiz").hide();
             $("#loading-quiz").show();
             $.ajax({
                 type: "POST",
@@ -92,6 +113,7 @@
                         questions = response.questions;
                         currentQuestionIndex = 0;
                         showQuestionAtCurrentIndex();
+                        $("#take-quiz").show();
                     }
                     else {
                         // no questions! user is done with all questions and should probably reset their saved question answers
@@ -124,8 +146,10 @@
         }, false);
 
         function moveToNextQuestion() {
-            currentQuestionIndex++;
-            showQuestionAtCurrentIndex();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestionAtCurrentIndex();
+            }
         }
 
         var nextQuestion = document.getElementById('next-question');
@@ -137,6 +161,9 @@
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
             nextQuestion.disabled = true;
+            flagQuestion.disabled = false;
+            $("#question-flagged").hide();
+            $("#quiz-answer").val("");
             currentQuestion = questions[currentQuestionIndex];
             $("#question-text").html(currentQuestion.question);
         }
