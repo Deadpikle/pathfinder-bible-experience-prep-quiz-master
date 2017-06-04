@@ -14,8 +14,8 @@
 
 <div id="display-types" >
     <a id="all-questions" class="btn-flat blue white-text">All Questions</a>
-    <a id="recently-added-questions" class="btn-flat waves-effect waves-teal">Recently Added</a>
-    <a id="flagged-questions" class="btn-flat waves-effect waves-teal">Flagged</a>
+    <a id="recently-added-questions" class="btn-flat waves-effect waves-blue">Recently Added</a>
+    <a id="flagged-questions" class="btn-flat waves-effect waves-blue">Flagged</a>
 </div>
 
 <div class="divider"></div>
@@ -141,9 +141,9 @@
         }
 
         function resetQuestionTypeSelectorClasses() {
-                $(all).attr("class", "btn-flat waves-effect waves-teal");
-                $(recent).attr("class", "btn-flat waves-effect waves-teal");
-                $(flagged).attr("class", "btn-flat waves-effect waves-teal");
+                $(all).attr("class", "btn-flat waves-effect waves-blue");
+                $(recent).attr("class", "btn-flat waves-effect waves-blue");
+                $(flagged).attr("class", "btn-flat waves-effect waves-blue");
         }
 
         function questionTypeSelectorClicked(loadType, element) {
