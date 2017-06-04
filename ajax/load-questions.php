@@ -15,10 +15,20 @@
         }
     }
 
-    $stmt = $pdo->query('
+    $pageSize = 10;
+    if (isset($_POST["pageSize"])) {
+        $pageSize = $_POST["pageSize"];
+    }
+
+    $pageOffset = 0;
+    if (isset($_POST["pageOffset"])) {
+        $pageOffset = $_POST["pageOffset"];
+    }
+    $selectPortion = '
         SELECT QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
-            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse
+            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse ';
+    $fromPortion = '
         FROM Questions q 
             JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
             JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
@@ -28,10 +38,20 @@
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
             ' . $whereClause . '
-        ORDER BY Question, Answer, NumberPoints
-    ');
+        ORDER BY Question, Answer, NumberPoints';
+    $limitClause = '
+        LIMIT ' . $pageOffset . ',' . $pageSize;  
+    $stmt = $pdo->query($selectPortion . $fromPortion . $limitClause);
     $questions = $stmt->fetchAll();
-    $output = json_encode($questions);
+
+    $stmt = $pdo->query("SELECT COUNT(*) AS QuestionCount " . $fromPortion);
+    $row = $stmt->fetch(); 
+    $totalQuestions = $row["QuestionCount"];
+
+    $output = json_encode(array(
+        "questions" => $questions,
+        "totalQuestions" => $totalQuestions
+    ));
     echo $output;
 
 ?>

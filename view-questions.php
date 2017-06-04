@@ -33,7 +33,9 @@
 </div>
 
 <div id="questions-table">
-    <table id="questions" class="striped">
+    <a id="prev-page" class="btn-flat blue white-text"><i class="material-icons">chevron_left</i></a>
+    <a id="next-page" class="btn-flat blue white-text"><i class="material-icons">chevron_right</i></a>
+    <table id="questions" class="striped responsive-table">
         <thead>
             <tr>
                 <th>Question</th>
@@ -54,6 +56,14 @@
     $(document).ready(function() {
 
         var currentlyLoadedType = "all";
+        var pageSize = 2;
+        var currentPageNumber = 0;
+        var maxPageNumber = 0;
+
+        function moveToPage(pageNumber) {
+            currentPageNumber = pageNumber;
+            loadQuestions(currentlyLoadedType);
+        }
 
         function loadQuestions(loadType) {
             $("#questions").hide();
@@ -63,13 +73,18 @@
                 type: "POST",
                 url: "ajax/load-questions.php",
                 data: {
-                    loadType: loadType
+                    loadType: loadType,
+                    pageSize: pageSize,
+                    pageOffset: currentPageNumber * pageSize
                 },
                 success: function(data) {
-                    setupTable(JSON.parse(data));
+                    var questionData = JSON.parse(data);
+                    setupTable(questionData.questions);
+                    maxPageNumber = Math.ceil(questionData.totalQuestions / pageSize) - 1;
+                    console.log(maxPageNumber);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(thrownError);
+                    alert("Unable to load questions. Please try again later.");
                 }
             });
         }
@@ -133,6 +148,21 @@
 
         flagged.addEventListener('click', function() {
             questionTypeSelectorClicked("flagged", flagged);
+        }, false);
+
+        var previousPage = document.getElementById('prev-page');
+        var nextPage = document.getElementById('next-page');
+
+        previousPage.addEventListener('click', function() {
+            if (currentPageNumber != 0) {
+                moveToPage(currentPageNumber - 1);
+            }
+        }, false);
+
+        nextPage.addEventListener('click', function() {
+            if (currentPageNumber != maxPageNumber) {
+                moveToPage(currentPageNumber + 1);
+            }
         }, false);
 
         $("#questions").hide();
