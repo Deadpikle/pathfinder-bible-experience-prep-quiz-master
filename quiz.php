@@ -45,6 +45,7 @@
 
     <div id="take-quiz">
         <h5 id="question-text">Question text will be here</h5>
+        <h6 id="question-points">Question points will be here</h6>
         <h6 id="quiz-progress">Question x/y text will be here</h6>
         <div class="row">
             <div class="input-field col s12 m6">
@@ -189,6 +190,10 @@
             }
             var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
             $("#question-text").html(questionText);
+            // show number of points
+            var numberOfPoints = data.points + " Points";
+            $("#question-points").html(numberOfPoints);
+            // show quiz progress
             var progress = "(Question " + data.number + "/" + questions.length + ")";
             $("#quiz-progress").html(progress)
         }
