@@ -33,8 +33,10 @@
 </div>
 
 <div id="questions-table">
-    <a id="prev-page" class="btn-flat blue white-text"><i class="material-icons">chevron_left</i></a>
-    <a id="next-page" class="btn-flat blue white-text"><i class="material-icons">chevron_right</i></a>
+    <div id="table-controls">
+        <button id="prev-page" class="btn-flat blue white-text waves-effect">Previous Page</button>
+        <button id="next-page" class="btn-flat blue white-text waves-effect">Next Page</button>
+    </div>
     <table id="questions" class="striped responsive-table">
         <thead>
             <tr>
@@ -60,6 +62,9 @@
         var currentPageNumber = 0;
         var maxPageNumber = 0;
 
+        var previousPage = document.getElementById('prev-page');
+        var nextPage = document.getElementById('next-page');
+
         function moveToPage(pageNumber) {
             currentPageNumber = pageNumber;
             loadQuestions(currentlyLoadedType);
@@ -81,10 +86,23 @@
                     var questionData = JSON.parse(data);
                     setupTable(questionData.questions);
                     maxPageNumber = Math.ceil(questionData.totalQuestions / pageSize) - 1;
-                    console.log(maxPageNumber);
+                    if (currentPageNumber == 0) {
+                        previousPage.disabled = true;
+                    }
+                    else {
+                        previousPage.disabled = false;
+                    }
+                    if (maxPageNumber == currentPageNumber) {
+                        nextPage.disabled = true;
+                    }
+                    else {
+                        nextPage.disabled = false;
+                    }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert("Unable to load questions. Please try again later.");
+                    var $questionsBody = $("#questions-body");
+                    $questionsBody.empty();
+                    alert("Unable to load questions. Please make sure you are connected to the internet or try again later.");
                 }
             });
         }
@@ -149,9 +167,6 @@
         flagged.addEventListener('click', function() {
             questionTypeSelectorClicked("flagged", flagged);
         }, false);
-
-        var previousPage = document.getElementById('prev-page');
-        var nextPage = document.getElementById('next-page');
 
         previousPage.addEventListener('click', function() {
             if (currentPageNumber != 0) {
