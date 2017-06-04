@@ -5,7 +5,7 @@
 
 <html>
     <head>
-        <title>PBE Quiz Engine</title>
+        <title>UCC PBE</title>
         <link rel="stylesheet" href="<?=$basePath?>/css/normalize.css" />
 
         <!--Import Google Icon Font-->
@@ -25,7 +25,7 @@
             <nav>
                 <div class="nav-wrapper teal lighten-2">
                     <div class="container">
-                        <a href="<?=$basePath?>" class="brand-logo">PBE Quiz Engine<sup>2</sup></a>
+                        <a href="<?=$basePath?>" class="brand-logo">UCC Quiz Engine</a>
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                         <ul class="right hide-on-med-and-down">
                             <?php if ($isLoggedIn) { ?>

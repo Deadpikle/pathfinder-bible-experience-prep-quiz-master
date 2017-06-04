@@ -58,7 +58,7 @@
     $(document).ready(function() {
 
         var currentlyLoadedType = "all";
-        var pageSize = 2;
+        var pageSize = 25;
         var currentPageNumber = 0;
         var maxPageNumber = 0;
 
