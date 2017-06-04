@@ -218,9 +218,11 @@
         function setupBookSelector(prefix) {
             $('#' + prefix + 'book-select').change(function() { 
                 var bookArrayIndex = $(this).val();
-                var book = books[bookArrayIndex];
-                setupChapterSelectForBook(book, prefix);
-                $('#' + prefix + 'verse-id').val(-1);
+                if (bookArrayIndex != -1 && bookArrayIndex !== "") {
+                    var book = books[bookArrayIndex];
+                    setupChapterSelectForBook(book, prefix);
+                    $('#' + prefix + 'verse-id').val(-1);
+                }
             }); 
         }
 
@@ -228,9 +230,11 @@
             $('#' + prefix + 'chapter-select').change(function() { 
                 var bookArrayIndex = $('#' + prefix + 'book-select').val();
                 var chapterArrayIndex = $(this).val();
-                var chapter = books[bookArrayIndex].chapters[chapterArrayIndex];
-                setupVerseSelectForChapter(chapter, prefix);
-                $('#' + prefix + 'verse-id').val(-1);
+                if (chapterArrayIndex != -1 && chapterArrayIndex !== "") {
+                    var chapter = books[bookArrayIndex].chapters[chapterArrayIndex];
+                    setupVerseSelectForChapter(chapter, prefix);
+                    $('#' + prefix + 'verse-id').val(-1);
+                }
             });
         }
 
@@ -239,8 +243,10 @@
                 var bookArrayIndex = $('#' + prefix + 'book-select').val();
                 var chapterArrayIndex = $('#' + prefix + 'chapter-select').val();
                 var verseArrayIndex = $(this).val();
-                selectedVerse = books[bookArrayIndex].chapters[chapterArrayIndex].verses[verseArrayIndex];
-                $('#' + prefix + 'verse-id').val(selectedVerse.verseID);
+                if (verseArrayIndex != -1 && verseArrayIndex !== "") {
+                    selectedVerse = books[bookArrayIndex].chapters[chapterArrayIndex].verses[verseArrayIndex];
+                    $('#' + prefix + 'verse-id').val(selectedVerse.verseID);
+                }
             });
         }
 
