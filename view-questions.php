@@ -84,10 +84,9 @@
                     pageSize: pageSize,
                     pageOffset: currentPageNumber * pageSize
                 },
-                success: function(data) {
-                    var questionData = JSON.parse(data);
-                    setupTable(questionData.questions);
-                    maxPageNumber = Math.ceil(questionData.totalQuestions / pageSize) - 1;
+                success: function(response) {
+                    setupTable(response.questions);
+                    maxPageNumber = Math.ceil(response.totalQuestions / pageSize) - 1;
                     if (currentPageNumber == 0) {
                         previousPage.disabled = true;
                     }
