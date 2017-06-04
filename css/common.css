@@ -44,6 +44,10 @@ main {
     margin: 1em;
 }
 
+.waves-effect.waves-blue .waves-ripple {
+    background-color: rgba(33,150,243,0.7);
+}
+
 #table-controls {
     display: flex;
     align-items: center;
