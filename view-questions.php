@@ -20,22 +20,10 @@
     </div>
 </div>
 
-<div id="loading-bar" class="preloader-wrapper active">
-    <div class="spinner-layer spinner-teal-only">
-      <div class="circle-clipper left">
-        <div class="circle"></div>
-      </div><div class="gap-patch">
-        <div class="circle"></div>
-      </div><div class="circle-clipper right">
-        <div class="circle"></div>
-      </div>
-    </div>
-</div>
-
 <div id="questions-table">
     <div id="table-controls">
-        <button id="prev-page" class="btn-flat blue white-text waves-effect">Previous Page</button>
-        <button id="next-page" class="btn-flat blue white-text waves-effect">Next Page</button>
+        <button id="prev-page" class="btn-flat blue white-text waves-effect" disabled>Previous Page</button>
+        <button id="next-page" class="btn-flat blue white-text waves-effect" disabled>Next Page</button>
     </div>
     <table id="questions" class="striped responsive-table">
         <thead>
@@ -52,6 +40,18 @@
         <tbody id="questions-body">
         </tbody>
     </table>
+</div>
+
+<div id="loading-bar" class="preloader-wrapper active">
+    <div class="spinner-layer spinner-blue-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -102,6 +102,8 @@
                 error: function (xhr, ajaxOptions, thrownError) {
                     var $questionsBody = $("#questions-body");
                     $questionsBody.empty();
+                    previousPage.disabled = true;
+                    nextPage.disabled = true;
                     alert("Unable to load questions. Please make sure you are connected to the internet or try again later.");
                 }
             });
@@ -146,6 +148,7 @@
 
         function questionTypeSelectorClicked(loadType, element) {
             if (currentlyLoadedType != loadType) {
+                currentPageNumber = 0;
                 resetQuestionTypeSelectorClasses();
                 setQuestionTypeSelectorSelected(element);
                 loadQuestions(loadType);
