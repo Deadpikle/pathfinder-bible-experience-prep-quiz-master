@@ -67,3 +67,22 @@ main {
     margin-left: 1em;
     margin-bottom: 1em;
 }
+
+#start-quiz-btn {
+    margin-top: 1em;
+}
+
+#question-types {
+    margin-top: -1em;
+    margin-bottom: -1em;
+}
+
+#question-order {
+    margin-top: 2em;
+    margin-bottom: -1em;
+}
+
+#question-filtering {
+    margin-top: 2em;
+    margin-bottom: -1em;
+}
