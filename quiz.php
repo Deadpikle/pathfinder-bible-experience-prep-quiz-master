@@ -1,6 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
-
+    if (!isset($_POST["max-questions"]) || !isset($_POST["max-points"]) || !isset($_POST["question-types"]) || !isset($_POST["order"])) {
+        header("Location: quiz-setup.php");
+    }    
     $maxQuestions = $_POST["max-questions"];
     $maxPoints = $_POST["max-points"];
     $questionTypes = $_POST["question-types"];
@@ -57,11 +59,13 @@
         <p id="question-flagged">Question successfully flagged!</p>
         <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves">Flag question</button>
         <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
+        <a id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves" href="quiz-setup.php">End quiz</a>
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#end-quiz").hide();
         var currentQuestionIndex = 0;
         var questions = [];
         var currentQuestion = null;
@@ -143,6 +147,11 @@
         checkAnswer.addEventListener('click', function() {
             checkUserAnswer();
             nextQuestion.disabled = false;
+            if (currentQuestionIndex == questions.length -1) {
+                $(flagQuestion).hide();
+                $(nextQuestion).hide();
+                $("#end-quiz").show();
+            }
         }, false);
 
         function moveToNextQuestion() {
