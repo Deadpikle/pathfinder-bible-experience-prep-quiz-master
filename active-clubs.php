@@ -5,7 +5,7 @@
     $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
 
     $query = '
-        SELECT c.Name, c.URL 
+        SELECT DISTINCT c.Name, c.URL 
         FROM Users u JOIN Clubs c ON u.ClubID = c.ClubID
         WHERE LastLoginDate > ?
         ORDER BY c.Name';
