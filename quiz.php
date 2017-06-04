@@ -65,7 +65,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#end-quiz").hide();
         var currentQuestionIndex = 0;
         var questions = [];
         var currentQuestion = null;
@@ -73,8 +72,10 @@
         var $correctAnswerText = $("#question-result-correct");
         var $incorrectAnswerText = $("#question-result-wrong");
 
-        var flagQuestion = document.getElementById('flag-question');
+        var endQuiz = document.getElementById('end-quiz');
+        $(endQuiz).hide();
 
+        var flagQuestion = document.getElementById('flag-question');
         flagQuestion.addEventListener('click', function() {
             $.ajax({
                 type: "POST",
@@ -121,8 +122,10 @@
                     }
                     else {
                         // no questions! user is done with all questions and should probably reset their saved question answers
+                        $(flagQuestion).hide();
+                        $(nextQuestion).hide();
+                        $(endQuiz).show();
                     }
-
                     $("#loading-quiz").hide();
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -150,7 +153,7 @@
             if (currentQuestionIndex == questions.length -1) {
                 $(flagQuestion).hide();
                 $(nextQuestion).hide();
-                $("#end-quiz").show();
+                $(endQuiz).show();
             }
         }, false);
 
@@ -166,15 +169,36 @@
             moveToNextQuestion();
         }, false);
 
+        // https://stackoverflow.com/a/1026087/3938401
+        function lowercaseFirstLetter(string) {
+            return string.charAt(0).toLowerCase() + string.slice(1);
+        }
+        
+        function displayQuestion(data) {
+            // TODO: the format for the 'according to' will be different for fill in the blank
+            var verseText = data.startBook + " " + data.startChapter + ":" + data.startVerse;
+            if (data.endBook !== "") {
+                if (data.startChapter == data.endChapter) {
+                    verseText += "-" + data.endVerse;
+                }
+                else {
+                    var endVerse = data.endChapter + ":" + data.endVerse;
+                    verseText += "-" + endVerse;
+                }
+            }
+            var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
+            $("#question-text").html(questionText);
+        }
+
         function showQuestionAtCurrentIndex() {
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
-            nextQuestion.disabled = true;
+            //nextQuestion.disabled = true;
             flagQuestion.disabled = false;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             currentQuestion = questions[currentQuestionIndex];
-            $("#question-text").html(currentQuestion.question);
+            displayQuestion(currentQuestion);
         }
 
         loadQuiz();

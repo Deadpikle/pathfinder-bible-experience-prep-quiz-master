@@ -94,12 +94,12 @@
             "number" => $number,
             "id" => $question["QuestionID"],
             "points" => $question["NumberPoints"],
-            "start-book" => $question["StartBook"],
-            "start-chapter" => $question["StartChapter"],
-            "start-verse" => $question["StartVerse"],
-            "end-book" => $question["EndBook"] != NULL ? $question["EndBook"] : "",
-            "end-chapter" => $question["EndChapter"] != NULL ? $question["EndChapter"] : "",
-            "end-verse" => $question["EndVerse"] != NULL ? $question["EndVerse"] : "",
+            "startBook" => $question["StartBook"],
+            "startChapter" => $question["StartChapter"],
+            "startVerse" => $question["StartVerse"],
+            "endBook" => $question["EndBook"] != NULL ? $question["EndBook"] : "",
+            "endChapter" => $question["EndChapter"] != NULL ? $question["EndChapter"] : "",
+            "endVerse" => $question["EndVerse"] != NULL ? $question["EndVerse"] : "",
             //
             "question" => $question["Question"],
             "answer" => $question["Answer"]
