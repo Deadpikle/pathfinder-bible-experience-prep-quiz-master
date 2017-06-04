@@ -30,9 +30,9 @@
             <tr>
                 <th>Question</th>
                 <th>Answer</th>
-                <th>Start Reference</th>
-                <th>End Reference</th>
-                <th>Number of Points</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Points</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>

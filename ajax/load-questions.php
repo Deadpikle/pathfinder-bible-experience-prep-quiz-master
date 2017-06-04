@@ -38,7 +38,7 @@
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
             ' . $whereClause . '
-        ORDER BY Question, Answer, NumberPoints';
+        ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number';
     $limitClause = '
         LIMIT ' . $pageOffset . ',' . $pageSize;  
     $stmt = $pdo->query($selectPortion . $fromPortion . $limitClause);
