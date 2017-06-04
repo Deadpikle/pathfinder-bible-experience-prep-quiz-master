@@ -1,5 +1,6 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+
     $maxQuestions = $_POST["max-questions"];
     $maxPoints = $_POST["max-points"];
     $questionTypes = $_POST["question-types"];
@@ -18,6 +19,7 @@
     var questionTypes = "<?= $questionTypes ?>";
     var questionOrder = "<?= $questionOrder ?>";
     var shouldAvoidPastCorrect = <?= $shouldAvoidPastCorrect ?>;
+    var userID = <?= $_SESSION["UserID"] ?>; // is this really wise?
 </script>
 
 <div id="take-quiz">

@@ -24,38 +24,38 @@
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="both" value="both" disabled/>
-                <label for="both">Both Q&amp;A and fill in the blank</label>
+                <label class="black-text" for="both">Both Q&amp;A and fill in the blank</label>
             </div>
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" checked/>
-                <label for="qa-only">Q&amp;A only</label>
+                <label class="black-text" for="qa-only">Q&amp;A only</label>
             </div>
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only" disabled/>
-                <label for="fill-in-only">Fill in the blank only</label>
+                <label class="black-text" for="fill-in-only">Fill in the blank only</label>
             </div>
             <!-- TODO: % of words blanked -->
         </div>
-        <p id="question-order">Question order</p>
+        <p id="question-order">Question selection and order</p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" checked/>
-                <label for="sequential-sequential">Sequential (Chapter verse sequence)</label>
+                <label class="black-text" for="sequential-sequential">Sequential (Chapter verse sequence)</label>
             </div>
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" />
-                <label for="random-sequential">Random selection and sequential order</label>
+                <label class="black-text" for="random-sequential">Random selection and sequential order</label>
             </div>
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="order" id="random-random" value="random-random"  />
-                <label for="random-random">Random selection and random order</label>
+                <label class="black-text" for="random-random">Random selection and random order</label>
             </div>
         </div>
-        <p id="question-filtering">Question history</p>
+        <p id="question-filtering">Question history (feature not yet available)</p>
         <div class="row">
             <div class="input-field col s12">
-                <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct"/>
-                <label for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
+                <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct" disabled/>
+                <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>
         <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action">Start Quiz</button>
