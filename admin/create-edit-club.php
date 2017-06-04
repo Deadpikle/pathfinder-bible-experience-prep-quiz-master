@@ -13,7 +13,8 @@
         $query = '
             SELECT ClubID, Name, URL
             FROM Clubs
-            WHERE ClubID = ?';
+            WHERE ClubID = ?
+            ORDER BY Name';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $club = $stmt->fetch();
