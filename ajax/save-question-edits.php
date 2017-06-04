@@ -5,6 +5,10 @@
     if ($_POST["end-verse-id"] == -1 || $_POST["end-verse-id"] == NULL) {
         $endVerseID = NULL;
     }
+    $shouldRemoveFlag = FALSE;
+    if (isset($_POST["remove-question-flag"]) && $_POST["remove-question-flag"] != NULL) {
+        $shouldRemoveFlag = TRUE;
+    }
     $params = [
         $_POST["question-text"],
         $_POST["question-answer"],
@@ -15,8 +19,11 @@
     ];
     if ($_GET["type"] == "update") {
         $query = '
-            UPDATE Questions SET Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ? WHERE QuestionID = ?
-        ';
+            UPDATE Questions SET Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?';
+        if ($shouldRemoveFlag) {
+            $query .= ', IsFlagged = 0 ';
+        }
+        $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
     else if ($_GET["type"] == "create") {

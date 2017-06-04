@@ -86,3 +86,12 @@ main {
     margin-top: 2em;
     margin-bottom: -1em;
 }
+
+#unflag-question .input-field {
+    margin-top: -2em;
+    margin-bottom: 1em;
+}
+
+#unflag-question label {
+    left: 0;
+}

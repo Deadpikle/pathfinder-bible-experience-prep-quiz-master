@@ -154,6 +154,14 @@
                 </select>
             </div>
         </div>
+        <?php if ($isFlagged) { ?>
+            <div class="row" id="unflag-question">
+                <div class="input-field col s12">
+                    <input type="checkbox" id="remove-question-flag" name="remove-question-flag"/>
+                    <label class="black-text" for="remove-question-flag">Remove question's flagged status</label>
+                </div>
+            </div>
+        <?php } ?>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
