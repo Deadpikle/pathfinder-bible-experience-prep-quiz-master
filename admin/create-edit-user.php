@@ -108,6 +108,13 @@
             top: '2em',
             left: '3em'
         });
+        $('select').each(function( index ) {
+            $(this).on('mousedown', function(e) {
+                e.preventDefault();
+                this.blur();
+                window.focus();
+            });
+        });
     });
 </script>
 

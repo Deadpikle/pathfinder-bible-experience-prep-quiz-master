@@ -24,7 +24,7 @@
 <p><a href="./view-questions.php">Back</a></p>
 
 <div id="delete-user">
-    <p> Are you sure you want to delete the question '<?= $question["Question"] ?>' with answer <?= $question["Answer"] ?>? </p>
+    <p> Are you sure you want to delete the question '<?= $question["Question"] ?>' with answer '<?= $question["Answer"] ?>'? </p>
     <form method="post">
         <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Question</button>
