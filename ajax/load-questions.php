@@ -4,6 +4,10 @@
     require_once("../database.php");
 
     $whereClause = "";
+    $isFlagged = FALSE;
+    //$flaggedSelectClause = "";
+    $flaggedJoinClause = "";
+    //$flaggedWhereClause = "";
     if (isset($_POST["loadType"])) {
         $loadType = $_POST["loadType"];
         if ($loadType == "recent") {
@@ -11,7 +15,14 @@
             $whereClause = " WHERE DateCreated >= '" . $eightDaysAgo . "' ";
         }
         else if ($loadType == "flagged") {
-            $whereClause = " WHERE IsFlagged = 1";
+            $isFlagged = TRUE;
+            $flaggedJoinClause =  " JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID ";
+            if ($loadType == "recent") {
+                $whereClause = " AND UserID = " . $_SESSION["UserID"];
+            }
+            else {
+                $whereClause = " WHERE UserID = " . $_SESSION["UserID"];
+            }
         }
     }
 
@@ -25,7 +36,7 @@
         $pageOffset = $_POST["pageOffset"];
     }
     $selectPortion = '
-        SELECT QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
+        SELECT q.QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
             bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse ';
     $fromPortion = '
@@ -37,6 +48,7 @@
             LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
+            ' . $flaggedJoinClause . '
             ' . $whereClause . '
         ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number';
     $limitClause = '

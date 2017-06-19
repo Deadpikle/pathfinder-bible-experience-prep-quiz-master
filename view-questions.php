@@ -86,7 +86,8 @@
                 },
                 success: function(response) {
                     setupTable(response.questions);
-                    maxPageNumber = Math.ceil(response.totalQuestions / pageSize) - 1;
+                    var totalQuestions = response.questions.length != 0 ? response.questions.length : 0;
+                    maxPageNumber = totalQuestions != 0 ? Math.ceil(response.totalQuestions / pageSize) - 1 : 0;
                     if (currentPageNumber == 0) {
                         previousPage.disabled = true;
                     }
