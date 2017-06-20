@@ -8,16 +8,19 @@
     $startVerseID = -1;
     $endVerseID = -1;
     if ($_GET["type"] == "update") {
-        $query = 'SELECT Question, Answer, NumberPoints, IsFlagged, StartVerseID, EndVerseID FROM Questions WHERE QuestionID = ?';
+        $query = '
+            SELECT q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged
+            FROM Questions q LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID
+            WHERE q.QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $question = $stmt->fetch();
         $questionText = $question["Question"];
         $answer = $question["Answer"];
         $numberOfPoints = $question["NumberPoints"];
-        $isFlagged = $question["IsFlagged"];
         $startVerseID = $question["StartVerseID"];
         $endVerseID = $question["EndVerseID"];
+        $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? TRUE : FALSE;
         $postType = "update";
         $titleString = "Edit";
     }
@@ -163,7 +166,7 @@
             <div class="row" id="unflag-question">
                 <div class="input-field col s12">
                     <input type="checkbox" id="remove-question-flag" name="remove-question-flag"/>
-                    <label class="black-text" for="remove-question-flag">Remove question's flagged status</label>
+                    <label class="black-text" for="remove-question-flag">Delete flag for this question</label>
                 </div>
             </div>
         <?php } ?>

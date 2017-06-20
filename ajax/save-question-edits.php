@@ -20,9 +20,6 @@
     if ($_GET["type"] == "update") {
         $query = '
             UPDATE Questions SET Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?';
-        if ($shouldRemoveFlag) {
-            $query .= ', IsFlagged = 0 ';
-        }
         $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
@@ -37,5 +34,17 @@
     }
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
+
+
+    if ($shouldRemoveFlag) {
+        $query = ' DELETE FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';
+        $params = [
+            $_POST["question-id"],
+            $_SESSION["UserID"]
+        ];
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+    }
+
     header("Location: $basePath/view-questions.php");
 ?>
