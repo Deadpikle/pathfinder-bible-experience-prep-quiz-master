@@ -45,7 +45,7 @@
 
     // Setup query
     $selectPortion = '
-        SELECT q.QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
+        SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
             bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
             IFNULL(uf.UserFlaggedID, 0) AS IsFlagged ';
