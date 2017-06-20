@@ -45,18 +45,20 @@
 
     // Setup query
     $selectPortion = '
-        SELECT QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
+        SELECT q.QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
-            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse ';
+            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
+            IFNULL(uf.UserFlaggedID, 0) AS IsFlagged ';
     $fromPortion = '
         FROM Questions q 
             JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
             JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
             JOIN Books bStart ON bStart.BookID = cStart.BookID
 
-            LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
-            LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
-            LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID';
+            LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID 
+            LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID 
+            LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID 
+            LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
     $whereClause = ' 
         WHERE NumberPoints <= ' . $maxPoints;
     $orderByPortion = '';
@@ -93,6 +95,7 @@
             "type" => "qa", // todo: fill in the blank
             "number" => $number,
             "id" => $question["QuestionID"],
+            "isFlagged" => $question["IsFlagged"],
             "points" => $question["NumberPoints"],
             "startBook" => $question["StartBook"],
             "startChapter" => $question["StartChapter"],

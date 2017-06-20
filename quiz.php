@@ -207,11 +207,16 @@
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
             nextQuestion.disabled = true;
-            flagQuestion.disabled = false;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             checkAnswer.disabled = false;
             currentQuestion = questions[currentQuestionIndex];
+            if (currentQuestion.isFlagged == 0 && currentQuestion.isFlagged == "0") {
+                flagQuestion.disabled = false;
+            }
+            else {
+                flagQuestion.disabled = true;
+            }
             displayQuestion(currentQuestion);
         }
 

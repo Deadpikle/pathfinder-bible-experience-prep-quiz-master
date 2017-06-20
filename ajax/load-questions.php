@@ -36,7 +36,7 @@
         $pageOffset = $_POST["pageOffset"];
     }
     $selectPortion = '
-        SELECT q.QuestionID, Question, Answer, NumberPoints, IsFlagged, DateCreated,
+        SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
             bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse ';
     $fromPortion = '
