@@ -8,12 +8,17 @@
 
 <div id="create" class="row">
     <div class="col s12"> 
-    <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>
+        <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>
     </div>
 </div>
 
-<div id="display-types" >
-    <a id="all-questions" class="btn-flat blue white-text">All Questions</a>
+<div id="question-type-choice">
+    <a id="bible-qna" class="btn-flat blue white-text">Bible Q&amp;A</a>
+    <a id="commentary-qna" class="btn-flat waves-effect waves-blue">Commentary Q&amp;A</a>
+</div>
+
+<div id="display-types">
+    <a id="all-questions" class="btn-flat blue white-text">All</a>
     <a id="recently-added-questions" class="btn-flat waves-effect waves-blue">Recently Added</a>
     <a id="flagged-questions" class="btn-flat waves-effect waves-blue">Flagged</a>
 </div>
@@ -27,7 +32,7 @@
     </div>
     <table id="questions" class="striped responsive-table">
         <thead>
-            <tr>
+            <tr id="table-header-row">
                 <th>Question</th>
                 <th>Answer</th>
                 <th>Start</th>
@@ -59,7 +64,8 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        var currentlyLoadedType = "all";
+        var questionType = "bible-qna";
+        var questionFilter = "all";
         var pageSize = 25;
         var currentPageNumber = 0;
         var maxPageNumber = 0;
@@ -69,18 +75,18 @@
 
         function moveToPage(pageNumber) {
             currentPageNumber = pageNumber;
-            loadQuestions(currentlyLoadedType);
+            loadQuestions(questionFilter);
         }
 
-        function loadQuestions(loadType) {
+        function loadQuestions() {
             $("#questions").hide();
             $("#loading-bar").show();
-            currentlyLoadedType = loadType;
             $.ajax({
                 type: "POST",
                 url: "ajax/load-questions.php",
                 data: {
-                    loadType: loadType,
+                    questionType: questionType,
+                    questionFilter: questionFilter,
                     pageSize: pageSize,
                     pageOffset: currentPageNumber * pageSize
                 },
@@ -111,26 +117,62 @@
             });
         }
 
-        function setupTable(questions) {
+        function setupTableHeader(questionType) {
+            var $tableHeaderRow = $('#table-header-row');
+            $tableHeaderRow.empty();
+            var html = '';
+            if (questionType == 'bible-qna') {
+                html += '<th>Question</th>';
+                html += '<th>Answer</th>';
+                html += '<th>Start</th>';
+                html += '<th>End</th>';
+                html += '<th>Points</th>';
+            }
+            else if (questionType == 'commentary-qna') {
+                html += '<th>Question</th>';
+                html += '<th>Answer</th>';
+                html += '<th>Volume</th>';
+                html += '<th>Points</th>';
+            }
+            html += '<th>Edit</th>';
+            html += '<th>Delete</th>';
+            $tableHeaderRow.append(html);
+        }
+
+        function emptyQuestionBody() {
             var $questionsBody = $("#questions-body");
             $questionsBody.empty();
+        }
+
+        function setupTable(questions) {
+            var $questionsBody = $("#questions-body");
+            emptyQuestionBody();
 
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
                 var id = question.QuestionID;
-                var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
-                var endVerse = "";
-                if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
-                    endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
-                }
                 var html = '<tr>';
+                if (question.Type == "bible-qna") {
+                    var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
+                    var endVerse = "";
+                    if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
+                        endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
+                    }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + question.Answer + '</td>';
                     html += '<td>' + startVerse + '</td>';
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
-                    html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
-                    html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
+                }
+                else if (question.Type == "commentary-qna") {
+                    var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
+                    html += '<td>' + question.Question + '</td>';
+                    html += '<td>' + question.Answer + '</td>';
+                    html += '<td>' + volume + '</td>';
+                    html += '<td>' + question.NumberPoints + '</td>';
+                }
+                html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
+                html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
                 html += '</tr>';
                 $questionsBody.append(html);
             }
@@ -138,39 +180,67 @@
             $("#loading-bar").hide();
         }
 
-        function setQuestionTypeSelectorSelected(element) {
+        function setQuestionSelectorSelected(element) {
             $(element).attr("class", "btn-flat blue white-text");
         }
 
         function resetQuestionTypeSelectorClasses() {
-                $(all).attr("class", "btn-flat waves-effect waves-blue");
-                $(recent).attr("class", "btn-flat waves-effect waves-blue");
-                $(flagged).attr("class", "btn-flat waves-effect waves-blue");
+            $(bibleQnA).attr("class", "btn-flat waves-effect waves-blue");
+            $(commentaryQnA).attr("class", "btn-flat waves-effect waves-blue");
         }
 
-        function questionTypeSelectorClicked(loadType, element) {
-            if (currentlyLoadedType != loadType) {
+        function resetQuestionFilterSelectorClasses() {
+            $(all).attr("class", "btn-flat waves-effect waves-blue");
+            $(recent).attr("class", "btn-flat waves-effect waves-blue");
+            $(flagged).attr("class", "btn-flat waves-effect waves-blue");
+        }
+
+        function questionTypeSelectorClicked(questionTypeSelected, element) {
+            if (questionType != questionTypeSelected) {
+                questionType = questionTypeSelected;
                 currentPageNumber = 0;
                 resetQuestionTypeSelectorClasses();
-                setQuestionTypeSelectorSelected(element);
-                loadQuestions(loadType);
+                setQuestionSelectorSelected(element);
+                emptyQuestionBody();
+                setupTableHeader(questionTypeSelected);
+                loadQuestions();
             }
         }
+
+        function questionFilterSelectorClicked(questionFilterSelected, element) {
+            if (questionFilter != questionFilterSelected) {
+                questionFilter = questionFilterSelected;
+                currentPageNumber = 0;
+                resetQuestionFilterSelectorClasses();
+                setQuestionSelectorSelected(element);
+                emptyQuestionBody();
+                loadQuestions();
+            }
+        }
+
+        var bibleQnA = document.getElementById('bible-qna');
+        var commentaryQnA = document.getElementById('commentary-qna');
+        bibleQnA.addEventListener('click', function() {
+            questionTypeSelectorClicked("bible-qna", bibleQnA);
+        }, false);
+        commentaryQnA.addEventListener('click', function() {
+            questionTypeSelectorClicked("commentary-qna", commentaryQnA);
+        }, false);
 
         var all = document.getElementById('all-questions');
         var recent = document.getElementById('recently-added-questions');
         var flagged = document.getElementById('flagged-questions');
 
         all.addEventListener('click', function() {
-            questionTypeSelectorClicked("all", all);
+            questionFilterSelectorClicked("all", all);
         }, false);
         
         recent.addEventListener('click', function() {
-            questionTypeSelectorClicked("recent", recent);
+            questionFilterSelectorClicked("recent", recent);
         }, false);
 
         flagged.addEventListener('click', function() {
-            questionTypeSelectorClicked("flagged", flagged);
+            questionFilterSelectorClicked("flagged", flagged);
         }, false);
 
         previousPage.addEventListener('click', function() {
@@ -186,7 +256,7 @@
         }, false);
 
         $("#questions").hide();
-        loadQuestions(currentlyLoadedType);
+        loadQuestions();
     });
 </script>
 

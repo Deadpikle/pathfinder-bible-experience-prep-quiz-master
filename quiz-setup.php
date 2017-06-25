@@ -12,15 +12,15 @@
         <p>Maximum number of questions and maximum number of points per question</p>
         <div class="row">
             <div class="input-field col s6 m3">
-                <input type="number" id="max-questions" name="max-questions" required value="30" max="500"/>
+                <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
                 <label for="max-questions">Maximum Questions</label>
             </div>
             <div class="input-field col s6 m3">
-                <input type="number" id="max-points" name="max-points" required value="25" max="500"/>
+                <input type="number" id="max-points" name="max-points" required value="25" max="500" min="0"/>
                 <label for="max-points">Maximum Points</label>
             </div>
         </div>
-        <p id="question-types">Question types (only Q&amp;A available at this point in time)</p>
+        <p id="question-types">Question types (only Bible/Commentary Q&amp;A available at this point in time)</p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="both" value="both" disabled/>
@@ -40,7 +40,7 @@
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" checked/>
-                <label class="black-text" for="sequential-sequential">Sequential (Chapter verse sequence)</label>
+                <label class="black-text" for="sequential-sequential">Sequential</label>
             </div>
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" />

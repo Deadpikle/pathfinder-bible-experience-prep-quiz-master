@@ -19,6 +19,7 @@
         <script src="<?=$basePath?>/lib/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/materialize/js/materialize.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
+        <script src="<?=$basePath?>/js/common.js"></script>
     </head>
     <body>
         <header>

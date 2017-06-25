@@ -95,3 +95,11 @@ main {
 #unflag-question label {
     left: 0;
 }
+
+#question-type-paragraph {
+    margin-bottom: -1em;
+}
+
+#question-type-choice {
+    margin-bottom: 1em;
+}
