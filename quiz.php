@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <div id="take-quiz">
+    <div class="hidden" id="take-quiz">
         <h5 id="question-text"></h5>
         <h6 id="question-points"></h6>
         <h6 id="quiz-progress"></h6>
@@ -78,7 +78,7 @@
         <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</a>
         <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</a>
     </div>
-    <p class="negative-top-margin" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
+    <p id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
 </div>
 
 <script type="text/javascript">
