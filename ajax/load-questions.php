@@ -8,22 +8,27 @@
     //$flaggedSelectClause = "";
     $flaggedJoinClause = "";
     //$flaggedWhereClause = "";
-    if (isset($_POST["loadType"])) {
-        $loadType = $_POST["loadType"];
-        if ($loadType == "recent") {
+    $questionType = "bible-qna";
+    if (isset($_POST["questionFilter"])) {
+        $questionFilter = $_POST["questionFilter"];
+        if ($questionFilter == "recent") {
             $eightDaysAgo = date('Y-m-d 00:00:00', strtotime('-8 days'));
             $whereClause = " WHERE DateCreated >= '" . $eightDaysAgo . "' ";
         }
-        else if ($loadType == "flagged") {
+        else if ($questionFilter == "flagged") {
             $isFlagged = TRUE;
             $flaggedJoinClause =  " JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID ";
-            if ($loadType == "recent") {
-                $whereClause = " AND UserID = " . $_SESSION["UserID"];
-            }
-            else {
-                $whereClause = " WHERE UserID = " . $_SESSION["UserID"];
-            }
+            $whereClause = " WHERE UserID = " . $_SESSION["UserID"];
         }
+    }
+    if (isset($_POST["questionType"])) {
+        $questionType = $_POST["questionType"];
+    }
+    if ($whereClause == "") {
+        $whereClause = " WHERE Type = '" . $questionType . "'";
+    }
+    else {
+        $whereClause .= " AND Type = '" . $questionType . "'";
     }
 
     $pageSize = 10;
@@ -38,12 +43,13 @@
     $selectPortion = '
         SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
-            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse ';
+            bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
+            Type, CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
     $fromPortion = '
         FROM Questions q 
-            JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
-            JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
-            JOIN Books bStart ON bStart.BookID = cStart.BookID
+            LEFT JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
+            LEFT JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
+            LEFT JOIN Books bStart ON bStart.BookID = cStart.BookID
 
             LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
