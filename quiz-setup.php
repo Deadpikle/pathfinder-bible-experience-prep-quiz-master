@@ -34,7 +34,7 @@
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
     <form action="quiz.php" method="post">
-        <p>Maximum number of questions and maximum number of points per question</p>
+        <p>Chapter &amp; Commentary Choices -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
@@ -49,7 +49,8 @@
                 <label>Chapters &amp; Commentary Volumes</label>
             </div>
         </div>
-        <div class="row negative-top-margin">
+        <p class="negative-top-margin">Maximum number of questions and maximum number of points per question</p>
+        <div class="row">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
                 <label for="max-questions">Maximum Questions</label>
