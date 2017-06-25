@@ -43,64 +43,58 @@
     $isOutputSequential = $questionOrder == "random-sequential" || $questionOrder == "sequential-sequential";
     $shouldAvoidPastCorrect = $_POST["shouldAvoidPastCorrect"]; // TODO: extra JOIN and WHERE 
 
-    // Setup query
+    // load Bible questions
     $selectPortion = '
         SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
             bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
-            IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
-            CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
+            IFNULL(uf.UserFlaggedID, 0) AS IsFlagged ';
     $fromPortion = '
         FROM Questions q 
-            LEFT JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
-            LEFT JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
-            LEFT JOIN Books bStart ON bStart.BookID = cStart.BookID
+            JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
+            JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
+            JOIN Books bStart ON bStart.BookID = cStart.BookID
 
             LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID 
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID 
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID 
             LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
     $whereClause = ' 
-        WHERE NumberPoints <= ' . $maxPoints;
+        WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "bible-qna"';
     $orderByPortion = '';
     if ($areRandomQuestionsPulled) {
         $orderByPortion = ' ORDER BY RAND() ';
     }
     else {
         // sequential-sequential
-        // this is less than ideal due to the commentary vs Bible q&a ordering, but 
-        // I couldn't think of a better & quick way to handle sequential-sequential with multiple question types
-        // I really need to pull these out with 2 queries, but that's problematic due to max questions.
-        // Should I just enforce a start/end verse on commentary questions?
-        // sequential-sequential is problematic when pulling questions out of two locations...
-        // what I really need to do is 2 queries with up to max # questions and then intersperse them for a final
-        // array result of size max questions
         $orderByPortion = '
-            ORDER BY COALESCE(bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number,
-                CommentaryVolume, CommentaryStartPage, CommentaryEndPage)';
+            ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number';
     }
 
     $limitPortion = ' LIMIT ' . $maxQuestions;
     $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
-    $questions = $stmt->fetchAll();
+    $bibleQnA = $stmt->fetchAll();
 
-
+    // load commentary questions
+    $selectPortion = '
+        SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
+            IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
+            CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
+    $fromPortion = '
+        FROM Questions q 
+            LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
+    $whereClause = ' 
+        WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
+    if (!$areRandomQuestionsPulled) {
+        $orderByPortion = ' ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage';
+    }
+    $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
+    $commentaryQnA = $stmt->fetchAll();
+    // TODO: pull out fill in the blank questions
+    // Merge data as needed
     if ($isOutputSequential) {
-        // If things need to be shown sequentially, we need to separate the question types, sort them individually,
+        // If things need to be shown sequentially, we need to sort them individually,
         // then re-merge them in a random order (but still sequential within the question types)
-
-        // Separate the two question types
-        $bibleQnA = array();
-        $commentaryQnA = array();
-        foreach ($questions as $question) {
-            $type = $question["Type"];
-            if ($type === "bible-qna") {
-                $bibleQnA[] = $question;
-            }
-            else if ($type === "commentary-qna") {
-                $commentaryQnA[] = $question;
-            }
-        }
 
         // Sort the arrays
         // https://stackoverflow.com/a/3233009/3938401
@@ -117,44 +111,54 @@
             array_column($commentaryQnA, 'CommentaryStartPage'), SORT_ASC, 
             array_column($commentaryQnA, 'CommentaryEndPage'), SORT_ASC,
             $commentaryQnA);
-
-        // Merge them back together~
-        $output = array();
-        $bibleCount = count($bibleQnA);
-        $commentaryCount = count($commentaryQnA);
-        $totalQuestions = $bibleCount + $commentaryCount;
-        $bibleIndex = 0;
-        $commentaryIndex = 0;
-        for ($i = 0; $i < $totalQuestions; $i++) {
-            // 0 = Bible question, 1 = commentary question obtained via random_int(0, 1);
-            $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
-            $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
-            if ($hasBibleQuestionLeft && $hasCommentaryQuestionLeft) {
-                // pull next one out randomly
-                $randomSelection = random_int(0, 1);
-                if ($randomSelection == 0) {
-                    $output[] = $bibleQnA[$bibleIndex];
-                    $bibleIndex++;
-                }
-                else {
-                    $output[] = $commentaryQnA[$commentaryIndex];
-                    $commentaryIndex++;
-                }
-            }
-            else if ($hasBibleQuestionLeft) {
+    }
+    
+    // Generate final questions array using data we've pulled out of the database
+    $output = array();
+    $bibleCount = count($bibleQnA);
+    $commentaryCount = count($commentaryQnA);
+    $bibleAdded = 0;
+    $commentaryAdded = 0;
+    //die("bible: " . (int)$bibleCount . "  commentary: " . (int)$commentaryCount);
+    $totalQuestions = $bibleCount + $commentaryCount;
+    $bibleIndex = 0;
+    $commentaryIndex = 0;
+    for ($i = 0; $i < $maxQuestions; $i++) {
+        // even = Bible question, odd = commentary question obtained via random_int(0, 100);
+        $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
+        $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
+        if (!$hasBibleQuestionLeft && !$hasCommentaryQuestionLeft) {
+            break; // ran out of questions!
+        }
+        if ($hasBibleQuestionLeft && $hasCommentaryQuestionLeft) {
+            // pull next one out randomly
+            $randomSelection = random_int(0, 100);
+            if ($randomSelection % 2 == 0) {
                 $output[] = $bibleQnA[$bibleIndex];
                 $bibleIndex++;
+                $bibleAdded++;
             }
             else {
-                // has commentary question left
                 $output[] = $commentaryQnA[$commentaryIndex];
                 $commentaryIndex++;
+                $commentaryAdded++;
             }
         }
-        // set questions to output of this algorithm~
-        $questions = $output;
+        else if ($hasBibleQuestionLeft) {
+            $output[] = $bibleQnA[$bibleIndex];
+            $bibleIndex++;
+            $bibleAdded++;
+        }
+        else if ($hasCommentaryQuestionLeft) {
+            // has commentary question left
+            $output[] = $commentaryQnA[$commentaryIndex];
+            $commentaryIndex++;
+            $commentaryAdded++;
+        }
     }
-    // TODO: pull out fill in the blank questions
+    // set questions to output of this little merging algorithm
+    $questions = $output;
+    
     // TODO: sort/merge with fill in the blank questions
 
     // Generate output
@@ -190,7 +194,11 @@
         $number++;
     }
 
-    $output = [ "questions" => $outputQuestions ];
+    $output = [ 
+        "numberOfBibleQuestions" => $bibleAdded,
+        "numberOfCommentaryQuestions" => $commentaryAdded,
+        "questions" => $outputQuestions 
+    ];
     
     header('Content-Type: application/json; charset=utf-8');
 
