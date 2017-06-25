@@ -1,10 +1,22 @@
-function commentaryVolumeString(volume, startPage, endPage) {
-    var str = 'Volume ' + volume;
+
+function pageString(startPage, endPage) {
     if (typeof endPage !== 'undefined' && endPage != null && endPage != "" && endPage > startPage) {
-        str += ', pp. ' + startPage + '-' + endPage;
+        return 'pp. ' + startPage + '-' + endPage;
     }
     else {
-        str += ', p. ' + startPage;
+        return 'p. ' + startPage;
     }
+}
+
+function commentaryVolumeString(volume, startPage, endPage) {
+    var str = 'Volume ' + volume;
+    str += ', ' + pageString(startPage, endPage);
     return str;
+}
+
+// https://stackoverflow.com/a/2548133/3938401
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
 }

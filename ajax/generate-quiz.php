@@ -73,6 +73,8 @@
         // I really need to pull these out with 2 queries, but that's problematic due to max questions.
         // Should I just enforce a start/end verse on commentary questions?
         // sequential-sequential is problematic when pulling questions out of two locations...
+        // what I really need to do is 2 queries with up to max # questions and then intersperse them for a final
+        // array result of size max questions
         $orderByPortion = '
             ORDER BY COALESCE(bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number,
                 CommentaryVolume, CommentaryStartPage, CommentaryEndPage)';

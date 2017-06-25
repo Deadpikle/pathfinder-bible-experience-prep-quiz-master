@@ -183,18 +183,29 @@
         
         function displayQuestion(data) {
             // TODO: the format for the 'according to' will be different for fill in the blank
-            var verseText = data.startBook + " " + data.startChapter + ":" + data.startVerse;
-            if (data.endBook !== "") {
-                if (data.startChapter == data.endChapter) {
-                    verseText += "-" + data.endVerse;
-                }
-                else {
-                    var endVerse = data.endChapter + ":" + data.endVerse;
-                    verseText += "-" + endVerse;
-                }
+            if (!data.question.endsWith("?")) {
+                data.question += "?";
             }
-            var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
-            $("#question-text").html(questionText);
+            if (data.type == 'bible-qna') {
+                var verseText = data.startBook + " " + data.startChapter + ":" + data.startVerse;
+                if (data.endBook !== "") {
+                    if (data.startChapter == data.endChapter) {
+                        verseText += "-" + data.endVerse;
+                    }
+                    else {
+                        var endVerse = data.endChapter + ":" + data.endVerse;
+                        verseText += "-" + endVerse;
+                    }
+                }
+                var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
+                $("#question-text").html(questionText);
+            }
+            else if (data.type == 'commentary-qna') {
+                var pageStr = pageString(data.startPage, data.endPage);
+                var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
+                    + pageStr + ", " + lowercaseFirstLetter(data.question);
+                $("#question-text").html(questionText);
+            }
             // show number of points
             var numberOfPoints = data.points + " Points";
             $("#question-points").html(numberOfPoints);
@@ -206,7 +217,7 @@
         function showQuestionAtCurrentIndex() {
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
-            nextQuestion.disabled = true;
+            //nextQuestion.disabled = true;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             checkAnswer.disabled = false;
