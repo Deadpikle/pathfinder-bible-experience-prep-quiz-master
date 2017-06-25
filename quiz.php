@@ -14,7 +14,12 @@
     if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
         $shouldAvoidPastCorrect = "true";
     }
-    $quizItems = $_POST["quiz-items"];
+    if (isset($_POST["quiz-items"])) {
+        $quizItems = $_POST["quiz-items"];
+    }
+    else {
+        $quizItems = array();
+    }
 
 ?>
 
@@ -62,26 +67,41 @@
                     <button id="check-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Check answer</button>
                 </div>
         </div>
+        <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
         <p class="negative-top-margin" id="question-result-correct">That's the right answer! Good job!</p>
         <p class="negative-top-margin" id="question-result-wrong">Sorry, that's not the correct answer.</p>
         <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
-        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves">Flag question</button>
+        <p class="negative-top-margin" id="saving-data">Saving answers...</p>
+        <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
+        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
         <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
-        <a id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves" href="quiz-setup.php">End quiz</a>
+        <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</a>
+        <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</a>
     </div>
+    <p class="negative-top-margin" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         var currentQuestionIndex = 0;
         var questions = [];
+        var userAnswers = [];
         var currentQuestion = null;
+        var didSaveAnswers = false;
 
         var $correctAnswerText = $("#question-result-correct");
         var $incorrectAnswerText = $("#question-result-wrong");
 
+        var noQuestionsError = document.getElementById('no-questions-available');
+        var answersSavedLabel = document.getElementById('data-saved');
+        var savingDataLabel = document.getElementById('saving-data');
+        $(answersSavedLabel).hide();
+        $(savingDataLabel).hide();
+        var saveData = document.getElementById('save-data');
         var endQuiz = document.getElementById('end-quiz');
+        $(saveData).hide();
         $(endQuiz).hide();
+        $(noQuestionsError).hide();
 
         var flagQuestion = document.getElementById('flag-question');
         flagQuestion.addEventListener('click', function() {
@@ -108,6 +128,44 @@
             });
         }, false);
 
+        saveData.addEventListener('click', function() {
+            $(savingDataLabel).show();
+            $.ajax({
+                type: "POST",
+                url: "ajax/save-answers.php",
+                data: {
+                    answers: userAnswers
+                },
+                success: function(response) {
+                    $(savingDataLabel).hide();
+                    if (response.status == 200) {
+                        // successfully saved
+                        saveData.disabled = true;
+                        $("#save-data").show();
+                    }
+                    else {
+                        alert("Error saving answers: " + response);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $(savingDataLabel).hide();
+                    alert("Unable to save answers. Please make sure you are connected to the internet or try again later.");
+                }
+            });
+        }, false);
+
+        endQuiz.addEventListener('click', function() {
+            if (!saveData.disabled) {
+                var result = confirm("You haven't saved your answers yet! Are you sure you want to leave this quiz?");
+                if (result) {
+                    window.location.href = "quiz-setup.php";
+                }
+            }
+            else {
+                window.location.href = "quiz-setup.php";
+            }
+        });
+
         function loadQuiz() {
             $("#take-quiz").hide();
             $("#loading-quiz").show();
@@ -133,6 +191,7 @@
                         // no questions! user is done with all questions and should probably reset their saved question answers
                         $(flagQuestion).hide();
                         $(nextQuestion).hide();
+                        $(noQuestionsError).show();
                         $(endQuiz).show();
                     }
                     $("#loading-quiz").hide();
@@ -146,15 +205,24 @@
         function checkUserAnswer() {
             var answer = $("#quiz-answer").val();
             checkAnswer.disabled = true;
+            var answerData = {
+                userAnswer: answer,
+                dateAnswered: (new Date()).toISOString().replace('T', ' ').replace('Z', ''),
+                questionID: currentQuestion.id,
+                userID: userID
+            };
             if (answer == currentQuestion.answer) {
                 $correctAnswerText.show();
                 $incorrectAnswerText.hide();
+                answerData.correct = 1; // TODO: someday, figure out how to set this as true/false in a way that PHP will be happy in the ajax call
             }
             else {
                 $correctAnswerText.hide();
                 $incorrectAnswerText.html("Sorry, that's not the correct answer. The correct answer is: " + currentQuestion.answer + "." );
                 $incorrectAnswerText.show();
+                answerData.correct = 0;
             }
+            userAnswers.push(answerData);
         }
 
         var checkAnswer = document.getElementById('check-answer');
@@ -165,6 +233,7 @@
                 $(flagQuestion).hide();
                 $(nextQuestion).hide();
                 $(endQuiz).show();
+                $(saveData).show();
             }
         }, false);
 
@@ -221,7 +290,7 @@
         function showQuestionAtCurrentIndex() {
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
-            nextQuestion.disabled = true;
+           // nextQuestion.disabled = true;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             checkAnswer.disabled = false;

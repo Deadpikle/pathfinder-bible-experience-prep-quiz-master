@@ -107,3 +107,7 @@ main {
 .negative-top-margin {
     margin-top: -1em;
 }
+
+.right-margin {
+    margin-right: 1em;
+}
