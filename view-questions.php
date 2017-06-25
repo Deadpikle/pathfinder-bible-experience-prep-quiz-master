@@ -132,8 +132,6 @@
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
                 html += '<th>Volume</th>';
-                html += '<th>Start Page</th>';
-                html += '<th>End Page</th>';
                 html += '<th>Points</th>';
             }
             html += '<th>Edit</th>';
@@ -153,13 +151,13 @@
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
                 var id = question.QuestionID;
-                var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
-                var endVerse = "";
-                if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
-                    endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
-                }
                 var html = '<tr>';
                 if (question.Type == "bible-qna") {
+                    var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
+                    var endVerse = "";
+                    if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
+                        endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
+                    }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + question.Answer + '</td>';
                     html += '<td>' + startVerse + '</td>';
@@ -167,11 +165,18 @@
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
                 else if (question.Type == "commentary-qna") {
+                    var volume = 'Volume ' + question.CommentaryVolume;// + ' Pages'
+                    var startPage = question.CommentaryStartPage;
+                    var endPage = question.CommentaryEndPage;
+                    if (typeof endPage !== 'undefined' && endPage != null && endPage != "" && endPage > startPage) {
+                        volume += ', pp. ' + startPage + '-' + endPage;
+                    }
+                    else {
+                        volume += ', p. ' + startPage;
+                    }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + question.Answer + '</td>';
-                    html += '<td>' + question.CommentaryVolume + '</td>';
-                    html += '<td>' + question.CommentaryStartPage + '</td>';
-                    html += '<td>' + question.CommentaryEndPage + '</td>';
+                    html += '<td>' + volume + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
                 html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
