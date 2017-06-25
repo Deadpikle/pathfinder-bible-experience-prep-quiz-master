@@ -9,22 +9,28 @@
     $endVerseID = -1;
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged
+            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
+                CommentaryVolume, CommentaryStartPage, CommentaryEndPage
             FROM Questions q LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID
             WHERE q.QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $question = $stmt->fetch();
+        $questionType = $question["Type"];
         $questionText = $question["Question"];
         $answer = $question["Answer"];
         $numberOfPoints = $question["NumberPoints"];
         $startVerseID = $question["StartVerseID"];
         $endVerseID = $question["EndVerseID"];
         $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? TRUE : FALSE;
+        $commentaryVolume = $question["CommentaryVolume"];
+        $commentaryStartPage = $question["CommentaryStartPage"];
+        $commentaryEndPage = $question["CommentaryEndPage"];
         $postType = "update";
         $titleString = "Edit";
     }
     else {
+        $questionType = "bible-qna";
         $questionText = "";
         $answer = "";
         $numberOfPoints = "";
@@ -118,11 +124,13 @@
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" checked/>
+                <?php $checked = $questionType == "bible-qna" ? "checked" : ""; ?>
+                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" <?= $checked ?>/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna"/>
+                <?php $checked = $questionType == "commentary-qna" ? "checked" : ""; ?>
+                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" <?= $checked ?>/>
                 <label class="black-text" for="commentary-qna">Commentary</label>
             </div>
         </div>
@@ -228,7 +236,7 @@
         }
 
         var bibleQuestionType = document.getElementById('bible-qna');
-        var commentaryType = document.getElementById('commentary');
+        var commentaryType = document.getElementById('commentary-qna');
         var startVerseDiv = document.getElementById('start-verse-div');
         var endVerseDiv = document.getElementById('end-verse-div');
         var startBook = document.getElementById('start-book-select');
