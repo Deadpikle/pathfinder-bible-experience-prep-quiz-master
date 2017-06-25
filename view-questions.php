@@ -165,7 +165,7 @@
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
                 else if (question.Type == "commentary-qna") {
-                    var volume = 'Volume ' + question.CommentaryVolume;// + ' Pages'
+                    var volume = 'Volume ' + question.CommentaryVolume;
                     var startPage = question.CommentaryStartPage;
                     var endPage = question.CommentaryEndPage;
                     if (typeof endPage !== 'undefined' && endPage != null && endPage != "" && endPage > startPage) {

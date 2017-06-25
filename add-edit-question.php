@@ -35,10 +35,16 @@
         $answer = "";
         $numberOfPoints = "";
         $isFlagged = FALSE;
+        $commentaryVolume = "";
+        $commentaryStartPage = "";
+        $commentaryEndPage = "";
         $postType = "create";
         $titleString = "Create";
     }
 
+    if ($startVerseID == NULL) {
+        $startVerseID = -1;
+    }
     if ($endVerseID == NULL) {
         $endVerseID = -1;
     }
@@ -110,6 +116,7 @@
 
 <script type="text/javascript">
     var books = <?= json_encode($books) ?>;
+    var questionType = '<?= $questionType ?>';
     var startVerseID = <?= $startVerseID ?>;
     var endVerseID = <?= $endVerseID ?>;
 </script>
@@ -184,15 +191,15 @@
         <div class="row" id="commentary-inputs">
             <p class="section-info">Commentary Info</p>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-volume" name="commentary-volume" value="<?= $numberOfPoints ?>" required/>
+                <input type="number" min="0" id="commentary-volume" name="commentary-volume" value="<?= $commentaryVolume ?>" required/>
                 <label for="commentary-volume">Volume</label>
             </div>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $numberOfPoints ?>" required/>
+                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $commentaryStartPage ?>" required/>
                 <label for="commentary-start">Start Page</label>
             </div>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $numberOfPoints ?>" required/>
+                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $commentaryEndPage ?>"/>
                 <label for="commentary-end">End Page</label>
             </div>
         </div>
@@ -252,9 +259,22 @@
             $(commentaryDiv).hide();
             commentaryVolume.required = false;
             commentaryStartPage.required = false;
-            commentaryEndPage.required = false;
         }
-        hideCommentaryDiv(); // on page load, default is Bible question [bible-qna]
+
+        function hideBibleDiv() {
+            $(startVerseDiv).hide();
+            $(endVerseDiv).hide();
+            startBook.required = false;
+            startChapter.required = false;
+            startVerse.required = false;
+        }
+
+        if (questionType == 'bible-qna') {
+            hideCommentaryDiv(); // on page load, default is Bible question [bible-qna]
+        }
+        else {
+            hideBibleDiv();
+        }
 
         bibleQuestionType.addEventListener('click', function() {
             // hide commentary data and set fields as not required
@@ -268,16 +288,11 @@
         }, false);
         commentaryType.addEventListener('click', function() {
             // hide Bible question data and set fields as not required
-            $(startVerseDiv).hide();
-            $(endVerseDiv).hide();
-            startBook.required = false;
-            startChapter.required = false;
-            startVerse.required = false;
+            hideBibleDiv();
             // show commentary data and set fields as required
             $(commentaryDiv).show();
             commentaryVolume.required = true;
             commentaryStartPage.required = true;
-            commentaryEndPage.required = true;
         }, false);
 
 
