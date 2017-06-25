@@ -32,7 +32,7 @@
     </div>
     <table id="questions" class="striped responsive-table">
         <thead>
-            <tr>
+            <tr id="table-header-row">
                 <th>Question</th>
                 <th>Answer</th>
                 <th>Start</th>
@@ -117,9 +117,38 @@
             });
         }
 
-        function setupTable(questions) {
+        function setupTableHeader(questionType) {
+            var $tableHeaderRow = $('#table-header-row');
+            $tableHeaderRow.empty();
+            var html = '';
+            if (questionType == 'bible-qna') {
+                html += '<th>Question</th>';
+                html += '<th>Answer</th>';
+                html += '<th>Start</th>';
+                html += '<th>End</th>';
+                html += '<th>Points</th>';
+            }
+            else if (questionType == 'commentary-qna') {
+                html += '<th>Question</th>';
+                html += '<th>Answer</th>';
+                html += '<th>Volume</th>';
+                html += '<th>Start Page</th>';
+                html += '<th>End Page</th>';
+                html += '<th>Points</th>';
+            }
+            html += '<th>Edit</th>';
+            html += '<th>Delete</th>';
+            $tableHeaderRow.append(html);
+        }
+
+        function emptyQuestionBody() {
             var $questionsBody = $("#questions-body");
             $questionsBody.empty();
+        }
+
+        function setupTable(questions) {
+            var $questionsBody = $("#questions-body");
+            emptyQuestionBody();
 
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
@@ -130,13 +159,23 @@
                     endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
                 }
                 var html = '<tr>';
+                if (question.Type == "bible-qna") {
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + question.Answer + '</td>';
                     html += '<td>' + startVerse + '</td>';
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
-                    html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
-                    html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
+                }
+                else if (question.Type == "commentary-qna") {
+                    html += '<td>' + question.Question + '</td>';
+                    html += '<td>' + question.Answer + '</td>';
+                    html += '<td>' + question.CommentaryVolume + '</td>';
+                    html += '<td>' + question.CommentaryStartPage + '</td>';
+                    html += '<td>' + question.CommentaryEndPage + '</td>';
+                    html += '<td>' + question.NumberPoints + '</td>';
+                }
+                html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
+                html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
                 html += '</tr>';
                 $questionsBody.append(html);
             }
@@ -165,6 +204,8 @@
                 currentPageNumber = 0;
                 resetQuestionTypeSelectorClasses();
                 setQuestionSelectorSelected(element);
+                emptyQuestionBody();
+                setupTableHeader(questionTypeSelected);
                 loadQuestions();
             }
         }
@@ -175,6 +216,7 @@
                 currentPageNumber = 0;
                 resetQuestionFilterSelectorClasses();
                 setQuestionSelectorSelected(element);
+                emptyQuestionBody();
                 loadQuestions();
             }
         }
