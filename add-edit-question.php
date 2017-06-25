@@ -48,6 +48,9 @@
     if ($endVerseID == NULL) {
         $endVerseID = -1;
     }
+    if ($commentaryVolume == NULL) {
+        $commentaryVolume = -1;
+    }
 
     // TODO: refactor to a function
     // Load all book, chapter, and verse information
@@ -119,6 +122,7 @@
     var questionType = '<?= $questionType ?>';
     var startVerseID = <?= $startVerseID ?>;
     var endVerseID = <?= $endVerseID ?>;
+    var volume = <?= $commentaryVolume ?>;
 </script>
 
 <p><a href="./view-questions.php">Back</a></p>
@@ -152,7 +156,7 @@
                 <label for="question-answer">Answer</label>
             </div>
         </div>
-        <div class="row">
+        <div class="row negative-top-margin">
             <div class="input-field col s12 m3">
                 <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
                 <label for="number-of-points">Number of Points</label>
@@ -161,6 +165,7 @@
         <div class="row" id="start-verse-div">
             <p class="section-info">Start Reference</p>
             <div class="input-field">
+            <!-- TODO: Don't need the extra hidden input. Can just use the select element. -->
                 <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
                 <select class="col s4 m3" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="">Select a book...</option>
@@ -188,12 +193,15 @@
                 </select>
             </div>
         </div>
-        <div class="row" id="commentary-inputs">
+        <div class="row commentary-inputs">
             <p class="section-info">Commentary Info</p>
-            <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-volume" name="commentary-volume" value="<?= $commentaryVolume ?>" required/>
-                <label for="commentary-volume">Volume</label>
-            </div>
+            <select class="col s12 m3" id="commentary-volume" name="commentary-volume" required>
+                <option id="commentary-no-selection-option" value="">Select a book...</option>
+                <option value="4">Daniel</option>
+                <option value="3">Esther</option>
+            </select>
+        </div>
+        <div class="row commentary-inputs negative-top-margin">
             <div class="input-field col s12 m3">
                 <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $commentaryStartPage ?>" required/>
                 <label for="commentary-start">Start Page</label>
@@ -220,28 +228,6 @@
     var selectedVerse = null;
     $(document).ready(function() {
 
-        function fixRequiredSelectorCSS() {
-            $('select[required]').css({
-                display: 'inline',
-                position: 'absolute',
-                float: 'left',
-                padding: 0,
-                margin: 0,
-                border: '1px solid rgba(255,255,255,0)',
-                height: 0, 
-                width: 0,
-                top: '2em',
-                left: '3em'
-            });
-            $('select').each(function( index ) {
-                $(this).on('mousedown', function(e) {
-                    e.preventDefault();
-                    this.blur();
-                    window.focus();
-                });
-            });
-        }
-
         var bibleQuestionType = document.getElementById('bible-qna');
         var commentaryType = document.getElementById('commentary-qna');
         var startVerseDiv = document.getElementById('start-verse-div');
@@ -250,13 +236,12 @@
         var startChapter = document.getElementById('start-chapter-select');
         var startVerse = document.getElementById('start-verse-select');
 
-        var commentaryDiv = document.getElementById('commentary-inputs');
         var commentaryVolume = document.getElementById('commentary-volume');
         var commentaryStartPage = document.getElementById('commentary-start');
         var commentaryEndPage = document.getElementById('commentary-end');
 
         function hideCommentaryDiv() {
-            $(commentaryDiv).hide();
+            $('.commentary-inputs').hide();
             commentaryVolume.required = false;
             commentaryStartPage.required = false;
         }
@@ -285,14 +270,16 @@
             startBook.required = true;
             startChapter.required = true;
             startVerse.required = true;
+            fixRequiredSelectorCSS();
         }, false);
         commentaryType.addEventListener('click', function() {
             // hide Bible question data and set fields as not required
             hideBibleDiv();
             // show commentary data and set fields as required
-            $(commentaryDiv).show();
+            $('.commentary-inputs').show();
             commentaryVolume.required = true;
             commentaryStartPage.required = true;
+            fixRequiredSelectorCSS();
         }, false);
 
 
@@ -423,6 +410,12 @@
             }
         }
         fixRequiredSelectorCSS();
+        // setup initial selection for commentary volume
+        if (questionType == 'commentary-qna' && volume != "" && volume != -1) {
+            //document.getElementById('commentary-volume').value = 'Seven';
+            $('#commentary-volume option[value="' + volume + '"]').prop('selected', true);
+        }
+        $('#commentary-volume').material_select();
 
     }); 
 </script>

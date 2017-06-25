@@ -14,6 +14,28 @@ function commentaryVolumeString(volume, startPage, endPage) {
     return str;
 }
 
+function fixRequiredSelectorCSS() {
+    $('select[required]').css({
+        display: 'inline',
+        position: 'absolute',
+        float: 'left',
+        padding: 0,
+        margin: 0,
+        border: '1px solid rgba(255,255,255,0)',
+        height: 0, 
+        width: 0,
+        top: '2em',
+        left: '3em'
+    });
+    $('select').each(function( index ) {
+        $(this).on('mousedown', function(e) {
+            e.preventDefault();
+            this.blur();
+            window.focus();
+        });
+    });
+}
+
 // https://stackoverflow.com/a/2548133/3938401
 if (typeof String.prototype.endsWith !== 'function') {
     String.prototype.endsWith = function(suffix) {

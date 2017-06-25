@@ -103,3 +103,7 @@ main {
 #question-type-choice {
     margin-bottom: 1em;
 }
+
+.negative-top-margin {
+    margin-top: -1em;
+}

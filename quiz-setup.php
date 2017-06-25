@@ -1,5 +1,30 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+
+    // load possible books and commentary volumes
+
+    $bookQuery = '
+    SELECT b.BookID, b.Name, b.NumberChapters,
+        c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
+    FROM Books b 
+        JOIN Chapters c ON b.BookID = c.BookID
+    ORDER BY b.Name, ChapterNumber';
+    $bookData = $pdo->query($bookQuery)->fetchAll();
+    $books = array();
+    foreach ($bookData as $book) {
+        $books[] =  array('id' => $book["ChapterID"], 'name' => $book["Name"] . " " . $book["ChapterNumber"]);
+    }
+
+    $volumeQuery = '
+    SELECT DISTINCT CommentaryVolume
+    FROM Questions q
+    WHERE CommentaryVolume IS NOT NULL AND CommentaryVolume <> 0
+    ORDER BY CommentaryVolume';
+    $volumeData = $pdo->query($volumeQuery)->fetchAll();
+    $volumes = array();
+    foreach ($volumeData as $volume) {
+        $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
+    }
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -10,6 +35,20 @@
     <h4>Quiz Setup</h4>
     <form action="quiz.php" method="post">
         <p>Maximum number of questions and maximum number of points per question</p>
+        <div class="row">
+            <div class="input-field col s12 m6 l6">
+                <select multiple id="quiz-items" name="quiz-items" required>
+                    <option value="" disabled selected>All</option>
+                    <?php foreach ($books as $book) { ?>
+                        <option value="book-<?= $book['id'] ?>"><?= $book['name'] ?></option>
+                    <?php } ?>
+                    <?php foreach ($volumes as $volume) { ?>
+                        <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
+                    <?php } ?>
+                </select>
+                <label>Chapters &amp; Commentary Volumes</label>
+            </div>
+        </div>
         <div class="row">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
@@ -63,3 +102,13 @@
 </div>
 
 <?php include(dirname(__FILE__)."/footer.php") ?>
+
+
+<script type="text/javascript">
+    // http://stackoverflow.com/a/15965470/3938401
+    $(document).ready(function() {
+        var bibleQuestionType = document.getElementById('quiz-items');
+        $(bibleQuestionType).material_select();
+        fixRequiredSelectorCSS();
+    });
+</script>
