@@ -18,6 +18,9 @@
     if (!isset($_POST["shouldAvoidPastCorrect"])) {
         die("shouldAvoidPastCorrect is required");
     }
+    if (!isset($_POST["userID"])) {
+        die("userID is required");
+    }
     $shouldAvoidPastCorrectAnswers = filter_var($_POST["shouldAvoidPastCorrect"], FILTER_VALIDATE_BOOLEAN);
     
     $maxQuestions = $_POST["maxQuestions"];
@@ -72,7 +75,7 @@
     // load Bible questions
     $bibleQnA = array();
     $selectPortion = '
-        SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
+        SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
             bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
             IFNULL(uf.UserFlaggedID, 0) AS IsFlagged ';
@@ -86,10 +89,17 @@
             LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID 
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID 
             LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
+    if ($shouldAvoidPastCorrectAnswers) {
+        $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
+    }
     $whereClause = ' 
         WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "bible-qna"';
     if (count($chapterIDs) > 0) {
         $whereClause .= ' AND cStart.ChapterID IN (' . implode(',', $chapterIDs) . ') ';
+    }
+    if ($shouldAvoidPastCorrectAnswers) {
+        $whereClause .= '  AND (ua.UserAnswerID IS NULL 
+            OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $_POST["userID"] . '))'; 
     }
     $orderByPortion = '';
     if ($areRandomQuestionsPulled) {
@@ -110,16 +120,23 @@
     $commentaryQnA = array();
     // load commentary questions
     $selectPortion = '
-        SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
+        SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
             IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
             CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
     $fromPortion = '
         FROM Questions q 
             LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
+    if ($shouldAvoidPastCorrectAnswers) {
+        $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
+    }
     $whereClause = ' 
         WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
     if (count($volumeNumbers) > 0) {
         $whereClause .= ' AND CommentaryVolume IN (' . implode(',', $volumeNumbers) . ') ';
+    }
+    if ($shouldAvoidPastCorrectAnswers) {
+        $whereClause .= '  AND (ua.UserAnswerID IS NULL 
+            OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $_POST["userID"] . '))'; 
     }
     if (!$areRandomQuestionsPulled) {
         $orderByPortion = ' ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage';

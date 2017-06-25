@@ -2,21 +2,43 @@
     session_start();
 
     require_once("../database.php");
-    
+        // prepare everything
+        // we don't want to add duplicate rows for a question
+        // so that generate-quiz has a bit easier of a time.
+        // I couldn't figure out an easy/quick way to have multiple rows for an answered question 
+        // where some of them had correct = false and one had correct = true. Probably need a GROUP BY and HAVING. 
+        // Keeping only one row in the db for this info makes it easier to generate a quiz. :effort:
+        // I'm sure there's a better way.
+        $query = 'SELECT 1 FROM UserAnswers WHERE QuestionID = ? AND UserID = ?';
+        $searchStmt = $pdo->prepare($query);
+        $insertQuery = "INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)";
+        $insertStmnt = $pdo->prepare($insertQuery);
+        $updateQuery = ' UPDATE UserAnswers SET Answer = ?, DateAnswered = ?, WasCorrect = ? WHERE QuestionID = ? AND UserID = ?';
+        $updateStmnt = $pdo->prepare($updateQuery);
     try {
         if (isset($_POST["answers"])) {
             $answers = $_POST["answers"];
-            $query = "INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($query);
             foreach ($answers as $answer) {
-                $params = [
+                $searchParams = [
+                    $answer["questionID"],
+                    $answer["userID"]
+                ];
+                $searchStmt->execute($searchParams);
+                $didFind = count($searchStmt->fetchAll()) >= 1 ? TRUE : FALSE;
+                $insertUpdateParams = [
                     $answer["userAnswer"],
                     $answer["dateAnswered"],
                     $answer["correct"],
                     $answer["questionID"],
                     $answer["userID"]
                 ];
-                $stmt->execute($params);
+                if (!$didFind) {
+                    $insertStmnt->execute($insertUpdateParams);
+                }
+                else {
+                    $updateStmnt->execute($insertUpdateParams);
+                }
             }   
         }
 

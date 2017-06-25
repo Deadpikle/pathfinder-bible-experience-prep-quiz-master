@@ -178,7 +178,8 @@
                     questionTypes: questionTypes,
                     questionOrder: questionOrder,
                     shouldAvoidPastCorrect: shouldAvoidPastCorrect,
-                    quizItems: quizItems
+                    quizItems: quizItems,
+                    userID: userID
                 },
                 success: function(response) {
                     if (typeof response.questions !== "undefined" && response.questions.length > 0) {
