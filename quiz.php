@@ -291,7 +291,7 @@
         function showQuestionAtCurrentIndex() {
             $correctAnswerText.hide();
             $incorrectAnswerText.hide();
-           // nextQuestion.disabled = true;
+            nextQuestion.disabled = true;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             checkAnswer.disabled = false;

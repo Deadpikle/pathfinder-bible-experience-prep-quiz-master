@@ -12,7 +12,7 @@
     $chapterData = $pdo->query($chapterQuery)->fetchAll();
     $chapters = array();
     foreach ($chapterData as $chapter) {
-        $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"] . " " . $chapter["ChapterNumber"]);
+        $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"], 'chapter' => $chapter["ChapterNumber"]);
     }
 
     $volumeQuery = '
@@ -25,6 +25,7 @@
     foreach ($volumeData as $volume) {
         $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
     }
+    $lastBookSeen = "";
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -39,12 +40,21 @@
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
                     <option value="" disabled selected>All</option>
-                    <optgroup label="Bible Chapters">
-                        <?php foreach ($chapters as $chapter) { ?>
-                            <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?></option>
-                        <?php } ?>
-                    </optgroup>
-                    <optgroup label="SDA Bible Commentary Volumes">
+                    <?php 
+                        foreach ($chapters as $chapter) { 
+                            if ($lastBookSeen != $chapter['name']) {
+                                if ($lastBookSeen != $chapter['name']) {
+                                    echo '</optgroup>';
+                                }
+                                echo '<optgroup label="' . $chapter['name'] . '">';
+                                $lastBookSeen = $chapter['name'];
+                            }
+                    ?>
+                            <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></option>
+                    <?php } 
+                        echo '</optgroup>';
+                    ?>
+                    <optgroup label="SDA Bible Commentary">
                         <?php foreach ($volumes as $volume) { ?>
                             <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
                         <?php } ?>
@@ -95,7 +105,7 @@
                 <label class="black-text" for="random-random">Random selection and random order</label>
             </div>
         </div>
-        <p id="question-filtering">Question history (feature not yet available)</p>
+        <p id="question-filtering">Question history</p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct"/>
