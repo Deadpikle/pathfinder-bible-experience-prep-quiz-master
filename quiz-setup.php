@@ -3,16 +3,16 @@
 
     // load possible books and commentary volumes
 
-    $bookQuery = '
+    $chapterQuery = '
     SELECT b.BookID, b.Name, b.NumberChapters,
         c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
     FROM Books b 
         JOIN Chapters c ON b.BookID = c.BookID
     ORDER BY b.Name, ChapterNumber';
-    $bookData = $pdo->query($bookQuery)->fetchAll();
-    $books = array();
-    foreach ($bookData as $book) {
-        $books[] =  array('id' => $book["ChapterID"], 'name' => $book["Name"] . " " . $book["ChapterNumber"]);
+    $chapterData = $pdo->query($chapterQuery)->fetchAll();
+    $chapters = array();
+    foreach ($chapterData as $chapter) {
+        $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"] . " " . $chapter["ChapterNumber"]);
     }
 
     $volumeQuery = '
@@ -37,10 +37,10 @@
         <p>Maximum number of questions and maximum number of points per question</p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
-                <select multiple id="quiz-items" name="quiz-items" required>
+                <select multiple id="quiz-items" name="quiz-items[]">
                     <option value="" disabled selected>All</option>
-                    <?php foreach ($books as $book) { ?>
-                        <option value="book-<?= $book['id'] ?>"><?= $book['name'] ?></option>
+                    <?php foreach ($chapters as $chapter) { ?>
+                        <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?></option>
                     <?php } ?>
                     <?php foreach ($volumes as $volume) { ?>
                         <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
@@ -49,7 +49,7 @@
                 <label>Chapters &amp; Commentary Volumes</label>
             </div>
         </div>
-        <div class="row">
+        <div class="row negative-top-margin">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
                 <label for="max-questions">Maximum Questions</label>

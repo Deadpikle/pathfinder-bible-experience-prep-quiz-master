@@ -14,6 +14,8 @@
     if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
         $shouldAvoidPastCorrect = "true";
     }
+    $quizItems = $_POST["quiz-items"];
+
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -24,10 +26,11 @@
     var questionTypes = "<?= $questionTypes ?>";
     var questionOrder = "<?= $questionOrder ?>";
     var shouldAvoidPastCorrect = <?= $shouldAvoidPastCorrect ?>;
+    var quizItems = <?= json_encode($quizItems) ?>;
     var userID = <?= $_SESSION["UserID"] ?>; // is this really wise?
 </script>
 
-<div id="take-quiz">
+<div id="quiz-taking">
     <h4>Quiz Me!</h4>
     <div id="loading-quiz">
         <h4 class="center-align">Generating quiz...</h4>
@@ -47,9 +50,9 @@
     </div>
 
     <div id="take-quiz">
-        <h5 id="question-text">Question text will be here</h5>
-        <h6 id="question-points">Question points will be here</h6>
-        <h6 id="quiz-progress">Question x/y text will be here</h6>
+        <h5 id="question-text"></h5>
+        <h6 id="question-points"></h6>
+        <h6 id="quiz-progress"></h6>
         <div class="row">
             <div class="input-field col s12 m6">
                 <input type="text" id="quiz-answer" name="quiz-answer" required/>
@@ -116,7 +119,8 @@
                     maxPoints: maxPoints,
                     questionTypes: questionTypes,
                     questionOrder: questionOrder,
-                    shouldAvoidPastCorrect: shouldAvoidPastCorrect
+                    shouldAvoidPastCorrect: shouldAvoidPastCorrect,
+                    quizItems: quizItems
                 },
                 success: function(response) {
                     if (response.questions.length > 0) {

@@ -43,7 +43,33 @@
     $isOutputSequential = $questionOrder == "random-sequential" || $questionOrder == "sequential-sequential";
     $shouldAvoidPastCorrect = $_POST["shouldAvoidPastCorrect"]; // TODO: extra JOIN and WHERE 
 
+    // see if user wants to load any possible question or just from a specific chapter of the Bible (or Bible commentary volume)
+    if (!isset($_POST["quizItems"])) {
+        $quizItems = array();
+    }
+    else {
+        $quizItems = $_POST["quizItems"];
+    }
+    $chapterIDs = array();
+    $volumeNumbers = array();
+    if (count($quizItems) > 0) {
+        // user wants to load specific things!
+        // figure out which chapter IDs and volume numbers they want to load
+        foreach ($quizItems as $item) {
+            if (strpos($item, 'chapter-') !== false) {
+                $text = str_replace('chapter-', '', $item);
+                $chapterIDs[] = (int)$text;
+            }
+            else if (strpos($item, 'commentary-') !== false) {
+                $text = str_replace('commentary-', '', $item);
+                $volumeNumbers[] = (int)$text;
+            }
+        }
+    }
+    $shouldLoadBibleQnA = count($quizItems) == 0 || count($chapterIDs) > 0;
+    $shouldLoadCommentaryQnA = count($quizItems) == 0 || count($volumeNumbers) > 0;
     // load Bible questions
+    $bibleQnA = array();
     $selectPortion = '
         SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
             bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
@@ -61,6 +87,9 @@
             LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
     $whereClause = ' 
         WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "bible-qna"';
+    if (count($chapterIDs) > 0) {
+        $whereClause .= ' AND cStart.ChapterID IN (' . implode(',', $chapterIDs) . ') ';
+    }
     $orderByPortion = '';
     if ($areRandomQuestionsPulled) {
         $orderByPortion = ' ORDER BY RAND() ';
@@ -72,9 +101,12 @@
     }
 
     $limitPortion = ' LIMIT ' . $maxQuestions;
-    $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
-    $bibleQnA = $stmt->fetchAll();
+    if ($shouldLoadBibleQnA) {
+        $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
+        $bibleQnA = $stmt->fetchAll();
+    }
 
+    $commentaryQnA = array();
     // load commentary questions
     $selectPortion = '
         SELECT q.QuestionID, q.Type, Question, Answer, NumberPoints, DateCreated,
@@ -85,11 +117,16 @@
             LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
     $whereClause = ' 
         WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
+    if (count($volumeNumbers) > 0) {
+        $whereClause .= ' AND CommentaryVolume IN (' . implode(',', $volumeNumbers) . ') ';
+    }
     if (!$areRandomQuestionsPulled) {
         $orderByPortion = ' ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage';
     }
-    $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
-    $commentaryQnA = $stmt->fetchAll();
+    if ($shouldLoadCommentaryQnA) {
+        $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
+        $commentaryQnA = $stmt->fetchAll();
+    }
     // TODO: pull out fill in the blank questions
     // Merge data as needed
     if ($isOutputSequential) {
@@ -195,8 +232,8 @@
     }
 
     $output = [ 
-        "numberOfBibleQuestions" => $bibleAdded,
-        "numberOfCommentaryQuestions" => $commentaryAdded,
+        "bibleQuestions" => $bibleAdded,
+        "commentaryQuestions" => $commentaryAdded,
         "questions" => $outputQuestions 
     ];
     
