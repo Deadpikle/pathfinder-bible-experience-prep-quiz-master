@@ -181,7 +181,7 @@
                     quizItems: quizItems
                 },
                 success: function(response) {
-                    if (response.questions.length > 0) {
+                    if (typeof response.questions !== "undefined" && response.questions.length > 0) {
                         questions = response.questions;
                         currentQuestionIndex = 0;
                         showQuestionAtCurrentIndex();

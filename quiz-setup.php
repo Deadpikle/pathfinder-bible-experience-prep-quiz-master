@@ -98,7 +98,7 @@
         <p id="question-filtering">Question history (feature not yet available)</p>
         <div class="row">
             <div class="input-field col s12">
-                <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct" disabled/>
+                <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct"/>
                 <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>

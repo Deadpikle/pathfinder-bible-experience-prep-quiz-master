@@ -18,6 +18,7 @@
     if (!isset($_POST["shouldAvoidPastCorrect"])) {
         die("shouldAvoidPastCorrect is required");
     }
+    $shouldAvoidPastCorrectAnswers = filter_var($_POST["shouldAvoidPastCorrect"], FILTER_VALIDATE_BOOLEAN);
     
     $maxQuestions = $_POST["maxQuestions"];
     if ($maxQuestions > 500) {
