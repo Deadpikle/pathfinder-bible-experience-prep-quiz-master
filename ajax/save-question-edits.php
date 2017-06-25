@@ -1,6 +1,10 @@
 <?php
     require_once(dirname(__FILE__)."/../init.php");
     
+    $startVerseID = isset($_POST["start-verse-id"]) ? $_POST["start-verse-id"] : NULL;
+    if ($_POST["start-verse-id"] == -1 || $_POST["start-verse-id"] == NULL) {
+        $startVerseID = NULL;
+    }
     $endVerseID = isset($_POST["end-verse-id"]) ? $_POST["end-verse-id"] : NULL;
     if ($_POST["end-verse-id"] == -1 || $_POST["end-verse-id"] == NULL) {
         $endVerseID = NULL;
@@ -15,7 +19,7 @@
         $_POST["question-answer"],
         $_POST["number-of-points"],
         $_SESSION["UserID"],
-        $_POST["start-verse-id"],
+        $startVerseID,
         $endVerseID,
         $_POST["commentary-volume"],
         $_POST["commentary-start"],
