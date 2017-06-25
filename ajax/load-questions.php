@@ -30,6 +30,15 @@
     else {
         $whereClause .= " AND Type = '" . $questionType . "'";
     }
+    if ($questionType == "bible-qna") {
+        $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
+    }
+    else if ($questionType == "commentary-qna") {
+        $orderByClause = " ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage ";
+    }
+    else {
+        $orderByClause = "";
+    }
 
     $pageSize = 10;
     if (isset($_POST["pageSize"])) {
@@ -56,7 +65,7 @@
             LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
             ' . $flaggedJoinClause . '
             ' . $whereClause . '
-        ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number';
+            ' . $orderByClause;
     $limitClause = '
         LIMIT ' . $pageOffset . ',' . $pageSize;  
     $stmt = $pdo->query($selectPortion . $fromPortion . $limitClause);
