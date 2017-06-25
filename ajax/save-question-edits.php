@@ -10,23 +10,30 @@
         $shouldRemoveFlag = TRUE;
     }
     $params = [
+        $_POST["question-type"], // either bible-qna or commentary-qna right now
         $_POST["question-text"],
         $_POST["question-answer"],
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $_POST["start-verse-id"],
-        $endVerseID
+        $endVerseID,
+        $_POST["commentary-volume"],
+        $_POST["commentary-start"],
+        $_POST["commentary-end"]
     ];
     if ($_GET["type"] == "update") {
         $query = '
-            UPDATE Questions SET Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?';
+            UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
+            CommentaryVolume = ?, CommentaryStartPage = ?, CommentaryEndPage = ?';
         $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
     else if ($_GET["type"] == "create") {
         $params[] = $_SESSION["UserID"];
         $query = '
-            INSERT INTO Questions (Question, Answer, NumberPoints, LastEditedByID, StartVerseID, EndVerseID, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
+            EndVerseID, CommentaryVolume, CommentaryStartPage, CommentaryEndPage, CreatorID) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
     }
     else {
@@ -34,7 +41,6 @@
     }
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
-
 
     if ($shouldRemoveFlag) {
         $query = ' DELETE FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';

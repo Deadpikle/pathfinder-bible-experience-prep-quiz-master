@@ -118,12 +118,12 @@
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-type" id="qna" value="qna" checked/>
-                <label class="black-text" for="qna">Bible</label>
+                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" checked/>
+                <label class="black-text" for="bible-qna">Bible</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-type" id="commentary" value="commentary"/>
-                <label class="black-text" for="commentary">Commentary</label>
+                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna"/>
+                <label class="black-text" for="commentary-qna">Commentary</label>
             </div>
         </div>
         <div class="row">
@@ -227,7 +227,7 @@
             });
         }
 
-        var bibleQuestionType = document.getElementById('qna');
+        var bibleQuestionType = document.getElementById('bible-qna');
         var commentaryType = document.getElementById('commentary');
         var startVerseDiv = document.getElementById('start-verse-div');
         var endVerseDiv = document.getElementById('end-verse-div');
@@ -240,12 +240,17 @@
         var commentaryStartPage = document.getElementById('commentary-start');
         var commentaryEndPage = document.getElementById('commentary-end');
 
-        bibleQuestionType.addEventListener('click', function() {
-            // hide commentary data and set fields as not required
+        function hideCommentaryDiv() {
             $(commentaryDiv).hide();
             commentaryVolume.required = false;
             commentaryStartPage.required = false;
             commentaryEndPage.required = false;
+        }
+        hideCommentaryDiv(); // on page load, default is Bible question [bible-qna]
+
+        bibleQuestionType.addEventListener('click', function() {
+            // hide commentary data and set fields as not required
+            hideCommentaryDiv();
             // show Bible question data and set fields as required
             $(startVerseDiv).show();
             $(endVerseDiv).show();
