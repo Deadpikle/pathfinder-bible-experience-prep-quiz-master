@@ -39,12 +39,16 @@
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
                     <option value="" disabled selected>All</option>
-                    <?php foreach ($chapters as $chapter) { ?>
-                        <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?></option>
-                    <?php } ?>
-                    <?php foreach ($volumes as $volume) { ?>
-                        <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
-                    <?php } ?>
+                    <optgroup label="Bible Chapters">
+                        <?php foreach ($chapters as $chapter) { ?>
+                            <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?></option>
+                        <?php } ?>
+                    </optgroup>
+                    <optgroup label="SDA Bible Commentary Volumes">
+                        <?php foreach ($volumes as $volume) { ?>
+                            <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
+                        <?php } ?>
+                    </optgroup>
                 </select>
                 <label>Chapters &amp; Commentary Volumes</label>
             </div>

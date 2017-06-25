@@ -62,9 +62,9 @@
                     <button id="check-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Check answer</button>
                 </div>
         </div>
-        <p id="question-result-correct">That's the right answer! Good job!</p>
-        <p id="question-result-wrong">Sorry, that's not the correct answer.</p>
-        <p id="question-flagged">Question successfully flagged!</p>
+        <p class="negative-top-margin" id="question-result-correct">That's the right answer! Good job!</p>
+        <p class="negative-top-margin" id="question-result-wrong">Sorry, that's not the correct answer.</p>
+        <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
         <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves">Flag question</button>
         <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
         <a id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves" href="quiz-setup.php">End quiz</a>
