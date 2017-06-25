@@ -75,8 +75,8 @@
         <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
         <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
         <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
-        <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</a>
-        <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</a>
+        <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
+        <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
     </div>
     <p id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
 </div>
