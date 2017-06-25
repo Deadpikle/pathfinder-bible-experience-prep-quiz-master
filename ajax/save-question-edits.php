@@ -13,17 +13,30 @@
     if (isset($_POST["remove-question-flag"]) && $_POST["remove-question-flag"] != NULL) {
         $shouldRemoveFlag = TRUE;
     }
+    $commentaryVolume = $_POST["commentary-volume"];
+    $commentaryStartPage = $_POST["commentary-start"];
+    $commentaryEndPage = $_POST["commentary-end"];
+    $questionType = $_POST["question-type"];
+    if ($questionType == "bible-qna") {
+        $commentaryVolume = NULL;
+        $commentaryStartPage = NULL;
+        $commentaryEndPage = NULL;
+    }
+    else if ($questionType == "commentary-qna") {
+        $startVerseID = NULL;
+        $endVerseID = NULL;
+    }
     $params = [
-        $_POST["question-type"], // either bible-qna or commentary-qna right now
+        $questionType, // either bible-qna or commentary-qna right now (we don't support fill in the blank quite yet)
         $_POST["question-text"],
         $_POST["question-answer"],
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $startVerseID,
         $endVerseID,
-        $_POST["commentary-volume"],
-        $_POST["commentary-start"],
-        $_POST["commentary-end"]
+        $commentaryVolume,
+        $commentaryStartPage,
+        $commentaryEndPage
     ];
     if ($_GET["type"] == "update") {
         $query = '
