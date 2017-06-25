@@ -115,6 +115,17 @@
 <div id="edit-question">
     <form action="ajax/save-question-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
+        <p id="question-type-paragraph">Question Type</p>
+        <div id="question-type" class="row">
+            <div class="input-field col s12">
+                <input type="radio" class="with-gap" name="question-type" id="qna" value="qna" checked/>
+                <label class="black-text" for="qna">Bible</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="radio" class="with-gap" name="question-type" id="commentary" value="commentary"/>
+                <label class="black-text" for="commentary">Commentary</label>
+            </div>
+        </div>
         <div class="row">
             <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
             <div class="input-field col s12 m6">
@@ -127,7 +138,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="input-field col s12 m2">
+            <div class="input-field col s12 m3">
                 <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
                 <label for="number-of-points">Number of Points</label>
             </div>
@@ -136,13 +147,13 @@
             <p class="section-info">Start Reference</p>
             <div class="input-field">
                 <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-                <select class="col s4 m2" id="start-book-select" name="start-book" required>
+                <select class="col s4 m3" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="">Select a book...</option>
                 </select>
-                <select class="col s4 m2" id="start-chapter-select" name="start-chapter" required>
+                <select class="col s4 m3" id="start-chapter-select" name="start-chapter" required>
                     <option id="chapter-no-selection-option" value="">Select a chapter...</option>
                 </select>
-                <select class="col s4 m2" id="start-verse-select" name="start-verse" required>
+                <select class="col s4 m3" id="start-verse-select" name="start-verse" required>
                     <option id="verse-no-selection-option" value="">Select a verse...</option>
                 </select>
             </div>
@@ -151,15 +162,30 @@
             <p class="section-info">End Reference (if question covers more than 1 verse)</p>
             <div class="input-field">
                 <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
-                <select class="col s4 m2" id="end-book-select" name="end-book">
+                <select class="col s4 m3" id="end-book-select" name="end-book">
                     <option id="book-no-selection-option" value="-1">Select a book...</option>
                 </select>
-                <select class="col s4 m2" id="end-chapter-select" name="chapter">
+                <select class="col s4 m3" id="end-chapter-select" name="chapter">
                     <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
                 </select>
-                <select class="col s4 m2" id="end-verse-select" name="verse">
+                <select class="col s4 m3" id="end-verse-select" name="verse">
                     <option id="verse-no-selection-option" value="-1">Select a verse...</option>
                 </select>
+            </div>
+        </div>
+        <div class="row" id="commentary-inputs">
+            <p class="section-info">Commentary Info</p>
+            <div class="input-field col s12 m3">
+                <input type="number" min="0" id="commentary-volume" name="commentary-volume" value="<?= $numberOfPoints ?>" required/>
+                <label for="commentary-volume">Volume</label>
+            </div>
+            <div class="input-field col s12 m3">
+                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $numberOfPoints ?>" required/>
+                <label for="commentary-start">Start Page</label>
+            </div>
+            <div class="input-field col s12 m3">
+                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $numberOfPoints ?>" required/>
+                <label for="commentary-end">End Page</label>
             </div>
         </div>
         <?php if ($isFlagged) { ?>
@@ -200,6 +226,47 @@
                 });
             });
         }
+
+        var bibleQuestionType = document.getElementById('qna');
+        var commentaryType = document.getElementById('commentary');
+        var startVerseDiv = document.getElementById('start-verse-div');
+        var endVerseDiv = document.getElementById('end-verse-div');
+        var startBook = document.getElementById('start-book-select');
+        var startChapter = document.getElementById('start-chapter-select');
+        var startVerse = document.getElementById('start-verse-select');
+
+        var commentaryDiv = document.getElementById('commentary-inputs');
+        var commentaryVolume = document.getElementById('commentary-volume');
+        var commentaryStartPage = document.getElementById('commentary-start');
+        var commentaryEndPage = document.getElementById('commentary-end');
+
+        bibleQuestionType.addEventListener('click', function() {
+            // hide commentary data and set fields as not required
+            $(commentaryDiv).hide();
+            commentaryVolume.required = false;
+            commentaryStartPage.required = false;
+            commentaryEndPage.required = false;
+            // show Bible question data and set fields as required
+            $(startVerseDiv).show();
+            $(endVerseDiv).show();
+            startBook.required = true;
+            startChapter.required = true;
+            startVerse.required = true;
+        }, false);
+        commentaryType.addEventListener('click', function() {
+            // hide Bible question data and set fields as not required
+            $(startVerseDiv).hide();
+            $(endVerseDiv).hide();
+            startBook.required = false;
+            startChapter.required = false;
+            startVerse.required = false;
+            // show commentary data and set fields as required
+            $(commentaryDiv).show();
+            commentaryVolume.required = true;
+            commentaryStartPage.required = true;
+            commentaryEndPage.required = true;
+        }, false);
+
 
         function setupChapterSelectForBook(book, prefix) {
             $('#' + prefix + 'chapter-select option').not(':first').remove();

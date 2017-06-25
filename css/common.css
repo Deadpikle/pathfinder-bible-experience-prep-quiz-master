@@ -95,3 +95,7 @@ main {
 #unflag-question label {
     left: 0;
 }
+
+#question-type-paragraph {
+    margin-bottom: -1em;
+}
