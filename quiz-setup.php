@@ -83,11 +83,11 @@
         <p id="question-order">Question selection and order</p>
         <div class="row">
             <div class="input-field col s12">
-                <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" checked/>
+                <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />
                 <label class="black-text" for="sequential-sequential">Sequential</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" />
+                <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" checked/>
                 <label class="black-text" for="random-sequential">Random selection and sequential order</label>
             </div>
             <div class="input-field col s12">
