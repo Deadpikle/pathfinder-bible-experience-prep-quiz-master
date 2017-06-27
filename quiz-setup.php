@@ -28,12 +28,15 @@
         $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
     }
     $lastBookSeen = "";
+
+    $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <p><a href=".">Back</a></p>
 
+<?php if ($areAnyQuestionsAvailable) { ?>
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
     <form action="quiz.php" method="post">
@@ -120,6 +123,12 @@
         </div>
     </form>
 </div>
+<?php } else { ?>
+<div id="start-quiz">
+    <h4>Quiz Setup</h4>
+    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="add-edit-question.php?type=create">create one</a>?</p>
+</div>
+<?php } ?>
 
 <?php include(dirname(__FILE__)."/footer.php") ?>
 
