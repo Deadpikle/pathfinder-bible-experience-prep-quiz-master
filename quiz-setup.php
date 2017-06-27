@@ -4,10 +4,12 @@
     // load possible books and commentary volumes
 
     $chapterQuery = '
-    SELECT b.BookID, b.Name, b.NumberChapters,
+    SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
         c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
     FROM Books b 
         JOIN Chapters c ON b.BookID = c.BookID
+        JOIN Verses v ON c.ChapterID = v.ChapterID
+        JOIN Questions q ON v.VerseID = q.StartVerseID
     ORDER BY b.Name, ChapterNumber';
     $chapterData = $pdo->query($chapterQuery)->fetchAll();
     $chapters = array();
@@ -35,7 +37,7 @@
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
     <form action="quiz.php" method="post">
-        <p>Chapter &amp; Commentary Choices -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
+        <p>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
@@ -60,7 +62,7 @@
                         <?php } ?>
                     </optgroup>
                 </select>
-                <label>Chapters &amp; Commentary Volumes</label>
+                <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
             </div>
         </div>
         <p class="negative-top-margin">Maximum number of questions and maximum number of points per question</p>
