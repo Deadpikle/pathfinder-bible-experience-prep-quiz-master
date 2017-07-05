@@ -262,7 +262,7 @@
             }
             if (data.type == 'bible-qna') {
                 var verseText = data.startBook + " " + data.startChapter + ":" + data.startVerse;
-                if (data.endBook !== "") {
+                if (data.endBook !== "" && data.startVerse != data.endVerse) {
                     if (data.startChapter == data.endChapter) {
                         verseText += "-" + data.endVerse;
                     }
