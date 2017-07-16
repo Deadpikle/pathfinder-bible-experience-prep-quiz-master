@@ -4,11 +4,13 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
+<p><a href="./manage-study-guides.php">Back</a></p>
+
 <h2>Upload Study Guide</h2>
 
 <div id="upload-study-guide">
+    <p>This form only accepts PDF files. The maximum file size for a PDF study guide is 10 MB.</p>
     <form action="ajax/upload-file.php" method="post">
-        <input type="hidden" name="club-id" value="<?= $clubID ?>"/>
         <div class="row">
             <div class="file-field input-field col s12 m6">
                 <div class="btn blue">
@@ -20,7 +22,7 @@
                 </div>
             </div>
             <div class="input-field col s12 m4">
-                <input type="url" id="display-name" name="display-name" data-length="300" required/>
+                <input type="text" id="display-name" name="display-name" data-length="300" required/>
                 <label for="display-name">Display Name</label>
             </div>
         </div>
