@@ -73,6 +73,6 @@
     }
 
     // if we get here, we did everything right!
-    header("Location: " . $basePath . "/admin/upload-study-guide.php?success");
+    header("Location: " . $basePath . "/admin/manage-study-guides.php");
 
 ?>
