@@ -115,3 +115,7 @@ main {
 .hidden {
     display: none;
 }
+/* https://stackoverflow.com/a/38251646/3938401 */
+.no-uppercase {
+     text-transform: none;
+}
