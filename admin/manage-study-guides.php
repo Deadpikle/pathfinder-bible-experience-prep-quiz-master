@@ -27,9 +27,9 @@
             <?php foreach ($files as $file) { ?>
                 <tr>
                     <td><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $basePath . '/' .$file['FileName'] ?>"><?= $file['DisplayName'] ?></a></td> 
-                    <td><a class="btn blue white-text waves-effect" 
+                    <td><a class="btn waves-effect" 
                             href="rename-study-guide.php?id=<?= $file['StudyGuideID'] ?>">Rename</a></td> 
-                    <td><a class="btn red white-text waves-effect" 
+                    <td><a class="btn red white-text waves-effect waves-light" 
                             href="delete-study-guide.php?id=<?= $file['StudyGuideID'] ?>">Delete</a></td> 
                 </tr>
             <?php } ?>
