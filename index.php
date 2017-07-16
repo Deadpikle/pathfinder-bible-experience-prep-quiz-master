@@ -9,7 +9,7 @@
 
 <div id="user-links">
     <div class="row">
-        <div class="col s4">
+        <div class="col s12 m4">
             <ul>
                 <li class="home-buttons"><a class='btn  waves-effect waves-light' href="view-questions.php">Questions</a></li>
                 <li class="home-buttons"><a class='btn  waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
@@ -17,7 +17,7 @@
                 <li class="home-buttons"><a class='btn  waves-effect waves-light' href="study-guides.php">Study Guides</a></li>
             </ul>
         </div>
-        <div class="col s8">
+        <div class="col s12 m8">
             <?php output_home_sections($sections, FALSE); ?>
         </div>
     </div>
