@@ -12,6 +12,7 @@
         <?php if ($isWebAdmin) { ?>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-clubs.php">Pathfinder Clubs</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-home-sections.php">Home Page Info</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="manage-study-guides.php">Manage Study Guides</a></li>
         <?php } ?>
     </ul>  
 </div>
