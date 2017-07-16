@@ -8,9 +8,13 @@
 
 <h2>Upload Study Guide</h2>
 
+<?php if (isset($_GET["success"])) { ?>
+    <h4>File uploaded successfully!</h4>
+<?php } ?>
+
 <div id="upload-study-guide">
     <p>This form only accepts PDF files. The maximum file size for a PDF study guide is 10 MB.</p>
-    <form action="ajax/upload-file.php" method="post">
+    <form action="ajax/upload-file.php" method="post" enctype="multipart/form-data">
         <div class="row">
             <div class="file-field input-field col s12 m6">
                 <div class="btn blue">

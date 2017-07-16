@@ -1,16 +1,14 @@
 <?php
-
     require_once(dirname(__FILE__)."/../init-admin.php");
-    session_start();
 
     // A bunch of code here is from http://php.net/manual/en/features.file-upload.php
-
     $errorMessage = "";
     $displayName = $_POST["display-name"];
     // Undefined | Multiple Files | $_FILES Corruption Attack
     // If this request falls under any of them, treat it invalid.
-    if (!isset($_FILES['file-upload']['error']) || is_array($_FILES['upfile']['error'])) {
+    if (!isset($_FILES['file-upload']['error']) || is_array($_FILES['file-upload']['error'])) {
         $errorMessage = "Invalid parameters";
+        print_r($_FILES['file-upload']['error']);
         die($errorMessage);
     }
 
@@ -48,7 +46,6 @@
         die($errorMessage);
     }
 
-    // You should name it uniquely.
     // DO NOT USE $_FILES['file-upload']['name'] WITHOUT ANY VALIDATION!!
     // On this example, obtain safe unique name from its binary data.
     $fileName = generate_uuid() . '.pdf';
@@ -65,17 +62,17 @@
             'uploads/' . $fileName,
             $displayName
         ];
-        $query = 'INSERT INTO StudyGuides (FilePath, DisplayName) VALUES (?, ?)';
+        $query = 'INSERT INTO StudyGuides (FileName, DisplayName) VALUES (?, ?)';
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
     }
     catch (PDOException $e) {
         unlink($filePath);
-        $errorMessage = "Error inserting database information";
+        $errorMessage = "Error inserting database information" . $e;
         die($errorMessage);
     }
 
     // if we get here, we did everything right!
-    header("Location: upload-study-guide.php?success");
+    header("Location: " . $basePath . "/admin/upload-study-guide.php?success");
 
 ?>
