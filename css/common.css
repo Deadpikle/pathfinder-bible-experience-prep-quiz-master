@@ -117,5 +117,23 @@ main {
 }
 /* https://stackoverflow.com/a/38251646/3938401 */
 .no-uppercase {
-     text-transform: none;
+    text-transform: none;
+}
+
+.fill-in-blank-input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px solid black;
+    min-width: 10em;
+    display: inline-block;
+}
+
+/* https://stackoverflow.com/a/34961662/3938401 */
+[contenteditable] b {
+  font-weight: normal;
+}
+    
+[contenteditable] i {
+  font-style: normal;
 }
