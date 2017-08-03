@@ -1,7 +1,7 @@
 <?php
 	require_once('./test.php');
 
-	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', '.', '?', '!'];
+	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', '.', '?', '!', ','];
 
 	/*
 	 * words = verse
@@ -21,11 +21,11 @@
 		$words = tokenize($phrase);
 
 		$blank_indexes = get_blanks($words, $num_blanks);
-
 		foreach ($blank_indexes as $key) {
 			$words[$key] = '_';
 		}
-
+print_r(["original" => $phrase, "condensed" => condense($words)]);
+echo ("<br>");
 		return condense($words);
 	}
 
@@ -57,13 +57,13 @@
 		$result = [];
 
 		foreach ($words as $word) {
-			preg_match('/(\w+)( |\.|\?|!)?/', $word, $matches);
+			preg_match('/(\w+)( |\.|\?|!|,)?/', $word, $matches);
 
 			// The word itself
 			$result[] = $matches[1];
 
 			// and separately, the punctuation.
-			if ($matches[2]) {
+			if (count($matches) > 2 && isset($matches[2])) {
 				$result[] = $matches[2];
 			}
 		}
@@ -97,6 +97,7 @@
 
 		// doesn't choke on multiple words
 		$t->equal(generate_question("Hello world!", 2), ['_', '_', '!']);
+		$t->equal(generate_question("Hello, world!", 2), ['_', ',', '_', '!']);
 
 		// ignores conjunctions
 		$t->equal(generate_question("Fred and Harry.", 2), ['_', 'and', '_', '.']);
