@@ -1,6 +1,9 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
     $sections = load_home_sections($pdo);
+    $percent = 0.5;
+    $number = 10;
+    echo floor($percent * $number);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
