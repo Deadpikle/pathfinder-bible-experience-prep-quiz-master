@@ -1,13 +1,13 @@
 <?php
 // blanks a minimum of 1 word
-	require_once('./test.php');
+	//require_once('./test.php');
 
 	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the'];
     const PUNCTUATION = ['.', '?', '!', ',', ' '];
     const DEBUG = FALSE;
 
     // $percentToBlank should be a decimal
-	function generate_question($phrase, $percentToBlank) {
+	function generate_fill_in_question($phrase, $percentToBlank) {
         if (DEBUG) {
             echo '<br>-----<br>';
             echo $phrase;

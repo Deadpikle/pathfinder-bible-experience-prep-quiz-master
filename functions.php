@@ -1,5 +1,7 @@
 <?php
 
+    require_once("blanks.php");
+
     function generate_uuid() {
         $bytes = random_bytes(16);
         $UUID = bin2hex($bytes);
