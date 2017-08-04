@@ -4,17 +4,16 @@
 
 	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the'];
     const PUNCTUATION = ['.', '?', '!', ',', ' '];
+    const DEBUG = FALSE;
 
     // $percentToBlank should be a decimal
 	function generate_question($phrase, $percentToBlank) {
-        echo '<br>-----<br>';
-        echo $phrase;
-        echo '<br>';
+        if (DEBUG) {
+            echo '<br>-----<br>';
+            echo $phrase;
+            echo '<br>';
+        }
 		$tokenized = tokenize($phrase);
-        // echo $phrase;
-        // echo '<br>';
-        // print_r($words);
-        // echo '<br>';
 
         $data = $tokenized["word-data"];
         $blankableIndices = $tokenized["blankable-indices"];
@@ -30,10 +29,12 @@
         for ($i = 0; $i < count($blankableIndices); $i++) {
             $data[$blankableIndices[$i]]["shouldBeBlanked"] = TRUE;
         }
-        echo $numberToBlank . ' to blank';
-        echo '<br>';
-        print_r($data);
-        echo '<br>-----<br>';
+        if (DEBUG) {
+            echo $numberToBlank . ' to blank';
+            echo '<br>';
+            print_r($data);
+            echo '<br>-----<br>';
+        }
         return $data;
 	}
 
@@ -49,8 +50,10 @@
             $actualWord = trim($matches[2]);
             $isBlankable = array_search($actualWord, SKIPPABLE) === FALSE ? TRUE : FALSE;
             if ($isBlankable) {
-                echo '"' . $actualWord . '" is blankable';
-                echo '<br>';
+                if (DEBUG) {
+                    echo '"' . $actualWord . '" is blankable';
+                    echo '<br>';
+                }
                 $blankableIndices[] = $i;
             }
             $word_array = [
@@ -97,4 +100,6 @@
 	}
 
 	test_generate_question();*/
+
+    //generate_question("Hello, mom!", 0.5);
 ?>
