@@ -145,8 +145,15 @@
                 <label class="black-text" for="commentary-qna">Commentary</label>
             </div>
         </div>
+        <div id="question-fill-in" class="row">
+            <div class="input-field col s12 m4">
+                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" />
+                <label class="black-text" for="question-is-fill-in-blank">Fill in the blank?</label>
+            </div>
+        </div>
         <div class="row">
             <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
+            <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
@@ -239,6 +246,9 @@
         var commentaryVolume = document.getElementById('commentary-volume');
         var commentaryStartPage = document.getElementById('commentary-start');
         var commentaryEndPage = document.getElementById('commentary-end');
+
+        var fillInBlankCheckbox = document.getElementById('question-is-fill-in-blank');
+        var answerField = document.getElementById('question-answer');
 
         function hideCommentaryDiv() {
             $('.commentary-inputs').hide();
@@ -416,6 +426,18 @@
             $('#commentary-volume option[value="' + volume + '"]').prop('selected', true);
         }
         $('#commentary-volume').material_select();
+
+        // events for fill in the blank checkbox (fillInBlankCheckbox)
+        $(fillInBlankCheckbox).change(function() {
+            if (this.checked) {
+                answerField.disabled = true;
+                answerField.required = false;
+            }     
+            else {
+                answerField.disabled = false;
+                answerField.required = true;
+            }
+        });
 
     }); 
 </script>

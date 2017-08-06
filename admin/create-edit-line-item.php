@@ -60,7 +60,7 @@
             </div>
             <div class="input-field col s12 m2">
                 <input type="checkbox" id="line-is-link" name="line-is-link" <?= $isLink ?>/>
-                <label for="line-is-link">Links to URL</label>
+                <label class="black-text" for="line-is-link">Links to URL</label>
             </div>
             <div class="input-field col s12 m6">
                 <input type="url" id="line-url" name="line-url" value="<?= $URL ?>"/>
