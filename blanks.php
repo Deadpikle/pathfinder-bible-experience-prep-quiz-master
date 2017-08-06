@@ -48,7 +48,7 @@
             // could add ^' to keep words like 'taint (as in "'taint so") in the word section and not in the before section
             preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
             $actualWord = trim($matches[2]);
-            $isBlankable = array_search($actualWord, SKIPPABLE) === FALSE ? TRUE : FALSE;
+            $isBlankable = array_search(strtolower($actualWord), SKIPPABLE) === FALSE ? TRUE : FALSE;
             if ($isBlankable) {
                 if (DEBUG) {
                     echo '"' . $actualWord . '" is blankable';
