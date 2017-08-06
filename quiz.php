@@ -60,8 +60,8 @@
         <h5 id="question-points"></h5>
         <h6 id="user-points-earned"></h6>
         <div class="divider"></div>
-        <h5 id="question-text"></h5>
         <div id="qna-question" class="row">
+            <h5 id="question-text"></h5>
             <div class="input-field col s12 m6">
                 <input type="text" id="quiz-answer" name="quiz-answer" required/>
                 <label for="quiz-answer">Answer</label>
@@ -318,7 +318,7 @@
             totalPointsPossible += currentQuestion.points;
             var percent = Math.round((totalPointsEarned / totalPointsPossible) * 100);
             var pointsLabel = totalPointsEarned == 1 ? " point" : " points";
-            $("#user-points-earned").html(totalPointsEarned + pointsLabel + " earned out of " + totalPointsPossible + " (" + percent + "%)");
+            $("#user-points-earned").html(totalPointsEarned + pointsLabel + " earned out of " + totalPointsPossible + " total points possible (" + percent + "%)");
         }
 
         nextQuestion.addEventListener('click', function() {
