@@ -130,6 +130,10 @@ main {
     margin-top: 1em;
     /*text-align: center;*/
 }
+.fill-in-blank-input:disabled {
+    border-bottom: 1px solid black !important;
+    color: inherit !important;
+}
 
 /* https://stackoverflow.com/a/34961662/3938401 */
 [contenteditable] b {

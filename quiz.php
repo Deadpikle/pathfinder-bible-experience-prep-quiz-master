@@ -259,6 +259,7 @@
 
         var checkFillInAnswer = document.getElementById('check-fill-in-answer');
         checkFillInAnswer.addEventListener('click', function() {
+            $("#fill-in-question :input").attr("disabled", true);
             checkUserAnswer();
             nextQuestion.disabled = false;
             if (currentQuestionIndex == questions.length -1) {
