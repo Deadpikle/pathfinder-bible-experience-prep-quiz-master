@@ -144,4 +144,12 @@ main {
     margin-left: -8px;
 }
 
-.nowrap { white-space: nowrap; }
+.nowrap { 
+    white-space: nowrap; 
+}
+
+#fill-in-percent-div {
+    margin-left: 1em;
+    margin-top: 3em;
+    margin-bottom: -2em;
+}

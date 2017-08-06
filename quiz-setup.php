@@ -79,7 +79,7 @@
                 <label for="max-points">Maximum Points</label>
             </div>
         </div>
-        <p id="question-types">Question types (only Bible/Commentary Q&amp;A available at this point in time)</p>
+        <p id="question-types">Question types</p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="both" value="both" disabled/>
@@ -90,10 +90,13 @@
                 <label class="black-text" for="qa-only">Q&amp;A only</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only" disabled/>
+                <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only"/>
                 <label class="black-text" for="fill-in-only">Fill in the blank only</label>
             </div>
-            <!-- TODO: % of words blanked -->
+            <div class="input-field col s2" id="fill-in-percent-div">
+                <input type="number" name="fill-in-percent" id="fill-in-percent" value="30" min="0" max="100"/>
+                <label class="black-text" for="fill-in-percent">% Blanks</label>
+            </div>
         </div>
         <p id="question-order">Question selection and order</p>
         <div class="row">
