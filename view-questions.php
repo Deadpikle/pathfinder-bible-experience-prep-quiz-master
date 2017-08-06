@@ -123,7 +123,7 @@
             var $tableHeaderRow = $('#table-header-row');
             $tableHeaderRow.empty();
             var html = '';
-            if (questionType == 'bible-qna') {
+            if (isBibleQuestion(questionType)) {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
                 html += '<th class="nowrap">Fill-in?</th>';
@@ -131,7 +131,7 @@
                 html += '<th>End</th>';
                 html += '<th>Points</th>';
             }
-            else if (questionType == 'commentary-qna') {
+            else if (isCommentaryQuestion(questionType)) {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
                 html += '<th class="nowrap">Fill-in?</th>';
@@ -159,10 +159,10 @@
                 var question = questions[i];
                 var id = question.QuestionID;
                 var html = '<tr>';
-                var isFillIn = question.Type.indexOf("-fill") !== -1;
+                var isFillIn = isFillInQuestion(question.Type);
                 var checkboxTypeForFillIn = isFillIn ? checked : unchecked;
                 var answer = isFillIn ? "[Fill in the blanks]" : question.Answer;
-                if (question.Type == "bible-qna" || question.Type == "bible-qna-fill") {
+                if (isBibleQuestion(question.Type)) {
                     var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
                     var endVerse = "";
                     if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
@@ -175,7 +175,7 @@
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
-                else if (question.Type == "commentary-qna" || question.Type == "commentary-qna-fill") {
+                else if (isCommentaryQuestion(question.Type)) {
                     var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';

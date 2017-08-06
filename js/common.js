@@ -14,6 +14,18 @@ function commentaryVolumeString(volume, startPage, endPage) {
     return str;
 }
 
+function isBibleQuestion(type) {
+    return type === "bible-qna" || type === "bible-qna-fill";
+}
+
+function isCommentaryQuestion(type) {
+    return type === "commentary-qna" || type === "commentary-qna-fill";
+}
+
+function isFillInQuestion(type) {
+    return type.indexOf("-fill") !== -1;
+}
+
 function fixRequiredSelectorCSS() {
     $('select[required]').css({
         display: 'inline',
