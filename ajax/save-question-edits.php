@@ -17,19 +17,33 @@
     $commentaryStartPage = $_POST["commentary-start"];
     $commentaryEndPage = $_POST["commentary-end"];
     $questionType = $_POST["question-type"];
+    // see if fill in the blank
+    if (!isset($_POST["question-is-fill-in-blank"]) || $_POST["question-is-fill-in-blank"] == NULL) {
+        $isFillInTheBlank = FALSE;
+    }
+    else {
+        $isFillInTheBlank = TRUE;
+    }
     if ($questionType == "bible-qna") {
         $commentaryVolume = NULL;
         $commentaryStartPage = NULL;
         $commentaryEndPage = NULL;
+        if ($isFillInTheBlank) {
+            $questionType = "bible-qna-fill";
+        }
     }
     else if ($questionType == "commentary-qna") {
         $startVerseID = NULL;
         $endVerseID = NULL;
+        if ($isFillInTheBlank) {
+            $questionType = "commentary-qna-fill";
+        }
     }
+
     $params = [
-        $questionType, // either bible-qna or commentary-qna right now (we don't support fill in the blank quite yet)
+        $questionType, // either bible-qna or bible-qna-fill or commentary-qna or commentary-qna-fill right now
         $_POST["question-text"],
-        $_POST["question-answer"],
+        isset($_POST["question-answer"]) ? _POST["question-answer"] : "",
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $startVerseID,

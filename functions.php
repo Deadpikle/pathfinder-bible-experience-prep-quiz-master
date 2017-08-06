@@ -2,6 +2,18 @@
 
     require_once("blanks.php");
 
+    function is_bible_qna($type) {
+        return $type === "bible-qna" || $type == "bible-qna-fill";
+    }
+
+    function is_commentary_qna($type) {
+        return $type === "commentary-qna" || $type == "commentary-qna-fill";
+    }
+
+    function is_fill_in($type) {
+        return $type === "bible-qna-fill" || $type === "commentary-qna-fill";
+    }
+
     function generate_uuid() {
         $bytes = random_bytes(16);
         $UUID = bin2hex($bytes);

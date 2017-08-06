@@ -17,6 +17,9 @@
         $stmt->execute([$_GET["id"]]);
         $question = $stmt->fetch();
         $questionType = $question["Type"];
+        $isFillIn = is_fill_in($questionType);
+        $isFillInText = $isFillIn ? "true" : "false"; // because javascript
+        $isFillInCheckedText = $isFillIn ? " checked " : "";
         $questionText = $question["Question"];
         $answer = $question["Answer"];
         $numberOfPoints = $question["NumberPoints"];
@@ -32,6 +35,9 @@
     else {
         $questionType = "bible-qna";
         $questionText = "";
+        $isFillIn = FALSE;
+        $isFillInText = "false"; // because javascript
+        $isFillInCheckedText = "";
         $answer = "";
         $numberOfPoints = "";
         $isFlagged = FALSE;
@@ -120,6 +126,7 @@
 <script type="text/javascript">
     var books = <?= json_encode($books) ?>;
     var questionType = '<?= $questionType ?>';
+    var isFillInInitially = <?= $isFillInText ?>;
     var startVerseID = <?= $startVerseID ?>;
     var endVerseID = <?= $endVerseID ?>;
     var volume = <?= $commentaryVolume ?>;
@@ -135,25 +142,25 @@
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <?php $checked = $questionType == "bible-qna" ? "checked" : ""; ?>
+                <?php $checked = is_bible_qna($questionType) ? "checked" : ""; ?>
                 <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" <?= $checked ?>/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>
             <div class="input-field col s12">
-                <?php $checked = $questionType == "commentary-qna" ? "checked" : ""; ?>
+                <?php $checked = is_commentary_qna($questionType) ? "checked" : ""; ?>
                 <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" <?= $checked ?>/>
-                <label class="black-text" for="commentary-qna">Commentary</label>
+                <label class="black-text" for="commentary-qna">SDA Bible Commentary</label>
             </div>
         </div>
         <div id="question-fill-in" class="row">
             <div class="input-field col s12 m4">
-                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" />
+                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" <?= $isFillInCheckedText ?> />
                 <label class="black-text" for="question-is-fill-in-blank">Fill in the blank?</label>
             </div>
         </div>
         <div class="row">
             <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
-            <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
+            <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
@@ -264,7 +271,7 @@
             startVerse.required = false;
         }
 
-        if (questionType == 'bible-qna') {
+        if (questionType == 'bible-qna' || questionType == 'bible-qna-fill') {
             hideCommentaryDiv(); // on page load, default is Bible question [bible-qna]
         }
         else {
@@ -421,15 +428,16 @@
         }
         fixRequiredSelectorCSS();
         // setup initial selection for commentary volume
-        if (questionType == 'commentary-qna' && volume != "" && volume != -1) {
+        if ((questionType == 'commentary-qna' || questionType == 'commentary-qna-fill') && volume != "" && volume != -1) {
             //document.getElementById('commentary-volume').value = 'Seven';
             $('#commentary-volume option[value="' + volume + '"]').prop('selected', true);
         }
         $('#commentary-volume').material_select();
 
         // events for fill in the blank checkbox (fillInBlankCheckbox)
-        $(fillInBlankCheckbox).change(function() {
-            if (this.checked) {
+        function modifyAnswerField(isFillInChecked) {
+            // readOnly looks/acts quirky with Materialize, so we're just going to use disabled :\
+            if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
             }     
@@ -437,7 +445,12 @@
                 answerField.disabled = false;
                 answerField.required = true;
             }
+        }
+        $(fillInBlankCheckbox).change(function() {
+            modifyAnswerField(this.checked);
         });
+
+        modifyAnswerField(isFillInInitially);
 
     }); 
 </script>

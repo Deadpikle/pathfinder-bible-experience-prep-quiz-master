@@ -6,9 +6,7 @@
     try {
         $whereClause = "";
         $isFlagged = FALSE;
-        //$flaggedSelectClause = "";
         $flaggedJoinClause = "";
-        //$flaggedWhereClause = "";
         $questionType = "bible-qna";
         if (isset($_POST["questionFilter"])) {
             $questionFilter = $_POST["questionFilter"];
@@ -26,15 +24,15 @@
             $questionType = $_POST["questionType"];
         }
         if ($whereClause == "") {
-            $whereClause = " WHERE Type = '" . $questionType . "'";
+            $whereClause = " WHERE (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
         else {
-            $whereClause .= " AND Type = '" . $questionType . "'";
+            $whereClause .= " AND (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
-        if ($questionType == "bible-qna") {
+        if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
             $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
         }
-        else if ($questionType == "commentary-qna") {
+        else if ($questionType == "commentary-qna" || $questionType == "commentary-qna-fill") {
             $orderByClause = " ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage ";
         }
         else {

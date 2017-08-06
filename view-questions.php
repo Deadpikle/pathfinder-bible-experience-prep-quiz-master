@@ -4,6 +4,15 @@
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
+<!-- https://github.com/Dogfalo/materialize/issues/1376 -->
+<style type="text/css">
+    [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: static;
+        left: 0px; 
+        opacity: 1; 
+    }
+</style>
+
 <p><a href=".">Back</a></p>
 
 <div id="create" class="row">
@@ -33,13 +42,6 @@
     <table id="questions" class="striped responsive-table">
         <thead>
             <tr id="table-header-row">
-                <th>Question</th>
-                <th>Answer</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Points</th>
-                <th>Edit</th>
-                <th>Delete</th>
             </tr>
         </thead>
         <tbody id="questions-body">
@@ -124,6 +126,7 @@
             if (questionType == 'bible-qna') {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
+                html += '<th class="nowrap">Fill-in?</th>';
                 html += '<th>Start</th>';
                 html += '<th>End</th>';
                 html += '<th>Points</th>';
@@ -131,6 +134,7 @@
             else if (questionType == 'commentary-qna') {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
+                html += '<th class="nowrap">Fill-in?</th>';
                 html += '<th>Volume</th>';
                 html += '<th>Points</th>';
             }
@@ -148,26 +152,34 @@
             var $questionsBody = $("#questions-body");
             emptyQuestionBody();
 
+            var unchecked = "<span><input type='checkbox' disabled></input></span>";
+            var checked = "<span><input type='checkbox' disabled checked></input></span>";
+
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
                 var id = question.QuestionID;
                 var html = '<tr>';
-                if (question.Type == "bible-qna") {
+                var isFillIn = question.Type.indexOf("-fill") !== -1;
+                var checkboxTypeForFillIn = isFillIn ? checked : unchecked;
+                var answer = isFillIn ? "[Fill in the blanks]" : question.Answer;
+                if (question.Type == "bible-qna" || question.Type == "bible-qna-fill") {
                     var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
                     var endVerse = "";
                     if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
                         endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
                     }
                     html += '<td>' + question.Question + '</td>';
-                    html += '<td>' + question.Answer + '</td>';
+                    html += '<td>' + answer + '</td>';
+                    html += '<td>' + checkboxTypeForFillIn + '</td>';
                     html += '<td>' + startVerse + '</td>';
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
-                else if (question.Type == "commentary-qna") {
+                else if (question.Type == "commentary-qna" || question.Type == "commentary-qna") {
                     var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
                     html += '<td>' + question.Question + '</td>';
-                    html += '<td>' + question.Answer + '</td>';
+                    html += '<td>' + answer + '</td>';
+                    html += '<td>' + checkboxTypeForFillIn + '</td>';
                     html += '<td>' + volume + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
@@ -256,6 +268,7 @@
         }, false);
 
         $("#questions").hide();
+        setupTableHeader("bible-qna");
         loadQuestions();
     });
 </script>
