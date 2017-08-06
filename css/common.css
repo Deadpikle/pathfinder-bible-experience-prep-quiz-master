@@ -120,6 +120,10 @@ main {
     text-transform: none;
 }
 
+#fill-in-data {
+    line-height: 2;
+}
+
 .fill-in-blank-input {
     border: 0;
     outline: 0;

@@ -70,7 +70,7 @@
         <div id="fill-in-question">
             <h5 id="fill-in-title"></h5>
             <div class="row">
-                <div id="fill-in-data" class="col s8"></div>
+                <div id="fill-in-data" class="col s10"></div>
             </div>
         </div>
         <div id="show-answer-div" class="row">
