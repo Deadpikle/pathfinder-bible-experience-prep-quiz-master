@@ -36,6 +36,12 @@
 
 <p><a href=".">Back</a></p>
 
+<!--
+https://stackoverflow.com/questions/18223743/to-generate-pdf-download-using-tcpdf
+https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-and-different-actions-for-each-button
+
+    -->
+
 <?php if ($areAnyQuestionsAvailable) { ?>
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
