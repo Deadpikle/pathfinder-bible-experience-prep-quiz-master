@@ -130,7 +130,7 @@ main {
     margin-top: 1em;
     /*text-align: center;*/
 }
-.fill-in-blank-input:disabled {
+.fill-in-blank-input:disabled, #quiz-answer:disabled {
     border-bottom: 1px solid black !important;
     color: inherit !important;
 }

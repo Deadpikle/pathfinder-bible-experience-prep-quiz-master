@@ -247,6 +247,7 @@
 
         var checkQnaAnswer = document.getElementById('check-qna-answer');
         checkQnaAnswer.addEventListener('click', function() {
+            $("#qna-question :input").attr("disabled", true);
             checkUserAnswer();
             nextQuestion.disabled = false;
             if (currentQuestionIndex == questions.length -1) {
