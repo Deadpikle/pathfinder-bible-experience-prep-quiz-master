@@ -155,7 +155,7 @@
         <div id="question-fill-in" class="row">
             <div class="input-field col s12 m4">
                 <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" <?= $isFillInCheckedText ?> />
-                <label class="black-text" for="question-is-fill-in-blank">Fill in the blank?</label>
+                <label class="black-text" for="question-is-fill-in-blank">Fill in the blank</label>
             </div>
         </div>
         <div class="row">
