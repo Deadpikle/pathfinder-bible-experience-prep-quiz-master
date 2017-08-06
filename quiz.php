@@ -244,9 +244,6 @@
             pointsEarnedInput.value = 0;
             $("#points-earned-row").show();
             var outputAnswer = isFillInQuestion(currentQuestion.type) ? currentQuestion.question : currentQuestion.answer;
-            if (!outputAnswer.endsWith('.')) {
-                outputAnswer = outputAnswer + '.';
-            }
             $questionAnswerText.html("The answer is: " + outputAnswer);
             $questionAnswerText.show();
         }

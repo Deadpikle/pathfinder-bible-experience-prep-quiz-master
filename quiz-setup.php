@@ -82,15 +82,15 @@
         <p id="question-types">Question types</p>
         <div class="row">
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="both" value="both" disabled/>
+                <input type="radio" class="with-gap" name="question-types" id="both" value="both"/>
                 <label class="black-text" for="both">Both Q&amp;A and fill in the blank</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" />
+                <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" checked/>
                 <label class="black-text" for="qa-only">Q&amp;A only</label>
             </div>
             <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only" checked/>
+                <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only"/>
                 <label class="black-text" for="fill-in-only">Fill in the blank only</label>
             </div>
             <div class="input-field col s2" id="fill-in-percent-div">
