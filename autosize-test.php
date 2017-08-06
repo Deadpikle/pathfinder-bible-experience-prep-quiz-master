@@ -3,7 +3,7 @@
     $sections = load_home_sections($pdo);
 
     $question = generate_fill_in_question("There was a boy called Eustace Clarence Scrubb, and he almost deserved it.", 0.5);
-    $question = generate_fill_in_question("\"My dear boy, what ever shall you do?\"", 0.5);
+    //$question = generate_fill_in_question("\"My dear boy, what ever shall you do?\"", 0.5);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>

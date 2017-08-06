@@ -54,3 +54,28 @@ if (typeof String.prototype.endsWith !== 'function') {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 }
+
+function createFillInInput(inputSelector, questionWords) {
+    $element = $(inputSelector);
+    for (var i = 0; i < questionWords.length; i++) {
+        var wordData = questionWords[i];
+        if (wordData.before !== "") {
+            $element.append(wordData.before);
+        }
+        if (wordData.word !== "") {
+            if (wordData.shouldBeBlanked) {
+                var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
+                $element.append(html);
+            }
+            else {
+                $element.append(wordData.word);
+            }
+        }
+        if (wordData.after !== "") {
+            $element.append(wordData.after);
+        }
+        if (i != questionWords.length - 1) {
+            $element.append(" ");
+        }
+    }
+}

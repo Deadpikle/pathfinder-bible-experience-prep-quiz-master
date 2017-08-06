@@ -125,8 +125,10 @@ main {
     outline: 0;
     background: transparent;
     border-bottom: 1px solid black;
-    min-width: 7em;
+    min-width: 4em;
     display: inline-block;
+    margin-top: 1em;
+    /*text-align: center;*/
 }
 
 /* https://stackoverflow.com/a/34961662/3938401 */

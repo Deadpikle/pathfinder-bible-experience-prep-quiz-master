@@ -1,7 +1,7 @@
 <?php
     // DO NOT RUN THIS FILE UNLESS YOU KNOW WHAT YOU'RE DOING
     require_once(dirname(__FILE__)."/init.php");
-    die("don't touch this file");
+    die();
     echo("Creating verse content...<br>");
     $chaptersQuery = "
         SELECT ChapterID, NumberVerses

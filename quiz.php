@@ -10,6 +10,7 @@
     $maxPoints = $_POST["max-points"];
     $questionTypes = $_POST["question-types"];
     $questionOrder = $_POST["order"];
+    $fillInPercent = $_POST["fill-in-percent"];
     $shouldAvoidPastCorrect = "false";
     if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
         $shouldAvoidPastCorrect = "true";
@@ -30,6 +31,7 @@
     var maxPoints = <?= $maxPoints ?>;
     var questionTypes = "<?= $questionTypes ?>";
     var questionOrder = "<?= $questionOrder ?>";
+    var fillInPercent = <?= $fillInPercent ?>;
     var shouldAvoidPastCorrect = <?= $shouldAvoidPastCorrect ?>;
     var quizItems = <?= json_encode($quizItems) ?>;
     var userID = <?= $_SESSION["UserID"] ?>; // is this really wise?
@@ -58,14 +60,23 @@
         <h5 id="question-text"></h5>
         <h6 id="question-points"></h6>
         <h6 id="quiz-progress"></h6>
-        <div class="row">
+        <div id="qna-question" class="row">
             <div class="input-field col s12 m6">
                 <input type="text" id="quiz-answer" name="quiz-answer" required/>
                 <label for="quiz-answer">Answer</label>
             </div>
+            <div class="input-field col s6 m6">
+                <button id="check-qna-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
+            </div>
+        </div>
+        <div id="fill-in-question">
+            <h5 id="fill-in-title"></h5>
+            <div class="row">
+                <div id="fill-in-data" class="col s6"></div>
                 <div class="input-field col s6 m6">
-                    <button id="check-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Check answer</button>
+                    <button id="check-fill-in-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
                 </div>
+            </div>
         </div>
         <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
         <p class="negative-top-margin" id="question-result-correct">That's the right answer! Good job!</p>
@@ -91,6 +102,9 @@
 
         var $correctAnswerText = $("#question-result-correct");
         var $incorrectAnswerText = $("#question-result-wrong");
+
+        var qnaDiv = document.getElementById('qna-question');
+        var fillInDiv = document.getElementById('fill-in-question');
 
         var noQuestionsError = document.getElementById('no-questions-available');
         var answersSavedLabel = document.getElementById('data-saved');
@@ -177,6 +191,7 @@
                     maxPoints: maxPoints,
                     questionTypes: questionTypes,
                     questionOrder: questionOrder,
+                    fillInPercent: fillInPercent,
                     shouldAvoidPastCorrect: shouldAvoidPastCorrect,
                     quizItems: quizItems,
                     userID: userID
@@ -205,29 +220,45 @@
 
         function checkUserAnswer() {
             var answer = $("#quiz-answer").val();
-            checkAnswer.disabled = true;
+            checkQnaAnswer.disabled = true;
             var answerData = {
                 userAnswer: answer,
                 dateAnswered: (new Date()).toISOString().replace('T', ' ').replace('Z', ''),
                 questionID: currentQuestion.id,
                 userID: userID
             };
-            if (answer == currentQuestion.answer) {
+            /*if (answer == currentQuestion.answer) {
                 $correctAnswerText.show();
                 $incorrectAnswerText.hide();
                 answerData.correct = 1; // TODO: someday, figure out how to set this as true/false in a way that PHP will be happy in the ajax call
             }
-            else {
+            else {*/
                 $correctAnswerText.hide();
-                $incorrectAnswerText.html("Sorry, that's not the correct answer. The correct answer is: " + currentQuestion.answer + "." );
+                var outputAnswer = isFillInQuestion(currentQuestion.type) ? currentQuestion.question : currentQuestion.answer;
+                if (!outputAnswer.endsWith('.')) {
+                    outputAnswer = outputAnswer + '.';
+                }
+                $incorrectAnswerText.html("The answer is: " + outputAnswer);
                 $incorrectAnswerText.show();
                 answerData.correct = 0;
-            }
+            //}
             userAnswers.push(answerData);
         }
 
-        var checkAnswer = document.getElementById('check-answer');
-        checkAnswer.addEventListener('click', function() {
+        var checkQnaAnswer = document.getElementById('check-qna-answer');
+        checkQnaAnswer.addEventListener('click', function() {
+            checkUserAnswer();
+            nextQuestion.disabled = false;
+            if (currentQuestionIndex == questions.length -1) {
+                $(flagQuestion).hide();
+                $(nextQuestion).hide();
+                $(endQuiz).show();
+                $(saveData).show();
+            }
+        }, false);
+
+        var checkFillInAnswer = document.getElementById('check-fill-in-answer');
+        checkFillInAnswer.addEventListener('click', function() {
             checkUserAnswer();
             nextQuestion.disabled = false;
             if (currentQuestionIndex == questions.length -1) {
@@ -256,11 +287,11 @@
         }
         
         function displayQuestion(data) {
-            // TODO: the format for the 'according to' will be different for fill in the blank
-            if (!data.question.endsWith("?")) {
+
+            if (!isFillInQuestion(data.type) && !data.question.endsWith("?")) {
                 data.question += "?";
             }
-            if (data.type == 'bible-qna') {
+            if (isBibleQuestion(data.type)) {
                 var verseText = data.startBook + " " + data.startChapter + ":" + data.startVerse;
                 if (data.endBook !== "" && data.startVerse != data.endVerse) {
                     if (data.startChapter == data.endChapter) {
@@ -271,20 +302,44 @@
                         verseText += "-" + endVerse;
                     }
                 }
-                var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
-                $("#question-text").html(questionText);
+                if (isFillInQuestion(data.type)) {
+                    $("#fill-in-title").empty().html("Fill in the blanks for " + verseText);
+                    $("#fill-in-data").empty().html(createFillInInput("#fill-in-data", data.fillInData));
+                    $(qnaDiv).hide();
+                    $(fillInDiv).show();
+                }
+                else {
+                    var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
+                    $("#question-text").html(questionText);
+                    $(qnaDiv).show();
+                    $(fillInDiv).hide();
+                }
             }
-            else if (data.type == 'commentary-qna') {
+            else if (isCommentaryQuestion(data.type)) {
                 var pageStr = pageString(data.startPage, data.endPage);
-                var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
-                    + pageStr + ", " + lowercaseFirstLetter(data.question);
-                $("#question-text").html(questionText);
+                if (isFillInQuestion(data.type)) {
+                    var questionTitleText = "Fill in the blanks for SDA Bible Commentary, Volume " + data.volume + ", "
+                        + pageStr;
+                    $("#fill-in-title").empty().html(questionTitleText);
+                    $("#fill-in-data").empty().html(createFillInInput("#fill-in-data", data.fillInData));
+                    $(qnaDiv).hide();
+                    $(fillInDiv).show();
+                }
+                else {
+                    var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
+                        + pageStr + ", " + lowercaseFirstLetter(data.question);
+                    $("#question-text").html(questionText);
+                    $(qnaDiv).show();
+                    $(fillInDiv).hide();
+                }
             }
+
+
             // show number of points
             var numberOfPoints = data.points + " Points";
             $("#question-points").html(numberOfPoints);
             // show quiz progress
-            var progress = "(Question " + data.number + "/" + questions.length + ")";
+            var progress = "(Question " + data.number + " of " + questions.length + ")";
             $("#quiz-progress").html(progress)
         }
 
@@ -294,7 +349,7 @@
             nextQuestion.disabled = true;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
-            checkAnswer.disabled = false;
+            checkQnaAnswer.disabled = false;
             currentQuestion = questions[currentQuestionIndex];
             if (currentQuestion.isFlagged == 0 && currentQuestion.isFlagged == "0") {
                 flagQuestion.disabled = false;
