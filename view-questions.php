@@ -175,7 +175,7 @@
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
-                else if (question.Type == "commentary-qna" || question.Type == "commentary-qna") {
+                else if (question.Type == "commentary-qna" || question.Type == "commentary-qna-fill") {
                     var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';

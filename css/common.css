@@ -1,5 +1,5 @@
 body {
-    display: flex;
+    display: flex; /* ...why did I put this here? It concerns me...maybe it's causing issues... */
     min-height: 100vh;
     flex-direction: column;
 }
