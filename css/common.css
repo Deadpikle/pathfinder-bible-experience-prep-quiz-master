@@ -130,6 +130,7 @@ main {
     margin-top: 1em;
     /*text-align: center;*/
 }
+
 .fill-in-blank-input:disabled, #quiz-answer:disabled {
     border-bottom: 1px solid black !important;
     color: inherit !important;
@@ -158,4 +159,13 @@ main {
     margin-left: 1em;
     margin-top: 3em;
     margin-bottom: -2em;
+}
+
+p#quiz-question-show-answer {
+    margin-top: 1em;
+}
+
+h6#user-points-earned {
+    margin-top: 1em;
+    margin-left: 3px;
 }

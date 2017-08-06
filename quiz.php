@@ -38,7 +38,6 @@
 </script>
 
 <div id="quiz-taking">
-    <h4>Quiz Me!</h4>
     <div id="loading-quiz">
         <h4 class="center-align">Generating quiz...</h4>
         <div id="loading-bar" class="preloader-wrapper active">
@@ -57,35 +56,49 @@
     </div>
 
     <div class="hidden" id="take-quiz">
+        <h4 id="quiz-progress"></h4>
+        <h5 id="question-points"></h5>
+        <h6 id="user-points-earned"></h6>
+        <div class="divider"></div>
         <h5 id="question-text"></h5>
-        <h6 id="question-points"></h6>
-        <h6 id="quiz-progress"></h6>
         <div id="qna-question" class="row">
             <div class="input-field col s12 m6">
                 <input type="text" id="quiz-answer" name="quiz-answer" required/>
                 <label for="quiz-answer">Answer</label>
             </div>
-            <div class="input-field col s6 m6">
-                <button id="check-qna-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
-            </div>
         </div>
         <div id="fill-in-question">
             <h5 id="fill-in-title"></h5>
             <div class="row">
-                <div id="fill-in-data" class="col s6"></div>
-                <div class="input-field col s6 m6">
-                    <button id="check-fill-in-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
-                </div>
+                <div id="fill-in-data" class="col s8"></div>
             </div>
         </div>
+        <div id="show-answer-div" class="row">
+            <div class="input-field col s12" id="">
+                <button id="show-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
+            </div>
+        </div>
+        <p class="negative-top-margin" id="quiz-question-show-answer">The answer is:</p>
+        <div id="points-earned-row" class="row">
+            <div class="input-field col s6 m3" id="">
+                <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
+                <label class="black-text" for="correct-answer">Correct Answer</label>
+            </div>
+            <div class="input-field col s6 m2" id="points-earned-div">
+                <input type="number" name="points-earned" id="points-earned" value="0" min="0" max="100"/>
+                <label class="black-text" for="points-earned">Points earned</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
+                <button id="tally-points" class="btn btn-flat blue white-text waves-effect blue-waves">Tally Points</button>
+            </div>
+        </div>
+        <div class="divider"></div>
         <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
-        <p class="negative-top-margin" id="question-result-correct">That's the right answer! Good job!</p>
-        <p class="negative-top-margin" id="question-result-wrong">Sorry, that's not the correct answer.</p>
         <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
         <p class="negative-top-margin" id="saving-data">Saving answers...</p>
         <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
         <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
-        <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
         <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
         <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
     </div>
@@ -95,13 +108,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
         var currentQuestionIndex = 0;
+        var totalPointsEarned = 0;
+        var totalPointsPossible = 0;
+
         var questions = [];
         var userAnswers = [];
         var currentQuestion = null;
         var didSaveAnswers = false;
 
-        var $correctAnswerText = $("#question-result-correct");
-        var $incorrectAnswerText = $("#question-result-wrong");
+        var $questionAnswerText = $("#quiz-question-show-answer");
 
         var qnaDiv = document.getElementById('qna-question');
         var fillInDiv = document.getElementById('fill-in-question');
@@ -109,8 +124,13 @@
         var noQuestionsError = document.getElementById('no-questions-available');
         var answersSavedLabel = document.getElementById('data-saved');
         var savingDataLabel = document.getElementById('saving-data');
+        var pointsEarnedInput = document.getElementById('points-earned');
+        var correctAnswerCheckbox = document.getElementById('correct-answer');
+        var nextQuestion = document.getElementById('next-question');
+        var tallyPoints = document.getElementById('tally-points');
         $(answersSavedLabel).hide();
         $(savingDataLabel).hide();
+        $(tallyPoints).hide();
         var saveData = document.getElementById('save-data');
         var endQuiz = document.getElementById('end-quiz');
         $(saveData).hide();
@@ -218,56 +238,39 @@
             });
         }
 
-        function checkUserAnswer() {
-            var answer = $("#quiz-answer").val();
-            checkQnaAnswer.disabled = true;
-            var answerData = {
-                userAnswer: answer,
-                dateAnswered: (new Date()).toISOString().replace('T', ' ').replace('Z', ''),
-                questionID: currentQuestion.id,
-                userID: userID
-            };
-            /*if (answer == currentQuestion.answer) {
-                $correctAnswerText.show();
-                $incorrectAnswerText.hide();
-                answerData.correct = 1; // TODO: someday, figure out how to set this as true/false in a way that PHP will be happy in the ajax call
+        function showAnswerToUser() {
+            showAnswer.disabled = true;
+            correctAnswerCheckbox.checked = false;
+            pointsEarnedInput.value = 0;
+            $("#points-earned-row").show();
+            var outputAnswer = isFillInQuestion(currentQuestion.type) ? currentQuestion.question : currentQuestion.answer;
+            if (!outputAnswer.endsWith('.')) {
+                outputAnswer = outputAnswer + '.';
             }
-            else {*/
-                $correctAnswerText.hide();
-                var outputAnswer = isFillInQuestion(currentQuestion.type) ? currentQuestion.question : currentQuestion.answer;
-                if (!outputAnswer.endsWith('.')) {
-                    outputAnswer = outputAnswer + '.';
-                }
-                $incorrectAnswerText.html("The answer is: " + outputAnswer);
-                $incorrectAnswerText.show();
-                answerData.correct = 0;
-            //}
-            userAnswers.push(answerData);
+            $questionAnswerText.html("The answer is: " + outputAnswer);
+            $questionAnswerText.show();
         }
 
-        var checkQnaAnswer = document.getElementById('check-qna-answer');
-        checkQnaAnswer.addEventListener('click', function() {
-            $("#qna-question :input").attr("disabled", true);
-            checkUserAnswer();
-            nextQuestion.disabled = false;
-            if (currentQuestionIndex == questions.length -1) {
-                $(flagQuestion).hide();
-                $(nextQuestion).hide();
-                $(endQuiz).show();
-                $(saveData).show();
+        $(correctAnswerCheckbox).change(function() {
+            if (this.checked) {
+                pointsEarnedInput.value = currentQuestion.points;
             }
-        }, false);
+            else {
+                pointsEarnedInput.value = 0;
+            }
+        });
 
-        var checkFillInAnswer = document.getElementById('check-fill-in-answer');
-        checkFillInAnswer.addEventListener('click', function() {
+        var showAnswer = document.getElementById('show-answer');
+        showAnswer.addEventListener('click', function() {
+            $("#qna-question :input").attr("disabled", true);
             $("#fill-in-question :input").attr("disabled", true);
-            checkUserAnswer();
+            showAnswerToUser();
+            $("#show-answer-div").hide();
             nextQuestion.disabled = false;
             if (currentQuestionIndex == questions.length -1) {
                 $(flagQuestion).hide();
                 $(nextQuestion).hide();
-                $(endQuiz).show();
-                $(saveData).show();
+                $(tallyPoints).show();
             }
         }, false);
 
@@ -278,18 +281,71 @@
             }
         }
 
-        var nextQuestion = document.getElementById('next-question');
+        function saveQuestionResponse() {
+            var pointsAchieved = Number(pointsEarnedInput.value);
+            if (pointsAchieved > currentQuestion.points) {
+                pointsAchieved = currentQuestion.points;
+            }
+            //var didGetAllPossible = pointsAchieved >= currentQuestion.points;
+            // save the user's answer data 
+            var wasCorrect = 0;
+            if (correctAnswerCheckbox.checked) {
+                wasCorrect = 1; // TODO: someday, figure out how to set this as true/false in a way that PHP will be happy in the ajax call
+            }
+            var userAnswer = "";
+            if (isFillInQuestion(currentQuestion.type)) {
+                var inputValues = $("#fill-in-data :input").map(function() {
+                    return $(this).val();
+                });
+                // https://stackoverflow.com/a/1424720/3938401 -- have to do some extra work to do a .join()
+                for (var i = 0; i < inputValues.length; ++i) {
+                    userAnswer += inputValues[i];
+                    if (i != inputValues.length - 1) {
+                        userAnswer += ", ";
+                    }
+                }
+            }
+            else {
+                userAnswer = $("#quiz-answer").val()
+            }
+            var answerData = {
+                userAnswer: userAnswer,
+                dateAnswered: (new Date()).toISOString().replace('T', ' ').replace('Z', ''),
+                questionID: currentQuestion.id,
+                userID: userID,
+                correct: wasCorrect // TODO: should this change to didGetAllPossible?
+            };
+            userAnswers.push(answerData);
+            // update points earned & points possible
+            totalPointsEarned += pointsAchieved;
+            totalPointsPossible += currentQuestion.points;
+            var percent = Math.round((totalPointsEarned / totalPointsPossible) * 100);
+            var pointsLabel = totalPointsEarned == 1 ? " point" : " points";
+            $("#user-points-earned").html(totalPointsEarned + pointsLabel + " earned out of " + totalPointsPossible + " (" + percent + "%)");
+        }
+
         nextQuestion.addEventListener('click', function() {
+            saveQuestionResponse();
             moveToNextQuestion();
+        }, false);
+
+        tallyPoints.addEventListener('click', function() {
+            saveQuestionResponse();
+            tallyPoints.disabled = true;
+            endQuiz.disabled = false;
+            $(endQuiz).show();
+            $(saveData).show();
         }, false);
 
         // https://stackoverflow.com/a/1026087/3938401
         function lowercaseFirstLetter(string) {
+            if (string.length == 0) {
+                return "";
+            }
             return string.charAt(0).toLowerCase() + string.slice(1);
         }
         
         function displayQuestion(data) {
-
             if (!isFillInQuestion(data.type) && !data.question.endsWith("?")) {
                 data.question += "?";
             }
@@ -336,22 +392,22 @@
                 }
             }
 
-
             // show number of points
-            var numberOfPoints = data.points + " Points";
+            var numberOfPoints = data.points + " Points Possible";
             $("#question-points").html(numberOfPoints);
             // show quiz progress
-            var progress = "(Question " + data.number + " of " + questions.length + ")";
+            var progress = "Question " + data.number + " of " + questions.length + "";
             $("#quiz-progress").html(progress)
         }
 
         function showQuestionAtCurrentIndex() {
-            $correctAnswerText.hide();
-            $incorrectAnswerText.hide();
+            $questionAnswerText.hide();
             nextQuestion.disabled = true;
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
-            checkQnaAnswer.disabled = false;
+            $("#points-earned-row").hide();
+            $("#show-answer-div").show();
+            showAnswer.disabled = false;
             currentQuestion = questions[currentQuestionIndex];
             if (currentQuestion.isFlagged == 0 && currentQuestion.isFlagged == "0") {
                 flagQuestion.disabled = false;
