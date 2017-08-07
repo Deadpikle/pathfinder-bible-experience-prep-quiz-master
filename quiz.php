@@ -402,6 +402,8 @@
         function showQuestionAtCurrentIndex() {
             $questionAnswerText.hide();
             nextQuestion.disabled = true;
+            $("#qna-question :input").attr("disabled", false);
+            $("#fill-in-question :input").attr("disabled", false);
             $("#question-flagged").hide();
             $("#quiz-answer").val("");
             $("#points-earned-row").hide();
