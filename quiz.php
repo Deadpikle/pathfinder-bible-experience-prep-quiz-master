@@ -317,8 +317,9 @@
             totalPointsEarned += pointsAchieved;
             totalPointsPossible += currentQuestion.points;
             var percent = Math.round((totalPointsEarned / totalPointsPossible) * 100);
-            var pointsLabel = totalPointsEarned == 1 ? " point" : " points";
-            $("#user-points-earned").html(totalPointsEarned + pointsLabel + " earned out of " + totalPointsPossible + " total points possible (" + percent + "%)");
+            var earnedPointsLabel = totalPointsEarned == 1 ? " point" : " points";
+            var possiblePointsLabel = totalPointsPossible == 1 ? " point" : " points";
+            $("#user-points-earned").html(totalPointsEarned + earnedPointsLabel + " earned out of " + totalPointsPossible + " total" + possiblePointsLabel + " possible (" + percent + "%)");
         }
 
         nextQuestion.addEventListener('click', function() {
