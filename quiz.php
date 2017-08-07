@@ -390,7 +390,8 @@
             }
 
             // show number of points
-            var numberOfPoints = data.points + " Points Possible";
+            var pointsLabel = data.points == 1 ? " point" : " points";
+            var numberOfPoints = data.points + pointsLabel + " Possible";
             $("#question-points").html(numberOfPoints);
             // show quiz progress
             var progress = "Question " + data.number + " of " + questions.length + "";
