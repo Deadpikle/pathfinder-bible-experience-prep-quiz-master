@@ -29,14 +29,17 @@
         for ($i = 0; $i < count($blankableIndices); $i++) {
             $data[$blankableIndices[$i]]["shouldBeBlanked"] = TRUE;
         }
-        $data["blank-count"] = $numberToBlank;
+        
         if (DEBUG) {
             echo $numberToBlank . ' to blank';
             echo '<br>';
             print_r($data);
             echo '<br>-----<br>';
         }
-        return $data;
+        return [
+            "data" => $data,
+            "blank-count" => $numberToBlank
+        ];
 	}
 
     function tokenize($phrase) {
