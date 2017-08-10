@@ -43,7 +43,7 @@
     $params = [
         $questionType, // either bible-qna or bible-qna-fill or commentary-qna or commentary-qna-fill right now
         $_POST["question-text"],
-        isset($_POST["question-answer"]) ? _POST["question-answer"] : "",
+        isset($_POST["question-answer"]) ? $_POST["question-answer"] : "",
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $startVerseID,
@@ -52,6 +52,8 @@
         $commentaryStartPage,
         $commentaryEndPage
     ];
+    print_r($params);
+    die();
     if ($_GET["type"] == "update") {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
