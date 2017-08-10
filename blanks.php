@@ -29,6 +29,7 @@
         for ($i = 0; $i < count($blankableIndices); $i++) {
             $data[$blankableIndices[$i]]["shouldBeBlanked"] = TRUE;
         }
+        $data["blank-count"] = $numberToBlank;
         if (DEBUG) {
             echo $numberToBlank . ' to blank';
             echo '<br>';

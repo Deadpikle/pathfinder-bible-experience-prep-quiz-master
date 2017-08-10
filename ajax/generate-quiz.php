@@ -314,6 +314,7 @@
         if (is_fill_in($question["Type"])) {
             $fillInData = generate_fill_in_question($question["Question"], $percentFillIn);
             $data["fillInData"] = $fillInData;
+            $data["points"] = $fillInData["blank-count"];
         }
         // for fill in the blank, will have text/blank key/value pairs
         $outputQuestions[] = $data;
