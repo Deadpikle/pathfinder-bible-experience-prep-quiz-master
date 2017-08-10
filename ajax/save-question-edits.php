@@ -52,8 +52,7 @@
         $commentaryStartPage,
         $commentaryEndPage
     ];
-    print_r($params);
-    die();
+    
     if ($_GET["type"] == "update") {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
