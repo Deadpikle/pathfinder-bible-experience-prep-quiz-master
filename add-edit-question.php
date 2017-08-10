@@ -39,7 +39,7 @@
         $isFillInText = "false"; // because javascript
         $isFillInCheckedText = "";
         $answer = "";
-        $numberOfPoints = "";
+        $numberOfPoints = "1";
         $isFlagged = FALSE;
         $commentaryVolume = "";
         $commentaryStartPage = "";
