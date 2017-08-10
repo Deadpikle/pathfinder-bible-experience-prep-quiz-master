@@ -170,7 +170,7 @@
                 <label for="question-answer">Answer</label>
             </div>
         </div>
-        <div class="row negative-top-margin">
+        <div id="number-of-points-div" class="row negative-top-margin">
             <div class="input-field col s12 m3">
                 <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
                 <label for="number-of-points">Number of Points</label>
@@ -435,17 +435,23 @@
         $('#commentary-volume').material_select();
 
         // events for fill in the blank checkbox (fillInBlankCheckbox)
+        var previousNumPointsValue = "1";
         function modifyAnswerField(isFillInChecked) {
             // readOnly looks/acts quirky with Materialize, so we're just going to use disabled :\
             if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
                 $("#question-answer-div").hide();
+                previousNumPointsValue = $("#number-of-points").val();
+                $("#number-of-points").val("1");
+                $("#number-of-points-div").hide();
             }     
             else {
                 answerField.disabled = false;
                 answerField.required = true;
+                $("#number-of-points").val(previousNumPointsValue);
                 $("#question-answer-div").show();
+                $("#number-of-points-div").show();
             }
         }
         $(fillInBlankCheckbox).change(function() {
