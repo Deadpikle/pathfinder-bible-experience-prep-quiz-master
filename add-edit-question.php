@@ -165,7 +165,7 @@
                 <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
-            <div class="input-field col s12 m6">
+            <div id="question-answer-div" class="input-field col s12 m6">
                 <textarea id="question-answer" name="question-answer" class="materialize-textarea" required data-length="3000"><?= $answer ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
@@ -440,10 +440,12 @@
             if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
+                $("#question-answer-div").hide();
             }     
             else {
                 answerField.disabled = false;
                 answerField.required = true;
+                $("#question-answer-div").show();
             }
         }
         $(fillInBlankCheckbox).change(function() {
