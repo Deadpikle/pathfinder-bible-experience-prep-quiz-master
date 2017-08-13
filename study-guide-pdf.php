@@ -5,6 +5,13 @@
     require_once('lib/fpdf181/fpdf.php');
 
     class UCCPDF extends FPDF {
+
+        // https://stackoverflow.com/a/36515771/3938401
+        function SetCellMargin($margin){
+            // Set cell margin
+            $this->cMargin = $margin;
+        }
+
         // Page header
         function Header() {
             // Logo
@@ -20,8 +27,7 @@
         
         // Page footer
         function Footer() {
-            // Position at 1.5 cm from bottom
-            $this->SetY(-15);
+            $this->SetY(-15.4);
             // Arial italic 8
             $this->SetFont('Arial', '', 10);
             // Page number
@@ -126,7 +132,7 @@
                 $this->SetXY($x + $w, $y);
             }
             // Go to the next line
-            $this->Ln($h);
+            $this->Ln($h + 2);
         }
     }
 
@@ -210,9 +216,15 @@
     }
 
     $pdf = new UCCPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
+    $pdf->SetTitle("UCC PBE Study Guide");
+    $pdf->SetAuthor("UCC Quiz Engine");
+    $pdf->SetCreator("UCC Quiz Engine");
+    $pdf->SetKeywords("quiz study Bible UCC PBE Pathfinder");
+    $pdf->SetSubject("PBE Study Guides");
     $pdf->AliasNbPages();
     $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
     $pdf->SetWidths([82.55, 82.55]);
+    $pdf->setCellMargin(3);
     $pdf->AddPage();
     // 8.5 - 2 = 6.5 inches for content width = 165.1 mm
     // 165.1 / 2 = 82.55 mm for each half (questions on left, answers on right)
