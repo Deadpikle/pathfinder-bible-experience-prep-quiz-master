@@ -4,9 +4,6 @@
     require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
-    print_r($_POST);
-    die();
-
     class UCCPDF extends FPDF {
         // Page header
         function Header() {
@@ -15,7 +12,7 @@
             // Arial bold 15
             $this->SetFont('Arial','B',15);
             // Draw centered title
-            $this->Cell(165.1, 10, 'UCC PBE Quiz Engine Study Guide', 0, 0, 'C');
+            $this->Cell(165.1, 10, 'UCC PBE Study Guide', 0, 0, 'C');
             // Line break
             $this->Ln(15);
         }
@@ -126,6 +123,85 @@
         }
     }
 
+    function get_question_text($question) {
+        $type = $question["type"];
+        $output = $question["question"];
+        $isFillIn = is_fill_in($type);
+        if (!$isFillIn && !ends_with($output, "?")) {
+            $output .= "?";
+        }
+        if (is_bible_qna($type)) {
+            $startBook = $question["startBook"];
+            $startChapter = $question["startChapter"];
+            $startVerse = $question["startVerse"];
+            $endBook = $question["endBook"];
+            $endChapter = $question["endChapter"];
+            $endVerse = $question["endVerse"];
+            $verseText = $startBook . " " . $startChapter . ":" . $startVerse;
+            if ($endBook !== "" && $startVerse != $endVerse) {
+                if ($startChapter == $endChapter) {
+                    $verseText .= "-" . $endVerse;
+                }
+                else {
+                    $endPart = $endChapter . ":" . $endVerse;
+                    $verseText .= "-" . $endPart;
+                }
+            }
+            if ($isFillIn) {
+                $output = "Fill in the blanks for " . $verseText;
+            }
+            else {
+                $output = "According to " . $verseText . ", " . lcfirst($output);
+            }
+        }
+        else if (is_commentary_qna($type)) {
+            $volume = $question["volume"];
+            $startPage = $question["startPage"];
+            $endPage = isset($question["endPage"]) ? $question["endPage"] : NULL;
+            $pageStr = "";
+            if ($endPage != NULL && $endPage != "" && $endPage > $startPage) {
+                $pageStr = "pp. " . $startPage . "-" . $endPage;
+            }
+            else {
+                $pageStr = "p. " . $startPage;
+            }
+            if ($isFillIn) {
+                $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr;
+            }
+            else {
+                $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . lcfirst($output);
+            }
+        }
+        return $output;
+    }
+
+    function generate_fill_in($question) {
+        $data = $question["fillInData"];
+        $output = "";
+        $i = 0;
+        foreach ($data as $questionWords) {
+            if ($questionWords["before"] !== "") {
+                $output .= $questionWords["before"];
+            }
+            if ($questionWords["word"] !== "") {
+                if ($questionWords["shouldBeBlanked"]) {
+                    $output .= "________";
+                }
+                else {
+                    $output .= $questionWords["word"];
+                }
+            }
+            if ($questionWords["after"] !== "") {
+                $output .= $questionWords["after"];
+            }
+            if ($i != count($data) - 1) {
+                $output .= " ";
+            }
+            $i++;
+        }
+        return $output;
+    }
+
     $pdf = new UCCPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
     $pdf->AliasNbPages();
     $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
@@ -133,13 +209,43 @@
     $pdf->AddPage();
     // 8.5 - 2 = 6.5 inches for content width = 165.1 mm
     // 165.1 / 2 = 82.55 mm for each half (questions on left, answers on right)
-    $pdf->SetFont('Arial','B', 16);
+    $pdf->SetFont('Arial','', 14);
     //$pdf->Cell(40,10,'Hello World!', 1);
 
-    $x = $pdf->GetX();
-    $y = $pdf->GetY();
-    $pdf->OutputRow([
+    // exchange $_POST for actual params
+    $params = array();
+    $params["maxQuestions"] = $_POST["max-questions"];
+    $params["maxPoints"] = $_POST["max-points"];
+    $params["questionTypes"] = $_POST["question-types"];
+    $params["questionOrder"] = $_POST["order"];
+    $params["fillInPercent"] = $_POST["fill-in-percent"];
+
+    $shouldAvoidPastCorrect = "false";
+    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
+        $shouldAvoidPastCorrect = "true";
+    }
+    $params["shouldAvoidPastCorrect"] = $shouldAvoidPastCorrect;
+    $params["quizItems"] = isset($_POST["quiz-items"]) ? $_POST["quiz-items"] : array();
+    $params["userID"] = $_SESSION["UserID"];
+    // generate the quiz
+    $quizMaterials = generate_quiz_questions($pdo, $params);
+    foreach ($quizMaterials["questions"] as $question) {
+        //$question = $question["question"];
+        $answer = $question["answer"];
+        $text = get_question_text($question);
+        if (!is_fill_in($question["type"])) {
+            $pdf->OutputRow([$text, $question["answer"]], 7);
+        }
+        else {
+            // for fill in the blanks, the full answer is stored
+            // in the question field
+            $text .= "\n" . generate_fill_in($question);
+            $pdf->OutputRow([$text, $question["question"]], 7);
+        }
+    }
+
+    /*$pdf->OutputRow([
         'Hi mom! I am a quiz question! This is a song of a young boy who likes to sing lots of songs.',
-        'Hi mom! I am a quiz answer! This is a song of a young boy who likes to sing lots of songs twice. This is a song of a young boy who likes to sing lots of songs.'], 7);
+        'Hi mom! I am a quiz answer! This is a song of a young boy who likes to sing lots of songs twice. This is a song of a young boy who likes to sing lots of songs.'], 7);*/
     $pdf->Output();
 ?>
