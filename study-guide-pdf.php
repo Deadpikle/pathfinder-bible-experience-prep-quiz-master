@@ -17,9 +17,8 @@
             // HTML parser
             $html = str_replace("\n", ' ', $html);
             $a = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
-            foreach($a as $i=>$e)
-            {
-                if($i % 2==0) {
+            foreach($a as $i=>$e) {
+                if ($i % 2 == 0) {
                     // Text
                     if ($this->HREF) {
                         $this->PutLink($this->HREF,$e);
@@ -76,8 +75,7 @@
             // Modify style and select corresponding font
             $this->$tag += ($enable ? 1 : -1);
             $style = '';
-            foreach(array('B', 'I', 'U') as $s)
-            {
+            foreach(array('B', 'I', 'U') as $s) {
                 if ($this->$s > 0) {
                     $style .= $s;
                 }
@@ -117,7 +115,7 @@
         function Footer() {
             $this->SetY(-15.4);
             // Arial italic 8
-            $this->SetFont('Arial', '', 10);
+            $this->SetFont('Arial', '', 12);
             // Page number
             $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
         }
@@ -195,17 +193,30 @@
             return $nl;
         }
 
+        function printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET) {
+            if (!$DRAW_RECT) {
+                $this->Line($x + $w, $y, $x + $w, $y + $h);
+            }
+            $this->SetFont('Arial', 'B', 14);
+            // print title
+            $this->Cell($w - $WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
+        }
+
         function OutputRow($data, $title, $lineHeight) {
             $this->lineHeight = $lineHeight;
             // Calculate the height of the row
             $maxLines = 0;
-            $numberOfTextLinesInCell = array();
+            $numberOfLinesInCell = array();
             $WIDTH_OFFSET = 0;
+            $tallestCellIndex = 0;
             for ($i = 0; $i < count($data); $i++) {
                 $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
-                $textHeight = $this->NbLines($this->widths[$i] - $WIDTH_OFFSET, $outputToCheck);
-                $numberOfTextLinesInCell[] = $textHeight;
-                $maxLines = max($maxLines, $textHeight);
+                $numberOfLines = $this->NbLines($this->widths[$i] - $WIDTH_OFFSET, $outputToCheck);
+                $numberOfLinesInCell[] = $numberOfLines;
+                if ($numberOfLines > $maxLines) {
+                    $tallestCellIndex = $i;
+                    $maxLines = $numberOfLines;
+                }
             }
             $h = $lineHeight * $maxLines;
             // Issue a page break first if needed
@@ -228,22 +239,34 @@
                     $this->SetY($y + ($cellOffset / 2), FALSE);
                 }
                 // Print the text
-                if ($i == 0) {
-                    if (!$DRAW_RECT) {
-                        $this->Line($x + $w, $y, $x + $w, $y + $h);
+                if ($i != $tallestCellIndex) {
+                    // this isn't the tallest cell, so center the text vertically
+                    $this->SetY($y + (($h - ($lineHeight * $numberOfLinesInCell[$i])) / 2), false);
+                    if ($i == 0) { 
+                        // printing the title portion of the question ("Question X -- Z Points")
+                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET);
                     }
-                    $this->SetFont('Arial', 'B', 14);
-                    $this->Cell($w - $WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
-                }
-                $this->SetFont('Arial', '', 14);
-                if ($i == 1) {
-                    $this->SetY($y + (($h - ($lineHeight * $numberOfTextLinesInCell[$i])) / 2), false);
+                    $this->SetFont('Arial', '', 14);
+                    // have to set left margin and right margins properly so the html wrapping works just right and wraps
+                    // text to the correct location
                     $lm = $this->lMargin;
-                    $this->SetLeftMargin($w + $lm);
+                    $rm = $this->rMargin;
+                    if ($i == 0) {
+                        $this->SetLeftMargin($lm);
+                        $this->SetRightMargin($w + $rm);
+                    }
+                    else {
+                        $this->SetLeftMargin($w + $lm);
+                    }
                     $this->WriteHTML($data[$i]);
                     $this->SetLeftMargin($lm);
+                    $this->SetRightMargin($rm);
                 }
                 else {
+                    if ($i == 0) {
+                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET);
+                    }
+                    $this->SetFont('Arial', '', 14); // just in case
                     $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
                 }
                 // Put the position to the right of the cell
