@@ -14,6 +14,16 @@
         return $type === "bible-qna-fill" || $type === "commentary-qna-fill";
     }
 
+    // https://stackoverflow.com/a/834355/3938401
+    function ends_with($haystack, $needle) {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
     function generate_uuid() {
         $bytes = random_bytes(16);
         $UUID = bin2hex($bytes);
@@ -320,7 +330,7 @@
             $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
             $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
             $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
-            $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $bibleFillInCount;
+            $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
 
             if (!$hasBibleQuestionLeft && !$hasCommentaryQuestionLeft && 
                 !$hasBibleFillInLeft && !$hasCommentaryFillInQuestionLeft) {
