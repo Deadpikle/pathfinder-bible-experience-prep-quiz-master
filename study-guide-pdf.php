@@ -38,6 +38,11 @@
             // Set the array of column widths
             $this->widths = $w;
         }
+        
+        function SetAligns($a) {
+            // Set the array of column widths
+            $this->aligns = $a;
+        }
 
         function GetCurrentFont() {
             return $this->CurrentFont;
@@ -58,16 +63,16 @@
             }
             $wmax = ($w-2 * $this->cMargin) * 1000 / $this->FontSize;
             $s = str_replace("\r",'',$txt);
-            $nb = strlen($s);
-            if ($nb > 0 and $s[$nb-1] == "\n") {
-                $nb--;
+            $maxLines = strlen($s);
+            if ($maxLines > 0 and $s[$maxLines-1] == "\n") {
+                $maxLines--;
             }
             $sep = -1;
             $i = 0;
             $j = 0;
             $l = 0;
             $nl = 1;
-            while ($i < $nb) {
+            while ($i < $maxLines) {
                 $c = $s[$i];
                 if ($c == "\n") {
                     $i++;
@@ -77,13 +82,13 @@
                     $nl++;
                     continue;
                 }
-                if($c==' ') {
+                if($c == ' ') {
                     $sep = $i;
                 }
                 $l += $cw[$c];
                 if ($l > $wmax) {
-                    if($sep==-1) {
-                        if($i==$j) {
+                    if ($sep == -1) {
+                        if ($i == $j) {
                             $i++;
                         }
                     }
@@ -104,14 +109,20 @@
 
         function OutputRow($data, $title, $lineHeight) {
             // Calculate the height of the row
-            $nb = 0;
+            $maxLines = 0;
+            $numberOfTextLinesInCell = array();
             for ($i = 0; $i < count($data); $i++) {
                 $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
-                $nb = max($nb, $this->NbLines($this->widths[$i], $outputToCheck));
+                $textHeight = $this->NbLines($this->widths[$i], $outputToCheck);
+                $numberOfTextLinesInCell[] = $textHeight;
+                $maxLines = max($maxLines, $textHeight);
             }
-            $h = $lineHeight * $nb;
+            $h = $lineHeight * $maxLines;
             // Issue a page break first if needed
-            $this->CheckPageBreak($h);
+            $DRAW_RECT = FALSE;
+            $OFFSET = FALSE;
+            $cellOffset = $OFFSET ? 5 : 0;
+            $this->CheckPageBreak($h + $cellOffset);
             // Draw the cells of the row
             for ($i = 0; $i < count($data); $i++) {
                 $w = $this->widths[$i];
@@ -120,19 +131,32 @@
                 $x = $this->GetX();
                 $y = $this->GetY();
                 // Draw the border
-                $this->Rect($x, $y, $w, $h);
+                if ($DRAW_RECT) {
+                    $this->Rect($x, $y, $w, $h + $cellOffset);
+                }
+                else {
+                    $this->SetY($y + ($cellOffset / 2), FALSE);
+                }
                 // Print the text
                 if ($i == 0) {
+                    $this->SetCellMargin(0);
+                    if (!$DRAW_RECT) {
+                        $this->Line($x + $w, $y, $x + $w, $y + $h);
+                    }
                     $this->SetFont('Arial', 'B', 14);
                     $this->Cell($w, $lineHeight, $title, 0, 1, 'C');
                 }
                 $this->SetFont('Arial', '', 14);
+                if ($i == 1) {
+                    $this->SetCellMargin(2);
+                    $this->SetY($y + (($h - ($lineHeight * $numberOfTextLinesInCell[$i])) / 2), false);
+                }
                 $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
                 // Put the position to the right of the cell
                 $this->SetXY($x + $w, $y);
             }
             // Go to the next line
-            $this->Ln($h + 2);
+            $this->Ln($h + 4 + ($cellOffset / 2));
         }
     }
 
@@ -161,7 +185,7 @@
                 }
             }
             if ($isFillIn) {
-                $output = "Fill in the blanks for " . $verseText;
+                $output = "Fill in the blanks for " . $verseText . ".";
             }
             else {
                 $output = "According to " . $verseText . ", " . lcfirst($output);
@@ -179,7 +203,7 @@
                 $pageStr = "p. " . $startPage;
             }
             if ($isFillIn) {
-                $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr;
+                $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ".";
             }
             else {
                 $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . lcfirst($output);
@@ -224,7 +248,8 @@
     $pdf->AliasNbPages();
     $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
     $pdf->SetWidths([82.55, 82.55]);
-    $pdf->setCellMargin(3);
+    $pdf->SetAligns(['L', 'L']);
+    //$pdf->setCellMargin(3);
     $pdf->AddPage();
     // 8.5 - 2 = 6.5 inches for content width = 165.1 mm
     // 165.1 / 2 = 82.55 mm for each half (questions on left, answers on right)
