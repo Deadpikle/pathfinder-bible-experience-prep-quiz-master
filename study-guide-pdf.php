@@ -1,10 +1,98 @@
 <?php
     // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
+    // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
     require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
     class UCCPDF extends FPDF {
+
+        protected $B = 0;
+        protected $I = 0;
+        protected $U = 0;
+        protected $HREF = '';
+        protected $lineHeight = 7;
+        
+        function WriteHTML($html) {
+            // HTML parser
+            $html = str_replace("\n", ' ', $html);
+            $a = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+            foreach($a as $i=>$e)
+            {
+                if($i % 2==0) {
+                    // Text
+                    if ($this->HREF) {
+                        $this->PutLink($this->HREF,$e);
+                    }
+                    else {
+                        $this->Write($this->lineHeight, $e);
+                    }
+                }
+                else {
+                    // Tag
+                    if ($e[0]=='/') {
+                        $this->CloseTag(strtoupper(substr($e,1)));
+                    }
+                    else {
+                        // Extract attributes
+                        $a2 = explode(' ', $e);
+                        $tag = strtoupper(array_shift($a2));
+                        $attr = array();
+                        foreach($a2 as $v) {
+                            if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
+                                $attr[strtoupper($a3[1])] = $a3[2];
+                            }
+                        }
+                        $this->OpenTag($tag,$attr);
+                    }
+                }
+            }
+        }
+        
+        function OpenTag($tag, $attr) {
+            // Opening tag
+            if ($tag=='B' || $tag=='I' || $tag=='U') {
+                $this->SetStyle($tag, true);
+            }
+            if ($tag=='A') {
+                $this->HREF = $attr['HREF'];
+            }
+            if ($tag=='BR') {
+                $this->Ln(5);
+            }
+        }
+        
+        function CloseTag($tag) {
+            // Closing tag
+            if ($tag =='B' || $tag =='I' || $tag =='U') {
+                $this->SetStyle($tag,false);
+            }
+            if ($tag=='A') {
+                $this->HREF = '';
+            }
+        }
+        
+        function SetStyle($tag, $enable) {
+            // Modify style and select corresponding font
+            $this->$tag += ($enable ? 1 : -1);
+            $style = '';
+            foreach(array('B', 'I', 'U') as $s)
+            {
+                if ($this->$s > 0) {
+                    $style .= $s;
+                }
+            }
+            $this->SetFont('', $style);
+        }
+        
+        function PutLink($URL, $txt) {
+            // Put a hyperlink
+            $this->SetTextColor(0,0,255);
+            $this->SetStyle('U',true);
+            $this->Write(5,$txt,$URL);
+            $this->SetStyle('U',false);
+            $this->SetTextColor(0);
+        }
 
         // https://stackoverflow.com/a/36515771/3938401
         function SetCellMargin($margin){
@@ -108,6 +196,7 @@
         }
 
         function OutputRow($data, $title, $lineHeight) {
+            $this->lineHeight = $lineHeight;
             // Calculate the height of the row
             $maxLines = 0;
             $numberOfTextLinesInCell = array();
@@ -149,8 +238,14 @@
                 $this->SetFont('Arial', '', 14);
                 if ($i == 1) {
                     $this->SetY($y + (($h - ($lineHeight * $numberOfTextLinesInCell[$i])) / 2), false);
+                    $lm = $this->lMargin;
+                    $this->SetLeftMargin($w + $lm);
+                    $this->WriteHTML($data[$i]);
+                    $this->SetLeftMargin($lm);
                 }
-                $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
+                else {
+                    $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
+                }
                 // Put the position to the right of the cell
                 $this->SetXY($x + $w, $y);
             }
@@ -213,29 +308,35 @@
 
     function generate_fill_in($question) {
         $data = $question["fillInData"];
-        $output = "";
+        $blankedOutput = "";
+        $boldedOutput = "";
         $i = 0;
         foreach ($data as $questionWords) {
             if ($questionWords["before"] !== "") {
-                $output .= $questionWords["before"];
+                $blankedOutput .= $questionWords["before"];
+                $boldedOutput .= $questionWords["before"];
             }
             if ($questionWords["word"] !== "") {
                 if ($questionWords["shouldBeBlanked"]) {
-                    $output .= "________";
+                    $blankedOutput .= "________";
+                    $boldedOutput .= "<b>" . $questionWords["word"] . "</b>";
                 }
                 else {
-                    $output .= $questionWords["word"];
+                    $blankedOutput .= $questionWords["word"];
+                    $boldedOutput .= $questionWords["word"];
                 }
             }
             if ($questionWords["after"] !== "") {
-                $output .= $questionWords["after"];
+                $blankedOutput .= $questionWords["after"];
+                $boldedOutput .= $questionWords["after"];
             }
             if ($i != count($data) - 1) {
-                $output .= " ";
+                $blankedOutput .= " ";
+                $boldedOutput .= " ";
             }
             $i++;
         }
-        return $output;
+        return ["question" => $blankedOutput, "answer" => $boldedOutput];
     }
 
     $pdf = new UCCPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
@@ -291,8 +392,9 @@
             else {
                 // for fill in the blanks, the full answer is stored
                 // in the question field
-                $text .= "\n" . generate_fill_in($question);
-                $pdf->OutputRow([$text, $question["question"]], $title, 7);
+                $fillIn = generate_fill_in($question);
+                $text .= "\n" . $fillIn["question"];
+                $pdf->OutputRow([$text, $fillIn["answer"]], $title, 7);
             }
             $questionNumber++;
         }
