@@ -127,7 +127,7 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
             </div>
         </div>
         <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="quiz.php">Start Quiz</button>
-        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="generate-pdf.php" >Flash Cards</button>
+        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="study-guide-pdf.php" >Flash Cards</button>
         <div class="divider"></div>
         <div class="input-field col s6">
             <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="delete-user-answers.php">Erase previously saved answers</a>

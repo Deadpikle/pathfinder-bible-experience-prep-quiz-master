@@ -10,6 +10,7 @@
             // Logo
             // $this->Image('logo.png',10,6,30);
             // Arial bold 15
+            $this->SetY(15.4);
             $this->SetFont('Arial', 'B', 15);
             // Draw centered title
             $this->Cell(165.1, 10, 'UCC PBE Study Guide', 0, 0, 'C');
@@ -22,7 +23,7 @@
             // Position at 1.5 cm from bottom
             $this->SetY(-15);
             // Arial italic 8
-            $this->SetFont('Arial', '', 8);
+            $this->SetFont('Arial', '', 10);
             // Page number
             $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
         }
@@ -95,11 +96,12 @@
             return $nl;
         }
 
-        function OutputRow($data, $lineHeight) {
+        function OutputRow($data, $title, $lineHeight) {
             // Calculate the height of the row
             $nb = 0;
-            for($i = 0; $i < count($data); $i++) {
-                $nb = max($nb, $this->NbLines($this->widths[$i], $data[$i]));
+            for ($i = 0; $i < count($data); $i++) {
+                $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
+                $nb = max($nb, $this->NbLines($this->widths[$i], $outputToCheck));
             }
             $h = $lineHeight * $nb;
             // Issue a page break first if needed
@@ -114,6 +116,11 @@
                 // Draw the border
                 $this->Rect($x, $y, $w, $h);
                 // Print the text
+                if ($i == 0) {
+                    $this->SetFont('Arial', 'B', 14);
+                    $this->Cell($w, $lineHeight, $title, 0, 1, 'C');
+                }
+                $this->SetFont('Arial', '', 14);
                 $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
                 // Put the position to the right of the cell
                 $this->SetXY($x + $w, $y);
@@ -241,15 +248,15 @@
             $points = $question["points"];
             $pointsStr = $points == 1 ? "point" : "points";
             $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-            $text = $title . "\n" . get_question_text($question);
+            $text = get_question_text($question);
             if (!is_fill_in($question["type"])) {
-                $pdf->OutputRow([$text, $question["answer"]], 7);
+                $pdf->OutputRow([$text, $question["answer"]], $title, 7);
             }
             else {
                 // for fill in the blanks, the full answer is stored
                 // in the question field
                 $text .= "\n" . generate_fill_in($question);
-                $pdf->OutputRow([$text, $question["question"]], 7);
+                $pdf->OutputRow([$text, $question["question"]], $title, 7);
             }
             $questionNumber++;
         }
