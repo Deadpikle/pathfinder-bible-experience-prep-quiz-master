@@ -211,6 +211,7 @@
             $tallestCellIndex = 0;
             for ($i = 0; $i < count($data); $i++) {
                 $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
+                $outputToCheck = strip_tags($outputToCheck);
                 $numberOfLines = $this->NbLines($this->widths[$i] - $WIDTH_OFFSET, $outputToCheck);
                 $numberOfLinesInCell[] = $numberOfLines;
                 if ($numberOfLines > $maxLines) {
