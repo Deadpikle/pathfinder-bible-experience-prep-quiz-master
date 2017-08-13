@@ -10,7 +10,7 @@
             // Logo
             // $this->Image('logo.png',10,6,30);
             // Arial bold 15
-            $this->SetFont('Arial','B',15);
+            $this->SetFont('Arial', 'B', 15);
             // Draw centered title
             $this->Cell(165.1, 10, 'UCC PBE Study Guide', 0, 0, 'C');
             // Line break
@@ -22,7 +22,7 @@
             // Position at 1.5 cm from bottom
             $this->SetY(-15);
             // Arial italic 8
-            $this->SetFont('Arial','I',8);
+            $this->SetFont('Arial', '', 8);
             // Page number
             $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
         }
@@ -229,23 +229,31 @@
     $params["userID"] = $_SESSION["UserID"];
     // generate the quiz
     $quizMaterials = generate_quiz_questions($pdo, $params);
-    foreach ($quizMaterials["questions"] as $question) {
-        //$question = $question["question"];
-        $answer = $question["answer"];
-        $text = get_question_text($question);
-        if (!is_fill_in($question["type"])) {
-            $pdf->OutputRow([$text, $question["answer"]], 7);
-        }
-        else {
-            // for fill in the blanks, the full answer is stored
-            // in the question field
-            $text .= "\n" . generate_fill_in($question);
-            $pdf->OutputRow([$text, $question["question"]], 7);
+    if ($quizMaterials["totalQuestions"] <= 0) {
+        $pdf->MultiCell(165.1, 10, 
+        'No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!');        
+    }
+    else {
+        $questionNumber = 1;
+        foreach ($quizMaterials["questions"] as $question) {
+            //$question = $question["question"];
+            $answer = $question["answer"];
+            $points = $question["points"];
+            $pointsStr = $points == 1 ? "point" : "points";
+            $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
+            $text = $title . "\n" . get_question_text($question);
+            if (!is_fill_in($question["type"])) {
+                $pdf->OutputRow([$text, $question["answer"]], 7);
+            }
+            else {
+                // for fill in the blanks, the full answer is stored
+                // in the question field
+                $text .= "\n" . generate_fill_in($question);
+                $pdf->OutputRow([$text, $question["question"]], 7);
+            }
+            $questionNumber++;
         }
     }
 
-    /*$pdf->OutputRow([
-        'Hi mom! I am a quiz question! This is a song of a young boy who likes to sing lots of songs.',
-        'Hi mom! I am a quiz answer! This is a song of a young boy who likes to sing lots of songs twice. This is a song of a young boy who likes to sing lots of songs.'], 7);*/
     $pdf->Output();
 ?>
