@@ -349,7 +349,7 @@
                     $boldedOutput .= $questionWords["word"];
                 }
             }
-            if ($questionWords["after"] !== "") {
+            if ($questionWords["after"] !== "" && $questionWords["after"] !== "...") {
                 $blankedOutput .= $questionWords["after"];
                 $boldedOutput .= $questionWords["after"];
             }

@@ -2,7 +2,7 @@
 // blanks a minimum of 1 word
 	//require_once('./test.php');
 
-	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the'];
+	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the', '...'];
     const PUNCTUATION = ['.', '?', '!', ',', ' '];
     const DEBUG = FALSE;
 
@@ -45,6 +45,24 @@
     function tokenize($phrase) {
         preg_match_all("/[^\s]+/", $phrase, $words);
         $words = $words[0];
+        $adjustedWords = array();
+        foreach ($words as $word) {
+            if (strpos($word, '...') !== false) {
+                $parts = explode("...", $word);
+                $i = 0;
+                foreach ($parts as $part) {
+                    if ($i != count($parts) - 1) { // so if we split more than once we get all the ... in the output :)
+                        $part = $part . "...";
+                    }
+                    $adjustedWords[] = $part;
+                    $i++;
+                }
+            }
+            else {
+                $adjustedWords[] = $word;
+            }
+        }
+        $words = $adjustedWords;
         $word_arrays = [];
         $blankableIndices = [];
         for ($i = 0; $i < count($words); $i++) {

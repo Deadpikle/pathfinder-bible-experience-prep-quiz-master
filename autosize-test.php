@@ -3,6 +3,7 @@
     $sections = load_home_sections($pdo);
 
     $question = generate_fill_in_question("There was a boy called Eustace Clarence Scrubb, and he almost deserved it.", 0.5);
+    $question = generate_fill_in_question("There...almost deserved it.", 0.75);
     //$question = generate_fill_in_question("\"My dear boy, what ever shall you do?\"", 0.5);
 ?>
 
@@ -40,27 +41,7 @@
         $("span").keypress(function(e) { return e.which != 13; } );
 
         $place = $("#magic");
-        for (var i = 0; i < questionWords.length; i++) {
-            var wordData = questionWords[i];
-            if (wordData.before !== "") {
-                $place.append(wordData.before);
-            }
-            if (wordData.word !== "") {
-                if (wordData.shouldBeBlanked) {
-                    var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input-\'{ "space": 4 }\/></span>';
-                    $place.append(html);
-                }
-                else {
-                    $place.append(wordData.word);
-                }
-            }
-            if (wordData.after !== "") {
-                $place.append(wordData.after);
-            }
-            if (i != questionWords.length - 1) {
-                $place.append(" ");
-            }
-        }
+        createFillInInput("#magic", questionWords.data);
 
 
     });

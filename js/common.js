@@ -74,7 +74,7 @@ function createFillInInput(inputSelector, questionWords) {
         if (wordData.after !== "") {
             $element.append(wordData.after);
         }
-        if (i != questionWords.length - 1) {
+        if (i != questionWords.length - 1 && wordData.after !== "...") {
             $element.append(" ");
         }
     }
