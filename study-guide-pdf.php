@@ -17,7 +17,7 @@
             // HTML parser
             $html = str_replace("\n", ' ', $html);
             $a = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
-            foreach($a as $i=>$e) {
+            foreach ($a as $i=>$e) {
                 if ($i % 2 == 0) {
                     // Text
                     if ($this->HREF) {
@@ -75,7 +75,7 @@
             // Modify style and select corresponding font
             $this->$tag += ($enable ? 1 : -1);
             $style = '';
-            foreach(array('B', 'I', 'U') as $s) {
+            foreach (array('B', 'I', 'U') as $s) {
                 if ($this->$s > 0) {
                     $style .= $s;
                 }
