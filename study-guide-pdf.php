@@ -111,9 +111,10 @@
             // Calculate the height of the row
             $maxLines = 0;
             $numberOfTextLinesInCell = array();
+            $WIDTH_OFFSET = 0;
             for ($i = 0; $i < count($data); $i++) {
                 $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
-                $textHeight = $this->NbLines($this->widths[$i], $outputToCheck);
+                $textHeight = $this->NbLines($this->widths[$i] - $WIDTH_OFFSET, $outputToCheck);
                 $numberOfTextLinesInCell[] = $textHeight;
                 $maxLines = max($maxLines, $textHeight);
             }
@@ -139,16 +140,14 @@
                 }
                 // Print the text
                 if ($i == 0) {
-                    $this->SetCellMargin(0);
                     if (!$DRAW_RECT) {
                         $this->Line($x + $w, $y, $x + $w, $y + $h);
                     }
                     $this->SetFont('Arial', 'B', 14);
-                    $this->Cell($w, $lineHeight, $title, 0, 1, 'C');
+                    $this->Cell($w - $WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
                 }
                 $this->SetFont('Arial', '', 14);
                 if ($i == 1) {
-                    $this->SetCellMargin(2);
                     $this->SetY($y + (($h - ($lineHeight * $numberOfTextLinesInCell[$i])) / 2), false);
                 }
                 $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
@@ -249,7 +248,7 @@
     $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
     $pdf->SetWidths([82.55, 82.55]);
     $pdf->SetAligns(['L', 'L']);
-    //$pdf->setCellMargin(3);
+    $pdf->setCellMargin(3);
     $pdf->AddPage();
     // 8.5 - 2 = 6.5 inches for content width = 165.1 mm
     // 165.1 / 2 = 82.55 mm for each half (questions on left, answers on right)
