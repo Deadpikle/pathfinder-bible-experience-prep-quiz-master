@@ -45,7 +45,7 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
 <?php if ($areAnyQuestionsAvailable) { ?>
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
-    <form action="quiz.php" method="post">
+    <form method="post">
         <p>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
@@ -126,7 +126,9 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
                 <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>
-        <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action">Start Quiz</button>
+        <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="quiz.php">Start Quiz</button>
+        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="generate-pdf.php" >Flash Cards</button>
+        <div class="divider"></div>
         <div class="input-field col s6">
             <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="delete-user-answers.php">Erase previously saved answers</a>
         </div>
@@ -148,5 +150,31 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
         var bibleQuestionType = document.getElementById('quiz-items');
         $(bibleQuestionType).material_select();
         fixRequiredSelectorCSS();
+
+        $('#start-quiz-btn').click(function() {
+            $('form').attr('target', '').submit();
+        });
+        $('#flash-quiz-btn').click(function() {
+            $('form').attr('target', '_blank').submit();
+            return false;
+        });
+
+        var buttonID = '';
+        $(':submit').click(function() {
+            buttonID = $(this).attr('id');
+        })
+        $('form').submit(function() {
+            if (buttonID != '') {
+                if (buttonID === 'flash-cards-btn') {
+                    this.target = '_blank';
+                }
+                else {
+                    this.target = '';
+                }
+            }
+            buttonID = '';
+            return true;
+        })
+
     });
 </script>

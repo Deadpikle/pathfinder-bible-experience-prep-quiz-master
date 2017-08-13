@@ -4,11 +4,14 @@
     require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
+    print_r($_POST);
+    die();
+
     class UCCPDF extends FPDF {
         // Page header
         function Header() {
             // Logo
-            //$this->Image('logo.png',10,6,30);
+            // $this->Image('logo.png',10,6,30);
             // Arial bold 15
             $this->SetFont('Arial','B',15);
             // Draw centered title
@@ -118,11 +121,10 @@
                 // Put the position to the right of the cell
                 $this->SetXY($x + $w, $y);
             }
-            //Go to the next line
+            // Go to the next line
             $this->Ln($h);
         }
     }
-    
 
     $pdf = new UCCPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
     $pdf->AliasNbPages();

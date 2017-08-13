@@ -68,8 +68,12 @@ main {
     margin-bottom: 1em;
 }
 
-#start-quiz-btn {
+#start-quiz-btn, #flash-cards-btn {
     margin-top: 1em;
+}
+
+#flash-cards-btn {
+    margin-left: 1em;
 }
 
 #question-types {
