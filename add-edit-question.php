@@ -162,7 +162,7 @@
             <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
             <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
-                <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="3000"><?= $questionText ?></textarea>
+                <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="10000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div id="question-answer-div" class="input-field col s12 m6">
