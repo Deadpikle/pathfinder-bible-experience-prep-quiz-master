@@ -13,8 +13,7 @@
         $query = '
             SELECT ClubID, Name, URL
             FROM Clubs
-            WHERE ClubID = ?
-            ORDER BY Name';
+            WHERE ClubID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $club = $stmt->fetch();
@@ -41,7 +40,7 @@
 
 <p><a href="./view-clubs.php">Back</a></p>
 
-<h4><?= $titleString ?> Line Item</h4>
+<h4><?= $titleString ?> Pathfinder Club</h4>
 
 <div id="edit-club">
     <form action="ajax/save-club-edits.php?type=<?= $postType ?>" method="post">
