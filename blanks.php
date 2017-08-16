@@ -71,7 +71,7 @@
             preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
             $actualWord = trim($matches[2]);
             $isBlankable = array_search(strtolower($actualWord), SKIPPABLE) === FALSE ? TRUE : FALSE;
-            if ($isBlankable) {
+            if ($isBlankable && !is_numeric($actualWord)) {
                 if (DEBUG) {
                     echo '"' . $actualWord . '" is blankable';
                     echo '<br>';
