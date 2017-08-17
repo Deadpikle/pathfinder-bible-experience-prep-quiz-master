@@ -36,9 +36,9 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-blankable-words.php">Back</a></p>
+<p><a href="./view-non-blankable-words.php">Back</a></p>
 
-<h4><?= $titleString ?> Blankable Word</h4>
+<h4><?= $titleString ?> Non-Blankable Word</h4>
 
 <div id="edit-word">
     <form action="ajax/save-blankable-word-edits.php?type=<?= $postType ?>" method="post">

@@ -2,7 +2,7 @@
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
         $params = [
-            $_POST["blankable-word"]
+            trim($_POST["blankable-word"])
         ];
         if ($_GET["type"] == "update") {
             $query = '
@@ -20,7 +20,7 @@
         }
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
-        header("Location: $basePath/admin/view-blankable-words.php");
+        header("Location: $basePath/admin/view-non-blankable-words.php");
     }
     catch (PDOException $e) {
         print_r($e);

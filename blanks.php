@@ -7,13 +7,13 @@
     const DEBUG = FALSE;
 
     // $percentToBlank should be a decimal
-	function generate_fill_in_question($phrase, $percentToBlank) {
+	function generate_fill_in_question($phrase, $percentToBlank, $nonBlankableWords) {
         if (DEBUG) {
             echo '<br>-----<br>';
             echo $phrase;
             echo '<br>';
         }
-		$tokenized = tokenize($phrase);
+		$tokenized = tokenize($phrase, $nonBlankableWords);
 
         $data = $tokenized["word-data"];
         $blankableIndices = $tokenized["blankable-indices"];
@@ -42,7 +42,7 @@
         ];
 	}
 
-    function tokenize($phrase) {
+    function tokenize($phrase, $nonBlankableWords) {
         preg_match_all("/[^\s]+/", $phrase, $words);
         $words = $words[0];
         $adjustedWords = array();
@@ -70,7 +70,7 @@
             // could add ^' to keep words like 'taint (as in "'taint so") in the word section and not in the before section
             preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
             $actualWord = trim($matches[2]);
-            $isBlankable = array_search(strtolower($actualWord), SKIPPABLE) === FALSE ? TRUE : FALSE;
+            $isBlankable = array_search(strtolower($actualWord), $nonBlankableWords) === FALSE ? TRUE : FALSE;
             if ($isBlankable && !is_numeric($actualWord)) {
                 if (DEBUG) {
                     echo '"' . $actualWord . '" is blankable';

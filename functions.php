@@ -36,6 +36,18 @@
         return $UUID;
     }
 
+    function load_non_blankable_words($pdo) {
+        $query = 'SELECT Word FROM BlankableWords ORDER BY Word';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([]);
+        $words = $stmt->fetchAll();
+        $output = array();
+        foreach ($words as $word) {
+            $output[] = $word["Word"];
+        }
+        return $output;
+    }
+
     function load_home_sections($pdo) {
         $query = '
         SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,
@@ -378,8 +390,9 @@
         // set questions to output of this little merging algorithm
         $questions = $output;
         
-        // TODO: sort/merge with fill in the blank questions
-
+        // TODO: sort/merge with fill in the blank questions?
+        // load non-blankable words
+        $words = load_non_blankable_words($pdo);
         // Generate output
         $outputQuestions = [];
         $number = 1;
@@ -409,7 +422,7 @@
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
             if (is_fill_in($question["Type"])) {
-                $fillInData = generate_fill_in_question($question["Question"], $percentFillIn);
+                $fillInData = generate_fill_in_question($question["Question"], $percentFillIn, $words);
                 $data["fillInData"] = $fillInData["data"];
                 $data["points"] = $fillInData["blank-count"];
             }

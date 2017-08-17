@@ -14,17 +14,17 @@
         $query = 'DELETE FROM BlankableWords WHERE WordID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$wordID]);
-        header("Location: view-blankable-words.php");
+        header("Location: view-non-blankable-words.php");
     }
 
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-blankable-words.php">Back</a></p>
+<p><a href="./view-non-blankable-words.php">Back</a></p>
 
 <div id="delete-word">
-    <h4> Are you sure you want to delete '<?= $word["Word"] ?>' from the blankable words list?</h4>
+    <h4> Are you sure you want to delete '<?= $word["Word"] ?>' from the non-blankable words list?</h4>
     <form method="post">
         <input type="hidden" name="word-id" value="<?= $wordID ?>"/>
         <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Word</button>
