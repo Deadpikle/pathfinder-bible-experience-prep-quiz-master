@@ -57,25 +57,54 @@ if (typeof String.prototype.endsWith !== 'function') {
 
 function createFillInInput(inputSelector, questionWords) {
     $element = $(inputSelector);
+    $element.append(fillInText(questionWords));
+}
+
+// if shouldBoldWords is true, puts in answers as bold instead of as blanks
+function fillInText(questionWords, shouldBoldWords = false) {
+    var output = '';
     for (var i = 0; i < questionWords.length; i++) {
         var wordData = questionWords[i];
         if (wordData.before !== "") {
-            $element.append(wordData.before);
+            output += wordData.before;
         }
         if (wordData.word !== "") {
             if (wordData.shouldBeBlanked) {
-                var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
-                $element.append(html);
+                if (shouldBoldWords) {
+                    var html = '<b>' + wordData.word + '</b>';
+                    output += html;
+                }
+                else {
+                    var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
+                    output += html;
+                }
             }
             else {
-                $element.append(wordData.word);
+                output += wordData.word;
             }
         }
         if (wordData.after !== "") {
-            $element.append(wordData.after);
+            output += wordData.after;
         }
-        if (i != questionWords.length - 1 && wordData.after !== "...") {
-            $element.append(" ");
+        if (i != questionWords.length - 1 && wordData.after !== '...') {
+            output += ' ';
         }
     }
+    return output;
+}
+
+function fillInAnswerString(questionWords, separator = ', ') {
+    var output = '';
+    var didAddOneToList = false;
+    for (var i = 0; i < questionWords.length; i++) {
+        var wordData = questionWords[i];
+        if (wordData.word !== "" && wordData.shouldBeBlanked) {
+            if (didAddOneToList) {
+                output += separator;
+            }
+            output += wordData.word;
+            didAddOneToList = true;
+        }
+    }
+    return output;
 }

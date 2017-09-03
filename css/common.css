@@ -41,7 +41,8 @@ main {
 }
 
 .divider {
-    margin: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .waves-effect.waves-blue .waves-ripple {
@@ -170,7 +171,9 @@ main {
 }
 
 p#quiz-question-show-answer {
-    margin-top: 1em;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    margin-left: 0.75em;
 }
 
 h6#user-points-earned {

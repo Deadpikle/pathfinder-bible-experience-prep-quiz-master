@@ -78,7 +78,12 @@
                 <button id="show-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
             </div>
         </div>
-        <p class="negative-top-margin" id="quiz-question-show-answer">The answer is:</p>
+        <div id="answer-divider" class="divider"></div>
+        <div id="full-fill-in-div" class="input-field col s12 m4">
+            <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
+            <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+        </div>
+        <p id="quiz-question-show-answer">The answer is:</p>
         <div id="points-earned-row" class="row">
             <div class="input-field col s6 m3" id="">
                 <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
@@ -128,6 +133,11 @@
         var correctAnswerCheckbox = document.getElementById('correct-answer');
         var nextQuestion = document.getElementById('next-question');
         var tallyPoints = document.getElementById('tally-points');
+
+        var answerDivider = document.getElementById('answer-divider');
+        var fullFillInDiv = document.getElementById('full-fill-in-div');
+        var fullFillInCheckbox = document.getElementById('full-fill-in');
+
         $(answersSavedLabel).hide();
         $(savingDataLabel).hide();
         $(tallyPoints).hide();
@@ -243,10 +253,36 @@
             correctAnswerCheckbox.checked = false;
             pointsEarnedInput.value = 0;
             $("#points-earned-row").show();
-            var outputAnswer = isFillInQuestion(currentQuestion.type) ? currentQuestion.question : currentQuestion.answer;
-            $questionAnswerText.html("The answer is: " + outputAnswer);
+            $(answerDivider).show();
+            var isFillIn = isFillInQuestion(currentQuestion.type);
+            if (isFillIn) {
+                $(fullFillInDiv).show();
+                var outputAnswer = currentQuestion.question;
+                if (fullFillInCheckbox.checked) {
+                    outputAnswer = fillInText(currentQuestion.fillInData, true);
+                }
+                else {
+                    outputAnswer = fillInAnswerString(currentQuestion.fillInData);
+                }
+                $questionAnswerText.html("The answer is: " + outputAnswer);
+            }
+            else {
+                var outputAnswer = isFillIn ? currentQuestion.question : currentQuestion.answer;
+                $questionAnswerText.html("The answer is: " + outputAnswer);
+            }
             $questionAnswerText.show();
         }
+
+        $(fullFillInCheckbox).change(function() {
+            var outputAnswer = '';
+            if (this.checked) {
+                outputAnswer = fillInText(currentQuestion.fillInData, true);
+            }
+            else {
+                outputAnswer = fillInAnswerString(currentQuestion.fillInData);
+            }
+            $questionAnswerText.html("The answer is: " + outputAnswer);
+        });
 
         $(correctAnswerCheckbox).change(function() {
             if (this.checked) {
@@ -408,6 +444,8 @@
             $("#quiz-answer").val("");
             $("#points-earned-row").hide();
             $("#show-answer-div").show();
+            $(answerDivider).hide();
+            $(fullFillInDiv).hide();
             showAnswer.disabled = false;
             currentQuestion = questions[currentQuestionIndex];
             if (currentQuestion.isFlagged == 0 && currentQuestion.isFlagged == "0") {
