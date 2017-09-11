@@ -1,4 +1,5 @@
 <?php
+    // if "Type" is undefined, check for an invisible bullet char at gist.github.com -> if exists, erase with hex editor (dunno why it's there...)
     require_once(dirname(__FILE__)."/init.php");
     if ($_SESSION["UserType"] !== "WebAdmin") {
         die("You shall not pass!");
@@ -67,7 +68,8 @@
             die();*/
             try {
                 $questionType = "";
-                $isFillInTheBlank = $row["Fill in?"] === "Yes";
+                $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
+                $row["Type"] = trim($row["Type"]);
                 if ($row["Type"] === "Bible") {
                     if ($isFillInTheBlank) {
                         $questionType = "bible-qna-fill";
@@ -133,10 +135,20 @@
                     }
                 }
 
+                $questionText = trim($row["Question"]);
+                $questionText = str_replace('“', '"', $questionText);
+                $questionText = str_replace('”', '"', $questionText);
+                $questionText = str_replace('‘', "'", $questionText);
+                $questionText = str_replace('’', "'", $questionText);
+                $answerText = trim($row["Answer"]);
+                $answerText = str_replace('“', '"', $answerText);
+                $answerText = str_replace('”', '"', $answerText);
+                $answerText = str_replace('‘', "'", $answerText);
+                $answerText = str_replace('’', "'", $answerText);
                 $params = [
                     $questionType, 
-                    $row["Question"],
-                    $row["Answer"],
+                    $questionText,
+                    $answerText,
                     $row["Points"],
                     $_SESSION["UserID"],
                     $startVerseID,
