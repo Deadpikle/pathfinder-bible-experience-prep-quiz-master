@@ -18,6 +18,7 @@
                 $qID, 
                 trim($text)
             ];
+            $text = str_replace("Â", " ", $text);
             $updateStmnt->execute($params);
         }
     }
