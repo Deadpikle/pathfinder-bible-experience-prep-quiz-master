@@ -16,7 +16,7 @@
             $qID = $question["QuestionID"];
             $text = $question["Question"];
             $text = str_replace("Â", " ", $text);
-            $text = preg_replace("/\xC2A0/", ' ', $text);
+            $text = preg_replace("/\xC2\xA0/", ' ', $text);
             $params = [
                 $qID, 
                 trim($text)
