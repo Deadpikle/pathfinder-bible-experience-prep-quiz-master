@@ -6,6 +6,7 @@
     $query = "SELECT QuestionID, Question FROM Questions WHERE Question LIKE '%Â%';";
 
     $update = "UPDATE Questions SET Question = ? WHERE QuestionID = ?";
+    $count = 0;
     try {
         $qStatement = $pdo->prepare($query);
         $qStatement->execute([]);
@@ -15,11 +16,13 @@
             $qID = $question["QuestionID"];
             $text = $question["Question"];
             $text = str_replace("Â", " ", $text);
+            $text = preg_replace("/\xC2A0/", ' ', $text);
             $params = [
                 $qID, 
                 trim($text)
             ];
             $updateStmnt->execute($params);
+            $count += 1;
         }
     }
     catch (PDOException $e) {
@@ -27,5 +30,5 @@
         //print_r($e);
         die();
     }
-    echo("got it");
+    echo("got it " . $count);
 ?>
