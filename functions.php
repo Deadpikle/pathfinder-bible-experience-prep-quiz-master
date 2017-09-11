@@ -283,6 +283,7 @@
         $whereClause = str_replace("commentary-qna", "commentary-qna-fill", $whereClause);
         if ($userWantsFillIn) {
             $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
+            die($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
             $commentaryFillIn = $stmt->fetchAll();
         }
         // // // // //
