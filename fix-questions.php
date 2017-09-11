@@ -7,8 +7,10 @@
 
     $update = "UPDATE Questions SET Question = ? WHERE QuestionID = ?";
     try {
-        $questions = $stmt->fetchAll();
-        $stmt = $pdo->prepare($query);
+        $qStatement = $pdo->prepare($query);
+        $qStatement->execute([]);
+        $questions = $qStatement->fetchAll();
+        $updateStmnt = $pdo->prepare($update);
         foreach ($questions as $question) {
             $qID = $question["QuestionID"];
             $text = $question["Question"];
@@ -16,12 +18,13 @@
                 $qID, 
                 trim($text)
             ];
-            $stmt->execute($params);
+            $updateStmnt->execute($params);
         }
     }
     catch (PDOException $e) {
         echo "error inserting question <br>";
         //print_r($e);
-        //die();
+        die();
     }
+    echo("got it");
 ?>
