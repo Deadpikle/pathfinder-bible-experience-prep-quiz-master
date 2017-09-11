@@ -14,11 +14,11 @@
         foreach ($questions as $question) {
             $qID = $question["QuestionID"];
             $text = $question["Question"];
+            $text = str_replace("Â", " ", $text);
             $params = [
                 $qID, 
                 trim($text)
             ];
-            $text = str_replace("Â", " ", $text);
             $updateStmnt->execute($params);
         }
     }
