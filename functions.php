@@ -190,6 +190,16 @@
         }
         $shouldLoadBibleQnA = (count($quizItems) == 0 || count($chapterIDs) > 0) && $userWantsNormalQuestions;
         $shouldLoadCommentaryQnA = (count($quizItems) == 0 || count($volumeNumbers) > 0) && $userWantsNormalQuestions;
+        $disableBibleFillInLoading = FALSE;
+        $disableCommentaryFillInLoading = FALSE;
+        if (count($chapterIDs) > 0 && count($volumeNumbers) == 0) {
+            $shouldLoadCommentaryQnA = FALSE;
+            $disableCommentaryFillInLoading = TRUE;
+        }
+        if (count($volumeNumbers) > 0 && count($chapterIDs) == 0) {
+            $shouldLoadBibleQnA = FALSE;
+            $disableBibleFillInLoading = TRUE;
+        }
         // // // // //
         // load Bible questions
         // // // // //
@@ -241,7 +251,7 @@
         // // // // //
         $bibleFillIn = array();
         $whereClause = str_replace("bible-qna", "bible-qna-fill", $whereClause);
-        if ($userWantsFillIn) {
+        if ($userWantsFillIn && !$disableBibleFillInLoading) {
             $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
             $bibleFillIn = $stmt->fetchAll();
         }
@@ -281,9 +291,8 @@
         // // // // //
         $commentaryFillIn = array();
         $whereClause = str_replace("commentary-qna", "commentary-qna-fill", $whereClause);
-        if ($userWantsFillIn) {
+        if ($userWantsFillIn && !$disableCommentaryFillInLoading) {
             $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
-            die($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
             $commentaryFillIn = $stmt->fetchAll();
         }
         // // // // //
