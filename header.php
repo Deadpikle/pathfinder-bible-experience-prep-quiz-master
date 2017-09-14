@@ -2,14 +2,14 @@
     $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder";
     $isLoggedIn = $loggedIn;
 
-    $whitelist = array(
+    $localHostList = array(
         '127.0.0.1',
         '::1'
     );
-    $isLocalHost = FALSE;
-    if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+    $isLocalHost = TRUE;
+    if(!in_array($_SERVER['REMOTE_ADDR'], $localHostList)){
         // not valid
-        $isLocalHost = TRUE;
+        $isLocalHost = FALSE;
     }
 ?>
 
