@@ -1,6 +1,16 @@
 <?php
     $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder";
     $isLoggedIn = $loggedIn;
+
+    $whitelist = array(
+        '127.0.0.1',
+        '::1'
+    );
+    $isLocalHost = FALSE;
+    if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+        // not valid
+        $isLocalHost = TRUE;
+    }
 ?>
 
 <html>
@@ -21,6 +31,23 @@
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
         <script src="<?=$basePath?>/js/common.js?v=20170813b"></script>
+        <?php if (!$isLocalHost) { ?>
+            <!-- Piwik -->
+            <script type="text/javascript">
+                var _paq = _paq || [];
+                /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+                _paq.push(['trackPageView']);
+                _paq.push(['enableLinkTracking']);
+                (function() {
+                    var u="//babien.co/analytics/";
+                    _paq.push(['setTrackerUrl', u+'piwik.php']);
+                    _paq.push(['setSiteId', '1']);
+                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+                })();
+            </script>
+            <!-- End Piwik Code -->
+        <?php } ?>
     </head>
     <body>
         <header>
