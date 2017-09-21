@@ -1,11 +1,12 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+    $isAdminJS = $isAdmin ? "true" : "false";
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <script type="text/javascript">
-    var isAdmin = <?= $isAdmin ?>;
+    var isAdmin = <?= $isAdminJS ?>;
 </script>
 
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
