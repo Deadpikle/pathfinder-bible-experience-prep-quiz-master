@@ -4,6 +4,10 @@
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
+<script type="text/javascript">
+    var isAdmin = <?= $isAdmin ?>;
+</script>
+
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
 <style type="text/css">
     [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
@@ -138,8 +142,10 @@
                 html += '<th>Volume</th>';
                 html += '<th>Points</th>';
             }
-            html += '<th>Edit</th>';
-            html += '<th>Delete</th>';
+            if (isAdmin) {
+                html += '<th>Edit</th>';
+                html += '<th>Delete</th>';
+            }
             $tableHeaderRow.append(html);
         }
 
@@ -183,8 +189,10 @@
                     html += '<td>' + volume + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
-                html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
-                html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
+                if (isAdmin) {
+                    html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
+                    html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
+                }
                 html += '</tr>';
                 $questionsBody.append(html);
             }

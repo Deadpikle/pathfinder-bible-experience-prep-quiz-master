@@ -8,6 +8,10 @@
     $startVerseID = -1;
     $endVerseID = -1;
     if ($_GET["type"] == "update") {
+        if (!$isAdmin) {
+            header("Location: " . $basePath . "/view-questions.php");            
+            die();
+        }
         $query = '
             SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
                 CommentaryVolume, CommentaryStartPage, CommentaryEndPage
