@@ -21,6 +21,6 @@
     $isClubAdmin = $_SESSION["UserType"] === "ClubAdmin";
     $isWebAdmin = $_SESSION["UserType"] === "WebAdmin";
     $isAdmin = $isClubAdmin || $isWebAdmin;
-    $isPathfinder = $_SESSION["UserType"] = !($isAdmin);
+    $isPathfinder = !($isAdmin);
 
 ?>
