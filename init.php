@@ -18,8 +18,8 @@
         $loggedIn = TRUE;
     }
     
-    $isClubAdmin = $_SESSION["UserType"] === "ClubAdmin";
-    $isWebAdmin = $_SESSION["UserType"] === "WebAdmin";
+    $isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";
+    $isWebAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "WebAdmin";
     $isAdmin = $isClubAdmin || $isWebAdmin;
     $isPathfinder = !($isAdmin);
 
