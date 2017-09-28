@@ -17,16 +17,7 @@
         $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"], 'chapter' => $chapter["ChapterNumber"]);
     }
 
-    $volumeQuery = '
-    SELECT DISTINCT CommentaryVolume
-    FROM Questions q
-    WHERE CommentaryVolume IS NOT NULL AND CommentaryVolume <> 0
-    ORDER BY CommentaryVolume';
-    $volumeData = $pdo->query($volumeQuery)->fetchAll();
-    $volumes = array();
-    foreach ($volumeData as $volume) {
-        $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
-    }
+    $volumes = load_volumes($pdo);
     $lastBookSeen = "";
 
     $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;

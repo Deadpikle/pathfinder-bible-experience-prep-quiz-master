@@ -35,12 +35,14 @@
         $book["chapters"][] = $chapter;
     }
     $books[] = $book; // make sure to get the last item
+    $volumes = load_volumes($pdo);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <script type="text/javascript">
     var books = <?= json_encode($books) ?>;
+    var volumes = <?= json_encode($volumes) ?>;
     var isAdmin = <?= $isAdminJS ?>;
 </script>
 
@@ -74,11 +76,14 @@
 
 <div class="row">
     <p class="left-margin-fix" id="filter-by-text">Filter by Book/Chapter</p>
-    <select id="book-select" class="col s3 m2">
+    <select id="book-select" class="col s4 m3">
         <option value="-1" selected>No book filter</option>
     </select>
-    <select id="chapter-select" class="col s3 m2">
+    <select id="chapter-select" class="col s4 m3">
         <option value="-1" selected>No chapter filter</option>
+    </select>
+    <select id="volume-select" class="col s4 m3">
+        <option value="-1" selected>No commentary filter</option>
     </select>
 </div>
 
@@ -125,7 +130,7 @@
         var chapterIndex = 0;
         var bookFilter = -1;
         var chapterFilter = -1;
-        var commentaryFilter = -1;
+        var volumeFilter = -1;
 
         var previousPage = document.getElementById('prev-page');
         var nextPage = document.getElementById('next-page');
@@ -147,7 +152,8 @@
                     pageSize: pageSize,
                     pageOffset: currentPageNumber * pageSize,
                     bookFilter: bookFilter,
-                    chapterFilter: chapterFilter
+                    chapterFilter: chapterFilter,
+                    volumeFilter: volumeFilter
                 },
                 success: function(response) {
                     setupTable(response.questions);
@@ -271,6 +277,12 @@
         function questionTypeSelectorClicked(questionTypeSelected, element) {
             if (questionType != questionTypeSelected) {
                 questionType = questionTypeSelected;
+                if (questionTypeSelected == "bible-qna") {
+                    setupBookSelector();
+                }
+                else {
+                    setupVolumeSelector();
+                }
                 currentPageNumber = 0;
                 resetQuestionTypeSelectorClasses();
                 setQuestionSelectorSelected(element);
@@ -333,6 +345,24 @@
 
         // setup selectors
 
+        function resetAllFilters() {
+            bookIndex = 0;
+            bookFilter = -1;
+            chapterFilter = -1;
+            chapterIndex = 0;
+            volumeFilter = -1;
+        }
+
+        function setupBookSelector() {
+            resetAllFilters();
+            $("#filter-by-text").html("Filter by Book/Chapter");
+            for (var i = 0; i < books.length; i++) {
+                $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
+            }
+            $('#volume-select').material_select("destroy");
+            $('#book-select').material_select();
+        }
+
         function setupChapterSelectForBook(book) {
             $('#chapter-select option').not(':first').remove();
             if (typeof book !== 'undefined') {
@@ -343,11 +373,21 @@
             }
             $('#chapter-select').material_select();
         }
-        // setup the book selector
-        for (var i = 0; i < books.length; i++) {
-            $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
+
+        function setupVolumeSelector() {
+            resetAllFilters();
+            $("#filter-by-text").html("Filter by Commentary Volume");
+            for (var i = 0; i < books.length; i++) {
+                $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + "</option>");
+            }
+            $('#book-select').material_select("destroy");
+            $('#chapter-select').material_select("destroy");
+            $('#volume-select').material_select();
         }
+
+        // setup the book selector
         $('#book-select').change(function() { 
+            currentPageNumber = 0;
             var bookArrayIndex = $(this).val();
             if (bookArrayIndex != -1 && bookArrayIndex !== "") {
                 var book = books[bookArrayIndex];
@@ -356,8 +396,6 @@
                 chapterIndex = 0;
                 chapterFilter = -1;
                 setupChapterSelectForBook(book);
-                currentPageNumber = 0;
-                loadQuestions();
             }
             else {
                 // bookArrayIndex is invalid; clear stuff
@@ -366,26 +404,36 @@
                 chapterFilter = -1;
                 chapterIndex = 0;
                 $('#chapter-select').material_select('destroy');
-                loadQuestions();
             }
+            loadQuestions();
         }); 
         $('#chapter-select').change(function() { 
             var chapterArrayIndex = $(this).val();
+            currentPageNumber = 0;
             if (chapterArrayIndex != -1 && chapterArrayIndex !== "") {
                 var chapter = books[bookIndex].chapters[chapterArrayIndex];
                 chapterFilter = chapter.chapterID;
                 chapterIndex = chapterArrayIndex;
-                currentPageNumber = 0;
-                loadQuestions();
             }
             else {
                 chapterFilter = -1;
                 chapterIndex = 0;
-                currentPageNumber = 0;
-                loadQuestions();
             }
+            loadQuestions();
         }); 
-        $('#book-select').material_select();
+        $('#volume-select').change(function() { 
+            currentPageNumber = 0;
+            var volumeArrayIndex = $(this).val();
+            if (volumeArrayIndex != -1 && volumeArrayIndex !== "") {
+                volumeFilter = volumes[volumeArrayIndex].id;
+                currentPageNumber = 0;
+            }
+            else {
+                volumeFilter = -1;
+            }
+            loadQuestions();
+        }); 
+        setupBookSelector();
         
         // load questions
         loadQuestions();

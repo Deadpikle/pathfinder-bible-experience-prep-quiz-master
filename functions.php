@@ -48,6 +48,20 @@
         return $output;
     }
 
+    function load_volumes($pdo) {
+        $volumeQuery = '
+        SELECT DISTINCT CommentaryVolume
+        FROM Questions q
+        WHERE CommentaryVolume IS NOT NULL AND CommentaryVolume <> 0
+        ORDER BY CommentaryVolume';
+        $volumeData = $pdo->query($volumeQuery)->fetchAll();
+        $volumes = array();
+        foreach ($volumeData as $volume) {
+            $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
+        }
+        return $volumes;
+    }
+
     function load_home_sections($pdo) {
         $query = '
         SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,

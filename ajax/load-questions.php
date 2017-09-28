@@ -30,11 +30,18 @@
             $whereClause .= " AND (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
 
-        if (isset($_POST["bookFilter"]) && is_numeric($_POST["bookFilter"]) && $_POST["bookFilter"] != -1) {
-            $whereClause .= " AND bStart.BookID = " . $_POST["bookFilter"];
+        if (strpos($questionType, 'bible') !== false) {
+            if (isset($_POST["bookFilter"]) && is_numeric($_POST["bookFilter"]) && $_POST["bookFilter"] != -1) {
+                $whereClause .= " AND bStart.BookID = " . $_POST["bookFilter"];
+            }
+            if (isset($_POST["chapterFilter"]) && is_numeric($_POST["chapterFilter"]) && $_POST["chapterFilter"] != -1) {
+                $whereClause .= " AND cStart.ChapterID = " . $_POST["chapterFilter"];
+            }
         }
-        if (isset($_POST["chapterFilter"]) && is_numeric($_POST["chapterFilter"]) && $_POST["chapterFilter"] != -1) {
-            $whereClause .= " AND cStart.ChapterID = " . $_POST["chapterFilter"];
+        else if (strpos($questionType, 'commentary') !== false) {
+            if (isset($_POST["volumeFilter"]) && is_numeric($_POST["volumeFilter"]) && $_POST["volumeFilter"] != -1) {
+                $whereClause .= " AND CommentaryVolume = " . $_POST["volumeFilter"];
+            }
         }
 
         if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
