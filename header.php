@@ -11,6 +11,8 @@
         // not valid
         $isLocalHost = FALSE;
     }
+
+    $homePath = $basePath == "" ? "/" : $basePath;
 ?>
 
 <html>
@@ -54,11 +56,11 @@
             <nav>
                 <div class="nav-wrapper teal lighten-2">
                     <div class="container">
-                        <a href="<?=$basePath?>" class="brand-logo">UCC Quiz Engine</a>
+                        <a href="<?=$homePath?>" class="brand-logo">UCC Quiz Engine</a>
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                         <ul class="right hide-on-med-and-down">
                             <?php if ($isLoggedIn) { ?>
-                                <li><a href="<?=$basePath?>">Home</a></li>
+                                <li><a href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
                             <li><a href="<?=$basePath?>/about.php">About</a></li>
@@ -71,7 +73,7 @@
                         </ul>
                         <ul class="side-nav" id="mobile-demo">
                             <?php if ($isLoggedIn) { ?>
-                                <li><a href="<?=$basePath?>">Home</a></li>
+                                <li><a href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
                             <li><a href="<?=$basePath?>/about.php">About</a></li>
