@@ -355,6 +355,7 @@
 
         function setupBookSelector() {
             resetAllFilters();
+            $('#book-select option').not(':first').remove();
             $("#filter-by-text").html("Filter by Book/Chapter");
             for (var i = 0; i < books.length; i++) {
                 $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
@@ -376,6 +377,7 @@
 
         function setupVolumeSelector() {
             resetAllFilters();
+            $('#volume-select option').not(':first').remove();
             $("#filter-by-text").html("Filter by Commentary Volume");
             for (var i = 0; i < books.length; i++) {
                 $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + "</option>");
