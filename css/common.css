@@ -188,3 +188,12 @@ h6#user-points-earned {
 h5#question-text {
     margin-left: 11px;
 }
+
+#extra-home-info .row {
+    margin-bottom: 0em;
+}
+
+#extra-home-info ul {
+    margin-top: 0em;
+    margin-left: 1.2em;
+}

@@ -27,12 +27,12 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <link rel="stylesheet" href="<?=$basePath?>/css/common.css?v=20170927" />
+        <link rel="stylesheet" href="<?=$basePath?>/css/common.css?v=20170927b" />
         <script src="<?=$basePath?>/lib/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/materialize/js/materialize.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
-        <script src="<?=$basePath?>/js/common.js?v=20170927"></script>
+        <script src="<?=$basePath?>/js/common.js?v=20170927b"></script>
         <?php if (!$isLocalHost) { ?>
             <!-- Piwik -->
             <script type="text/javascript">

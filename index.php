@@ -29,6 +29,14 @@
         Please remember that this website is under active construction. New features and adjustments may appear any day! If you encounter issues or need assistance, please see <a href="about.php">the about page</a> for this website.
         </p>
     </div>
+    <div class="row">
+        <p class="col s12">
+            Recent website updates:
+        </p>
+        <ul class="col s12 browser-default">
+            <li>2017-09-27: Added filter for Bible book/chapter or commentary volume on the questions page</li>
+        </ul>
+    </div>
 </div>
 
 <?php include(dirname(__FILE__)."/footer.php") ?>
