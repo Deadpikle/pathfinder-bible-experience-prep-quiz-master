@@ -1,11 +1,46 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
     $isAdminJS = $isAdmin ? "true" : "false";
+
+    // Load all book, chapter, and verse information
+    $bookQuery = '
+    SELECT b.BookID, b.Name, b.NumberChapters,
+        c.ChapterID, c.Number AS ChapterNumber
+    FROM Books b  JOIN Chapters c ON b.BookID = c.BookID
+    ORDER BY b.Name, ChapterNumber';
+    $bookData = $pdo->query($bookQuery)->fetchAll();
+
+    $lastBookID = -1;
+    $books = array();
+    $book = NULL;
+    $chapter = NULL;
+    foreach ($bookData as $row) {
+        if ($row["BookID"] != $lastBookID) {
+            $lastBookID = $row["BookID"];
+            if ($book != NULL) {
+                $books[] = $book;
+            }
+            $book = array(
+                "bookID" => $row["BookID"],
+                "name" => $row["Name"], 
+                "numberChapters" => $row["NumberChapters"],
+                "chapters" => array()
+            );
+            $chapter = NULL;
+        }
+        $chapter = array(
+            "chapterID" => $row["ChapterID"],
+            "number" => $row["ChapterNumber"]
+        );
+        $book["chapters"][] = $chapter;
+    }
+    $books[] = $book; // make sure to get the last item
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <script type="text/javascript">
+    var books = <?= json_encode($books) ?>;
     var isAdmin = <?= $isAdminJS ?>;
 </script>
 
@@ -35,6 +70,16 @@
     <a id="all-questions" class="btn-flat blue white-text">All</a>
     <a id="recently-added-questions" class="btn-flat waves-effect waves-blue">Recently Added</a>
     <a id="flagged-questions" class="btn-flat waves-effect waves-blue">Flagged</a>
+</div>
+
+<div class="row">
+    <p class="left-margin-fix" id="filter-by-text">Filter by Book/Chapter</p>
+    <select id="book-select" class="col s3 m2">
+        <option value="-1" selected>No book filter</option>
+    </select>
+    <select id="chapter-select" class="col s3 m2">
+        <option value="-1" selected>No chapter filter</option>
+    </select>
 </div>
 
 <div class="divider"></div>
@@ -76,6 +121,11 @@
         var pageSize = 25;
         var currentPageNumber = 0;
         var maxPageNumber = 0;
+        var bookIndex = 0;
+        var chapterIndex = 0;
+        var bookFilter = -1;
+        var chapterFilter = -1;
+        var commentaryFilter = -1;
 
         var previousPage = document.getElementById('prev-page');
         var nextPage = document.getElementById('next-page');
@@ -95,7 +145,9 @@
                     questionType: questionType,
                     questionFilter: questionFilter,
                     pageSize: pageSize,
-                    pageOffset: currentPageNumber * pageSize
+                    pageOffset: currentPageNumber * pageSize,
+                    bookFilter: bookFilter,
+                    chapterFilter: chapterFilter
                 },
                 success: function(response) {
                     setupTable(response.questions);
@@ -278,6 +330,64 @@
 
         $("#questions").hide();
         setupTableHeader("bible-qna");
+
+        // setup selectors
+
+        function setupChapterSelectForBook(book) {
+            $('#chapter-select option').not(':first').remove();
+            if (typeof book !== 'undefined') {
+                var chapters = book.chapters;
+                for (var i = 0; i < chapters.length; i++) {
+                    $('#chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
+                }
+            }
+            $('#chapter-select').material_select();
+        }
+        // setup the book selector
+        for (var i = 0; i < books.length; i++) {
+            $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
+        }
+        $('#book-select').change(function() { 
+            var bookArrayIndex = $(this).val();
+            if (bookArrayIndex != -1 && bookArrayIndex !== "") {
+                var book = books[bookArrayIndex];
+                bookFilter = book.bookID;
+                bookIndex = bookArrayIndex;
+                chapterIndex = 0;
+                chapterFilter = -1;
+                setupChapterSelectForBook(book);
+                currentPageNumber = 0;
+                loadQuestions();
+            }
+            else {
+                // bookArrayIndex is invalid; clear stuff
+                bookIndex = 0;
+                bookFilter = -1;
+                chapterFilter = -1;
+                chapterIndex = 0;
+                $('#chapter-select').material_select('destroy');
+                loadQuestions();
+            }
+        }); 
+        $('#chapter-select').change(function() { 
+            var chapterArrayIndex = $(this).val();
+            if (chapterArrayIndex != -1 && chapterArrayIndex !== "") {
+                var chapter = books[bookIndex].chapters[chapterArrayIndex];
+                chapterFilter = chapter.chapterID;
+                chapterIndex = chapterArrayIndex;
+                currentPageNumber = 0;
+                loadQuestions();
+            }
+            else {
+                chapterFilter = -1;
+                chapterIndex = 0;
+                currentPageNumber = 0;
+                loadQuestions();
+            }
+        }); 
+        $('#book-select').material_select();
+        
+        // load questions
         loadQuestions();
     });
 </script>

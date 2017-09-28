@@ -12,6 +12,10 @@ main {
     margin-top: 1em;
 }
 
+.left-margin-fix {
+    margin-left: 0.75em; /* ugh */
+}
+
 #page-list .add {
     margin-left: 1em;
 }

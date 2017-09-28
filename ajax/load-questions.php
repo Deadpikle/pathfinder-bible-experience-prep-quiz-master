@@ -29,6 +29,14 @@
         else {
             $whereClause .= " AND (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
+
+        if (isset($_POST["bookFilter"]) && is_numeric($_POST["bookFilter"]) && $_POST["bookFilter"] != -1) {
+            $whereClause .= " AND bStart.BookID = " . $_POST["bookFilter"];
+        }
+        if (isset($_POST["chapterFilter"]) && is_numeric($_POST["chapterFilter"]) && $_POST["chapterFilter"] != -1) {
+            $whereClause .= " AND cStart.ChapterID = " . $_POST["chapterFilter"];
+        }
+
         if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
             $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
         }
