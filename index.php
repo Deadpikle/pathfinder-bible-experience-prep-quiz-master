@@ -34,6 +34,7 @@
             Recent website updates:
         </p>
         <ul class="col s12 browser-default">
+            <li>2017-11-12: Allowed flash card generation of those questions that have been recently added (within the last 1 to 31 days)</li>
             <li>2017-09-27: Added filter for Bible book/chapter or commentary volume on the questions page</li>
         </ul>
     </div>
