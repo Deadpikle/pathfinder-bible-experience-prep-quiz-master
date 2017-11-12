@@ -169,6 +169,11 @@
         $percentFillIn = $percentFillIn / 100;
 
         $shouldShowOnlyRecentlyAdded = filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN);
+        $recentlyAddedAmount = filter_var($params["flashShowOnlyRecentDayAmount"], FILTER_VALIDATE_INT, array("options" => array(
+            "default" => 30,
+            "min_range" => 1,
+            "max_range" => 31
+        )));
 
         // question type values:
         // both
@@ -180,7 +185,7 @@
             $questionOrder = "sequential-sequential";
             unset($params["quizItems"]);
             $shouldAvoidPastCorrectAnswers = FALSE;
-            $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-30 days'));
+            $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-' . $recentlyAddedAmount . ' days'));
         }
         $userWantsNormalQuestions = $params["questionTypes"] === "qa-only" || $params["questionTypes"] === "both";
         $userWantsFillIn = $params["questionTypes"] === "fill-in-only" || $params["questionTypes"] === "both";

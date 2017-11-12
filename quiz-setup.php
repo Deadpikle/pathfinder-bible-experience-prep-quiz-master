@@ -92,7 +92,7 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
             </div>
             <div class="input-field col s2" id="fill-in-percent-div">
                 <input type="number" name="fill-in-percent" id="fill-in-percent" value="30" min="1" max="100"/>
-                <label class="black-text" for="fill-in-percent">% Blanks</label>
+                <label class="" for="fill-in-percent">% Blanks</label>
             </div>
         </div>
         <p id="question-order">Question selection and order</p>
@@ -122,6 +122,10 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
             <div class="input-field col s12">
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
                 <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings!)</label>
+            </div>
+            <div class="input-field col s4" id="fill-in-percent-div">
+                <input type="number" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31"/>
+                <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
             </div>
         </div>
         <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="quiz.php">Start Quiz</button>
