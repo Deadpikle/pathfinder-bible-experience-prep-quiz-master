@@ -168,11 +168,20 @@
         }
         $percentFillIn = $percentFillIn / 100;
 
+        $shouldShowOnlyRecentlyAdded = filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN);
+
         // question type values:
         // both
         // qa-only
         // fill-in-only
         $questionTypes = $params["questionTypes"];
+        if ($shouldShowOnlyRecentlyAdded) { // override all user settings and load recent questions instead
+            $questionTypes = "both"; 
+            $questionOrder = "sequential-sequential";
+            unset($params["quizItems"]);
+            $shouldAvoidPastCorrectAnswers = FALSE;
+            $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-30 days'));
+        }
         $userWantsNormalQuestions = $params["questionTypes"] === "qa-only" || $params["questionTypes"] === "both";
         $userWantsFillIn = $params["questionTypes"] === "fill-in-only" || $params["questionTypes"] === "both";
         $questionOrder = $params["questionOrder"];
@@ -245,6 +254,9 @@
             $whereClause .= '  AND (ua.UserAnswerID IS NULL 
                 OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
         }
+        if ($shouldShowOnlyRecentlyAdded) {
+            $whereClause = ' WHERE q.Type = "bible-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
+        }
         $orderByPortion = '';
         if ($areRandomQuestionsPulled) {
             $orderByPortion = ' ORDER BY RAND() ';
@@ -292,6 +304,9 @@
         if ($shouldAvoidPastCorrectAnswers) {
             $whereClause .= '  AND (ua.UserAnswerID IS NULL 
                 OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
+        }
+        if ($shouldShowOnlyRecentlyAdded) {
+            $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
         if (!$areRandomQuestionsPulled) {
             $orderByPortion = ' ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage';

@@ -387,6 +387,7 @@
     $params["questionTypes"] = $_POST["question-types"];
     $params["questionOrder"] = $_POST["order"];
     $params["fillInPercent"] = $_POST["fill-in-percent"];
+    $params["flashShowOnlyRecent"] = isset($_POST["flash-show-recently-added"]) ? $_POST["flash-show-recently-added"] : FALSE;
 
     $shouldAvoidPastCorrect = "false";
     if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
