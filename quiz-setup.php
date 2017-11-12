@@ -117,6 +117,13 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
                 <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>
+        <p id="question-filtering">Flash card options (Only apply to flash cards)</p>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
+                <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings!)</label>
+            </div>
+        </div>
         <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="quiz.php">Start Quiz</button>
         <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="study-guide-pdf.php" >Flash Cards</button>
         <div class="divider"></div>
