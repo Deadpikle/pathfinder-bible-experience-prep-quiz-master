@@ -1,6 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
     $isAdminJS = $isAdmin ? "true" : "false";
+    $GUEST_MODEJS = $GUEST_MODE ? "true" : "false";
 
     // Load all book, chapter, and verse information
     $bookQuery = '
@@ -44,6 +45,7 @@
     var books = <?= json_encode($books) ?>;
     var volumes = <?= json_encode($volumes) ?>;
     var isAdmin = <?= $isAdminJS ?>;
+    var isGuestMode = <?= $GUEST_MODEJS ?>;
 </script>
 
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
@@ -57,11 +59,13 @@
 
 <p><a href=".">Back</a></p>
 
+<?php if (!$GUEST_MODE) { ?>
 <div id="create" class="row">
     <div class="col s12"> 
         <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>
     </div>
 </div>
+<?php } ?>
 
 <div id="question-type-choice">
     <a id="bible-qna" class="btn-flat blue white-text">Bible Q&amp;A</a>
@@ -201,7 +205,7 @@
                 html += '<th>Volume</th>';
                 html += '<th>Points</th>';
             }
-            if (isAdmin) {
+            if (isAdmin && !isGuestMode) {
                 html += '<th>Edit</th>';
                 html += '<th>Delete</th>';
             }
@@ -248,7 +252,7 @@
                     html += '<td>' + volume + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
-                if (isAdmin) {
+                if (isAdmin && !isGuestMode) {
                     html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
                     html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
                 }

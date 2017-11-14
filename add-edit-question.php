@@ -4,6 +4,11 @@
 
     require_once(dirname(__FILE__)."/init.php");
 
+    if ($GUEST_MODE) {
+        header('Location: index.php');
+        die();
+    }
+
     $questionID = isset($_GET['id']) ? $_GET['id'] : "";
     $startVerseID = -1;
     $endVerseID = -1;

@@ -1,5 +1,11 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+    
+    if ($GUEST_MODE) {
+        header('Location: index.php');
+        die();
+    }
+
     $questionID = $_GET["id"];
 
     $query = 'SELECT Question, Answer FROM Questions WHERE QuestionID = ?';
