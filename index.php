@@ -7,14 +7,18 @@
 
 <h3>Welcome back, <?=$_SESSION["Username"]?>!</h3>
 
+<?php if ($GUEST_MODE) { ?>
+    <h4>You are currently browsing the site in guest mode. You will be unable to add, edit, or delete questions.</h4>
+<?php } ?>
+
 <div id="user-links">
     <div class="row">
         <div class="col s12 m4">
             <ul>
-                <li class="home-buttons"><a class='btn  waves-effect waves-light' href="view-questions.php">Questions</a></li>
-                <li class="home-buttons"><a class='btn  waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
-                <li class="home-buttons"><a class='btn  waves-effect waves-light' href="active-clubs.php">Clubs</a></li>
-                <li class="home-buttons"><a class='btn  waves-effect waves-light' href="study-guides.php">Study Guides</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="view-questions.php">Questions</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="active-clubs.php">Clubs</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="study-guides.php">Study Guides</a></li>
             </ul>
         </div>
         <div class="col s12 m8">
