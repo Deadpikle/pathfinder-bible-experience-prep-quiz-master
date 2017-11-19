@@ -56,12 +56,12 @@
                             <td><?= $user["UserTypeDisplayName"] ?></td>
                         <?php } ?>
                         <td>
-                            <?php if ($_SESSION["UserID"] != $user["UserID"] && !($isClubAdmin && $user['UserType'] == 'WebAdmin')) { ?> 
+                            <?php if ($_SESSION["UserID"] != $user["UserID"] && !($isClubAdmin && $user['Type'] == 'WebAdmin')) { ?> 
                                 <a href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit User</a>
                             <?php } ?> 
                         </td>
                         <td>
-                            <?php if ($_SESSION["UserID"] != $user["UserID"] && !($isClubAdmin && $user['UserType'] == 'WebAdmin')) { ?> 
+                            <?php if ($_SESSION["UserID"] != $user["UserID"] && !($isClubAdmin && $user['Type'] == 'WebAdmin')) { ?> 
                                 <a href="delete-user.php?id=<?=$user['UserID'] ?>">Delete User</a>
                             <?php } ?> 
                          </td>
