@@ -55,8 +55,13 @@
                             <td><?= $user["ClubName"] ?></td>
                             <td><?= $user["UserTypeDisplayName"] ?></td>
                         <?php } ?>
-                        <td><a href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit User</a></td>
-                        <td><?php if ($_SESSION["UserID"] != $user["UserID"]) { ?> 
+                        <td>
+                            <?php if ($_SESSION["UserID"] != $user["UserID"]) { ?> 
+                                <a href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit User</a>
+                            <?php } ?> 
+                        </td>
+                        <td>
+                            <?php if ($_SESSION["UserID"] != $user["UserID"]) { ?> 
                                 <a href="delete-user.php?id=<?=$user['UserID'] ?>">Delete User</a>
                             <?php } ?> 
                          </td>
