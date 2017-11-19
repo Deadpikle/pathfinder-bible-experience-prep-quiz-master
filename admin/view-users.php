@@ -8,7 +8,7 @@
         $params[] = $_SESSION["ClubID"];
     }
     $query = '
-        SELECT UserID, Username, EntryCode, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName
+        SELECT UserID, Username, EntryCode, ut.Type, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
         ' . $whereClause . '
