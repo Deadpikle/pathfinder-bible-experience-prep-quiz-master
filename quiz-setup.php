@@ -123,7 +123,7 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
                 <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings!)</label>
             </div>
-            <div class="input-field col s4" id="fill-in-percent-div">
+            <div class="input-field col s12 m4" id="fill-in-percent-div">
                 <input type="number" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31"/>
                 <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
             </div>
