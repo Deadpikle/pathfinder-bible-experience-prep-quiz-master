@@ -18,6 +18,7 @@
         $loggedIn = TRUE;
     }
     
+    $isGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
     $isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";
     $isWebAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "WebAdmin";
     $isAdmin = $isClubAdmin || $isWebAdmin;

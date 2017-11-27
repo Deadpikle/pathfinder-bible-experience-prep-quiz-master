@@ -1,5 +1,7 @@
 <?php
-    $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder";
+    $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder" 
+        && $_SESSION["UserType"] !== "Guest";
+    $headerIsGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
     $isLoggedIn = $loggedIn;
 
     $localHostList = array(
@@ -33,7 +35,7 @@
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
         <script src="<?=$basePath?>/js/common.js?v=20170927b"></script>
-        <?php if (!$isLocalHost && !GUEST_MODE) { ?>
+        <?php if (!$isLocalHost && !headerIsGuest) { ?>
             <!-- Piwik -->
             <script type="text/javascript">
                 var _paq = _paq || [];

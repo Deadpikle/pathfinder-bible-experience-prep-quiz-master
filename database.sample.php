@@ -14,8 +14,6 @@ try {
         PDO::ATTR_EMULATE_PREPARES   => false,
     ];
     $pdo = new PDO($dsn, $user, $pass, $opt);
-    
-    $GUEST_MODE = FALSE; // TODO: move to config.php or something
 }
 catch (Exception $e) {
     die("Please finish site setup");

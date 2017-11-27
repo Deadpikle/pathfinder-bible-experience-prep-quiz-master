@@ -1,7 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
     $isAdminJS = $isAdmin ? "true" : "false";
-    $GUEST_MODEJS = $GUEST_MODE ? "true" : "false";
+    $GUEST_MODEJS = $isGuest ? "true" : "false";
 
     // Load all book, chapter, and verse information
     $bookQuery = '
@@ -59,7 +59,7 @@
 
 <p><a href=".">Back</a></p>
 
-<?php if (!$GUEST_MODE) { ?>
+<?php if (!$isGuest) { ?>
 <div id="create" class="row">
     <div class="col s12"> 
         <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>

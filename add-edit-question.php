@@ -4,7 +4,7 @@
 
     require_once(dirname(__FILE__)."/init.php");
 
-    if ($GUEST_MODE) {
+    if ($isGuest) {
         header('Location: index.php');
         die();
     }

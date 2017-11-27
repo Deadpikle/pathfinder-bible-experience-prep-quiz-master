@@ -6,6 +6,7 @@
     require_once(dirname(__FILE__)."/init-admin.php");
 
     if ($_GET["type"] == "update") {
+        $extraWhere = '';
         $query = '
             SELECT UserID, Username, ut.UserTypeID AS UserType, c.ClubID AS ClubID
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID

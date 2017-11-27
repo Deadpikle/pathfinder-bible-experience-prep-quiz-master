@@ -7,7 +7,7 @@
 
 <h3>Welcome back, <?=$_SESSION["Username"]?>!</h3>
 
-<?php if ($GUEST_MODE) { ?>
+<?php if ($isGuest) { ?>
     <h4>You are currently browsing the site in guest mode. You will be unable to add, edit, or delete questions.</h4>
 <?php } ?>
 
