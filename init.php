@@ -30,5 +30,7 @@
     $contactEmail = isset($settings['AboutContactEmail']) ? $settings['AboutContactEmail'] : '[email redacted]';
     $websiteName = isset($settings['WebsiteName']) ? $settings['WebsiteName'] : 'UCC Quiz Engine';
     $websiteTabTitle = isset($settings['WebsiteTabTitle']) ? $settings['WebsiteTabTitle'] : 'UCC PBE';
+    $analyticsURL = isset($settings['AnalyticsURL']) ? $settings['AnalyticsURL'] : '';
+    $analyticsSiteID = isset($settings['AnalyticsSiteID']) ? $settings['AnalyticsSiteID'] : '1';
 
 ?>
