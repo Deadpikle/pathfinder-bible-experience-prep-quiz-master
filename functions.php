@@ -2,6 +2,22 @@
 
     require_once("blanks.php");
 
+    function get_settings($pdo) {
+        // load settings
+        $query = '
+        SELECT SettingID, SettingKey, SettingValue, DisplayName
+        FROM Settings
+        ORDER BY DisplayName';
+        $settingsStmt = $pdo->prepare($query);
+        $settingsStmt->execute([]);
+        $settings = $settingsStmt->fetchAll();
+        $output = [];
+        foreach ($settings as $setting) {
+            $output[$setting['SettingKey']] = $setting['SettingValue'];
+        }
+        return $output;
+    }
+
     function is_bible_qna($type) {
         return $type === "bible-qna" || $type == "bible-qna-fill";
     }

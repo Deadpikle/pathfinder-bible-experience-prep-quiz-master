@@ -24,4 +24,8 @@
     $isAdmin = $isClubAdmin || $isWebAdmin;
     $isPathfinder = !($isAdmin);
 
+    $settings = get_settings($pdo);
+    $websiteName = isset($settings['WebsiteName']) ? $settings['WebsiteName'] : 'UCC Quiz Engine';
+    $websiteTabTitle = isset($settings['WebsiteTabTitle']) ? $settings['WebsiteTabTitle'] : 'UCC PBE';
+
 ?>
