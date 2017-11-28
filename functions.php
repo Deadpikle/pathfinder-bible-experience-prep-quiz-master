@@ -184,12 +184,12 @@
         }
         $percentFillIn = $percentFillIn / 100;
 
-        $shouldShowOnlyRecentlyAdded = filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN);
-        $recentlyAddedAmount = filter_var($params["flashShowOnlyRecentDayAmount"], FILTER_VALIDATE_INT, array("options" => array(
+        $shouldShowOnlyRecentlyAdded = isset($params["flashShowOnlyRecent"]) ? filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN) : FALSE;
+        $recentlyAddedAmount = isset($params["flashShowOnlyRecentDayAmount"]) ? filter_var($params["flashShowOnlyRecentDayAmount"], FILTER_VALIDATE_INT, array("options" => array(
             "default" => 30,
             "min_range" => 1,
             "max_range" => 31
-        )));
+        ))) : 30;
 
         // question type values:
         // both
