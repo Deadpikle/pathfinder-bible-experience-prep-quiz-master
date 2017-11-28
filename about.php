@@ -11,7 +11,7 @@
         <div class="col s12">
             <p class="flow-text">The new UCC Quiz Engine website was developed for <a href="http://www.pathfindersonline.org/">Pathfinder</a> clubs in the <a href="https://www.uccsda.org/">Upper Columbia Conference</a> of <a href="https://www.adventist.org/en/">Seventh-day Adventists</a>. If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact:</p>
             <?php if (!$isGuest) { ?>
-                <p class="flow-text">Bev Mayfield<br>mayfieldb12 at gmail dot com</p>
+                <p class="flow-text">$contactName<br>$contactEmail</p>
             <?php } else { ?>
                 <p class="flow-text">[name redacted]<br>[email redacted]</p>
             <?php } ?>

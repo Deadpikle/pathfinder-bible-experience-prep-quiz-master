@@ -24,7 +24,10 @@
     $isAdmin = $isClubAdmin || $isWebAdmin;
     $isPathfinder = !($isAdmin);
 
+    // init settings
     $settings = get_settings($pdo);
+    $contactName = isset($settings['AboutContactName']) ? $settings['AboutContactName'] : '[name redacted]';
+    $contactEmail = isset($settings['AboutContactEmail']) ? $settings['AboutContactEmail'] : '[email redacted]';
     $websiteName = isset($settings['WebsiteName']) ? $settings['WebsiteName'] : 'UCC Quiz Engine';
     $websiteTabTitle = isset($settings['WebsiteTabTitle']) ? $settings['WebsiteTabTitle'] : 'UCC PBE';
 

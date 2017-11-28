@@ -30,11 +30,6 @@
 <div id="extra-home-info">
     <div class="row">
         <p class="col s12">
-        Please remember that this website is under active construction. New features and adjustments may appear any day! If you encounter issues or need assistance, please see <a href="about.php">the about page</a> for this website.
-        </p>
-    </div>
-    <div class="row">
-        <p class="col s12">
             Recent website updates:
         </p>
         <ul class="col s12 browser-default">
