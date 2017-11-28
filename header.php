@@ -35,7 +35,7 @@
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
         <script src="<?=$basePath?>/js/common.js?v=20170927b"></script>
-        <?php if (!$isLocalHost && !headerIsGuest && !analyticsURL !== '') { ?>
+        <?php if (!$isLocalHost && !headerIsGuest && $analyticsURL !== '') { ?>
             <!-- Piwik -->
             <script type="text/javascript">
                 var _paq = _paq || [];
