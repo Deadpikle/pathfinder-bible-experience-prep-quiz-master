@@ -2,6 +2,8 @@
 
     $basePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
 
+    require_once("config.php");
+    session_name($SESSION_NAME);
     session_start();
 
     require_once("database.php");
