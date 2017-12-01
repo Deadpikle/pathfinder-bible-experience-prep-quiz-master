@@ -27,6 +27,8 @@
 
 <p><a href=".">Back</a></p>
 
+<h4>Please note that there is currently a bug preventing quizzes from generating properly in the Microsoft Edge and Internet Explorer web browsers. Please use Chrome, Firefox, or Safari. We apologize for the inconvenience.</h4>
+
 <!--
 https://stackoverflow.com/questions/18223743/to-generate-pdf-download-using-tcpdf
 https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-and-different-actions-for-each-button
