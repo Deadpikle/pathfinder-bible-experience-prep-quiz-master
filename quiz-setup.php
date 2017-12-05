@@ -47,7 +47,7 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
                     <?php 
                         foreach ($chapters as $chapter) { 
                             if ($lastBookSeen != $chapter['name']) {
-                                if ($lastBookSeen != $chapter['name']) {
+                                if ($lastBookSeen != "" && $lastBookSeen != $chapter['name']) {
                                     echo '</optgroup>';
                                 }
                                 echo '<optgroup label="' . $chapter['name'] . '">';
