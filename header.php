@@ -17,6 +17,7 @@
     $homePath = $basePath == "" ? "/" : $basePath;
 ?>
 
+<!DOCTYPE html>
 <html>
     <head>
         <title><?= $websiteTabTitle ?></title>
@@ -25,7 +26,7 @@
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="<?=$basePath?>/lib/materialize/css/materialize.min.css?v=20170813b" media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="<?=$basePath?>/lib/materialize/css/materialize.min.css?v=20171204a" media="screen,projection"/>
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -34,7 +35,7 @@
         <script type="text/javascript" src="<?=$basePath?>/lib/materialize/js/materialize.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
-        <script src="<?=$basePath?>/js/common.js?v=20170927b"></script>
+        <script src="<?=$basePath?>/js/common.js?v=20171204a"></script>
         <?php if (!$isLocalHost && !$headerIsGuest && $analyticsURL !== '') { ?>
             <!-- Piwik -->
             <script type="text/javascript">
