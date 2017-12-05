@@ -1,6 +1,12 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // awful hack to make Microsoft Edge work -_-
+        include(dirname(__FILE__)."/quiz.php") ;
+        die();
+    }
+    
     // load possible books and commentary volumes
 
     $chapterQuery = '
@@ -26,8 +32,6 @@
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <p><a href=".">Back</a></p>
-
-<h5>Please note that there is currently a bug preventing quizzes from generating properly in the Microsoft Edge and Internet Explorer web browsers. Please use Chrome, Firefox, or Safari. We apologize for the inconvenience and will fix this issue as soon as we can!</h5>
 
 <!--
 https://stackoverflow.com/questions/18223743/to-generate-pdf-download-using-tcpdf
