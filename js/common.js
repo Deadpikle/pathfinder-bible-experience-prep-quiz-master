@@ -61,7 +61,10 @@ function createFillInInput(inputSelector, questionWords) {
 }
 
 // if shouldBoldWords is true, puts in answers as bold instead of as blanks
-function fillInText(questionWords, shouldBoldWords = false) {
+function fillInText(questionWords, shouldBoldWords) {
+    if (shouldBoldWords === undefined) {
+        shouldBoldWords = false;
+    }
     var output = '';
     for (var i = 0; i < questionWords.length; i++) {
         var wordData = questionWords[i];
@@ -93,7 +96,10 @@ function fillInText(questionWords, shouldBoldWords = false) {
     return output;
 }
 
-function fillInAnswerString(questionWords, separator = ', ') {
+function fillInAnswerString(questionWords, separator) {
+    if (separator === undefined) {
+        separator = ', ';
+    }
     var output = '';
     var didAddOneToList = false;
     for (var i = 0; i < questionWords.length; i++) {
