@@ -8,9 +8,9 @@
 
     $commentaryID = $_GET["id"];
     $query = '
-    SELECT Number, Year 
-    FROM Commentaries c JOIN Years y ON c.YearID = y.YearID
-    WHERE CommentaryID = ?';
+        SELECT Number, Year 
+        FROM Commentaries c JOIN Years y ON c.YearID = y.YearID
+        WHERE CommentaryID = ?';
     $stmt = $pdo->prepare($query);
     $stmt->execute([$commentaryID]);
     $commentary = $stmt->fetch();
@@ -31,7 +31,7 @@
 
 <p><a href="./view-commentaries.php">Back</a></p>
 
-<div id="delete-word">
+<div id="delete-commentary">
     <h4> Are you sure you want to remove SDA Bible Commentary <?= $commentary["Number"] ?> for the year <?= $commentary["Year"] ?> from the available commentaries list?</h4>
     <form method="post">
         <input type="hidden" name="commentary-id" value="<?= $commentaryID ?>"/>

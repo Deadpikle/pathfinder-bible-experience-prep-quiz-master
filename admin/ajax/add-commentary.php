@@ -11,7 +11,7 @@
         $stmt->execute([intval($commentaryNumber), $activeYearID]);
         $commentaryData = $stmt->fetchAll();
         if ($commentaryData === false || count($commentaryData) > 0) {
-            // year already exists; don't add it!
+            // commentary already exists; don't add it!
             header("Location: $basePath/admin/view-commentaries.php");
             die();
         }

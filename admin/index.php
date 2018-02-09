@@ -22,9 +22,10 @@
     <?php if ($isWebAdmin) { ?>
         <h4>Web Administrator Functions</h4>
         <ul>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Bible Books</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-books.php">Bible Books</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-commentaries.php">Commentaries</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Import Questions from Excel</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href=".">Conferences</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href=".">Import Questions from Excel</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-non-blankable-words.php">Non-Blankable Words</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Website Settings</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-years.php">Years</a></li>
