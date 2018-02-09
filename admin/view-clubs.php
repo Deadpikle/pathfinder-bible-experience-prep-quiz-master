@@ -14,6 +14,7 @@
 
 <p><a href=".">Back</a></p>
 
+<h4>Pathfinder Clubs</h4>
 
 <div id="users-div">
     <div class="section" id="create">
@@ -35,7 +36,7 @@
         </form>
     </div>
     <div class="divider"></div>
-    <table class="striped">
+    <table class="striped responsive-table">
         <thead>
             <tr>
                 <th>Club Name</th>

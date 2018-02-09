@@ -43,14 +43,14 @@
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Number of Chapters</th>
                     <th>Year</th>
-                    <th>Manage Chapters</th>
-                    <th>Remove</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

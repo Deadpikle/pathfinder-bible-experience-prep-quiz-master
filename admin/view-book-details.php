@@ -64,12 +64,12 @@
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
                 <tr>
                     <th>Chapter Number</th>
                     <th>Number of Verses</th>
-                    <th>Remove</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

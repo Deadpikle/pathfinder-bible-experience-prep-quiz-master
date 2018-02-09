@@ -39,12 +39,12 @@
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
                 <tr>
                     <th>Commentary Volume</th>
                     <th>Year</th>
-                    <th>Remove</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
