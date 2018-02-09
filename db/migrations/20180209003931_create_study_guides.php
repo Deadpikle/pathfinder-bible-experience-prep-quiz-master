@@ -27,9 +27,7 @@ class CreateStudyGuides extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('StudyGuides', 
-            ['id' => 'StudyGuideID',
-             'signed' => false]);
+        $table = $this->table('StudyGuides', ['id' => 'StudyGuideID']);
         $table->addColumn('DisplayName', 'string', ['limit' => 150]);
         $table->addColumn('FileName', 'string', ['limit' => 150]);
         $table->save();
