@@ -79,18 +79,23 @@
         return $output;
     }
 
-    function load_volumes($pdo) {
-        $volumeQuery = '
-        SELECT DISTINCT CommentaryVolume
-        FROM Questions q
-        WHERE CommentaryVolume IS NOT NULL AND CommentaryVolume <> 0
-        ORDER BY CommentaryVolume';
-        $volumeData = $pdo->query($volumeQuery)->fetchAll();
-        $volumes = array();
-        foreach ($volumeData as $volume) {
-            $volumes[] = array('id' => $volume["CommentaryVolume"], 'name' => "SDA Commentary Volume " . $volume["CommentaryVolume"]);
+    function load_commentaries($pdo) {
+        $currentYear = get_active_year($pdo)["YearID"];
+        $query = '
+            SELECT DISTINCT CommentaryID, Number
+            FROM Commentaries 
+            WHERE YearID = ?
+            ORDER BY Number';
+        $params = [ $currentYear ];
+        $commentaryStmt = $pdo->prepare($query);
+        $commentaryStmt->execute($params);
+        $commentaries = $commentaryStmt->fetchAll();
+
+        $commentariesOutput = array();
+        foreach ($commentaries as $commentary) {
+            $commentariesOutput[] = array('id' => $commentary["CommentaryID"], 'name' => "SDA Commentary Volume " . $commentary["Number"]);
         }
-        return $volumes;
+        return $commentariesOutput;
     }
 
     function load_home_sections($pdo) {

@@ -23,7 +23,7 @@
         $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"], 'chapter' => $chapter["ChapterNumber"]);
     }
 
-    $volumes = load_volumes($pdo);
+    $volumes = load_commentaries($pdo);
     $lastBookSeen = "";
 
     $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;

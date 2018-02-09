@@ -36,7 +36,7 @@
         $book["chapters"][] = $chapter;
     }
     $books[] = $book; // make sure to get the last item
-    $volumes = load_volumes($pdo);
+    $volumes = load_commentaries($pdo);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
