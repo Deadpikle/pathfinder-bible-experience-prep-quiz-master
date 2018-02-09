@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateCommentaries extends AbstractMigration
+class CreateUserFlagged extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,10 +28,11 @@ class CreateCommentaries extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Commentaries',  ['id' => 'CommentaryID']);
-        $table->addColumn('Number', 'integer');
-        $table->addColumn('YearID', 'integer');
-        $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
+        $table = $this->table('UserFlagged', ['id' => 'UserFlaggedID']);
+        $table->addColumn('UserID', 'integer');
+        $table->addColumn('QuestionID', 'integer');
+        $table->addForeignKey('UserID', 'Users', 'UserID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
+        $table->addForeignKey('QuestionID', 'Questions', 'QuestionID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->save();
     }
 }

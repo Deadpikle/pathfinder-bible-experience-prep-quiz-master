@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateCommentaries extends AbstractMigration
+class CreateHomeInfoItems extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,10 +28,15 @@ class CreateCommentaries extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Commentaries',  ['id' => 'CommentaryID']);
-        $table->addColumn('Number', 'integer');
-        $table->addColumn('YearID', 'integer');
-        $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
+        $table = $this->table('HomeInfoItems', ['id' => 'HomeInfoItemID']);
+        $table->addColumn('IsLink', 'boolean', ['default' => false]);
+        $table->addColumn('Text', 'string', ['limit' => 500]);
+        $table->addColumn('URL', 'string', ['limit' => 500]);
+        $table->addColumn('SortOrder', 'integer');
+
+        $table->addColumn('HomeInfoLineID', 'integer');
+
+        $table->addForeignKey('HomeInfoLineID', 'HomeInfoLines', 'HomeInfoLineID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->save();
     }
 }
