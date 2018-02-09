@@ -6,8 +6,9 @@
             $_POST["club-url"]
         ];
         if ($_GET["type"] == "update") {
+            $conferenceIDText = $isWebAdmin ? ', ConferenceID = ?' : '';
             $query = '
-                UPDATE Clubs SET Name = ?, URL = ?, ConferenceID = ? WHERE ClubID = ?
+                UPDATE Clubs SET Name = ?, URL = ? ' . $conferenceIDText . ' WHERE ClubID = ?
             ';
             if ($isWebAdmin) {
                 $params[] = $_POST["conference"];
