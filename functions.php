@@ -18,6 +18,21 @@
         return $output;
     }
 
+    function get_active_year_id($pdo) {
+        $query = '
+        SELECT YearID
+        FROM Years
+        WHERE IsCurrent = 1';
+        $yearsStmt = $pdo->prepare($query);
+        $yearsStmt->execute([]);
+        $years = $yearsStmt->fetchAll();
+        $output = [];
+        if (count($years) > 0) {
+            return $years[0]["YearID"];
+        }
+        return 1;
+    }
+
     function is_bible_qna($type) {
         return $type === "bible-qna" || $type == "bible-qna-fill";
     }

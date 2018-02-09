@@ -22,8 +22,9 @@
     
     $isGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
     $isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";
+    $isConferenceAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ConferenceAdmin";
     $isWebAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "WebAdmin";
-    $isAdmin = $isClubAdmin || $isWebAdmin;
+    $isAdmin = $isClubAdmin || $isWebAdmin || $isConferenceAdmin;
     $isPathfinder = !($isAdmin);
 
     // init settings
@@ -35,4 +36,6 @@
     $analyticsURL = isset($settings['AnalyticsURL']) ? $settings['AnalyticsURL'] : '';
     $analyticsSiteID = isset($settings['AnalyticsSiteID']) ? $settings['AnalyticsSiteID'] : '1';
 
+    // get active year
+    $activeYearID = get_active_year_id($pdo);
 ?>
