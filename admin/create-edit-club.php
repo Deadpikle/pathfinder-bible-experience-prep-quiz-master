@@ -47,11 +47,11 @@
         <input type="hidden" name="club-id" value="<?= $clubID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="club-name" name="club-name" value="<?= $clubName ?>" required data-length="100"/>
+                <input type="text" id="club-name" name="club-name" value="<?= $clubName ?>" required data-length="150"/>
                 <label for="club-name">Club Name</label>
             </div>
             <div class="input-field col s12 m4">
-                <input type="url" id="club-url" name="club-url" value="<?= $url ?>" data-length="1000"/>
+                <input type="url" id="club-url" name="club-url" value="<?= $url ?>" data-length="300"/>
                 <label for="club-url">Website or Facebook URL</label>
             </div>
         </div>

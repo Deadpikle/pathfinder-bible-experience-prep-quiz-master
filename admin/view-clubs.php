@@ -21,11 +21,11 @@
         <form action="ajax/save-club-edits.php?type=create" method="post">
             <div class="row">
                 <div class="input-field col s4 m4">
-                    <input type="text" id="club-name" name="club-name" value="" required data-length="100"/>
+                    <input type="text" id="club-name" name="club-name" value="" required data-length="150"/>
                     <label for="club-name">Club Name</label>
                 </div>
                 <div class="input-field col s4 m4">
-                    <input type="url" id="club-url" name="club-url" value="" required data-length="1000"/>
+                    <input type="url" id="club-url" name="club-url" value="" required data-length="300"/>
                     <label for="club-url">Website or Facebook URL</label>
                 </div>
                 <div class="input-field col s4 m4">
