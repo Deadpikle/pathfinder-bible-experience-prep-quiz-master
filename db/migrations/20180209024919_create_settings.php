@@ -34,6 +34,6 @@ class CreateSettings extends AbstractMigration
         $table->addColumn('DisplayName', 'string', ['limit' => 150]);
         $table->addColumn('LastEdited', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
 
-        $table->save();
+        $table->create();
     }
 }

@@ -38,6 +38,6 @@ class CreateUserAnswers extends AbstractMigration
 
         $table->addForeignKey('QuestionID', 'Questions', 'QuestionID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->addForeignKey('UserID', 'Users', 'UserID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

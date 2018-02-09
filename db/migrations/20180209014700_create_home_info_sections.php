@@ -37,6 +37,6 @@ class CreateHomeInfoSections extends AbstractMigration
 
         $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->addForeignKey('ConferenceID', 'Conferences', 'ConferenceID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

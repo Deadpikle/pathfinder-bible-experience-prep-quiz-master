@@ -33,6 +33,6 @@ class CreateChapters extends AbstractMigration
         $table->addColumn('NumberVerses', 'integer');
         $table->addColumn('BookID', 'integer');
         $table->addForeignKey('BookID', 'Books', 'BookID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

@@ -3,3 +3,4 @@ database.php
 uploads/*
 config.php
 vendor/*
+phinx.yml

@@ -31,8 +31,8 @@ class CreateClubs extends AbstractMigration
         $table = $this->table('Clubs', ['id' => 'ClubID']);
         $table->addColumn('Name', 'string', ['limit' => 150]);
         $table->addColumn('URL', 'string', ['limit' => 350]);
-        $table->addColumn('ConferenceID', 'integer');
-        $table->addForeignKey('ConferenceID', 'Conferences', 'ConferenceID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
-        $table->save();
+        $table->addColumn('ConferenceID', 'integer', ['null' => true]);
+        $table->addForeignKey('ConferenceID', 'Conferences', 'ConferenceID', ['delete'=> 'SET_NULL', 'update'=> 'NO_ACTION']);
+        $table->create();
     }
 }

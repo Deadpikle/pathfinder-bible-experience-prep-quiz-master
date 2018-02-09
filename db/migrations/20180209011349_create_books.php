@@ -33,6 +33,6 @@ class CreateBooks extends AbstractMigration
         $table->addColumn('NumberChapters', 'integer', ['default' => 0]);
         $table->addColumn('YearID', 'integer');
         $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

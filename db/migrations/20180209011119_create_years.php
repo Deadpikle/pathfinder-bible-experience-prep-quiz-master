@@ -30,6 +30,6 @@ class CreateYears extends AbstractMigration
         $table = $this->table('Years',  ['id' => 'YearID']);
         $table->addColumn('Year', 'integer');
         $table->addColumn('IsCurrent', 'boolean', ['default' => false]);
-        $table->save();
+        $table->create();
     }
 }

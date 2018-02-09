@@ -52,6 +52,6 @@ class CreateQuestions extends AbstractMigration
         $table->addForeignKey('EndVerseID', 'Verses', 'VerseID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('CommentaryID', 'Commentaries', 'CommentaryID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
 
-        $table->save();
+        $table->create();
     }
 }

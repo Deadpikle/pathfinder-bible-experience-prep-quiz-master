@@ -33,6 +33,6 @@ class CreateUserFlagged extends AbstractMigration
         $table->addColumn('QuestionID', 'integer');
         $table->addForeignKey('UserID', 'Users', 'UserID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->addForeignKey('QuestionID', 'Questions', 'QuestionID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

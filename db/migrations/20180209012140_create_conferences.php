@@ -33,6 +33,6 @@ class CreateConferences extends AbstractMigration
         $table->addColumn('URL', 'string', ['limit' => 350]);
         $table->addColumn('ContactName', 'string', ['limit' => 150]);
         $table->addColumn('ContactEmail', 'string', ['limit' => 150]);
-        $table->save();
+        $table->create();
     }
 }

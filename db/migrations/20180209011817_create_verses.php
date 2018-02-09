@@ -33,6 +33,6 @@ class CreateVerses extends AbstractMigration
         $table->addColumn('VerseText', 'string', ['limit' => 750]);
         $table->addColumn('ChapterID', 'integer');
         $table->addForeignKey('ChapterID', 'Chapters', 'ChapterID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

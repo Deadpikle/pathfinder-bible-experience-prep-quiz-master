@@ -39,6 +39,6 @@ class CreateUsers extends AbstractMigration
         $table->addForeignKey('UserTypeID', 'UserTypes', 'UserTypeID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('ClubID', 'Clubs', 'ClubID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->addForeignKey('CreatedByID', 'Users', 'UserID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

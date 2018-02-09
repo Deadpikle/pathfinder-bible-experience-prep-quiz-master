@@ -32,6 +32,6 @@ class CreateCommentaries extends AbstractMigration
         $table->addColumn('Number', 'integer');
         $table->addColumn('YearID', 'integer');
         $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }

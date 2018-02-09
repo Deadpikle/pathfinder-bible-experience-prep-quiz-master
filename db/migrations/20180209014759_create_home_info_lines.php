@@ -35,6 +35,6 @@ class CreateHomeInfoLines extends AbstractMigration
         $table->addColumn('HomeInfoSectionID', 'integer');
 
         $table->addForeignKey('HomeInfoSectionID', 'HomeInfoSections', 'HomeInfoSectionID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
-        $table->save();
+        $table->create();
     }
 }
