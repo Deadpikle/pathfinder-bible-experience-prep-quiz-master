@@ -6,7 +6,6 @@
         die();
     }
 
-    $whereClause = "";
     $params = [];
     $query = '
         SELECT YearID, Year, IsCurrent
@@ -38,7 +37,7 @@
         <form action="ajax/add-year.php" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
-                    <input type="number" id="year" name="year" value="2014" required/>
+                    <input type="number" id="year" name="year" value="2018" required/>
                     <label for="year">Year</label>
                 </div>
                 <div class="input-field col s6 m4">
