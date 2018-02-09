@@ -11,14 +11,23 @@
     <ul>
         <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-users.php">Users</a></li>
     </ul>  
-    <?php if ($isWebAdmin) { ?>
-        <h4>Web Administrator Functions</h4>
+    <?php if ($isConferenceAdmin || $isWebAdmin) { ?>
+        <h4>Conference Administrator Functions</h4>
         <ul>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-non-blankable-words.php">Non-Blankable Words</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-home-sections.php">Home Page Info</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-clubs.php">Pathfinder Clubs</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="manage-study-guides.php">Study Guides</a></li>
+        </ul>
+    <?php } ?>
+    <?php if ($isWebAdmin) { ?>
+        <h4>Web Administrator Functions</h4>
+        <ul>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Bible Books</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Commentaries</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Import Questions from Excel</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-non-blankable-words.php">Non-Blankable Words</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Website Settings</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-years.php">Years</a></li>
         </ul>
     <?php } ?>
 </div>

@@ -7,6 +7,10 @@
         $whereClause = " WHERE u.ClubID = ?";
         $params[] = $_SESSION["ClubID"];
     }
+    else if ($isConferenceAdmin) {
+        //$whereClause = " WHERE u.ClubID = ?";
+        //$params[] = $_SESSION["ConferenceID"];
+    }
     $query = '
         SELECT UserID, Username, EntryCode, ut.Type, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
@@ -22,14 +26,17 @@
 
 <p><a href=".">Back</a></p>
 
-<h4>UCC Website Users</h4>
+<h4>Website Users</h4>
 
 <p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
 
 <div id="users-div">
     <?php if ($isClubAdmin) { ?>
         <h3><?= $_SESSION["ClubName"] ?></h3>
+    <?php } else if ($isConferenceAdmin) { ?>
+        <h3><?= $_SESSION["ConferenceName"] ?></h3>
     <?php } ?>
+        
     <div id="create">
         <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
     </div>
