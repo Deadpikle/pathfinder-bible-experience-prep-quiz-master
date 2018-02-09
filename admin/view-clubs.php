@@ -1,8 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
 
-    if (!$isClubAdmin && !$isConferenceAdmin && !$isWebAdmin) {
-        header("Location: index.php");
+    if (!$isAdmin) {
+        header("Location: $basePath/index.php");
         die();
     }
     $query = '

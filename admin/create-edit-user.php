@@ -5,6 +5,10 @@
 
     require_once(dirname(__FILE__)."/init-admin.php");
 
+    if (!$isAdmin) {
+        header("Location: $basePath/index.php");
+        die();
+    }
     if ($_GET["type"] == "update") {
         $extraWhere = '';
         $query = '
@@ -38,8 +42,28 @@
     if ($isWebAdmin) {
         $userTypesQuery = 'SELECT UserTypeID, DisplayName FROM UserTypes ORDER BY UserTypeID';
         $userTypes = $pdo->query($userTypesQuery)->fetchAll();
-        $clubsQuery = 'SELECT ClubID, Name FROM Clubs ORDER BY Name';
+        $clubsQuery = '
+            SELECT ClubID, c.Name AS ClubName, conf.Name AS ConferenceName
+            FROM Clubs c LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
+            ORDER BY conf.Name, c.Name';
         $clubs = $pdo->query($clubsQuery)->fetchAll();
+    }
+    else if ($isConferenceAdmin) {
+        $userTypesQuery = "
+            SELECT UserTypeID, Type, DisplayName 
+            FROM UserTypes
+            WHERE Type <> 'WebAdmin' AND Type <> 'ConferenceAdmin' 
+            ORDER BY UserTypeID";
+        $userTypes = $pdo->query($userTypesQuery)->fetchAll();
+        $clubsQuery = '
+            SELECT ClubID, Name AS ClubName
+            FROM Clubs 
+            WHERE ConferenceID = ?
+            ORDER BY ClubName';
+        $params = [ $_SESSION["ConferenceID"] ];
+        $stmt = $pdo->prepare($clubsQuery);
+        $stmt->execute($params);
+        $clubs = $stmt->fetchAll();
     }
 
 ?>
@@ -55,22 +79,26 @@
         <input type="hidden" name="user-id" value="<?= $userID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="username" name="username" value="<?= $username ?>" required data-length="50"/>
+                <input type="text" id="username" name="username" value="<?= $username ?>" required data-length="150"/>
                 <label for="first-name">Username</label>
             </div>
         </div>
         <p>Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
-        <?php if ($isWebAdmin) { ?>
+        <?php if ($isWebAdmin || $isConferenceAdmin) { ?>
             <div class="row">
                 <div class="input-field col s12 m4">
                     <select id="club" name="club" required>
                         <option id="club-no-selection-option" value="">Select a club...</option>
                         <?php foreach ($clubs as $club) { 
+                                $displayName = $club['ClubName'];
+                                if ($isWebAdmin) {
+                                    $displayName .= ' (' . $club['ConferenceName'] . ')';
+                                }
                                 $selected = "";
                                 if ($club['ClubID'] == $clubID)
                                     $selected = "selected";
                         ?>
-                            <option value="<?= $club['ClubID'] ?>" <?=$selected?> ><?=$club['Name']?></option>
+                            <option value="<?= $club['ClubID'] ?>" <?=$selected?> ><?=$displayName?></option>
                         <?php } ?>
                     </select>
                     <label>Club</label>
