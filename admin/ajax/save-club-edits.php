@@ -7,14 +7,23 @@
         ];
         if ($_GET["type"] == "update") {
             $query = '
-                UPDATE Clubs SET Name = ?, URL = ? WHERE ClubID = ?
+                UPDATE Clubs SET Name = ?, URL = ?, ConferenceID = ? WHERE ClubID = ?
             ';
+            if ($isWebAdmin) {
+                $params[] = $_POST["conference"];
+            }
             $params[] = $_POST["club-id"];
         }
         else if ($_GET["type"] == "create") {
             $query = '
-                INSERT INTO Clubs (Name, URL) VALUES (?, ?)
+                INSERT INTO Clubs (Name, URL, ConferenceID) VALUES (?, ?, ?)
             ';
+            if ($isWebAdmin) {
+                $params[] = $_POST["conference"];
+            }
+            else {
+                $params[] = $_SESSION["ConferenceID"] != -1 ? $_SESSION["ConferenceID"] : NULL;
+            }
         }
         else {
             die("Invalid type");

@@ -73,6 +73,7 @@
                             <option value="<?= $club['ClubID'] ?>" <?=$selected?> ><?=$club['Name']?></option>
                         <?php } ?>
                     </select>
+                    <label>Club</label>
                 </div>
                 <div class="input-field col s12 m4">
                     <select id="user-type" name="user-type" required>
@@ -86,37 +87,12 @@
                             <option value="<?= $userType['UserTypeID'] ?>" <?=$selected?> ><?=$userType['DisplayName']?></option>
                         <?php } ?>
                     </select>
+                    <label>User Type</label>
                 </div>
             </div>
         <?php } ?>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('select').material_select();
-        // https://github.com/Dogfalo/materialize/issues/1861 fix validate on material selectors
-        $('select[required]').css({
-            display: 'inline',
-            position: 'absolute',
-            float: 'left',
-            padding: 0,
-            margin: 0,
-            border: '1px solid rgba(255,255,255,0)',
-            height: 0, 
-            width: 0,
-            top: '2em',
-            left: '3em'
-        });
-        $('select').each(function( index ) {
-            $(this).on('mousedown', function(e) {
-                e.preventDefault();
-                this.blur();
-                window.focus();
-            });
-        });
-    });
-</script>
 
 <?php include(dirname(__FILE__)."/../footer.php"); ?>

@@ -83,12 +83,15 @@
     <select id="book-select" class="col s4 m3">
         <option value="-1" selected>No book filter</option>
     </select>
+    <!-- <label>Book Filter</label> -->
     <select id="chapter-select" class="col s4 m3">
         <option value="-1" selected>No chapter filter</option>
     </select>
+    <!-- <label>Chapter Filter</label> -->
     <select id="volume-select" class="col s4 m3">
         <option value="-1" selected>No commentary filter</option>
     </select>
+    <!-- <label>Commentary Filter</label> -->
 </div>
 
 <div class="divider"></div>

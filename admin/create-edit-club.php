@@ -11,7 +11,7 @@
 
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT ClubID, Name, URL
+            SELECT ClubID, Name, URL, ConferenceID
             FROM Clubs
             WHERE ClubID = ?';
         $stmt = $pdo->prepare($query);
@@ -21,6 +21,7 @@
             die("invalid club id"); // TODO: better error
         }
         $clubID = $_GET["id"];
+        $conferenceID = $club["ConferenceID"];
         $clubName = $club["Name"];
         $url = $club["URL"];
         $postType = "update";
@@ -28,10 +29,18 @@
     }
     else {
         $clubID = "";
+        $conferenceID = -1;
         $clubName = "";
         $url = "";
         $postType = "create";
         $titleString = "Create";
+    }
+    if ($isWebAdmin) {
+        // need to let user choose which conference the club belongs to
+        $query = 'SELECT ConferenceID, Name FROM Conferences ORDER BY Name';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([]);
+        $conferences = $stmt->fetchAll();
     }
 
 ?>
@@ -55,7 +64,27 @@
                 <label for="club-url">Website or Facebook URL</label>
             </div>
         </div>
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        <div class="row">
+            <?php if ($isWebAdmin) { ?>
+                <div class="input-field col s12 m4">
+                    <select id="conference" name="conference" required>
+                        <option id="conference-no-selection-option" value="">Select a conference...</option>
+                        <?php foreach ($conferences as $conference) { 
+                                $selected = "";
+                                if ($conference['ConferenceID'] == $conferenceID) {
+                                    $selected = "selected";
+                                }
+                        ?>
+                            <option value="<?= $conference['ConferenceID'] ?>" <?= $selected ?>><?=$conference['Name']?></option>
+                        <?php } ?>
+                    </select>
+                    <label>Conference</label>
+                </div>
+            <?php } ?>
+            <div class="input-field col s12 m4">
+                <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+            </div>
+        </div>
     </form>
 </div>
 
