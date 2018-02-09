@@ -164,17 +164,17 @@ class DefaultSeeder extends AbstractSeed
                 'ConferenceID' => 1
             ],
             [
-                'Name' => 'Books',
-                'SortOrder' => 2,
-                'YearID' => 1,
-                'ConferenceID' => 1
-            ],
-            [
                 'Name' => 'Resources',
                 'SortOrder' => 1,
                 'YearID' => 1,
                 'ConferenceID' => 1
             ],
+            [
+                'Name' => 'Books',
+                'SortOrder' => 2,
+                'YearID' => 1,
+                'ConferenceID' => 1
+            ]
         ];
         $homeSections = $this->table('HomeInfoSections');
         $homeSections->insert($homeSectionsData)->save();
@@ -259,7 +259,7 @@ class DefaultSeeder extends AbstractSeed
                 'Text' => 'Location TBA (East Cascade District)',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 2,
                 'HomeInfoLineID' => 2
             ],
             [
@@ -273,14 +273,14 @@ class DefaultSeeder extends AbstractSeed
                 'Text' => 'March 10, 2018',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 1,
                 'HomeInfoLineID' => 3
             ],
             [
                 'Text' => 'Location TBA (Idaho Conference - Boise Area)',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 2,
                 'HomeInfoLineID' => 3
             ],
             [
@@ -294,14 +294,14 @@ class DefaultSeeder extends AbstractSeed
                 'Text' => 'April 20-21, 2018',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 1,
                 'HomeInfoLineID' => 4
             ],
             [
                 'Text' => 'Location: Orlando, Florida',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 2,
                 'HomeInfoLineID' => 4
             ],
             [
@@ -322,14 +322,14 @@ class DefaultSeeder extends AbstractSeed
                 'Text' => 'Purchase Link',
                 'IsLink' => 1,
                 'URL' => 'http://www.adventsource.org/as30/store-productDetails.aspx?ID=38282',
-                'SortOrder' => 0,
+                'SortOrder' => 1,
                 'HomeInfoLineID' => 6
             ],
             [
                 'Text' => 'PDF Download',
                 'IsLink' => 1,
                 'URL' => 'http://www.pathfindersonline.org/pdf/PBE/PBE_ApplicationGuideExodus_2016.pdf',
-                'SortOrder' => 0,
+                'SortOrder' => 2,
                 'HomeInfoLineID' => 6
             ],
             [
@@ -350,7 +350,7 @@ class DefaultSeeder extends AbstractSeed
                 'Text' => 'Software',
                 'IsLink' => 0,
                 'URL' => '',
-                'SortOrder' => 0,
+                'SortOrder' => 2,
                 'HomeInfoLineID' => 7
             ]
         ];
