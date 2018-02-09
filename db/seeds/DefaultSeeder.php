@@ -85,5 +85,10 @@ class DefaultSeeder extends AbstractSeed
         ];
         $conferences = $this->table('Conferences');
         $conferences->insert($conferencesData)->save();
+
+        // TODO: clubs
+        // TODO: users
+        // TODO: Home info sections/lines
+        // TODO: years
     }
 }
