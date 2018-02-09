@@ -18,9 +18,9 @@
         return $output;
     }
 
-    function get_active_year_id($pdo) {
+    function get_active_year($pdo) {
         $query = '
-        SELECT YearID
+        SELECT YearID, Year
         FROM Years
         WHERE IsCurrent = 1';
         $yearsStmt = $pdo->prepare($query);
@@ -28,9 +28,9 @@
         $years = $yearsStmt->fetchAll();
         $output = [];
         if (count($years) > 0) {
-            return $years[0]["YearID"];
+            return ["YearID" => $years[0]["YearID"], "Year" => $years[0]["Year"]];
         }
-        return 1;
+        return ["YearID" => 1, "Year" => 2018];
     }
 
     function is_bible_qna($type) {

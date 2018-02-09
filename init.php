@@ -37,5 +37,7 @@
     $analyticsSiteID = isset($settings['AnalyticsSiteID']) ? $settings['AnalyticsSiteID'] : '1';
 
     // get active year
-    $activeYearID = get_active_year_id($pdo);
+    $yearData = get_active_year($pdo);
+    $activeYearID = $yearData["YearID"];
+    $activeYearNumber = $yearData["Year"];
 ?>
