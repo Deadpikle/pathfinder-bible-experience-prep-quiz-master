@@ -45,7 +45,7 @@
         <input type="hidden" name="word-id" value="<?= $wordID ?>"/>
         <div class="row">
             <div class="input-field col s12 m4">
-                <input type="text" id="blankable-word" name="blankable-word" value="<?= $word ?>" required data-length="150"/>
+                <input type="text" id="blankable-word" name="blankable-word" value="<?= $word ?>" required data-length="300"/>
                 <label for="blankable-word">Word</label>
             </div>
         </div>
