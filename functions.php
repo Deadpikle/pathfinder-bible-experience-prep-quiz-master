@@ -330,17 +330,18 @@
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
                 IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
-                CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
+                comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage ';
         $fromPortion = '
             FROM Questions q 
-                LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
+                LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
+                JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID';
         if ($shouldAvoidPastCorrectAnswers) {
             $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
         }
         $whereClause = ' 
             WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
         if (count($volumeNumbers) > 0) {
-            $whereClause .= ' AND CommentaryVolume IN (' . implode(',', $volumeNumbers) . ') ';
+            $whereClause .= ' AND CommentaryNumber IN (' . implode(',', $volumeNumbers) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
             $whereClause .= '  AND (ua.UserAnswerID IS NULL 
@@ -350,7 +351,7 @@
             $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
         if (!$areRandomQuestionsPulled) {
-            $orderByPortion = ' ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage';
+            $orderByPortion = ' ORDER BY CommentaryNumber, CommentaryStartPage, CommentaryEndPage';
         }
         if ($shouldLoadCommentaryQnA) {
             $stmt = $pdo->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
@@ -392,12 +393,12 @@
                 $bibleFillIn);
                 
             array_multisort(
-                array_column($commentaryQnA, 'CommentaryVolume'), SORT_ASC, 
+                array_column($commentaryQnA, 'CommentaryNumber'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryEndPage'), SORT_ASC,
                 $commentaryQnA);
             array_multisort(
-                array_column($commentaryFillIn, 'CommentaryVolume'), SORT_ASC, 
+                array_column($commentaryFillIn, 'CommentaryNumber'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryEndPage'), SORT_ASC,
                 $commentaryFillIn);
@@ -497,7 +498,7 @@
             }
             else if (is_commentary_qna($question["Type"])) {
                 // commentary Q&A
-                $data["volume"] = $question["CommentaryVolume"];
+                $data["volume"] = $question["CommentaryNumber"];
                 $data["startPage"] = $question["CommentaryStartPage"];
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
