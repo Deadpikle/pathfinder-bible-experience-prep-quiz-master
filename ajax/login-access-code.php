@@ -6,9 +6,11 @@
     require_once("../database.php");
 
     $query = '
-        SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName
+        SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
+            conf.ConferenceID, conf.Name AS ConferenceName
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID
+            LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
         WHERE EntryCode = ?';
     $stmt = $pdo->prepare($query);
     $params = [
@@ -35,6 +37,14 @@
             $_SESSION["ClubID"] = -1;
         }
         $_SESSION["ClubName"] = $row["ClubName"];
+        if ($row["ConferenceID"] != NULL) {
+            $_SESSION["ConferenceID"] = $row["ConferenceID"];
+        }
+        else {
+            $_SESSION["ConferenceID"] = -1;
+        }
+        $_SESSION["ConferenceName"] = $row["ConferenceName"];
+        
         header("Location: ../index.php");
     }
     else {
