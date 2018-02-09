@@ -32,7 +32,7 @@
                     <label for="name">Name</label>
                 </div>
                 <div class="input-field col s6 m4">
-                    <input type="number" id="number-chapters" name="number-chapters" value="1" required min="1" max="150"/>
+                    <input type="number" id="number-chapters" name="number-chapters" placeholder="1" value="" required min="1" max="150"/>
                     <label for="number-chapters">Number of Chapters</label>
                 </div>
                 <div class="input-field col s6 m4">
@@ -49,7 +49,7 @@
                     <th>Name</th>
                     <th>Number of Chapters</th>
                     <th>Year</th>
-                    <th>Manage</th>
+                    <th>Manage Chapters</th>
                     <th>Remove</th>
                 </tr>
             </thead>
@@ -61,7 +61,7 @@
                             <td><?= $book["NumberChapters"] ?></td>
                             <td><?= $book["Year"] ?></td>
                             <td>
-                                <a class="waves-effect waves-light btn" href="view-book.php?id=<?= $book["BookID"] ?>">Manage</a>
+                                <a class="waves-effect waves-light btn" href="view-book-details.php?id=<?= $book["BookID"] ?>">Manage Chapters</a>
                             </td>
                             <td>
                                 <a class="waves-effect waves-light btn red white-text" href="delete-book.php?id=<?= $book["BookID"] ?>">Remove</a>
