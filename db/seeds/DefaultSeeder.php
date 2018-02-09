@@ -356,5 +356,40 @@ class DefaultSeeder extends AbstractSeed
         ];
         $homeInfoItems = $this->table('HomeInfoItems');
         $homeInfoItems->insert($homeInfoItemsData)->save();
+
+        $blankableWordsData = [
+            [
+                'Word' => 'and'
+            ],
+            [
+                'Word' => 'is'
+            ],
+            [
+                'Word' => 'not'
+            ],
+            [
+                'Word' => 'the'
+            ],
+            [
+                'Word' => 'a'
+            ],
+            [
+                'Word' => 'or'
+            ],
+            [
+                'Word' => 'but'
+            ],
+            [
+                'Word' => '...'
+            ],
+            [
+                'Word' => 'of'
+            ],
+            [
+                'Word' => 'to'
+            ],
+        ];
+        $blankableWords = $this->table('BlankableWords');
+        $blankableWords->insert($blankableWordsData)->save();
     }
 }
