@@ -1,9 +1,12 @@
 <?php
     // if "Type" is undefined, check for an invisible bullet char at gist.github.com -> if exists, erase with hex editor (dunno why it's there...)
-    require_once(dirname(__FILE__)."/init.php");
+    require_once(dirname(__FILE__)."/init-admin.php");
     if ($_SESSION["UserType"] !== "WebAdmin") {
-        die("You shall not pass!");
+        header("Location: $basePath/index.php");
+        die();
     }
+
+    $title = "Upload Questions";
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tmpName = $_FILES['csv']['tmp_name'];
@@ -171,13 +174,19 @@
     }
 ?>
 
-<?php include(dirname(__FILE__)."/header.php"); ?>
+<?php include(dirname(__FILE__)."/../header.php"); ?>
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
+
+<h4>Upload Questions from CSV File</h4>
+
+<p id="directions">WARNING: THIS PAGE IS NOT YET COMPLETE.</p>
 
 <div id="upload">
     <form method="post" enctype="multipart/form-data">
         <div class="file-field input-field">
             <div class="btn">
-                <span>File</span>
+                <span>Choose CSV File</span>
                 <input type="file" id="csv" name="csv" accept=".csv,text/csv">
             </div>
             <div class="file-path-wrapper">
@@ -187,4 +196,4 @@
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Submit</button>
     </form>
 </div>
-<?php include(dirname(__FILE__)."/footer.php") ?>
+<?php include(dirname(__FILE__)."/../footer.php") ?>

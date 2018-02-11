@@ -6,9 +6,9 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./manage-study-guides.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./manage-study-guides.php">Back</a></p>
 
-<h2>Upload Study Guide</h2>
+<h4>Upload Study Guide</h4>
 
 <?php if (isset($_GET["success"])) { ?>
     <h4>File uploaded successfully!</h4>
