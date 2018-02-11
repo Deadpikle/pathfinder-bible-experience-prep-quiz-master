@@ -1,5 +1,5 @@
 <?php
-    require_once(dirname(__FILE__)."/init.php");
+    require_once(dirname(__FILE__)."/../init.php");
     $sections = load_home_sections($pdo);
 
     $words = load_non_blankable_words($pdo);
@@ -9,7 +9,7 @@
     //$question = generate_fill_in_question("\"My dear boy, what ever shall you do?\"", 0.5, words);
 ?>
 
-<?php include(dirname(__FILE__)."/header.php"); ?>
+<?php include(dirname(__FILE__)."/../header.php"); ?>
 
 
 <script type="text/javascript">
@@ -50,4 +50,4 @@
 
 </script>
 
-<?php include(dirname(__FILE__)."/footer.php") ?>
+<?php include(dirname(__FILE__)."/../footer.php") ?>
