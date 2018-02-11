@@ -33,7 +33,7 @@
         else {
             $whereClause .= " AND (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
-
+        // TODO: why are these if/else things in two separate sections exactly?
         if (strpos($questionType, 'bible') !== false) {
             if (isset($_POST["bookFilter"]) && is_numeric($_POST["bookFilter"]) && $_POST["bookFilter"] != -1) {
                 $whereClause .= " AND bStart.BookID = " . $_POST["bookFilter"];
@@ -48,23 +48,28 @@
             }
         }
 
+        $currentYear = get_active_year($pdo)["YearID"];
+
         if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
             $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
+            if ($whereClause == "") {
+                $whereClause = " WHERE IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
+            }
+            else {
+                $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
+            }
         }
         else if ($questionType == "commentary-qna" || $questionType == "commentary-qna-fill") {
             $orderByClause = " ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage ";
+            if ($whereClause == "") {
+                $whereClause = " WHERE IsDeleted = 0 AND comm.YearID = " . $currentYear;
+            }
+            else {
+                $whereClause .= " AND IsDeleted = 0 AND comm.YearID = " . $currentYear;
+            }
         }
         else {
             $orderByClause = "";
-        }
-
-        $currentYear = get_active_year($pdo)["YearID"];
-
-        if ($whereClause == "") {
-            $whereClause = " WHERE IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
-        }
-        else {
-            $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
         }
 
         $pageSize = 10;
@@ -96,7 +101,8 @@
                 ' . $orderByClause;
         $limitClause = '
             LIMIT ' . $pageOffset . ',' . $pageSize;  
-        $stmt = $pdo->query($selectPortion . $fromPortion . $limitClause);
+        $fullQuery = $selectPortion . $fromPortion . $limitClause;
+        $stmt = $pdo->query($fullQuery);
         $questions = $stmt->fetchAll();
 
         $stmt = $pdo->query("SELECT COUNT(*) AS QuestionCount " . $fromPortion);

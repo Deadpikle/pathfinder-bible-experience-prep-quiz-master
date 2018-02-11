@@ -266,6 +266,7 @@
                 }
                 else if (isCommentaryQuestion(question.Type)) {
                     var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
+                    volume += ' - ' + question.TopicName;
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
