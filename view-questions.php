@@ -163,30 +163,39 @@
                     volumeFilter: volumeFilter
                 },
                 success: function(response) {
-                    setupTable(response.questions);
-                    var totalQuestions = response.questions.length != 0 ? response.questions.length : 0;
-                    maxPageNumber = totalQuestions != 0 ? Math.ceil(response.totalQuestions / pageSize) - 1 : 0;
-                    if (currentPageNumber == 0) {
-                        previousPage.disabled = true;
+                    if (typeof response == 'undefined' || typeof response.questions == 'undefined'){
+                        showLoadError();
                     }
                     else {
-                        previousPage.disabled = false;
-                    }
-                    if (maxPageNumber == currentPageNumber) {
-                        nextPage.disabled = true;
-                    }
-                    else {
-                        nextPage.disabled = false;
+                        setupTable(response.questions);
+                        var totalQuestions = response.questions.length != 0 ? response.questions.length : 0;
+                        maxPageNumber = totalQuestions != 0 ? Math.ceil(response.totalQuestions / pageSize) - 1 : 0;
+                        if (currentPageNumber == 0) {
+                            previousPage.disabled = true;
+                        }
+                        else {
+                            previousPage.disabled = false;
+                        }
+                        if (maxPageNumber == currentPageNumber) {
+                            nextPage.disabled = true;
+                        }
+                        else {
+                            nextPage.disabled = false;
+                        }
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    var $questionsBody = $("#questions-body");
-                    $questionsBody.empty();
-                    previousPage.disabled = true;
-                    nextPage.disabled = true;
-                    alert("Unable to load questions. Please make sure you are connected to the internet or try again later.");
+                    showLoadError();
                 }
             });
+        }
+
+        function showLoadError() {
+            var $questionsBody = $("#questions-body");
+            $questionsBody.empty();
+            previousPage.disabled = true;
+            nextPage.disabled = true;
+            alert("Unable to load questions. Please make sure you are connected to the internet or try again later.");
         }
 
         function setupTableHeader(questionType) {

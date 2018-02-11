@@ -13,7 +13,7 @@
     if (isset($_POST["remove-question-flag"]) && $_POST["remove-question-flag"] != NULL) {
         $shouldRemoveFlag = TRUE;
     }
-    $commentaryVolume = $_POST["commentary-volume"];
+    $commentaryID = $_POST["commentary-volume"];
     $commentaryStartPage = $_POST["commentary-start"];
     $commentaryEndPage = $_POST["commentary-end"];
     $questionType = $_POST["question-type"];
@@ -25,7 +25,7 @@
         $isFillInTheBlank = TRUE;
     }
     if ($questionType == "bible-qna") {
-        $commentaryVolume = NULL;
+        $commentaryID = NULL;
         $commentaryStartPage = NULL;
         $commentaryEndPage = NULL;
         if ($isFillInTheBlank) {
@@ -48,7 +48,7 @@
         $_SESSION["UserID"],
         $startVerseID,
         $endVerseID,
-        $commentaryVolume,
+        $commentaryID,
         $commentaryStartPage,
         $commentaryEndPage
     ];
@@ -56,7 +56,7 @@
     if ($_GET["type"] == "update") {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
-            CommentaryVolume = ?, CommentaryStartPage = ?, CommentaryEndPage = ?';
+            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?';
         $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
@@ -64,7 +64,7 @@
         $params[] = $_SESSION["UserID"];
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryVolume, CommentaryStartPage, CommentaryEndPage, CreatorID) 
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
     }

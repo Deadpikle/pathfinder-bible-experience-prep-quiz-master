@@ -37,7 +37,8 @@ function fixRequiredSelectorCSS() {
         height: 0, 
         width: 0,
         top: '2em',
-        left: '3em'
+        left: '3em',
+        pointerEvents: 'none'
     });
     $('select').each(function( index ) {
         $(this).on('mousedown', function(e) {
@@ -114,29 +115,3 @@ function fillInAnswerString(questionWords, separator) {
     }
     return output;
 }
-
-
-$(document).ready(function() {
-    $('select').material_select();
-    // https://github.com/Dogfalo/materialize/issues/1861 fix validate on material selectors
-    $('select[required]').css({
-        display: 'inline',
-        position: 'absolute',
-        float: 'left',
-        padding: 0,
-        margin: 0,
-        border: '1px solid rgba(255,255,255,0)',
-        height: 0, 
-        width: 0,
-        top: '2em',
-        left: '3em',
-        pointerEvents: 'none'
-    });
-    $('select').each(function( index ) {
-        $(this).on('mousedown', function(e) {
-            e.preventDefault();
-            this.blur();
-            window.focus();
-        });
-    });
-});

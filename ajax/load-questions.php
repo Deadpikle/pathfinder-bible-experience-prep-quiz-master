@@ -51,7 +51,7 @@
             $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
         }
         else if ($questionType == "commentary-qna" || $questionType == "commentary-qna-fill") {
-            $orderByClause = " ORDER BY CommentaryVolume, CommentaryStartPage, CommentaryEndPage ";
+            $orderByClause = " ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage ";
         }
         else {
             $orderByClause = "";
@@ -70,7 +70,7 @@
             SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
                 bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
-                Type, CommentaryVolume, CommentaryStartPage, CommentaryEndPage ';
+                Type, comm.Number AS CommentaryVolume, comm.TopicName, CommentaryStartPage, CommentaryEndPage ';
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
@@ -80,6 +80,7 @@
                 LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
                 LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
                 LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID
+                LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID 
                 ' . $flaggedJoinClause . '
                 ' . $whereClause . '
                 ' . $orderByClause;

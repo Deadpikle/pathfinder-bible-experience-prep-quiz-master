@@ -82,7 +82,7 @@
     function load_commentaries($pdo) {
         $currentYear = get_active_year($pdo)["YearID"];
         $query = '
-            SELECT DISTINCT CommentaryID, Number
+            SELECT DISTINCT CommentaryID, Number, TopicName
             FROM Commentaries 
             WHERE YearID = ?
             ORDER BY Number';
@@ -93,7 +93,11 @@
 
         $commentariesOutput = array();
         foreach ($commentaries as $commentary) {
-            $commentariesOutput[] = array('id' => $commentary["CommentaryID"], 'name' => "SDA Commentary Volume " . $commentary["Number"]);
+            $commentariesOutput[] = [
+                'id' => $commentary["CommentaryID"], 
+                'name' => "SDA Commentary Volume " . $commentary["Number"],
+                'topic' => $commentary["TopicName"]
+            ];
         }
         return $commentariesOutput;
     }

@@ -123,4 +123,11 @@
     </form>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+        fixRequiredSelectorCSS();
+    });
+</script>
+
 <?php include(dirname(__FILE__)."/../footer.php"); ?>

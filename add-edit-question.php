@@ -19,8 +19,10 @@
         }
         $query = '
             SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
-                CommentaryVolume, CommentaryStartPage, CommentaryEndPage
-            FROM Questions q LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID
+                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage
+            FROM Questions q 
+                LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
+                LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
             WHERE q.QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
@@ -35,7 +37,7 @@
         $startVerseID = $question["StartVerseID"];
         $endVerseID = $question["EndVerseID"];
         $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? TRUE : FALSE;
-        $commentaryVolume = $question["CommentaryVolume"];
+        $commentaryID = $question["CommentaryID"];
         $commentaryStartPage = $question["CommentaryStartPage"];
         $commentaryEndPage = $question["CommentaryEndPage"];
         $postType = "update";
@@ -50,7 +52,7 @@
         $answer = "";
         $numberOfPoints = "1";
         $isFlagged = FALSE;
-        $commentaryVolume = "";
+        $commentaryID = "";
         $commentaryStartPage = "";
         $commentaryEndPage = "";
         $postType = "create";
@@ -63,8 +65,8 @@
     if ($endVerseID == NULL) {
         $endVerseID = -1;
     }
-    if ($commentaryVolume == NULL) {
-        $commentaryVolume = -1;
+    if ($commentaryID == NULL) {
+        $commentaryID = -1;
     }
 
     // TODO: refactor to a function
@@ -128,17 +130,21 @@
     $books[] = $book;
 
     $bookJSON = json_encode($books);
+
+    $commentaries = load_commentaries($pdo); // keys: id, name, topic
+    $commentaryJSON = json_encode($commentaries);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
 
 <script type="text/javascript">
-    var books = <?= json_encode($books) ?>;
+    var books = <?= $bookJSON ?>;
+    var commentaries = <?= $commentaryJSON ?>;
     var questionType = '<?= $questionType ?>';
     var isFillInInitially = <?= $isFillInText ?>;
     var startVerseID = <?= $startVerseID ?>;
     var endVerseID = <?= $endVerseID ?>;
-    var volume = <?= $commentaryVolume ?>;
+    var commentaryID = <?= $commentaryID ?>;
 </script>
 
 <p><a href="./view-questions.php">Back</a></p>
@@ -171,11 +177,13 @@
             <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
             <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
-                <textarea id="question-text" name="question-text" class="materialize-textarea" required data-length="10000"><?= $questionText ?></textarea>
+                <textarea id="question-text" name="question-text" class="materialize-textarea" 
+                        required placeholder="What is the name of Esther's uncle?" data-length="10000"><?= $questionText ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div id="question-answer-div" class="input-field col s12 m6">
-                <textarea id="question-answer" name="question-answer" class="materialize-textarea" required data-length="3000"><?= $answer ?></textarea>
+                <textarea id="question-answer" name="question-answer" class="materialize-textarea" 
+                        required placeholder="Mordecai" data-length="3000"><?= $answer ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
@@ -219,18 +227,19 @@
         <div class="row commentary-inputs">
             <p class="section-info">Commentary Info</p>
             <select class="col s12 m3" id="commentary-volume" name="commentary-volume" required>
-                <option id="commentary-no-selection-option" value="">Select a book...</option>
-                <option value="4">Daniel</option>
-                <option value="3">Esther</option>
+                <option id="commentary-no-selection-option" value="">Select commentary...</option>
+                <?php foreach ($commentaries as $commentary) { ?>
+                        <option id="" value="<?= $commentary['id'] ?>"><?= $commentary['name'] ?> - <?= $commentary['topic'] ?></option>
+                <?php } ?>
             </select>
         </div>
         <div class="row commentary-inputs negative-top-margin">
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $commentaryStartPage ?>" required/>
+                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $commentaryStartPage ?>" required placeholder="12"/>
                 <label for="commentary-start">Start Page</label>
             </div>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $commentaryEndPage ?>"/>
+                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $commentaryEndPage ?>" placeholder="15"/>
                 <label for="commentary-end">End Page</label>
             </div>
         </div>
@@ -437,9 +446,9 @@
         }
         fixRequiredSelectorCSS();
         // setup initial selection for commentary volume
-        if ((questionType == 'commentary-qna' || questionType == 'commentary-qna-fill') && volume != "" && volume != -1) {
+        if ((questionType == 'commentary-qna' || questionType == 'commentary-qna-fill') && commentaryID != "" && commentaryID != -1) {
             //document.getElementById('commentary-volume').value = 'Seven';
-            $('#commentary-volume option[value="' + volume + '"]').prop('selected', true);
+            $('#commentary-volume option[value="' + commentaryID + '"]').prop('selected', true);
         }
         $('#commentary-volume').material_select();
 

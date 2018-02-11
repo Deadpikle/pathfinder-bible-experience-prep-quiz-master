@@ -38,7 +38,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href=".">Back</a></p>
+<p><a href="./view-books.php">Back</a></p>
 
 <h4>Chapters for <?= $book["Name"] ?></h4>
 
