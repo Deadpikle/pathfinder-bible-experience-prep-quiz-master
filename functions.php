@@ -271,6 +271,7 @@
         // // // // //
         // load Bible questions
         // // // // //
+        $currentYear = get_active_year($pdo)["YearID"];
         $bibleQnA = array();
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
@@ -302,6 +303,9 @@
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "bible-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
+
+        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND bEnd.YearID = ' . $currentYear;
+
         $orderByPortion = '';
         if ($areRandomQuestionsPulled) {
             $orderByPortion = ' ORDER BY RAND() ';
@@ -334,7 +338,7 @@
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
                 IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
-                comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage ';
+                comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage, comm.TopicName AS CommentaryTopic ';
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
@@ -354,6 +358,8 @@
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
+        $whereClause .= ' AND IsDeleted = 0 AND comm.YearID = ' . $currentYear;
+
         if (!$areRandomQuestionsPulled) {
             $orderByPortion = ' ORDER BY CommentaryNumber, CommentaryStartPage, CommentaryEndPage';
         }
@@ -398,11 +404,13 @@
                 
             array_multisort(
                 array_column($commentaryQnA, 'CommentaryNumber'), SORT_ASC, 
+                array_column($commentaryQnA, 'CommentaryTopic'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryEndPage'), SORT_ASC,
                 $commentaryQnA);
             array_multisort(
                 array_column($commentaryFillIn, 'CommentaryNumber'), SORT_ASC, 
+                array_column($commentaryFillIn, 'CommentaryTopic'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryEndPage'), SORT_ASC,
                 $commentaryFillIn);
@@ -503,6 +511,7 @@
             else if (is_commentary_qna($question["Type"])) {
                 // commentary Q&A
                 $data["volume"] = $question["CommentaryNumber"];
+                $data["topic"] = $question["CommentaryTopic"];
                 $data["startPage"] = $question["CommentaryStartPage"];
                 $data["endPage"] = $question["CommentaryEndPage"];
             }

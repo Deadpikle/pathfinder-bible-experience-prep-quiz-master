@@ -1,7 +1,4 @@
 <?php
-
-// TODO: Are ALL questions based on a specific verse of the Bible?
-
     require_once(dirname(__FILE__)."/init.php");
 
     if ($isGuest) {

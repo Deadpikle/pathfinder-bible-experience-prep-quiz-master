@@ -52,21 +52,11 @@
 
         if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
             $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
-            if ($whereClause == "") {
-                $whereClause = " WHERE IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
-            }
-            else {
-                $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
-            }
+            $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
         }
         else if ($questionType == "commentary-qna" || $questionType == "commentary-qna-fill") {
             $orderByClause = " ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage ";
-            if ($whereClause == "") {
-                $whereClause = " WHERE IsDeleted = 0 AND comm.YearID = " . $currentYear;
-            }
-            else {
-                $whereClause .= " AND IsDeleted = 0 AND comm.YearID = " . $currentYear;
-            }
+            $whereClause .= " AND IsDeleted = 0 AND comm.YearID = " . $currentYear;
         }
         else {
             $orderByClause = "";
