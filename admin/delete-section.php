@@ -21,7 +21,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-sections.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-sections.php">Back</a></p>
 
 <div id="delete-section">
     <h4> Are you sure you want to delete <?= $section["Name"] ?>? </h4>

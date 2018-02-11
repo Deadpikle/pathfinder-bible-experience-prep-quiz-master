@@ -21,7 +21,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-clubs.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-clubs.php">Back</a></p>
 
 <div id="delete-club">
     <h4> Are you sure you want to delete <?= $club["Name"] ?>? Any users who belong to this club will need to be reassigned to another club by a website administrator.</h4>

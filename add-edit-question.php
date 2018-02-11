@@ -148,7 +148,7 @@
     var commentaryID = <?= $commentaryID ?>;
 </script>
 
-<p><a href="./view-questions.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-questions.php">Back</a></p>
 
 <h4><?= $titleString ?> Question</h4>
 

@@ -29,7 +29,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-commentaries.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-commentaries.php">Back</a></p>
 
 <div id="delete-commentary">
     <h4> Are you sure you want to remove SDA Bible Commentary <?= $commentary["Number"] ?> for the year <?= $commentary["Year"] ?> from the available commentaries list?</h4>

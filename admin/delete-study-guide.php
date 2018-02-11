@@ -24,7 +24,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-study-guides.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-study-guides.php">Back</a></p>
 
 <div id="delete-study-guide">
     <h4> Are you sure you want to delete the <?= $studyGuide["DisplayName"] ?> study guide?</h4>

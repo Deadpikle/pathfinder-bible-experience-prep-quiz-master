@@ -18,7 +18,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href=".">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
 
 <h4>SDA Bible Commentaries</h4>
 

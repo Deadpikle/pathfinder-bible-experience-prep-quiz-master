@@ -44,7 +44,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
 
 <h4><?= $titleString ?> Line Item</h4>
 

@@ -31,7 +31,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-book-details.php?id=<?= $bookID ?>">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-book-details.php?id=<?= $bookID ?>">Back</a></p>
 
 <div id="delete-book">
     <h4> Are you sure you want to remove chapter number <?= $chapter["Number"] ?> from the available chapter list for <?= $chapter["Name"] ?> (<?= $chapter["Year"] ?>)?</h4>

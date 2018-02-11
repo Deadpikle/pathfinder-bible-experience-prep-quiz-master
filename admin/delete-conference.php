@@ -29,7 +29,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-conferences.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-conferences.php">Back</a></p>
 
 <div id="delete-conference">
     <h4> Are you sure you want to delete the conference named <?= $conference["Name"] ?>?</h4>

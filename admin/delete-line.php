@@ -27,7 +27,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
 
 <div id="delete-line">
     <h4> Are you sure you want to delete this line of text?</h4>
