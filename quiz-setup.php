@@ -9,21 +9,23 @@
     
     // load possible books and commentary volumes
 
+    $currentYear = get_active_year($pdo)["YearID"];
     $chapterQuery = '
-    SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
-        c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
-    FROM Books b 
-        JOIN Chapters c ON b.BookID = c.BookID
-        JOIN Verses v ON c.ChapterID = v.ChapterID
-        JOIN Questions q ON v.VerseID = q.StartVerseID
-    ORDER BY b.Name, ChapterNumber';
+        SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
+            c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
+        FROM Books b 
+            JOIN Chapters c ON b.BookID = c.BookID
+            JOIN Verses v ON c.ChapterID = v.ChapterID
+            JOIN Questions q ON v.VerseID = q.StartVerseID
+        WHERE b.YearID = ' . $currentYear . ' AND q.IsDeleted = 0
+        ORDER BY b.Name, ChapterNumber';
     $chapterData = $pdo->query($chapterQuery)->fetchAll();
     $chapters = array();
     foreach ($chapterData as $chapter) {
         $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"], 'chapter' => $chapter["ChapterNumber"]);
     }
 
-    $volumes = load_commentaries($pdo);
+    $volumes = load_commentaries($pdo, true);
     $lastBookSeen = "";
 
     $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;

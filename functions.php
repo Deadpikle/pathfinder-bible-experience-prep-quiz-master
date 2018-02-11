@@ -79,13 +79,22 @@
         return $output;
     }
 
-    function load_commentaries($pdo) {
+    function load_commentaries($pdo, $onlyLoadCommentariesWithActiveQuestions = false) {
         $currentYear = get_active_year($pdo)["YearID"];
-        $query = '
-            SELECT DISTINCT CommentaryID, Number, TopicName
-            FROM Commentaries 
-            WHERE YearID = ?
-            ORDER BY Number';
+        if ($onlyLoadCommentariesWithActiveQuestions) {
+            $query = '
+                SELECT DISTINCT c.CommentaryID, Number, TopicName
+                FROM Commentaries c JOIN Questions q ON c.CommentaryID = q.CommentaryID
+                WHERE YearID = ? AND q.IsDeleted = 0
+                ORDER BY Number';
+        }
+        else {
+            $query = '
+                SELECT DISTINCT CommentaryID, Number, TopicName
+                FROM Commentaries 
+                WHERE YearID = ?
+                ORDER BY Number';
+        }
         $params = [ $currentYear ];
         $commentaryStmt = $pdo->prepare($query);
         $commentaryStmt->execute($params);
