@@ -5,6 +5,7 @@
     session_start();
 
     require_once("../database.php");
+    require_once("../functions.php");
 
     try {
         $whereClause = "";
@@ -43,7 +44,7 @@
         }
         else if (strpos($questionType, 'commentary') !== false) {
             if (isset($_POST["volumeFilter"]) && is_numeric($_POST["volumeFilter"]) && $_POST["volumeFilter"] != -1) {
-                $whereClause .= " AND CommentaryVolume = " . $_POST["volumeFilter"];
+                $whereClause .= " AND comm.Number = " . $_POST["volumeFilter"];
             }
         }
 
@@ -55,6 +56,15 @@
         }
         else {
             $orderByClause = "";
+        }
+
+        $currentYear = get_active_year($pdo)["YearID"];
+
+        if ($whereClause == "") {
+            $whereClause = " WHERE IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
+        }
+        else {
+            $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND bEnd.YearID = " . $currentYear;
         }
 
         $pageSize = 10;

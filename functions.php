@@ -5,9 +5,9 @@
     function get_settings($pdo) {
         // load settings
         $query = '
-        SELECT SettingID, SettingKey, SettingValue, DisplayName
-        FROM Settings
-        ORDER BY DisplayName';
+            SELECT SettingID, SettingKey, SettingValue, DisplayName
+            FROM Settings
+            ORDER BY DisplayName';
         $settingsStmt = $pdo->prepare($query);
         $settingsStmt->execute([]);
         $settings = $settingsStmt->fetchAll();
@@ -20,9 +20,9 @@
 
     function get_active_year($pdo) {
         $query = '
-        SELECT YearID, Year
-        FROM Years
-        WHERE IsCurrent = 1';
+            SELECT YearID, Year
+            FROM Years
+            WHERE IsCurrent = 1';
         $yearsStmt = $pdo->prepare($query);
         $yearsStmt->execute([]);
         $years = $yearsStmt->fetchAll();

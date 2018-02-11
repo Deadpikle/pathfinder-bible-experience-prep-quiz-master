@@ -3,11 +3,14 @@
     $isAdminJS = $isAdmin ? "true" : "false";
     $GUEST_MODEJS = $isGuest ? "true" : "false";
 
+    $currentYear = get_active_year($pdo)["YearID"];
+    // TODO: refactor book loading to a function
     // Load all book, chapter, and verse information
     $bookQuery = '
     SELECT b.BookID, b.Name, b.NumberChapters,
         c.ChapterID, c.Number AS ChapterNumber
-    FROM Books b  JOIN Chapters c ON b.BookID = c.BookID
+    FROM Books b JOIN Chapters c ON b.BookID = c.BookID
+    WHERE b.YearID = ' . $currentYear . '
     ORDER BY b.Name, ChapterNumber';
     $bookData = $pdo->query($bookQuery)->fetchAll();
 
@@ -35,7 +38,9 @@
         );
         $book["chapters"][] = $chapter;
     }
-    $books[] = $book; // make sure to get the last item
+    if ($book != NULL) {
+        $books[] = $book; // make sure to get the last item
+    }
     $volumes = load_commentaries($pdo);
 ?>
 
@@ -80,15 +85,15 @@
 
 <div class="row">
     <p class="left-margin-fix" id="filter-by-text">Filter by Book/Chapter</p>
-    <select id="book-select" class="col s4 m3">
+    <select id="book-select" class="col s4 m4">
         <option value="-1" selected>No book filter</option>
     </select>
     <!-- <label>Book Filter</label> -->
-    <select id="chapter-select" class="col s4 m3">
+    <select id="chapter-select" class="col s4 m4">
         <option value="-1" selected>No chapter filter</option>
     </select>
     <!-- <label>Chapter Filter</label> -->
-    <select id="volume-select" class="col s4 m3">
+    <select id="volume-select" class="col s4 m4">
         <option value="-1" selected>No commentary filter</option>
     </select>
     <!-- <label>Commentary Filter</label> -->
@@ -164,7 +169,7 @@
                 },
                 success: function(response) {
                     if (typeof response == 'undefined' || typeof response.questions == 'undefined'){
-                        showLoadError();
+                        showLoadError(response);
                     }
                     else {
                         setupTable(response.questions);
@@ -185,17 +190,20 @@
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    showLoadError();
+                    showLoadError("");
                 }
             });
         }
 
-        function showLoadError() {
+        function showLoadError(error) {
             var $questionsBody = $("#questions-body");
             $questionsBody.empty();
             previousPage.disabled = true;
             nextPage.disabled = true;
             alert("Unable to load questions. Please make sure you are connected to the internet or try again later.");
+            if (error) {
+                console.log(error);
+            }
         }
 
         function setupTableHeader(questionType) {
@@ -395,8 +403,8 @@
             resetAllFilters();
             $('#volume-select option').not(':first').remove();
             $("#filter-by-text").html("Filter by Commentary Volume");
-            for (var i = 0; i < books.length; i++) {
-                $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + "</option>");
+            for (var i = 0; i < volumes.length; i++) {
+                $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + " - " + volumes[i].topic + "</option>");
             }
             $('#book-select').material_select("destroy");
             $('#chapter-select').material_select("destroy");

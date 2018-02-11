@@ -70,6 +70,7 @@
     }
 
     // TODO: refactor to a function
+    $currentYear = get_active_year($pdo)["YearID"];
     // Load all book, chapter, and verse information
     $bookQuery = '
     SELECT b.BookID, b.Name, b.NumberChapters,
@@ -78,6 +79,7 @@
     FROM Books b 
         JOIN Chapters c ON b.BookID = c.BookID
         LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
+    WHERE b.YearID = ' . $currentYear . '
     ORDER BY b.Name, ChapterNumber, VerseNumber';
     $bookData = $pdo->query($bookQuery)->fetchAll();
 
@@ -126,8 +128,10 @@
         // echo(json_encode($chapter));
     }
     // wrap it up
-    $book["chapters"][] = $chapter;
-    $books[] = $book;
+    if ($chapter != NULL && $book != NULL) {
+        $book["chapters"][] = $chapter;
+        $books[] = $book;
+    }
 
     $bookJSON = json_encode($books);
 
@@ -196,15 +200,13 @@
         <div class="row" id="start-verse-div">
             <p class="section-info">Start Reference</p>
             <div class="input-field">
-            <!-- TODO: Don't need the extra hidden input. Can just use the select element. -->
-                <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-                <select class="col s4 m3" id="start-book-select" name="start-book" required>
+                <select class="col s4 m4" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="">Select a book...</option>
                 </select>
-                <select class="col s4 m3" id="start-chapter-select" name="start-chapter" required>
+                <select class="col s4 m4" id="start-chapter-select" name="start-chapter" required>
                     <option id="chapter-no-selection-option" value="">Select a chapter...</option>
                 </select>
-                <select class="col s4 m3" id="start-verse-select" name="start-verse" required>
+                <select class="col s4 m4" id="start-verse-select" name="start-verse" required>
                     <option id="verse-no-selection-option" value="">Select a verse...</option>
                 </select>
             </div>
@@ -213,20 +215,20 @@
             <p class="section-info">End Reference (if question covers more than 1 verse)</p>
             <div class="input-field">
                 <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
-                <select class="col s4 m3" id="end-book-select" name="end-book">
+                <select class="col s4 m4" id="end-book-select" name="end-book">
                     <option id="book-no-selection-option" value="-1">Select a book...</option>
                 </select>
-                <select class="col s4 m3" id="end-chapter-select" name="chapter">
+                <select class="col s4 m4" id="end-chapter-select" name="chapter">
                     <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
                 </select>
-                <select class="col s4 m3" id="end-verse-select" name="verse">
+                <select class="col s4 m4" id="end-verse-select" name="verse">
                     <option id="verse-no-selection-option" value="-1">Select a verse...</option>
                 </select>
             </div>
         </div>
         <div class="row commentary-inputs">
             <p class="section-info">Commentary Info</p>
-            <select class="col s12 m3" id="commentary-volume" name="commentary-volume" required>
+            <select class="col s12 m4" id="commentary-volume" name="commentary-volume" required>
                 <option id="commentary-no-selection-option" value="">Select commentary...</option>
                 <?php foreach ($commentaries as $commentary) { ?>
                         <option id="" value="<?= $commentary['id'] ?>"><?= $commentary['name'] ?> - <?= $commentary['topic'] ?></option>

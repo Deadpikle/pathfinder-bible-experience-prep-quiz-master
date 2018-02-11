@@ -17,7 +17,7 @@
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && $questionID == $_POST["question-id"]) {
-        $query = 'DELETE FROM Questions WHERE QuestionID = ?';
+        $query = 'Update Questions SET IsDeleted = 1 WHERE QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$questionID]);
         header("Location: view-questions.php");
