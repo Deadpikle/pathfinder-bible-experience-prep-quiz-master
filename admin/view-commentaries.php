@@ -8,7 +8,7 @@
 
     $params = [];
     $query = '
-        SELECT CommentaryID, Number, Year
+        SELECT CommentaryID, Number, Year, TopicName
         FROM Commentaries c JOIN Years y ON c.YearID = y.YearID
         ORDER BY Year, Number';
     $commentaryStmt = $pdo->prepare($query);
@@ -28,8 +28,12 @@
         <form action="ajax/add-commentary.php" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
-                    <input type="number" id="commentary" name="commentary" value="1" required min="1" max="12"/>
+                    <input type="number" id="commentary" name="commentary" value="" placeholder="1" required min="1" max="12"/>
                     <label for="commentary">Commentary Number</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <input type="text" id="topic" name="topic" value="" placeholder="Daniel" required data-length="150"/>
+                    <label for="topic">Commentary Topic</label>
                 </div>
                 <div class="input-field col s6 m4">
                     <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Commentary</button>
@@ -43,6 +47,7 @@
             <thead>
                 <tr>
                     <th>Commentary Volume</th>
+                    <th>Topic</th>
                     <th>Year</th>
                     <th></th>
                 </tr>
@@ -52,6 +57,7 @@
                     foreach ($commentaries as $commentary) { ?>
                         <tr>
                             <td><?= $commentary["Number"] ?></td>
+                            <td><?= $commentary["TopicName"] ?></td>
                             <td><?= $commentary["Year"] ?></td>
                             <td>
                                 <a class="waves-effect waves-light btn red white-text" href="delete-commentary.php?id=<?= $commentary["CommentaryID"] ?>">Remove</a>

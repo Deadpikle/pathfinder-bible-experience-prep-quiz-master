@@ -17,10 +17,11 @@
         }
         $params = [
             intval($commentaryNumber), 
+            filter_var($_POST["topic"], FILTER_SANITIZE_STRING),
             $activeYearID
         ];
         $query = '
-            INSERT INTO Commentaries (Number, YearID) VALUES (?, ?)
+            INSERT INTO Commentaries (Number, TopicName, YearID) VALUES (?, ?, ?)
         ';
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
