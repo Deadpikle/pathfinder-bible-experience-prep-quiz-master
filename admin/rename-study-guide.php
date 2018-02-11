@@ -21,7 +21,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./manage-study-guides.php">Back</a></p>
+<p><a href="./view-study-guides.php">Back</a></p>
 
 <h4>Rename Study Guide</h4>
 

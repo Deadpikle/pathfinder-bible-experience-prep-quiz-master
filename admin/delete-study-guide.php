@@ -17,14 +17,14 @@
         $query = 'DELETE FROM StudyGuides WHERE StudyGuideID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$id]);
-        header("Location: manage-study-guides.php");
+        header("Location: view-study-guides.php");
     }
 
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./manage-study-guides.php">Back</a></p>
+<p><a href="./view-study-guides.php">Back</a></p>
 
 <div id="delete-study-guide">
     <h4> Are you sure you want to delete the <?= $studyGuide["DisplayName"] ?> study guide?</h4>

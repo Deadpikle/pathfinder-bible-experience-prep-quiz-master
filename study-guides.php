@@ -1,7 +1,12 @@
 <?php
     require_once(dirname(__FILE__).'/init.php');
 
-    $query = 'SELECT StudyGuideID, DisplayName, FileName FROM StudyGuides ORDER BY DisplayName';
+    $currentYear = get_active_year($pdo)["YearID"];
+    $query = '
+        SELECT StudyGuideID, DisplayName, FileName
+        FROM StudyGuides 
+        WHERE YearID = ' . $currentYear . '
+        ORDER BY DisplayName';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
     $files = $stmt->fetchAll();

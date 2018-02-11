@@ -16,7 +16,7 @@
         <ul>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-home-sections.php">Home Page Info</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-clubs.php">Pathfinder Clubs</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="manage-study-guides.php">Study Guides</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-study-guides.php">Study Guides</a></li>
         </ul>
     <?php } ?>
     <?php if ($isWebAdmin) { ?>

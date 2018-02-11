@@ -57,12 +57,14 @@
 
     // upload success? insert information into the database
     // use try/catch to make sure we can delete the file if this fails
+    $currentYear = get_active_year($pdo)["YearID"];
     try {
         $params = [
             'uploads/' . $fileName,
-            $displayName
+            $displayName,
+            $currentYear
         ];
-        $query = 'INSERT INTO StudyGuides (FileName, DisplayName) VALUES (?, ?)';
+        $query = 'INSERT INTO StudyGuides (FileName, DisplayName, YearID) VALUES (?, ?, ?)';
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
     }
@@ -73,6 +75,6 @@
     }
 
     // if we get here, we did everything right!
-    header("Location: " . $basePath . "/admin/manage-study-guides.php");
+    header("Location: " . $basePath . "/admin/view-study-guides.php");
 
 ?>
