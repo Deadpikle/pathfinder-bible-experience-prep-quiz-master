@@ -65,6 +65,8 @@
         $stmt->execute($params);
         $clubs = $stmt->fetchAll();
     }
+    
+    $title = $titleString . ' User';
 
 ?>
 

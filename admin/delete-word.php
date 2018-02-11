@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Delete Word';
 
     $wordID = $_GET["id"];
     $query = 'SELECT Word FROM BlankableWords WHERE WordID = ?';

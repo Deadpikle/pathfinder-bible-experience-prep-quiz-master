@@ -39,6 +39,8 @@
         $postType = "create";
         $titleString = "Create";
     }
+    
+    $title = $titleString . ' Line';
 
 ?>
 

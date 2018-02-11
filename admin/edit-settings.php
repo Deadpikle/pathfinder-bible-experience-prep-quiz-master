@@ -4,6 +4,8 @@
 // Error messages if server fails
 
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Settings';
 
     if ($isClubAdmin) {
         die("invalid user type");

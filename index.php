@@ -1,5 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+    
+    $title = 'Home';
+    
     $sections = load_home_sections($pdo);
 ?>
 

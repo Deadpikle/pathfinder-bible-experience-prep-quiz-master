@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+    
+    $title = 'Quiz Setup';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // awful hack to make Microsoft Edge work -_-

@@ -1,5 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Home Sections';
+    
     if ($isClubAdmin) {
         header("Location: index.php");
     }

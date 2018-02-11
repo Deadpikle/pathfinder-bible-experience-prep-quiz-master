@@ -2,6 +2,8 @@
     // TODO: clickless reCaptcha
 
     require_once(dirname(__FILE__)."/init.php");
+    
+    $title = 'Login';
 
     if (isset($_GET["error"])) {
         $error = $_GET["error"];

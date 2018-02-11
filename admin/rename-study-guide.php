@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Rename Study Guide';
 
     $id = $_GET["id"];
     $query = 'SELECT DisplayName, FileName FROM StudyGuides WHERE StudyGuideID = ?';

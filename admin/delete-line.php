@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Delete Info Line';
 
     $sectionID = $_GET["sectionID"];
     $lineID = $_GET["lineID"];

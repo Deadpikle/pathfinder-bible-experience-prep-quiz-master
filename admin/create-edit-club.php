@@ -42,7 +42,8 @@
         $stmt->execute([]);
         $conferences = $stmt->fetchAll();
     }
-
+    
+    $title = $titleString . ' Club';
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>

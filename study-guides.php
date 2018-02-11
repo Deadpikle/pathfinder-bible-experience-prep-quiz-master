@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__).'/init.php');
+    
+    $title = 'Study Guides';
 
     $currentYear = get_active_year($pdo)["YearID"];
     $query = '

@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+    
+    $title = 'Active Clubs';
 
     // https://stackoverflow.com/a/26044915/3938401 -- 30 days ago
     $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));

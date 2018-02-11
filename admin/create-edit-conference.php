@@ -33,6 +33,8 @@
         $postType = "create";
         $titleString = "Create";
     }
+    
+    $title = $titleString . ' Conference';
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>

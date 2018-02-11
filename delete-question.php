@@ -1,6 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
     
+    $title = 'Delete Question';
+    
     if ($isGuest) {
         header('Location: index.php');
         die();

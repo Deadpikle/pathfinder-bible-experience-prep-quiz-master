@@ -15,12 +15,14 @@
     }
 
     $homePath = $basePath == "" ? "/" : $basePath;
+
+    $htmlTitle = isset($title) ? $title . ' - ' . $websiteTabTitle : $websiteTabTitle;
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?= $websiteTabTitle ?></title>
+        <title><?= $htmlTitle ?></title>
         <link rel="stylesheet" href="<?=$basePath?>/css/normalize.css" />
 
         <!--Import Google Icon Font-->

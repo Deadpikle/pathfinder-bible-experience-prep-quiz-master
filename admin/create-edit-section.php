@@ -33,6 +33,8 @@
         $postType = "create";
         $titleString = "Create";
     }
+    
+    $title = $titleString . ' Section';
 
 ?>
 

@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Set Current Year';
 
     $yearID = $_GET["id"];
 

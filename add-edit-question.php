@@ -55,6 +55,8 @@
         $postType = "create";
         $titleString = "Create";
     }
+    
+    $title = $titleString . ' Question';
 
     if ($startVerseID == NULL) {
         $startVerseID = -1;

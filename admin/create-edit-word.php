@@ -31,6 +31,8 @@
         $postType = "create";
         $titleString = "Create";
     }
+    
+    $title = $titleString . ' Word';
 
 ?>
 

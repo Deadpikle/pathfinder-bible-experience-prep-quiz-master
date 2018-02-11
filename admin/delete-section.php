@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Delete Section';
 
     $sectionID = $_GET["id"];
     $query = 'SELECT Name FROM HomeInfoSections WHERE HomeInfoSectionID = ?';

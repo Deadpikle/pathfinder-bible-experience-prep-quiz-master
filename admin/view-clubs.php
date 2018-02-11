@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Clubs';
 
     if (!$isAdmin) {
         header("Location: $basePath/index.php");

@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/init-admin.php");
+    
+    $title = 'Delete Club';
 
     $clubID = $_GET["id"];
     $query = 'SELECT Name FROM Clubs WHERE ClubID = ?';

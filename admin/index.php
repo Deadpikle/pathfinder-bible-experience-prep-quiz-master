@@ -1,5 +1,7 @@
 <?php
     require_once(dirname(__FILE__).'/init-admin.php');
+    
+    $title = 'Admin';
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>

@@ -1,5 +1,8 @@
 <?php
     require_once(dirname(__FILE__)."/init.php");
+
+    $title = 'Questions';
+
     $isAdminJS = $isAdmin ? "true" : "false";
     $GUEST_MODEJS = $isGuest ? "true" : "false";
 
