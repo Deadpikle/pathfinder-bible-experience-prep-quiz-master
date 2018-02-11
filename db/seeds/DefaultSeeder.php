@@ -70,6 +70,11 @@ class DefaultSeeder extends AbstractSeed
                 'SettingKey' => 'AnalyticsSiteID',
                 'SettingValue' => '1',
                 'DisplayName' => 'Analytics Site ID'
+            ],
+            [
+                'SettingKey' => 'FooterText',
+                'SettingValue' => 'Scripture taken from the New King James Version®. Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved.',
+                'DisplayName' => 'Footer Text'
             ]
         ];
         $settings = $this->table('Settings');

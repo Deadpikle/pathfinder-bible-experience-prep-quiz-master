@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<div id="extra-home-info">
+<!-- <div id="extra-home-info">
     <div class="row">
         <p class="col s12">
             Recent website updates:
@@ -40,6 +40,6 @@
             <li>2017-09-27: Added filter for Bible book/chapter or commentary volume on the questions page</li>
         </ul>
     </div>
-</div>
+</div> -->
 
 <?php include(dirname(__FILE__)."/footer.php") ?>

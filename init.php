@@ -35,6 +35,7 @@
     $websiteTabTitle = isset($settings['WebsiteTabTitle']) ? $settings['WebsiteTabTitle'] : 'UCC PBE';
     $analyticsURL = isset($settings['AnalyticsURL']) ? $settings['AnalyticsURL'] : '';
     $analyticsSiteID = isset($settings['AnalyticsSiteID']) ? $settings['AnalyticsSiteID'] : '1';
+    $footerText = isset($settings['FooterText']) ? $settings['FooterText'] : '';
 
     // get active year
     $yearData = get_active_year($pdo);
