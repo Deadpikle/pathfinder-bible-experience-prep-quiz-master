@@ -199,6 +199,7 @@
         <div class="row" id="start-verse-div">
             <p class="section-info">Start Reference</p>
             <div class="input-field">
+                <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
                 <select class="col s4 m4" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="">Select a book...</option>
                 </select>
