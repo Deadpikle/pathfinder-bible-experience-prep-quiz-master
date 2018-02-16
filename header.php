@@ -76,17 +76,18 @@
                                 <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
                         </ul>
-                        <ul class="side-nav" id="mobile-demo">
+                        <ul class="side-nav teal darken-1" id="mobile-demo">
+                            <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $websiteName ?></a></li>
                             <?php if ($isLoggedIn) { ?>
-                                <li><a href="<?=$homePath?>">Home</a></li>
+                                <li><a class="white-text" href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li><a href="<?=$basePath?>/about.php">About</a></li>
+                            <li><a class="white-text" href="<?=$basePath?>/about.php">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                    <li><a class="white-text" href="<?=$basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
+                                <li><a class="white-text" href="<?=$basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
                         </ul>
                     </div>
