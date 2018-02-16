@@ -56,7 +56,7 @@
     <div id="create">
         <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
     </div>
-    <table class="striped responsive-table tablesorter-materialize">
+    <table class="striped tablesorter-materialize">
         <thead>
             <tr>
                 <th data-placeholder="Username">Username</th>
@@ -101,12 +101,12 @@
                         <td>
                             <!-- edit this to not let you edit people above you -->
                             <?php if ($_SESSION["UserID"] != $user["UserID"] && $canEdit) { ?> 
-                                <a class="waves-effect waves-light btn" href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit User</a>
+                                <a class="waves-effect waves-light btn" href="create-edit-user.php?type=update&id=<?=$user['UserID'] ?>">Edit</a>
                             <?php } ?> 
                         </td>
                         <td>
                             <?php if ($_SESSION["UserID"] != $user["UserID"] && $canEdit) { ?> 
-                                <a class="waves-effect waves-light btn red white-text" href="delete-user.php?id=<?=$user['UserID'] ?>">Delete User</a>
+                                <a class="waves-effect waves-light btn red white-text" href="delete-user.php?id=<?=$user['UserID'] ?>">Delete</a>
                             <?php } ?> 
                          </td>
                     </tr>
@@ -122,7 +122,7 @@
             widgets: ["filter", "stickyHeaders"],
 
             widgetOptions : {
-                filter_placeholder : { search : 'a', select : '' }
+                filter_placeholder : { search : '', select : '' }
             }
         });
     });

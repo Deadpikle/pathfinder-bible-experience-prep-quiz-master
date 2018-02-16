@@ -229,8 +229,8 @@
                 html += '<th>Points</th>';
             }
             if (isAdmin && !isGuestMode) {
-                html += '<th>Edit</th>';
-                html += '<th>Delete</th>';
+                html += '<th></th>';
+                html += '<th></th>';
             }
             $tableHeaderRow.append(html);
         }
@@ -277,8 +277,8 @@
                     html += '<td>' + question.NumberPoints + '</td>';
                 }
                 if (isAdmin && !isGuestMode) {
-                    html += '<td><a href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
-                    html += '<td><a href="delete-question.php?id=' + id + '">Delete</a></td>';
+                    html += '<td><a class="waves-effect waves-light btn" href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
+                    html += '<td><a class="waves-effect waves-light btn red" href="delete-question.php?id=' + id + '">Delete</a></td>';
                 }
                 html += '</tr>';
                 $questionsBody.append(html);
