@@ -56,20 +56,20 @@
     <div id="create">
         <a class="waves-effect waves-light btn" href="create-edit-user.php?type=create">Add User</a>
     </div>
-    <table class="striped responsive-table">
+    <table class="striped responsive-table tablesorter-materialize">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Entry Code</th>
+                <th data-placeholder="Username">Username</th>
+                <th data-placeholder="Entry Code">Entry Code</th>
                 <?php if ($isWebAdmin || $isConferenceAdmin) { ?>
-                    <th>User Type</th>
-                    <th>Club</th>
+                    <th data-placeholder="User Type">User Type</th>
+                    <th data-placeholder="Club">Club</th>
                 <?php } ?>
                 <?php if ($isWebAdmin) { ?>
-                    <th>Conference</th>
+                    <th data-placeholder="Conference">Conference</th>
                 <?php } ?>
-                <th></th>
-                <th></th>
+                <th data-sorter="false" data-filter="false"></th>
+                <th data-sorter="false" data-filter="false"></th>
             </tr>
         </thead>
         <tbody>
@@ -114,5 +114,18 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".tablesorter-materialize").tablesorter({ 
+            sortList: [[4,0], [3,0], [0,0]] ,
+            widgets: ["filter", "stickyHeaders"],
+
+            widgetOptions : {
+                filter_placeholder : { search : 'a', select : '' }
+            }
+        });
+    });
+</script>
 
 <?php include(dirname(__FILE__)."/../footer.php"); ?>

@@ -201,3 +201,7 @@ h5#question-text {
     margin-top: 0em;
     margin-left: 1.2em;
 }
+
+.tablesorter-materialize { margin-top: 2em; }
+.tablesorter-materialize thead .disabled { display: none }
+.tablesorter-materialize .tablesorter-header.sorter-false { background-image: url(); }

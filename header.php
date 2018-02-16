@@ -58,8 +58,17 @@
         <link rel="stylesheet" href="<?=$basePath?>/css/common.css?<?= filemtime(dirname(__FILE__) . "/css/common.css") ?>" />
         <script src="<?=$basePath?>/lib/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?=$basePath?>/lib/materialize/js/materialize.min.js"></script>
-        <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
+
+        <!-- For admin pages -->
+        <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
+        <!-- tablesorter.js -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/theme.materialize.min.css" integrity="sha256-jUiCvjE6E8l+KScSvjq5Sq28mU+/yFJNhxqcFPyvKJc=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/filter.formatter.min.css" integrity="sha256-mMTF3msZrX36jof9tDumliTFETqw3pw6Cygt+ZiLN1o=" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.min.js" integrity="sha256-5nivqdfmHxGs901RSMulMFGroDjG/qvWK5n8x+S/Wr4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.widgets.js" integrity="sha256-ntYf/f8FwONqwWYyCSyuPnkKBvh58KcFZkem8x15dOI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/widgets/widget-filter-formatter-html5.min.js" integrity="sha256-tP9/Kjrq6K2IGcLqni6LTTPGTthgtxb7omdC3RNyQW8=" crossorigin="anonymous"></script>
+
         <script src="<?=$basePath?>/js/common.js?<?= filemtime(dirname(__FILE__) . "/js/common.js") ?>"></script>
         <?php if (!$isLocalHost && !$headerIsGuest && $analyticsURL !== '') { ?>
             <!-- Piwik -->
