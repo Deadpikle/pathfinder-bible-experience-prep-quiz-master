@@ -2,6 +2,11 @@
 
     require_once("blanks.php");
 
+    function str_contains($needle, $haystack)
+    {
+        return strpos($haystack, $needle) !== false;
+    }
+
     function get_settings($pdo) {
         // load settings
         $query = '

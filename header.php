@@ -17,6 +17,20 @@
     $homePath = $basePath == "" ? "/" : $basePath;
 
     $htmlTitle = isset($title) ? $title . ' - ' . $websiteTabTitle : $websiteTabTitle;
+
+
+    $currentRequest = str_replace($basePath, '', $_SERVER['REQUEST_URI']);
+    if (ends_with($currentRequest, '/')) {
+        $currentRequest = substr($currentRequest, 0, -1);
+    }
+    $currentRequest = str_replace("/", "", $currentRequest);
+    
+    $homeHeaderActiveStatus = str_contains("home.php", $currentRequest) || $currentRequest == "" ? "active" : "";
+    $aboutHeaderActiveStatus = str_contains("about.php", $currentRequest) ? "active" : "";
+    $adminHeaderActiveStatus = str_contains("admin", $currentRequest) ? "active" : "";
+    if ($aboutHeaderActiveStatus === "" && $adminHeaderActiveStatus === "") {
+        $homeHeaderActiveStatus = "active";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -74,13 +88,13 @@
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                         <ul class="right hide-on-med-and-down">
                             <?php if ($isLoggedIn) { ?>
-                                <li><a href="<?=$homePath?>">Home</a></li>
+                                <li class="<?= $homeHeaderActiveStatus ?>"><a href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li><a href="<?=$basePath?>/about.php">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?=$basePath?>/about.php">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?=$basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
                                 <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
@@ -88,13 +102,13 @@
                         <ul class="side-nav teal darken-1" id="mobile-demo">
                             <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $websiteName ?></a></li>
                             <?php if ($isLoggedIn) { ?>
-                                <li><a class="white-text" href="<?=$homePath?>">Home</a></li>
+                                <li class="<?= $homeHeaderActiveStatus ?>"><a class="white-text" href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li><a class="white-text" href="<?=$basePath?>/about.php">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?=$basePath?>/about.php">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li><a class="white-text" href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?=$basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
                                 <li><a class="white-text" href="<?=$basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
