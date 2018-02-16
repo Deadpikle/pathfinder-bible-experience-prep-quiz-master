@@ -63,7 +63,7 @@
         <!-- For admin pages -->
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <!-- tablesorter.js -->
-        <?php if ($adminHeaderActiveStatus) { ?>
+        <?php if ($adminHeaderActiveStatus === "active") { ?>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/theme.materialize.min.css" integrity="sha256-jUiCvjE6E8l+KScSvjq5Sq28mU+/yFJNhxqcFPyvKJc=" crossorigin="anonymous" />
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/filter.formatter.min.css" integrity="sha256-mMTF3msZrX36jof9tDumliTFETqw3pw6Cygt+ZiLN1o=" crossorigin="anonymous" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.min.js" integrity="sha256-5nivqdfmHxGs901RSMulMFGroDjG/qvWK5n8x+S/Wr4=" crossorigin="anonymous"></script>
