@@ -36,8 +36,8 @@ class CreateQuestions extends AbstractMigration
         $table->addColumn('DateModified', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
         $table->addColumn('IsFlagged', 'boolean', ['default' => false]);
         $table->addColumn('Type', 'string', ['limit' => 50]);
-        $table->addColumn('CommentaryStartPage', 'integer');
-        $table->addColumn('CommentaryEndPage', 'integer');
+        $table->addColumn('CommentaryStartPage', 'integer', ['null' => true]);
+        $table->addColumn('CommentaryEndPage', 'integer', ['null' => true]);
         $table->addColumn('IsDeleted', 'boolean', ['default' => false]);
         // FKs
         $table->addColumn('CreatorID', 'integer', ['null' => true]);
