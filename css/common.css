@@ -205,3 +205,13 @@ h5#question-text {
 .tablesorter-materialize { margin-top: 2em; }
 .tablesorter-materialize thead .disabled { display: none }
 .tablesorter-materialize .tablesorter-header.sorter-false { background-image: url(); }
+
+ /* label focus color https://stackoverflow.com/a/37127156/3938401 */
+.blue-inputs input[type=text]:focus + label {
+    color: #4285f4;
+}
+/* label underline focus color https://stackoverflow.com/a/37127156/3938401 */
+.blue-inputs input[type=text]:focus {
+border-bottom: 1px solid #4285f4;
+box-shadow: 0 1px 0 0 #4285f4;
+}

@@ -87,19 +87,37 @@
 </div>
 
 <div class="row">
-    <p class="left-margin-fix" id="filter-by-text">Filter by Book/Chapter</p>
-    <select id="book-select" class="col s4 m4">
-        <option value="-1" selected>No book filter</option>
-    </select>
+    <p class="left-margin-fix" id="filter-by-text"><b>Filter by Book/Chapter</b></p>
+    <div class="input-field col s12 m4">
+        <select id="book-select">
+            <option value="-1" selected>No book filter</option>
+        </select>
+        <select id="volume-select" class="">
+            <option value="-1" selected>No commentary filter</option>
+        </select>
+    </div>
     <!-- <label>Book Filter</label> -->
-    <select id="chapter-select" class="col s4 m4">
-        <option value="-1" selected>No chapter filter</option>
-    </select>
+    <div class="input-field col s12 m4">
+        <select id="chapter-select">
+            <option value="-1" selected>No chapter filter</option>
+        </select>
+    </div>
     <!-- <label>Chapter Filter</label> -->
-    <select id="volume-select" class="col s4 m4">
-        <option value="-1" selected>No commentary filter</option>
-    </select>
+    <div class="input-field col s12 m4">
+    </div>
     <!-- <label>Commentary Filter</label> -->
+</div>
+<div class="row">
+    <p class="left-margin-fix" id="filter-by-search"><b>Question Search</b></p>
+    <div class="">
+        <div class="input-field blue-inputs col s12 m4">
+            <input id="online-search-input" name="search" type="text" placeholder="Search for a question...">
+            <label for="search">Search</label>
+        </div>
+        <div class="input-field blue-inputs col s12 m4">
+            <button id="online-search-button" class="btn-flat blue white-text waves-effect" style="vertical-align:middle">Search</button>
+        </div>
+    </div>
 </div>
 
 <div class="divider"></div>
@@ -146,9 +164,11 @@
         var bookFilter = -1;
         var chapterFilter = -1;
         var volumeFilter = -1;
+        var searchText = '';
 
         var previousPage = document.getElementById('prev-page');
         var nextPage = document.getElementById('next-page');
+        var onlineSearch = document.getElementById('online-search-button');
 
         function moveToPage(pageNumber) {
             currentPageNumber = pageNumber;
@@ -168,7 +188,8 @@
                     pageOffset: currentPageNumber * pageSize,
                     bookFilter: bookFilter,
                     chapterFilter: chapterFilter,
-                    volumeFilter: volumeFilter
+                    volumeFilter: volumeFilter,
+                    searchText: searchText
                 },
                 success: function(response) {
                     if (typeof response == 'undefined' || typeof response.questions == 'undefined'){
@@ -368,6 +389,11 @@
             }
         }, false);
 
+        onlineSearch.addEventListener('click', function() {
+            searchText = $("#online-search-input").val();
+            loadQuestions();
+        });
+
         $("#questions").hide();
         setupTableHeader("bible-qna");
 
@@ -384,7 +410,7 @@
         function setupBookSelector() {
             resetAllFilters();
             $('#book-select option').not(':first').remove();
-            $("#filter-by-text").html("Filter by Book/Chapter");
+            $("#filter-by-text").html("<b>Filter by Book/Chapter</b>");
             for (var i = 0; i < books.length; i++) {
                 $('#book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
             }
@@ -406,7 +432,7 @@
         function setupVolumeSelector() {
             resetAllFilters();
             $('#volume-select option').not(':first').remove();
-            $("#filter-by-text").html("Filter by Commentary Volume");
+            $("#filter-by-text").html("<b>Filter by Commentary Volume</b>");
             for (var i = 0; i < volumes.length; i++) {
                 $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + " - " + volumes[i].topic + "</option>");
             }

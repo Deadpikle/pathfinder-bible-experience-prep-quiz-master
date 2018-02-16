@@ -71,6 +71,7 @@
         if (isset($_POST["pageOffset"])) {
             $pageOffset = $_POST["pageOffset"];
         }
+
         $selectPortion = '
             SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
@@ -94,6 +95,22 @@
         $fullQuery = $selectPortion . $fromPortion . $limitClause;
         $stmt = $pdo->query($fullQuery);
         $questions = $stmt->fetchAll();
+
+        if (isset($_POST["searchText"]) && $_POST["searchText"] !== "") {
+            $tmpQuestions = [];
+            $searchText = $_POST["searchText"];
+            foreach ($questions as $question) {
+                // see if it matches the search text
+                $startBook = $question["StartBook"];
+                $startVerse = $question["StartChapter"] . ":" . $question["StartVerse"];
+                // TODO: finish up the custom search
+                /*var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
+                var endVerse = "";
+                if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
+                    endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
+                }*/
+            }
+        }
 
         $stmt = $pdo->query("SELECT COUNT(*) AS QuestionCount " . $fromPortion);
         $row = $stmt->fetch(); 

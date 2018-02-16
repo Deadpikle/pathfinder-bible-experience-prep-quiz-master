@@ -2,8 +2,7 @@
 
     require_once("blanks.php");
 
-    function str_contains($needle, $haystack)
-    {
+    function str_contains($needle, $haystack) {
         return strpos($haystack, $needle) !== false;
     }
 
