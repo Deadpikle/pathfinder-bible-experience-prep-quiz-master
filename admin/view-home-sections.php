@@ -8,6 +8,15 @@
     }
 
     $sections = load_home_sections($pdo, $_SESSION["ConferenceID"]);
+
+    $params = [];
+    $query = '
+        SELECT YearID, Year, IsCurrent
+        FROM Years
+        ORDER BY Year';
+    $yearStmt = $pdo->prepare($query);
+    $yearStmt->execute($params);
+    $years = $yearStmt->fetchAll();
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
@@ -31,6 +40,29 @@
         </form>
     </div>
     <div class="divider"></div>
+    <div class="section">
+        <h5>Copy Sections from Past/Admins</h5>
+        <p>If you'd like to copy over the home info sections from a previous year or from the website admins, choose the year to copy from and click the applicable button. This will not overwrite any of your current information that you've set up for the current year (<?= $activeYearNumber ?>).</p>
+        <form id="copy-form" method="post">
+            <div class="row">
+                <div class="input-field col s4 m2">
+                    <select id="year" name="year" required>
+                        <?php foreach ($years as $year) { 
+                                $selectedText = $year["IsCurrent"] == 1 ? "selected" : "";
+                            ?>
+                            <option value="<?= $year["YearID"] ?>" <?= $selectedText ?>><?= $year["Year"] ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="input-field col s12 m10">
+                    <button id="import-from-conference" class="margin-button btn waves-effect waves-light submit">Import from Conference</button>
+                    <button id="import-from-admin" class="margin-button btn waves-effect waves-light submit">Import from Admin</button>
+                </div>
+            </div>
+            <div class="div-below-selector row">
+            </div>
+        </form>
+    </div>
     <div class="section" id="section-list">
         <h5>Modify Sections</h5>
         <p>You can drag and drop lines and line items to resort them.</p>
@@ -53,8 +85,10 @@
 </div>
 
 <script type="text/javascript">
-    $('#saved-modal').modal();
     $(document).ready(function() {
+        $('#saved-modal').modal();
+        $('select').material_select();
+        fixRequiredSelectorCSS();
         sortable('.sortable', {
             forcePlaceholderSize: true,
             placeholderClass: 'teal lighten-5',
@@ -82,6 +116,14 @@
                     alert(thrownError);
                 }
             });
+        });
+        $('#import-from-conference').on("click",function() {
+            $('#copy-form').attr('action', 'ajax/import-home-info-from-conference.php');
+            $('#copy-form').submit();
+        });
+        $('#import-from-admin').on("click",function() {
+            $('#copy-form').attr('action', 'ajax/import-home-info-from-admin.php');
+            $('#copy-form').submit();
         });
     });
 </script>

@@ -30,7 +30,6 @@
         $yearsStmt = $pdo->prepare($query);
         $yearsStmt->execute([]);
         $years = $yearsStmt->fetchAll();
-        $output = [];
         if (count($years) > 0) {
             return ["YearID" => $years[0]["YearID"], "Year" => $years[0]["Year"]];
         }
@@ -126,18 +125,146 @@
             $params[] = $conferenceID;
         }
         $query = '
-        SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,
-            hil.HomeInfoLineID AS LineID,
-            hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
-        FROM HomeInfoSections his 
-            LEFT JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
-            LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
-        ' . $whereClause . '
-        ORDER BY SectionSortOrder, hil.SortOrder, ItemSortOrder';
+            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,
+                hil.HomeInfoLineID AS LineID,
+                hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
+            FROM HomeInfoSections his 
+                LEFT JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
+                LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
+            ' . $whereClause . '
+            ORDER BY SectionSortOrder, hil.SortOrder, ItemSortOrder';
         $sectionStmt = $pdo->prepare($query);
         $sectionStmt->execute($params);
         $sections = $sectionStmt->fetchAll();
         return $sections;
+    }
+
+    function get_web_admin_conference_id($pdo) {
+        $query = 'SELECT ConferenceID FROM Conferences WHERE Name = "Website Administrators"';
+        $conferenceStmnt = $pdo->prepare($query);
+        $conferenceStmnt->execute([]);
+        $conferences = $conferenceStmnt->fetchAll();
+        if (count($conferences) > 0) {
+            return $conferences[0]["ConferenceID"];
+        }
+        return -1;
+    }
+
+    function copy_home_sections($pdo, $fromConferenceID, $toConferenceID, $fromYearID) {
+        $toYearID = get_active_year($pdo)["YearID"];
+        // load all sections from other conference and year
+        $sectionQuery = '
+            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName
+            FROM HomeInfoSections his 
+            WHERE ConferenceID = ? AND YearID = ?
+            ORDER BY SortOrder';
+        $sectionParams = [
+            $fromConferenceID, 
+            $fromYearID
+        ];
+        $sectionStmt = $pdo->prepare($sectionQuery);
+        $sectionStmt->execute($sectionParams);
+        // prepare other queries so things go fast
+        // need to check for a pre-existing section with that name
+        $sectionNameQuery = 'SELECT HomeInfoSectionID FROM HomeInfoSections WHERE Name = ?';
+        $sectionNameStmnt = $pdo->prepare($sectionNameQuery);
+
+        $sectionMaxSortOrderQuery = '
+            SELECT MAX(SortOrder) AS MaxSortOrder 
+            FROM HomeInfoSections 
+            WHERE ConferenceID = ? AND YearID = ?';
+        $sectionMaxSortOrderStmnt = $pdo->prepare($sectionMaxSortOrderQuery);
+        $sectionMaxSortOrderStmnt->execute($sectionParams);
+        $nextSectionSortOrder = 0;
+        $maxSorts = $sectionMaxSortOrderStmnt->fetchAll();
+        if (count($maxSorts) > 0) {
+            $nextSectionSortOrder = ((int)$maxSorts[0]["MaxSortOrder"]) + 1;
+        }
+
+        $insertSection = 'INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)';
+        $insertSectionStmnt = $pdo->prepare($insertSection);
+        // --
+        $lineMaxSortOrderQuery = '
+            SELECT MAX(SortOrder) AS MaxSortOrder 
+            FROM HomeInfoLines
+            WHERE HomeInfoSectionID = ?';
+        $lineMaxSortOrderStmnt = $pdo->prepare($lineMaxSortOrderQuery);
+
+        $lineQuery = '
+            SELECT HomeInfoLineID, Name
+            FROM HomeInfoLines
+            WHERE HomeInfoSectionID = ?
+            ORDER BY SortOrder
+        ';
+        $lineQueryStmnt = $pdo->prepare($lineQuery);
+
+        $insertLine = 'INSERT INTO HomeInfoLines (Name, SortOrder, HomeInfoSectionID) VALUES (?, ?, ?)';
+        $insertLineStmnt = $pdo->prepare($insertLine);
+        // --
+        $itemQuery = '
+            SELECT IsLink, Text, URL, SortOrder
+            FROM HomeInfoItems
+            WHERE HomeInfoLineID = ?
+            ORDER BY SortOrder
+        ';
+        $itemQueryStmnt = $pdo->prepare($itemQuery);
+        $insertItem = 'INSERT INTO HomeInfoItems (IsLink, Text, URL, SortOrder, HomeInfoLineID) VALUES (?, ?, ?, ?, ?)';
+        $insertItemStmnt = $pdo->prepare($insertItem);
+        // start looping through the sections
+        foreach ($sectionStmt as $section) {
+            // check to see if a section with this name already exists
+            $sectionNameStmnt->execute([$section["SectionName"]]);
+            $sectionsWithThatName = $sectionNameStmnt->fetchAll();
+            if (count($sectionsWithThatName) > 0) {
+                $createdSectionID = $sectionsWithThatName[0]["HomeInfoSectionID"];
+            }
+            else {
+                // insert it into the HomeInfoSections table for the given year and conference
+                $insertSectionParams = [
+                    $section["SectionName"],
+                    $nextSectionSortOrder++,
+                    $toYearID,
+                    $toConferenceID
+                ];
+                $insertSectionStmnt->execute($insertSectionParams);
+                $createdSectionID = $pdo->lastInsertId();
+            }
+            $lineParams = [ $section["SectionID"] ];
+            // load the max sort order for the lines for this home info section
+            $lineMaxSortOrderStmnt->execute($lineParams);
+            $nextLineSortOrder = 0;
+            $maxLineSorts = $lineMaxSortOrderStmnt->fetchAll();
+            if (count($maxLineSorts) > 0) {
+                $nextLineSortOrder = ((int)$maxLineSorts[0]["MaxSortOrder"]) + 1;
+            }
+            // load all the lines for this home info section
+            $lineQueryStmnt->execute($lineParams);
+            foreach ($lineQueryStmnt as $line) {
+                // insert it into the HomeInfoLines table for the given just-created section
+                $insertLineParams = [
+                    $line["Name"],
+                    $nextLineSortOrder++,
+                    $createdSectionID
+                ];
+                $insertLineStmnt->execute($insertLineParams);
+                $createdLineID = $pdo->lastInsertId();
+                // load all the items for this line
+                $itemParams = [ $line["HomeInfoLineID"] ];
+                $itemQueryStmnt->execute($itemParams);
+                foreach ($itemQueryStmnt as $item) {
+                    // insert the new line item
+                    $insertItemParams = [
+                        $item["IsLink"],
+                        $item["Text"],
+                        $item["URL"],
+                        $item["SortOrder"],
+                        $createdLineID
+                    ];
+                    $insertItemStmnt->execute($insertItemParams);
+                }
+            }
+        }
+        // all done :3
     }
 
     function output_home_sections($sections, $isAdminPage) {
