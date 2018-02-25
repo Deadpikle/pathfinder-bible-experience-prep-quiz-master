@@ -1,6 +1,6 @@
 <?php
     require_once(dirname(__FILE__)."/../init.php");
-    $sections = load_home_sections($pdo);
+    $sections = load_home_sections($pdo, $_SESSION["ConferenceID"]);
 
     $words = load_non_blankable_words($pdo);
 

@@ -115,7 +115,16 @@
         return $commentariesOutput;
     }
 
-    function load_home_sections($pdo) {
+    function load_home_sections($pdo, $conferenceID = -1) {
+        $currentYear = get_active_year($pdo)["YearID"];
+        $params = [
+            $currentYear
+        ];
+        $whereClause = "WHERE his.YearID = ?";
+        if ($conferenceID != -1) {
+            $whereClause .= " AND his.ConferenceID = ?";
+            $params[] = $conferenceID;
+        }
         $query = '
         SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,
             hil.HomeInfoLineID AS LineID,
@@ -123,9 +132,10 @@
         FROM HomeInfoSections his 
             LEFT JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
             LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
+        ' . $whereClause . '
         ORDER BY SectionSortOrder, hil.SortOrder, ItemSortOrder';
         $sectionStmt = $pdo->prepare($query);
-        $sectionStmt->execute([]); // will we ever need params here?
+        $sectionStmt->execute($params);
         $sections = $sectionStmt->fetchAll();
         return $sections;
     }

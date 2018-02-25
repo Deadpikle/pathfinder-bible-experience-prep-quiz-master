@@ -7,7 +7,7 @@
         header("Location: index.php");
     }
 
-    $sections = load_home_sections($pdo);
+    $sections = load_home_sections($pdo, $_SESSION["ConferenceID"]);
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
