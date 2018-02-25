@@ -1,6 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
+        $conferenceID = $_POST["conference-id"];
         $sectionID = $_POST["section-id"];
         $lineID = $_POST["line-id"];
         if (!isset($_POST["line-is-link"]) || $_POST["line-is-link"] == NULL) {
@@ -40,7 +41,7 @@
         }
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
-        header("Location: $basePath/admin/view-home-section-items.php?sectionID=$sectionID");
+        header("Location: $basePath/admin/view-home-section-items.php?sectionID=$sectionID&conferenceID=$conferenceID");
     }
     catch (PDOException $e) {
         print_r($e);

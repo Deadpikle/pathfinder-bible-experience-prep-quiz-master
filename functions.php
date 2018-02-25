@@ -180,6 +180,7 @@
         if (count($maxSorts) > 0) {
             $nextSectionSortOrder = ((int)$maxSorts[0]["MaxSortOrder"]) + 1;
         }
+        //die("order = " .$nextSectionSortOrder);
 
         $insertSection = 'INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)';
         $insertSectionStmnt = $pdo->prepare($insertSection);
@@ -272,7 +273,7 @@
         // all done :3
     }
 
-    function output_home_sections($sections, $isAdminPage) {
+    function output_home_sections($sections, $isAdminPage, $conferenceID) {
         $lastSectionID = -1;
         $lastLineID = -1;
         foreach ($sections as $section) { 
@@ -290,9 +291,9 @@
                     $extraULClass = "browser-default";
                     echo "<div class='section-buttons'>";
                         echo "<div class='row'>";
-                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='create-edit-section.php?type=update&id=$sectionID'>Edit Section Name</a>";
-                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='view-home-section-items.php?sectionID=$sectionID'>Edit Line Items</a>";
-                            echo "<a class='add waves-effect waves-teal btn-flat red white-text col s12 m2 center-align' href='delete-section.php?id=$sectionID'>Delete Section</a>";
+                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='create-edit-section.php?type=update&id=$sectionID&conferenceID=$conferenceID'>Edit Section Name</a>";
+                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='view-home-section-items.php?sectionID=$sectionID&conferenceID=$conferenceID'>Edit Line Items</a>";
+                            echo "<a class='add waves-effect waves-teal btn-flat red white-text col s12 m2 center-align' href='delete-section.php?id=$sectionID&conferenceID=$conferenceID'>Delete Section</a>";
                         echo "</div>";
                     echo "</div>";
                 }

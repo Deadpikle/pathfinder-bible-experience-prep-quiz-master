@@ -8,6 +8,7 @@
     if ($isClubAdmin) {
         die("invalid user type");
     }
+    $conferenceID = $_GET["conferenceID"];
     $sectionID = $_GET["sectionID"];
     $lineID = $_GET["lineID"];
     if ($_GET["type"] == "update") {
@@ -46,12 +47,16 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-home-section-items.php?sectionID=<?=$sectionID?>">Back</a></p>
+<p>
+    <a class="btn-flat blue-text waves-effect waves-blue no-uppercase" 
+      href="./view-home-section-items.php?sectionID=<?= $sectionID ?>&conferenceID=<?= $conferenceID ?>">Back</a>
+</p>
 
 <h4><?= $titleString ?> Line Item</h4>
 
 <div id="edit-line-item">
     <form action="ajax/save-line-item-edits.php?type=<?= $postType ?>" method="post">
+        <input type="hidden" name="conference-id" value="<?= $conferenceID ?>">
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
         <input type="hidden" name="line-id" value="<?= $lineID ?>"/>
         <input type="hidden" name="item-id" value="<?= $itemID ?>"/>

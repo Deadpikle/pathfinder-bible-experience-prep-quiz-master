@@ -9,6 +9,8 @@
         die("invalid user type");
     }
 
+    $conferenceID = $_GET["conferenceID"];
+
     if ($_GET["type"] == "update") {
         $query = '
             SELECT Name, SortOrder
@@ -40,13 +42,14 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-home-sections.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-home-sections.php?conferenceID=<?= $conferenceID ?>">Back</a></p>
 
 <h4><?= $titleString ?> Section</h4>
 
 <div id="edit-user">
     <form action="ajax/save-section-edits.php?type=<?= $postType ?>" method="post">
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
+        <input type="hidden" name="to-conference-id" value="<?= $conferenceID ?>">
         <div class="row">
             <div class="input-field col s12 m4">
                 <input type="text" id="section-name" name="section-name" value="<?= $sectionName ?>" required data-length="150"/>

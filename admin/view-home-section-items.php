@@ -6,6 +6,7 @@
     if ($isClubAdmin) {
         header("Location: index.php");
     }
+    $conferenceID = $_GET["conferenceID"];
     $sectionID = $_GET['sectionID'];
     $query = '
         SELECT his.Name AS SectionName,
@@ -34,12 +35,13 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="view-home-sections.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="view-home-sections.php?conferenceID=<?= $conferenceID ?>">Back</a></p>
 
 <h5><?=$sectionName?></h5>
 
 <div class="lines">
     <form action="ajax/add-line.php" method="post">
+        <input type="hidden" name="conference-id" value="<?= $conferenceID ?>">
         <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
         <div class="input-field col s6 m4">
             <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
@@ -60,8 +62,8 @@
                     }
                     $i++;
                     echo "<li class='line' id='line-id-$lineID'>Line $i<br>";
-                    echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create'>add item</a>";
-                    echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID'>delete line</a>";
+                    echo "<a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create&conferenceID=$conferenceID'>add item</a>";
+                    echo "<a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID&conferenceID=$conferenceID'>delete line</a>";
                     echo "<ul class='browser-default sortable'>";
                     $lastLineID = $lineID;
                 }
@@ -77,9 +79,9 @@
                     else {
                         echo "<li class='line-item' id='item-id-$itemID'>" . $line["Text"] . "<br>";
                     }
-                    echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update'>edit</a>";
+                    echo "<a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update&conferenceID=$conferenceID'>edit</a>";
                     echo "&nbsp;&nbsp;";
-                    echo "<a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID'>delete</a></li>";
+                    echo "<a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID&conferenceID=$conferenceID'>delete</a></li>";
                 }
             }
         ?>

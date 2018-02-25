@@ -1,5 +1,6 @@
 <?php
     require_once(dirname(__FILE__)."/../init-admin.php");
+    $toConferenceID = $_POST["to-conference-id"];
     try {
         $params = [
             $_POST["section-name"]
@@ -20,7 +21,7 @@
             }
             $params[] = $sortOrder;
             $params[] = get_active_year($pdo)["YearID"];
-            $params[] = $_SESSION["ConferenceID"];
+            $params[] = $_POST["to-conference-id"];
             $query = '
                 INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)
             ';
@@ -30,7 +31,7 @@
         }
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
-        header("Location: $basePath/admin/view-home-sections.php");
+        header("Location: $basePath/admin/view-home-sections.php?conferenceID=" . $toConferenceID);
     }
     catch (PDOException $e) {
         print_r($e);

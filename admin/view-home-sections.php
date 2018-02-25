@@ -7,8 +7,6 @@
         header("Location: index.php");
     }
 
-    $sections = load_home_sections($pdo, $_SESSION["ConferenceID"]);
-
     $params = [];
     $query = '
         SELECT YearID, Year, IsCurrent
@@ -17,6 +15,29 @@
     $yearStmt = $pdo->prepare($query);
     $yearStmt->execute($params);
     $years = $yearStmt->fetchAll();
+
+    if ($isWebAdmin) {
+        $webAdminConferenceID = get_web_admin_conference_id($pdo);
+        if (isset($_GET["conferenceID"])) {
+            $selectedConferenceID = $_GET["conferenceID"];
+        }
+        else {
+            $selectedConferenceID = $webAdminConferenceID;
+        }
+    
+        $query = '
+            SELECT ConferenceID, Name, URL, ContactName, ContactEmail 
+            FROM Conferences 
+            ORDER BY Name';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([]);
+        $conferences = $stmt->fetchAll();
+    }
+    else {
+        $selectedConferenceID = $_SESSION["ConferenceID"];
+    }
+
+    $sections = load_home_sections($pdo, $selectedConferenceID);
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
@@ -28,6 +49,7 @@
     <div class="section" id="create">
         <h5>Create Section</h5>
         <form action="ajax/save-section-edits.php?type=create" method="post">
+            <input type="hidden" name="to-conference-id" value="<?= $selectedConferenceID ?>">
             <div class="row">
                 <div class="input-field col s6 m4">
                     <input type="text" id="section-name" name="section-name" value="" required data-length="150"/>
@@ -39,11 +61,35 @@
             </div>
         </form>
     </div>
+    <?php if ($isWebAdmin) { ?>
+        <div class="divider"></div>
+            <div class="section">
+            <h5>Change Conference</h5>
+            <form action="" method="get">
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <select id="conference" name="conferenceID" required>
+                            <?php foreach ($conferences as $conference) { 
+                                    $selectedText = $conference["ConferenceID"] == $selectedConferenceID ? "selected" : "";
+                                ?>
+                                <option value="<?= $conference["ConferenceID"] ?>" <?= $selectedText ?>><?= $conference["Name"] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <button id="switch-conference" class="margin-button btn waves-effect waves-light submit">Switch Conference</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    <?php } ?>
     <div class="divider"></div>
     <div class="section">
         <h5>Copy Sections from Past/Admins</h5>
         <p>If you'd like to copy over the home info sections from a previous year or from the website admins, choose the year to copy from and click the applicable button. This will not overwrite any of your current information that you've set up for the current year (<?= $activeYearNumber ?>).</p>
         <form id="copy-form" method="post">
+            <input type="hidden" name="from-conference-id" value="<?= $selectedConferenceID ?>"> <!-- Only used in copy from conf -->
+            <input type="hidden" name="to-conference-id" value="<?= $selectedConferenceID ?>">
             <div class="row">
                 <div class="input-field col s4 m2">
                     <select id="year" name="year" required>
@@ -55,11 +101,9 @@
                     </select>
                 </div>
                 <div class="input-field col s12 m10">
-                    <button id="import-from-conference" class="margin-button btn waves-effect waves-light submit">Import from Conference</button>
-                    <button id="import-from-admin" class="margin-button btn waves-effect waves-light submit">Import from Admin</button>
+                    <button id="import-from-conference" type="button" class="margin-button btn waves-effect waves-light">Import from Conference</button>
+                    <button id="import-from-admin" type="button" class="margin-button btn waves-effect waves-light">Import from Admin</button>
                 </div>
-            </div>
-            <div class="div-below-selector row">
             </div>
         </form>
     </div>
@@ -69,7 +113,7 @@
         <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
         <div class="sortable">
             <?php 
-                output_home_sections($sections, TRUE);
+                output_home_sections($sections, TRUE, $selectedConferenceID);
             ?>
         </div>
     </div>
@@ -96,7 +140,7 @@
         $('#save-sort').on("click",function() {
             var sections = [];
             $('.sortable-item').each(function(index, element) {
-                console.log(element.id);
+                //console.log(element.id);
                 var sectionObj = {
                     id: element.id.replace('section-', ''),
                     index: index
@@ -117,11 +161,11 @@
                 }
             });
         });
-        $('#import-from-conference').on("click",function() {
+        $('#import-from-conference').on("click", function() {
             $('#copy-form').attr('action', 'ajax/import-home-info-from-conference.php');
             $('#copy-form').submit();
         });
-        $('#import-from-admin').on("click",function() {
+        $('#import-from-admin').on("click", function() {
             $('#copy-form').attr('action', 'ajax/import-home-info-from-admin.php');
             $('#copy-form').submit();
         });
