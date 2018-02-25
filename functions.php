@@ -173,8 +173,12 @@
             SELECT MAX(SortOrder) AS MaxSortOrder 
             FROM HomeInfoSections 
             WHERE ConferenceID = ? AND YearID = ?';
+        $sectionMaxParams = [
+            $toConferenceID,
+            $toYearID
+        ];
         $sectionMaxSortOrderStmnt = $pdo->prepare($sectionMaxSortOrderQuery);
-        $sectionMaxSortOrderStmnt->execute($sectionParams);
+        $sectionMaxSortOrderStmnt->execute($sectionMaxParams);
         $nextSectionSortOrder = 0;
         $maxSorts = $sectionMaxSortOrderStmnt->fetchAll();
         if (count($maxSorts) > 0) {
