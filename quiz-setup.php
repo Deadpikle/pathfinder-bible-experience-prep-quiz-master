@@ -2,12 +2,6 @@
     require_once(dirname(__FILE__)."/init.php");
     
     $title = 'Quiz Setup';
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // awful hack to make Microsoft Edge work -_-
-        include(dirname(__FILE__)."/quiz.php") ;
-        die();
-    }
     
     // load possible books and commentary volumes
 
@@ -37,16 +31,10 @@
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
 
-<!--
-https://stackoverflow.com/questions/18223743/to-generate-pdf-download-using-tcpdf
-https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-and-different-actions-for-each-button
-
-    -->
-
 <?php if ($areAnyQuestionsAvailable) { ?>
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
-    <form method="post">
+    <form id="quiz-setup-form" method="post">
         <p>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
@@ -138,8 +126,10 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
                 <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
             </div>
         </div>
-        <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="submit" name="action" formaction="quiz.php">Start Quiz</button>
-        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="submit" name="action2" formaction="study-guide-pdf.php" >Flash Cards</button>
+        <div class="input-field col s12 m10">
+        <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
+        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="button">Flash Cards</button>
+        </div>
         <div class="divider"></div>
         <div class="input-field col s6">
             <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="delete-user-answers.php">Erase previously saved answers</a>
@@ -175,18 +165,14 @@ https://stackoverflow.com/questions/14765170/one-form-with-two-submit-buttons-an
         $(':submit').click(function() {
             buttonID = $(this).attr('id');
         })
-        $('form').submit(function() {
-            if (buttonID != '') {
-                if (buttonID === 'flash-cards-btn') {
-                    this.target = '_blank';
-                }
-                else {
-                    this.target = '';
-                }
-            }
-            buttonID = '';
-            return true;
-        })
-
+        
+        $('#start-quiz-btn').on("click", function() {
+            $('#quiz-setup-form').attr('action', 'quiz.php');
+            $('#quiz-setup-form').submit();
+        });
+        $('#flash-cards-btn').on("click", function() {
+            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php');
+            $('#quiz-setup-form').submit();
+        });
     });
 </script>
