@@ -166,7 +166,7 @@
         $sectionStmt->execute($sectionParams);
         // prepare other queries so things go fast
         // need to check for a pre-existing section with that name
-        $sectionNameQuery = 'SELECT HomeInfoSectionID FROM HomeInfoSections WHERE Name = ?';
+        $sectionNameQuery = 'SELECT HomeInfoSectionID FROM HomeInfoSections WHERE Name = ? AND ConferenceID = ? AND YearID = ?';
         $sectionNameStmnt = $pdo->prepare($sectionNameQuery);
 
         $sectionMaxSortOrderQuery = '
@@ -213,7 +213,12 @@
         // start looping through the sections
         foreach ($sectionStmt as $section) {
             // check to see if a section with this name already exists
-            $sectionNameStmnt->execute([$section["SectionName"]]);
+            $sectionNameCheckParams = [
+                $section["SectionName"],
+                $toConferenceID, 
+                $toYearID
+            ];
+            $sectionNameStmnt->execute($sectionNameCheckParams);
             $sectionsWithThatName = $sectionNameStmnt->fetchAll();
             if (count($sectionsWithThatName) > 0) {
                 $createdSectionID = $sectionsWithThatName[0]["HomeInfoSectionID"];
