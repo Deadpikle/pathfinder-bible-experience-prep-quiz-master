@@ -107,16 +107,18 @@
             </div>
         </form>
     </div>
-    <div class="section" id="section-list">
-        <h5>Modify Sections</h5>
-        <p>You can drag and drop lines and line items to resort them.</p>
-        <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
-        <div class="sortable">
-            <?php 
-                output_home_sections($sections, TRUE, $selectedConferenceID);
-            ?>
+    <?php if (count($sections) > 0) { ?>
+        <div class="section" id="section-list">
+            <h5>Modify Sections</h5>
+            <p>You can drag and drop lines and line items to resort them.</p>
+            <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
+            <div class="sortable">
+                <?php 
+                    output_home_sections($sections, TRUE, $selectedConferenceID);
+                ?>
+            </div>
         </div>
-    </div>
+    <?php } ?>
 </div>
 
 <div id="saved-modal" class="modal">
