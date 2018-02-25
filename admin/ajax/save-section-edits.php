@@ -19,8 +19,10 @@
                 $sortOrder = intval($row["MaxSort"]) + 1;
             }
             $params[] = $sortOrder;
+            $params[] = get_active_year($pdo)["YearID"];
+            $params[] = $_SESSION["ConferenceID"];
             $query = '
-                INSERT INTO HomeInfoSections (Name, SortOrder) VALUES (?, ?)
+                INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)
             ';
         }
         else {
