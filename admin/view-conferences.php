@@ -11,6 +11,7 @@
     $query = '
         SELECT ConferenceID, Name, URL, ContactName, ContactEmail 
         FROM Conferences 
+        WHERE Name <> "Website Administrators"
         ORDER BY Name';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);

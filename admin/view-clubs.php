@@ -10,6 +10,7 @@
     $query = '
         SELECT ClubID, c.Name AS ClubName, c.URL, conf.Name AS ConferenceName
         FROM Clubs c LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
+        WHERE c.Name <> "Website Administrators"
         ORDER BY conf.Name, c.Name';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
@@ -17,7 +18,11 @@
 
     if ($isWebAdmin) {
         // need to let user choose which conference the club belongs to
-        $query = 'SELECT ConferenceID, Name FROM Conferences ORDER BY Name';
+        $query = '
+            SELECT ConferenceID, Name 
+            FROM Conferences 
+            WHERE Name <> "Website Administrators"
+            ORDER BY Name';
         $stmt = $pdo->prepare($query);
         $stmt->execute([]);
         $conferences = $stmt->fetchAll();
@@ -74,8 +79,8 @@
                 <th>Club Name</th>
                 <th>URL</th>
                 <th>Conference</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -84,8 +89,8 @@
                         <td><?= $club["ClubName"] ?></td>
                         <td><?= $club["URL"] ?></td>
                         <td><?= $club["ConferenceName"] ?></td>
-                        <td><a href="create-edit-club.php?type=update&id=<?=$club['ClubID'] ?>">Edit Club</a></td>
-                        <td><a href="delete-club.php?id=<?=$club['ClubID'] ?>">Delete Club</a></td>
+                        <td><a class="waves-effect waves-light btn" href="create-edit-club.php?type=update&id=<?=$club['ClubID'] ?>">Edit Club</a></td>
+                        <td><a class="waves-effect waves-light btn red white-text" href="delete-club.php?id=<?=$club['ClubID'] ?>">Delete Club</a></td>
                     </tr>
             <?php } ?>
         </tbody>
