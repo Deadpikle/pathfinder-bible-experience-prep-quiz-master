@@ -21,7 +21,7 @@
         die("Invalid book id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $bookID == $_POST["book-id"]) {
+    if ($isPostRequest && $bookID == $_POST["book-id"]) {
         $query = 'DELETE FROM Books WHERE BookID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$bookID]);

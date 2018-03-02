@@ -13,7 +13,7 @@
         die("invalid user id"); // TODO: better error
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $yearID == $_POST["year-id"]) {
+    if ($isPostRequest && $yearID == $_POST["year-id"]) {
         // clear current year
         $query = 'UPDATE Years SET IsCurrent = 0;';
         $stmt = $pdo->prepare($query);

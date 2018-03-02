@@ -13,7 +13,7 @@
         die("invalid section id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $sectionID == $_POST["section-id"]) {
+    if ($isPostRequest && $sectionID == $_POST["section-id"]) {
         $query = 'DELETE FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$sectionID]);

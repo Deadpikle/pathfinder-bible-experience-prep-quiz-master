@@ -20,7 +20,7 @@
         die("Invalid commentary id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $commentaryID == $_POST["commentary-id"]) {
+    if ($isPostRequest && $commentaryID == $_POST["commentary-id"]) {
         $query = 'DELETE FROM Commentaries WHERE CommentaryID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$commentaryID]);

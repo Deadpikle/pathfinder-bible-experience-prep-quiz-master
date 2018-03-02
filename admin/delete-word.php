@@ -12,7 +12,7 @@
         die("invalid word id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wordID == $_POST["word-id"]) {
+    if ($isPostRequest && $wordID == $_POST["word-id"]) {
         $query = 'DELETE FROM BlankableWords WHERE WordID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$wordID]);

@@ -18,7 +18,7 @@
         die("invalid question id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $questionID == $_POST["question-id"]) {
+    if ($isPostRequest && $questionID == $_POST["question-id"]) {
         $query = 'Update Questions SET IsDeleted = 1 WHERE QuestionID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$questionID]);

@@ -5,7 +5,7 @@
     
     $userID = $_SESSION["UserID"];
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST["user-id"] == $userID) {
+    if ($isPostRequest && $_POST["user-id"] == $userID) {
         $query = 'DELETE FROM UserAnswers WHERE UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$userID]);

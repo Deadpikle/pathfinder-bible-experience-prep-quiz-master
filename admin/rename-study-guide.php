@@ -12,7 +12,7 @@
         die("Invalid study guide id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id == $_POST["study-guide-id"]) {
+    if ($isPostRequest && $id == $_POST["study-guide-id"]) {
         $query = 'UPDATE StudyGuides SET DisplayName = ? WHERE StudyGuideID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_POST["display-name"], $id]);

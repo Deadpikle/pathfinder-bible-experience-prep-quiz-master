@@ -19,7 +19,7 @@
         die("invalid line id"); // TODO: better error
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $lineID == $_POST["line-id"]) {
+    if ($isPostRequest && $lineID == $_POST["line-id"]) {
         $query = 'DELETE FROM HomeInfoLines WHERE HomeInfoLineID = ?';
         $lineStmt = $pdo->prepare($query);
         $lineStmt->execute([$lineID]);

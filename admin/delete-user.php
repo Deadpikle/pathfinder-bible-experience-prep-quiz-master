@@ -13,7 +13,7 @@
         die("invalid user id"); // TODO: better error
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userID == $_POST["user-id"]) {
+    if ($isPostRequest && $userID == $_POST["user-id"]) {
         $query = 'DELETE FROM Users WHERE UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$userID]);

@@ -19,6 +19,8 @@
     if ($isUserIDSessionSet) {
         $loggedIn = TRUE;
     }
+
+    $isPostRequest = $_SERVER['REQUEST_METHOD'] === 'POST';
     
     $isGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
     $isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";

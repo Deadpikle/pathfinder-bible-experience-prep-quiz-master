@@ -8,7 +8,10 @@
 
     $title = "Upload Questions";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $questionsSuccessfullyAdded = 0;
+    $questionsFailedToAdd = 0;
+    $errors = "";
+    if ($isPostRequest) {
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
         // split file by items
@@ -67,7 +70,7 @@
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
             EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsFlagged, IsDeleted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
         $stmt = $pdo->prepare($query);
         foreach ($csv as $row) {
@@ -106,7 +109,7 @@
                     }
                 }
                 if ($questionType === "") {
-                    echo "Unable to add question: " . $row["Question"] . ". Invalid question type.<br>";
+                    $errors .= "Unable to add question: " . $row["Question"] . ". Invalid question type.<br>";
                     continue;
                 }
 
@@ -122,7 +125,7 @@
                         $startVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
                     }
                     else {
-                        echo "Unable to add Bible question: " . $row["Question"] . ". Invalid book name, chapter, and/or verse.<br>";
+                        $errors .= "Unable to add Bible question: " . $row["Question"] . ". Invalid book name, chapter, and/or verse.<br>";
                         continue;
                     }
                     $bookName = $row["End Book"];
@@ -156,7 +159,7 @@
                         $commentaryID = $commentaryMap[$commentaryKey]["CommentaryID"];
                     }
                     else {
-                        echo "Unable to add commentary question: " . $row["Question"] . ". Invalid number and/or topic.<br>";
+                        $errors .= "Unable to add commentary question: " . $row["Question"] . ". Invalid number and/or topic.<br>";
                         continue;
                     }
 
@@ -198,9 +201,11 @@
                 //print_r($params);
                 //die();
                 $stmt->execute($params);
+                $questionsSuccessfullyAdded++;
             }
             catch (PDOException $e) {
-                echo "Error inserting question " . $row["Question"] . ": " . $e->getMessage() . "<br>";
+                $errors .= "Error inserting question " . $row["Question"] . ": " . $e->getMessage() . "<br>";
+                $questionsFailedToAdd++;
                 //print_r($e);
                 //die();
             }
@@ -211,6 +216,19 @@
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
+
+<?php if ($isPostRequest) { ?>
+    <p>
+        <b>Upload results:</b> <?= $questionsSuccessfullyAdded ?> questions successfully added. 
+        <?php if ($questionsFailedToAdd > 0) { ?>
+            <?= $questionsFailedToAdd ?> questions couldn't be added to the system.</p> <!-- close of initial paragraph -->
+            <?php if ($errors !== "") { ?>
+                    <p><?= $error ?></p>
+            <?php } ?>
+        <?php } else { ?>
+            </p> <!-- close of initial paragraph -->
+        <?php } ?>
+<?php } ?>
 
 <h4>Upload Questions from Excel CSV File</h4>
 

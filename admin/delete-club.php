@@ -12,7 +12,7 @@
         die("invalid club id");
     }
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $clubID == $_POST["club-id"]) {
+    if ($isPostRequest && $clubID == $_POST["club-id"]) {
         $query = 'DELETE FROM Clubs WHERE ClubID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute([$clubID]);
