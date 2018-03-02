@@ -2,13 +2,14 @@
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
         $commentaryNumber = $_POST["commentary"];
+        $topic = filter_var($_POST["topic"], FILTER_SANITIZE_STRING);
         if (!is_numeric($commentaryNumber)) {
             header("Location: $basePath/admin/view-years.php");
             die();
         }
-        $query = 'SELECT 1 FROM Commentaries WHERE Number = ? AND YearID = ?';
+        $query = 'SELECT 1 FROM Commentaries WHERE Number = ? AND TopicName = ? AND YearID = ?';
         $stmt = $pdo->prepare($query);
-        $stmt->execute([intval($commentaryNumber), $activeYearID]);
+        $stmt->execute([intval($commentaryNumber), $topic, $activeYearID]);
         $commentaryData = $stmt->fetchAll();
         if ($commentaryData === false || count($commentaryData) > 0) {
             // commentary already exists; don't add it!
@@ -17,7 +18,7 @@
         }
         $params = [
             intval($commentaryNumber), 
-            filter_var($_POST["topic"], FILTER_SANITIZE_STRING),
+            $topic,
             $activeYearID
         ];
         $query = '
