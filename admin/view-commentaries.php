@@ -30,7 +30,7 @@
         <form action="ajax/add-commentary.php" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
-                    <input type="number" id="commentary" name="commentary" value="" placeholder="1" required min="1" max="12"/>
+                    <input type="number" id="commentary" name="commentary" value="" placeholder="4" required min="1" max="12"/>
                     <label for="commentary">Commentary Number</label>
                 </div>
                 <div class="input-field col s6 m4">
