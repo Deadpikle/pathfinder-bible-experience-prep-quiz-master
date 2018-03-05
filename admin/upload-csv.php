@@ -109,6 +109,7 @@
                     }
                 }
                 if ($questionType === "") {
+                    $questionsFailedToAdd++;
                     $errors .= "Unable to add question: " . $row["Question"] . ". Invalid question type.<br>";
                     continue;
                 }
@@ -125,6 +126,7 @@
                         $startVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
                     }
                     else {
+                        $questionsFailedToAdd++;
                         $errors .= "Unable to add Bible question: " . $row["Question"] . ". Invalid book name, chapter, and/or verse.<br>";
                         continue;
                     }
@@ -159,6 +161,7 @@
                         $commentaryID = $commentaryMap[$commentaryKey]["CommentaryID"];
                     }
                     else {
+                        $questionsFailedToAdd++;
                         $errors .= "Unable to add commentary question: " . $row["Question"] . ". Invalid number and/or topic.<br>";
                         continue;
                     }
@@ -223,7 +226,7 @@
         <?php if ($questionsFailedToAdd > 0) { ?>
             <?= $questionsFailedToAdd ?> questions couldn't be added to the system.</p> <!-- close of initial paragraph -->
             <?php if ($errors !== "") { ?>
-                    <p><?= $error ?></p>
+                    <p><?= $errors ?></p>
             <?php } ?>
         <?php } else { ?>
             </p> <!-- close of initial paragraph -->
