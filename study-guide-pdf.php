@@ -113,11 +113,14 @@
         
         // Page footer
         function Footer() {
-            $this->SetY(-15.4);
+            $this->SetY(-23.4);
             // Arial italic 8
             $this->SetFont('Arial', '', 12);
             // Page number
             $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
+            $this->Ln(10);
+            $this->SetFont('Arial', '', 7);
+            $this->MultiCell(165.1, 5, 'Scripture taken from the New King James Version ' . iconv("UTF-8", "ISO-8859-1", "®") . '. Copyright ' . iconv("UTF-8", "ISO-8859-1", "©") . ' 1982 by Thomas Nelson. Used by permission. All rights reserved.', 0, 'C');
         }
 
         function SetWidths($w) {
