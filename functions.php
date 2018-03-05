@@ -556,6 +556,7 @@
                 array_column($bibleQnA, 'EndBook'), SORT_ASC,
                 array_column($bibleQnA, 'EndChapter'), SORT_ASC,
                 array_column($bibleQnA, 'EndVerse'), SORT_ASC,
+                array_column($bibleQnA, 'QuestionID'), SORT_ASC,
                 $bibleQnA);
             array_multisort(
                 array_column($bibleFillIn, 'StartBook'), SORT_ASC, 
@@ -564,6 +565,7 @@
                 array_column($bibleFillIn, 'EndBook'), SORT_ASC,
                 array_column($bibleFillIn, 'EndChapter'), SORT_ASC,
                 array_column($bibleFillIn, 'EndVerse'), SORT_ASC,
+                array_column($bibleFillIn, 'QuestionID'), SORT_ASC,
                 $bibleFillIn);
                 
             array_multisort(
@@ -571,12 +573,14 @@
                 array_column($commentaryQnA, 'CommentaryTopic'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryQnA, 'CommentaryEndPage'), SORT_ASC,
+                array_column($commentaryQnA, 'QuestionID'), SORT_ASC,
                 $commentaryQnA);
             array_multisort(
                 array_column($commentaryFillIn, 'CommentaryNumber'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryTopic'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryStartPage'), SORT_ASC, 
                 array_column($commentaryFillIn, 'CommentaryEndPage'), SORT_ASC,
+                array_column($commentaryFillIn, 'QuestionID'), SORT_ASC,
                 $commentaryFillIn);
         }
         
