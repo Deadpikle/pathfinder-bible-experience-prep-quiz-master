@@ -34,7 +34,7 @@
             $whereClause .= " AND (Type = '" . $questionType . "' OR Type = '" . $questionType . "-fill') ";
         }
         // TODO: why are these if/else things in two separate sections exactly?
-        if (strpos($questionType, 'bible') !== false) {
+        if (strpos($questionType, 'bible') !== FALSE) {
             if (isset($_POST["bookFilter"]) && is_numeric($_POST["bookFilter"]) && $_POST["bookFilter"] != -1) {
                 $whereClause .= " AND bStart.BookID = " . $_POST["bookFilter"];
             }
@@ -42,9 +42,19 @@
                 $whereClause .= " AND cStart.ChapterID = " . $_POST["chapterFilter"];
             }
         }
-        else if (strpos($questionType, 'commentary') !== false) {
+        else if (strpos($questionType, 'commentary') !== FALSE) {
             if (isset($_POST["volumeFilter"]) && is_numeric($_POST["volumeFilter"]) && $_POST["volumeFilter"] != -1) {
                 $whereClause .= " AND comm.Number = " . $_POST["volumeFilter"];
+            }
+        }
+
+        $isUsingCustomSearchText = FALSE;
+        $searchText = "";
+        if (isset($_POST["searchText"])) {
+            $text = trim($_POST["searchText"]);
+            if ($text !== "") {
+                $isUsingCustomSearchText = true;
+                $searchText = trim($text);
             }
         }
 
@@ -90,31 +100,73 @@
                 ' . $flaggedJoinClause . '
                 ' . $whereClause . '
                 ' . $orderByClause;
-        $limitClause = '
-            LIMIT ' . $pageOffset . ',' . $pageSize;  
+        if (!$isUsingCustomSearchText) {
+            $limitClause = '
+                LIMIT ' . $pageOffset . ',' . $pageSize;  
+        }
+        else {
+            $limitClause = ""; 
+            // will handle limit manually, which, while expensive, is necessary
+            // unless we implement full text search for the questions, which
+            // would be awesome but a whole lot of work :( We'd also want
+            // to add some "searchable" columns for 'Chapter:Verse' and
+            // 'Book Chapter:Verse'.
+        }
         $fullQuery = $selectPortion . $fromPortion . $limitClause;
         $stmt = $pdo->query($fullQuery);
         $questions = $stmt->fetchAll();
 
-        if (isset($_POST["searchText"]) && $_POST["searchText"] !== "") {
+        if ($isUsingCustomSearchText) {
             $tmpQuestions = [];
-            $searchText = $_POST["searchText"];
             foreach ($questions as $question) {
                 // see if it matches the search text
+                $questionText = $question["Question"];
+                $answer = $question["Answer"];
                 $startBook = $question["StartBook"];
                 $startVerse = $question["StartChapter"] . ":" . $question["StartVerse"];
-                // TODO: finish up the custom search
-                /*var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
-                var endVerse = "";
-                if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
-                    endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
-                }*/
+                $endBook = "";
+                $endVerse = "";
+                if ($question["EndBook"] !== "") {
+                    $endBook = $question["EndBook"];
+                }
+                if ($question["EndChapter"] !== "") {
+                    $endVerse = $question["EndChapter"] . ":" . $question["EndVerse"];
+                }
+
+                if (strpos($questionText, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if (strpos($startBook, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if (strpos($startVerse, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if ($endBook !== "" && strpos($endBook, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if ($endVerse !== "" && strpos($endVerse, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
             }
+            $totalQuestions = count($tmpQuestions);
+            // now apply the LIMIT manually
+            $offset = $pageOffset;
+            if (count($tmpQuestions) > $pageOffset) {
+                $tmpQuestions = array_slice($tmpQuestions, $pageOffset);
+            }
+            if (count($tmpQuestions) > $pageSize) {
+                $tmpQuestions = array_slice($tmpQuestions, 0, $pageSize);
+            }
+            // set output to tmpQuestions
+            $questions = $tmpQuestions;
+        }
+        else {
+            $stmt = $pdo->query("SELECT COUNT(*) AS QuestionCount " . $fromPortion);
+            $row = $stmt->fetch(); 
+            $totalQuestions = $row["QuestionCount"];
         }
 
-        $stmt = $pdo->query("SELECT COUNT(*) AS QuestionCount " . $fromPortion);
-        $row = $stmt->fetch(); 
-        $totalQuestions = $row["QuestionCount"];
 
         $output = json_encode(array(
             "questions" => $questions,

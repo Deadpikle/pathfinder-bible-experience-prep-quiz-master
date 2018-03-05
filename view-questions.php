@@ -108,14 +108,18 @@
     <!-- <label>Commentary Filter</label> -->
 </div>
 <div class="row">
-    <p class="left-margin-fix" id="filter-by-search"><b>Question Search</b></p>
+    <p class="left-margin-fix" id="filter-by-search"><b>Search Question Text, Answer, or Chapter:Verse</b></p>
     <div class="">
-        <div class="input-field blue-inputs col s12 m4">
-            <input id="online-search-input" name="search" type="text" placeholder="Search for a question...">
-            <label for="search">Search</label>
+        <div class="input-field blue-inputs col s12">
+            <p class="negative-top-margin">All above filters apply (Bible Q&amp;A vs Commentary Q&amp;A; book/chapter filter, etc.)</p>
         </div>
         <div class="input-field blue-inputs col s12 m4">
+            <input id="online-search-input" name="search" type="text" placeholder="Daniel's diet; 2 Kings 2:11; 3:16">
+            <label for="search">Search</label>
+        </div>
+        <div class="input-field blue-inputs col s12 m8">
             <button id="online-search-button" class="btn-flat blue white-text waves-effect" style="vertical-align:middle">Search</button>
+            <button id="online-search-clear-button" class="btn-flat blue white-text waves-effect" style="vertical-align:middle">Clear Search</button>
         </div>
     </div>
 </div>
@@ -169,6 +173,7 @@
         var previousPage = document.getElementById('prev-page');
         var nextPage = document.getElementById('next-page');
         var onlineSearch = document.getElementById('online-search-button');
+        var onlineSearchClear = document.getElementById('online-search-clear-button');
 
         function moveToPage(pageNumber) {
             currentPageNumber = pageNumber;
@@ -391,6 +396,19 @@
 
         onlineSearch.addEventListener('click', function() {
             searchText = $("#online-search-input").val();
+            loadQuestions();
+        });
+
+        document.getElementById("online-search-input")
+            .addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                onlineSearch.click();
+            }
+        });
+
+        onlineSearchClear.addEventListener('click', function() {
+            $("#online-search-input").val('');
             loadQuestions();
         });
 
