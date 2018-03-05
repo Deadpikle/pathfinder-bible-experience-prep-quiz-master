@@ -6,6 +6,10 @@
         return strpos($haystack, $needle) !== false;
     }
 
+    function utf8($str) {
+        return iconv("UTF-8", "ISO-8859-1", $str);
+    }
+
     function get_settings($pdo) {
         // load settings
         $query = '
