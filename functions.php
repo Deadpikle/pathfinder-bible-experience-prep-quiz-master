@@ -468,7 +468,7 @@
             $whereClause = ' WHERE q.Type = "bible-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
 
-        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND bEnd.YearID = ' . $currentYear;
+        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS NULL OR bEnd.YearID = ' . $currentYear . ')';
 
         $orderByPortion = '';
         if ($areRandomQuestionsPulled) {
