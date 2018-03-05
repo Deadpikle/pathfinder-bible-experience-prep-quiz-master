@@ -61,11 +61,11 @@
         $currentYear = get_active_year($pdo)["YearID"];
 
         if ($questionType == "bible-qna" || $questionType == "bible-qna-fill") {
-            $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number ";
+            $orderByClause = " ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number, q.QuestionID ";
             $whereClause .= " AND IsDeleted = 0 AND bStart.YearID = " . $currentYear . " AND (q.EndVerseID IS NULL OR bEnd.YearID = " . $currentYear . ")";
         }
         else if ($questionType == "commentary-qna" || $questionType == "commentary-qna-fill") {
-            $orderByClause = " ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage ";
+            $orderByClause = " ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage, q.QuestionID ";
             $whereClause .= " AND IsDeleted = 0 AND comm.YearID = " . $currentYear;
         }
         else {
@@ -124,6 +124,7 @@
                 $answer = $question["Answer"];
                 $startBook = $question["StartBook"];
                 $startVerse = $question["StartChapter"] . ":" . $question["StartVerse"];
+                $startFull = $startBook . " " . $startVerse;
                 $endBook = "";
                 $endVerse = "";
                 if ($question["EndBook"] !== "") {
@@ -132,8 +133,15 @@
                 if ($question["EndChapter"] !== "") {
                     $endVerse = $question["EndChapter"] . ":" . $question["EndVerse"];
                 }
+                $endFull = "";
+                if ($endBook !== "" && $endVerse !== "") {
+                    $endFull = $endBook . " " . $endVerse;
+                }
 
                 if (strpos($questionText, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if (strpos($answer, $searchText) !== FALSE) {
                     $tmpQuestions[] = $question;
                 }
                 else if (strpos($startBook, $searchText) !== FALSE) {
@@ -146,6 +154,12 @@
                     $tmpQuestions[] = $question;
                 }
                 else if ($endVerse !== "" && strpos($endVerse, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if ($startFull !== "" && strpos($startFull, $searchText) !== FALSE) {
+                    $tmpQuestions[] = $question;
+                }
+                else if ($endFull !== "" && strpos($endFull, $searchText) !== FALSE) {
                     $tmpQuestions[] = $question;
                 }
             }

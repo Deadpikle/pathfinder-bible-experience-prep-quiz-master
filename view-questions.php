@@ -399,6 +399,7 @@
             loadQuestions();
         });
 
+        // https://stackoverflow.com/a/155263/3938401
         document.getElementById("online-search-input")
             .addEventListener("keyup", function(event) {
             event.preventDefault();
