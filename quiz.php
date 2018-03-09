@@ -311,7 +311,7 @@
                         currentQuestionIndex = 0;
                         showQuestionAtCurrentIndex();
                         $("#take-quiz").show();
-                        // make sure the first tab is visible selected. because it's hidden at first,
+                        // make sure the first tab is visibly selected. because it's hidden at first,
                         // materialize doesn't draw the little indicator line.
                         $('ul.tabs').tabs('select_tab', 'current-question');
                     }
