@@ -172,11 +172,11 @@
             $('#quiz-setup-form').submit();
         });
         $('#lr-flash-cards-btn').on("click", function() {
-            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?lr');
+            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=lr');
             $('#quiz-setup-form').submit();
         });
         $('#fb-flash-cards-btn').on("click", function() {
-            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?fb');
+            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=fb');
             $('#quiz-setup-form').submit();
         });
     });

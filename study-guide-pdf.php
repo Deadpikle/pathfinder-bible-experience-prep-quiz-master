@@ -12,6 +12,8 @@
         protected $U = 0;
         protected $HREF = '';
         protected $lineHeight = 7;
+        protected $WIDTH_OFFSET = 0;
+        protected $DRAW_RECT = false;
         
         function WriteHTML($html) {
             // HTML parser
@@ -145,7 +147,8 @@
         }
 
         function NbLines($w, $txt) {
-            // Computes the number of lines a MultiCell of width w will take
+            // Computes the number of lines a MultiCell of width w will take.
+            // This was modified from fpdf examples.
             $cw = &$this->CurrentFont['cw'];
             if ($w == 0) {
                 $w= $this->w - $this->rMargin - $this->x;
@@ -165,9 +168,9 @@
                 $c = $s[$i];
                 if ($c == "\n") {
                     $i++;
-                    $sep=-1;
-                    $j=$i;
-                    $l=0;
+                    $sep = -1;
+                    $j = $i;
+                    $l = 0;
                     $nl++;
                     continue;
                 }
@@ -196,26 +199,31 @@
             return $nl;
         }
 
-        function printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET) {
-            if (!$DRAW_RECT) {
+        function printTitle($title, $lineHeight, $x, $y, $w, $h) {
+            if (!$this->DRAW_RECT) {
                 $this->Line($x + $w, $y, $x + $w, $y + $h);
             }
             $this->SetFont('Arial', 'B', 14);
             // print title
-            $this->Cell($w - $WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
+            $this->Cell($w - $this->WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
         }
 
-        function OutputRow($data, $title, $lineHeight) {
-            $this->lineHeight = $lineHeight;
+        function MeasureHeight($text, $columnIndex, $lineHeight) {
+            $textToMeasure = strip_tags($text);
+            $numberOfLines = $this->NbLines($this->widths[$columnIndex] - $this->WIDTH_OFFSET, $textToMeasure);
+            return $numberOfLines * $this->lineHeight;
+        }
+
+        // $data[0] == question, $data[1] == answer
+        function OutputRow($data, $title) {
             // Calculate the height of the row
             $maxLines = 0;
             $numberOfLinesInCell = array();
-            $WIDTH_OFFSET = 0;
             $tallestCellIndex = 0;
             for ($i = 0; $i < count($data); $i++) {
                 $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
                 $outputToCheck = strip_tags($outputToCheck);
-                $numberOfLines = $this->NbLines($this->widths[$i] - $WIDTH_OFFSET, $outputToCheck);
+                $numberOfLines = $this->NbLines($this->widths[$i] - $this->WIDTH_OFFSET, $outputToCheck);
                 $numberOfLinesInCell[] = $numberOfLines;
                 if ($numberOfLines > $maxLines) {
                     $tallestCellIndex = $i;
@@ -224,7 +232,6 @@
             }
             $h = $lineHeight * $maxLines;
             // Issue a page break first if needed
-            $DRAW_RECT = FALSE;
             $OFFSET = FALSE;
             $cellOffset = $OFFSET ? 5 : 0;
             $this->CheckPageBreak($h + $cellOffset);
@@ -236,7 +243,7 @@
                 $x = $this->GetX();
                 $y = $this->GetY();
                 // Draw the border
-                if ($DRAW_RECT) {
+                if ($this->DRAW_RECT) {
                     $this->Rect($x, $y, $w, $h + $cellOffset);
                 }
                 else {
@@ -248,7 +255,7 @@
                     $this->SetY($y + (($h - ($lineHeight * $numberOfLinesInCell[$i])) / 2), false);
                     if ($i == 0) { 
                         // printing the title portion of the question ("Question X -- Z Points")
-                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET);
+                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h);
                     }
                     $this->SetFont('Arial', '', 14);
                     // have to set left margin and right margins properly so the html wrapping works just right and wraps
@@ -268,7 +275,7 @@
                 }
                 else {
                     if ($i == 0) {
-                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h, $DRAW_RECT, $WIDTH_OFFSET);
+                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h);
                     }
                     $this->SetFont('Arial', '', 14); // just in case
                     $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
@@ -414,24 +421,33 @@
     }
     else {
         $questionNumber = 1;
-        foreach ($quizMaterials["questions"] as $question) {
-            //$question = $question["question"];
-            $answer = $question["answer"];
-            $points = $question["points"];
-            $pointsStr = $points == 1 ? "point" : "points";
-            $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-            $text = get_question_text($question);
-            if (!is_fill_in($question["type"])) {
-                $pdf->OutputRow([$text, $question["answer"]], $title, 7);
+        if (!isset($_GET["type"]) || $_GET["type"] == "lr") {
+            // left/right questions; can just output normally
+            foreach ($quizMaterials["questions"] as $question) {
+                //$question = $question["question"];
+                $answer = $question["answer"];
+                $points = $question["points"];
+                $pointsStr = $points == 1 ? "point" : "points";
+                $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
+                $text = get_question_text($question);
+                if (!is_fill_in($question["type"])) {
+                    $pdf->OutputRow([$text, $question["answer"]], $title);
+                }
+                else {
+                    // for fill in the blanks, the full answer is stored
+                    // in the question field
+                    $fillIn = generate_fill_in($question);
+                    $text .= "\n" . $fillIn["question"];
+                    $pdf->OutputRow([$text, $fillIn["answer"]], $title);
+                }
+                $questionNumber++;
             }
-            else {
-                // for fill in the blanks, the full answer is stored
-                // in the question field
-                $fillIn = generate_fill_in($question);
-                $text .= "\n" . $fillIn["question"];
-                $pdf->OutputRow([$text, $fillIn["answer"]], $title, 7);
-            }
-            $questionNumber++;
+        }
+        else {
+            // 1) measure everything
+            // 2) determine which questions and answers can fit on a 2-column page
+            // 3) output a page of questions followed by a page of answers such that printing front/back works
+            // 4) continue until all questions are output
         }
     }
 
