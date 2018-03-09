@@ -60,7 +60,7 @@
             <div class="col s12">
                 <ul class="tabs">
                     <li class="tab"><a class="active teal-text" href="#current-question">Current</a></li>
-                    <li class="tab"><a class="teal-text" href="#history">History</a></li>
+                    <li class="tab"><a class="teal-text" href="#history">Review</a></li>
                     <li class="tab"><a class="teal-text" href="#stats">Statistics</a></li>
                     <div class="indicator teal" style="z-index:1"></div>
                 </ul>
@@ -119,7 +119,8 @@
             </div>
         </div>
         <div class="col s12" id="history">
-            <p>history</p>
+            <ol id="history-list">
+            </ol>
         </div>
         <div class="col s12" id="stats">
             <p>stats</p>
@@ -138,6 +139,8 @@
         var userAnswers = [];
         var currentQuestion = null;
         var didSaveAnswers = false;
+
+        var answerIsPrefix = "The answer is: ";
 
         var $questionAnswerText = $("#quiz-question-show-answer");
 
@@ -285,11 +288,10 @@
                 else {
                     outputAnswer = fillInAnswerString(currentQuestion.fillInData);
                 }
-                $questionAnswerText.html("The answer is: " + outputAnswer);
+                $questionAnswerText.html(answerIsPrefix + outputAnswer);
             }
             else {
-                var outputAnswer = isFillIn ? currentQuestion.question : currentQuestion.answer;
-                $questionAnswerText.html("The answer is: " + outputAnswer);
+                $questionAnswerText.html(answerIsPrefix + currentQuestion.answer);
             }
             $questionAnswerText.show();
         }
@@ -302,7 +304,7 @@
             else {
                 outputAnswer = fillInAnswerString(currentQuestion.fillInData);
             }
-            $questionAnswerText.html("The answer is: " + outputAnswer);
+            $questionAnswerText.html(answerIsPrefix + outputAnswer);
         });
 
         $(correctAnswerCheckbox).change(function() {
@@ -340,6 +342,7 @@
             if (pointsAchieved > currentQuestion.points) {
                 pointsAchieved = currentQuestion.points;
             }
+            Math.floor(pointsAchieved);
             //var didGetAllPossible = pointsAchieved >= currentQuestion.points;
             // save the user's answer data 
             var wasCorrect = 0;
@@ -377,6 +380,13 @@
             var earnedPointsLabel = totalPointsEarned == 1 ? " point" : " points";
             var possiblePointsLabel = totalPointsPossible == 1 ? " point" : " points";
             $("#user-points-earned").html(totalPointsEarned + earnedPointsLabel + " earned out of " + totalPointsPossible + " total" + possiblePointsLabel + " possible (" + percent + "%)");
+            // add to user's question history
+            // we keep the answer text as-is and don't let the user change their display option for fill-in answers.
+            // instead, we just keep it like the user had it and assume they will display it like they want it when checking
+            // their answer. 
+            var answerText = $questionAnswerText.html();
+            answerText = answerText.replace(answerIsPrefix, '');
+            addToHistory($("#question-text").html(), answerText, userAnswer, correctAnswerCheckbox.checked, pointsAchieved);
         }
 
         nextQuestion.addEventListener('click', function() {
@@ -476,6 +486,18 @@
                 flagQuestion.disabled = true;
             }
             displayQuestion(currentQuestion);
+        }
+
+        function addToHistory(questionText, answer, userAnswer, markedCorrect, pointsGained) {
+            var html = "<li><ul>";
+            html += "<li>" + questionText + "</li>";
+            html += "<li><b>Answer:</b> " + answer + "</li>";
+            html += "<li><b>Your answer:</b> " + userAnswer + "</li>";
+            var markedCorrectStr = markedCorrect ? "Yes" : "No";
+            html += "<li><b>Marked correct?</b> " + markedCorrectStr + "</li>";
+            html += "<li><b>Points gained:</b> " + pointsGained + "</li>";
+            html += "</ul></li>"
+            $("#history-list").append($(html));
         }
 
         loadQuiz();
