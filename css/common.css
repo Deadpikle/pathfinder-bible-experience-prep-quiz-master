@@ -179,9 +179,7 @@ main {
 }
 
 p#quiz-question-show-answer {
-    margin-top: 2em;
     margin-bottom: 0.75em;
-    margin-left: 0.75em;
 }
 
 h6#user-points-earned {
@@ -228,4 +226,17 @@ h5#question-text {
 #quiz-tabs {
     margin-top: 1em;
     margin-bottom: 1em;
+}
+
+#quiz-answer {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+#full-fill-in-div {
+    padding-left: 0em;
+}
+
+#correct-answer-div {
+    padding-left: 0em;
 }

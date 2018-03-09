@@ -115,3 +115,11 @@ function fillInAnswerString(questionWords, separator) {
     }
     return output;
 }
+
+// https://stackoverflow.com/a/1026087/3938401
+function lowercaseFirstLetter(string) {
+    if (string.length == 0) {
+        return "";
+    }
+    return string.charAt(0).toLowerCase() + string.slice(1);
+}

@@ -89,13 +89,19 @@
                     </div>
                 </div>
                 <div id="answer-divider" class="divider"></div>
-                <div id="full-fill-in-div" class="input-field col s12 m4">
-                    <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
-                    <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+                <div id="quiz-answer" class="row">
+                    <div class="col s12">
+                        <p id="quiz-question-show-answer">The answer is:</p>
+                    </div>
                 </div>
-                <p id="quiz-question-show-answer">The answer is:</p>
+                <div class="row">
+                    <div id="full-fill-in-div" class="input-field col s12">
+                        <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
+                        <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+                    </div>
+                </div>
                 <div id="points-earned-row" class="row">
-                    <div class="input-field col s6 m3" id="">
+                    <div id="correct-answer-div" class="input-field col s6 m3" id="">
                         <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
                         <label class="black-text" for="correct-answer">Correct Answer</label>
                     </div>
@@ -110,9 +116,9 @@
                 </div>
                 <div class="divider"></div>
                 <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
-                <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
-                <p class="negative-top-margin" id="saving-data">Saving answers...</p>
-                <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
+                <p class="" id="question-flagged">Question successfully flagged!</p>
+                <p class="" id="saving-data">Saving answers...</p>
+                <p class="" id="data-saved">Answers successfully saved!</p>
                 <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
                 <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
                 <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
@@ -139,6 +145,7 @@
         var userAnswers = [];
         var currentQuestion = null;
         var didSaveAnswers = false;
+        var history = [];
 
         var answerIsPrefix = "The answer is: ";
 
@@ -343,14 +350,15 @@
                 pointsAchieved = currentQuestion.points;
             }
             Math.floor(pointsAchieved);
-            //var didGetAllPossible = pointsAchieved >= currentQuestion.points;
+            // var didGetAllPossible = pointsAchieved >= currentQuestion.points;
             // save the user's answer data 
             var wasCorrect = 0;
             if (correctAnswerCheckbox.checked) {
                 wasCorrect = 1; // TODO: someday, figure out how to set this as true/false in a way that PHP will be happy in the ajax call
             }
             var userAnswer = "";
-            if (isFillInQuestion(currentQuestion.type)) {
+            var isFillIn = isFillInQuestion(currentQuestion.type);
+            if (isFillIn) {
                 var inputValues = $("#fill-in-data :input").map(function() {
                     return $(this).val();
                 });
@@ -386,7 +394,9 @@
             // their answer. 
             var answerText = $questionAnswerText.html();
             answerText = answerText.replace(answerIsPrefix, '');
-            addToHistory($("#question-text").html(), answerText, userAnswer, correctAnswerCheckbox.checked, pointsAchieved);
+            addToHistory(currentQuestion.type, $("#question-text").html(), answerText, 
+                         userAnswer, correctAnswerCheckbox.checked, pointsAchieved,
+                         currentQuestion.fillInData);
         }
 
         nextQuestion.addEventListener('click', function() {
@@ -401,14 +411,6 @@
             $(endQuiz).show();
             $(saveData).show();
         }, false);
-
-        // https://stackoverflow.com/a/1026087/3938401
-        function lowercaseFirstLetter(string) {
-            if (string.length == 0) {
-                return "";
-            }
-            return string.charAt(0).toLowerCase() + string.slice(1);
-        }
         
         function displayQuestion(data) {
             if (!isFillInQuestion(data.type) && !data.question.endsWith("?")) {
@@ -488,7 +490,7 @@
             displayQuestion(currentQuestion);
         }
 
-        function addToHistory(questionText, answer, userAnswer, markedCorrect, pointsGained) {
+        function addToHistory(questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData) {
             var html = "<li><ul>";
             html += "<li>" + questionText + "</li>";
             html += "<li><b>Answer:</b> " + answer + "</li>";
@@ -498,6 +500,18 @@
             html += "<li><b>Points gained:</b> " + pointsGained + "</li>";
             html += "</ul></li>"
             $("#history-list").append($(html));
+            // this could be improved by not storing redundant info in the history array
+            // and referencing the original question object,
+            // but I also like the idea of having a separate object if I need it, so...
+            history.push({
+                questionType: questionType,
+                question: questionText,
+                answer: answer,
+                userAnswer: userAnswer,
+                markedCorrect: markedCorrect,
+                pointsGained: pointsGained,
+                fillInData: fillInData
+            });
         }
 
         loadQuiz();
