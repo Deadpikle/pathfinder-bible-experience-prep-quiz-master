@@ -666,13 +666,11 @@
                 var item = chapterStats[key];
                 var stats = item.stats;
                 if (item.isBible) {
-                    overallBibleStats.earned += stats.earned;
-                    overallBibleStats.possible += stats.possible;
+                    overallBibleStats.add(stats.earned, stats.possible);
                     bibleStats.push(item);
                 }
                 else {
-                    overallCommentaryStats.earned += stats.earned;
-                    overallCommentaryStats.possible += stats.possible;
+                    overallCommentaryStats.add(stats.earned, stats.possible);
                     commentaryStats.push(item);
                 }
             }
