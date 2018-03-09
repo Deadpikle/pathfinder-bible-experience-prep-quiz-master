@@ -140,12 +140,12 @@
                 <p id="stats-quiz-progress"></p>
                 <h5>Overall Bible Statistics</h5>
                 <p id="bible-stats-quiz-progress"></p>
-                <h5>Overall Commentary Statistics</h5>
+                <h5>Overall SDA Bible Commentary Statistics</h5>
                 <p id="commentary-stats-quiz-progress"></p>
                 <h5>Individual Bible Statistics</h5>
                 <ul class="browser-default" id="individual-bible-stats">
                 </ul>
-                <h5>Individual SDA Commentary Statistics</h5>
+                <h5>Individual SDA Bible Commentary Statistics</h5>
                 <ul class="browser-default" id="individual-commentary-stats">
                 </ul>
             </div>
@@ -621,10 +621,46 @@
             });
         }
 
+        function compareBooks(a, b) {
+            if (a.bookName == b.bookName) {
+                return parseInt(a.chapter, 10) - parseInt(b.chapter, 10);
+            }
+            if (a.bookName < b.bookName) {
+                return -1;
+            }
+            if (a.bookName > b.bookName) {
+                return 1;
+            }
+            return 0;
+        }
+        
+        function compareCommentaries(a, b) {
+            if (a.volume == b.volume) {
+                if (a.topic < b.topic) {
+                    return -1;
+                }
+                if (a.topic > b.topic) {
+                    return 1;
+                }
+                return 0;
+            }
+            return parseInt(a.volume, 10) - parseInt(b.volume, 10);
+        }
+
+        /*
+
+                    bookName: currentQuestion.startBook,
+                    chapter: currentQuestion.startChapter,
+                    volume: currentQuestion.volume,
+                    topic: currentQuestion.topic
+        */
+
         function updateStatsTab(justUpdatedItem) {
             $("#stats-quiz-progress").html(overallStats.toString());
             var overallBibleStats = new Stats();
             var overallCommentaryStats = new Stats();
+            var bibleStats = [];
+            var commentaryStats = [];
 
             for (var key in chapterStats) {
                 var item = chapterStats[key];
@@ -632,19 +668,44 @@
                 if (item.isBible) {
                     overallBibleStats.earned += stats.earned;
                     overallBibleStats.possible += stats.possible;
+                    bibleStats.push(item);
                 }
                 else {
                     overallCommentaryStats.earned += stats.earned;
                     overallCommentaryStats.possible += stats.possible;
+                    commentaryStats.push(item);
                 }
             }
 
             $("#bible-stats-quiz-progress").html(overallBibleStats.toString());
             $("#commentary-stats-quiz-progress").html(overallCommentaryStats.toString());
-            
-            $("#individual-stats").empty();
+
+            // Ok, now have to figure out the individual stats
+            // Sort the arrays, then output them
+            bibleStats.sort(compareBooks);
+            commentaryStats.sort(compareCommentaries);
+            // just empty the divs. it's not going to take that long to reconstruct, and we're
+            // lazy. it's probably just as fast to empty and reconstruct than to find 
+            // each individual item and then edit it. *shrug*
+            $("#individual-bible-stats").empty();
+            $("#individual-commentary-stats").empty();
 
             var html = "";
+            for (var key in bibleStats) {
+                var item = bibleStats[key];
+                html += "<li>";
+                html += "<b>" + item.bookName + "</b>: " + item.stats.toString();
+                html += "</li>";
+            }
+            $("#individual-bible-stats").html(html);
+            html = "";
+            for (var key in commentaryStats) {
+                var item = commentaryStats[key];
+                html += "<li>";
+                html += "<b>Volume " + item.volume + " (" + item.topic + ")</b>: " + item.stats.toString();
+                html += "</li>";
+            }
+            $("#individual-commentary-stats").html(html);
         }
 
         loadQuiz();
