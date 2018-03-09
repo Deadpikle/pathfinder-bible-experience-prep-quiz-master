@@ -40,8 +40,8 @@
             <thead>
                 <tr>
                     <th>Word</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
