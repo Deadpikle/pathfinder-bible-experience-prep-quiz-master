@@ -124,8 +124,8 @@
         <div class="col s12" id="stats">
             <p>stats</p>
         </div>
-        <p id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
     </div>
+    <p class="hidden" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
 </div>
 
 <script type="text/javascript">
