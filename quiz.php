@@ -141,10 +141,28 @@
 </div>
 
 <script type="text/javascript">
+    // TODO: refactor this to its own file
+    function Stats() {
+        this.earned = 0;
+        this.possible = 0;
+    }
+    Stats.prototype.add = function(earnedPoints, possiblePoints) {
+        this.earned += earnedPoints;
+        this.possible += possiblePoints;
+        return this;
+    }
+    Stats.prototype.toString = function() {
+        var earnedStr = this.earned == 1 ? "point" : "points";
+        var possibleStr = this.possible == 1 ? "point" : "points";
+        var percent = Math.round((this.earned / this.possible) * 100);
+        return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + percent + "%)";
+    }
+</script>
+
+<script type="text/javascript">
     $(document).ready(function() {
         var currentQuestionIndex = 0;
-        var totalPointsEarned = 0;
-        var totalPointsPossible = 0;
+        var overallStats = new Stats();
 
         var questions = [];
         var userAnswers = [];
@@ -413,13 +431,8 @@
             };
             userAnswers.push(answerData);
             // update points earned & points possible
-            totalPointsEarned += pointsAchieved;
-            totalPointsPossible += currentQuestion.points;
-            var percent = Math.round((totalPointsEarned / totalPointsPossible) * 100);
-            var earnedPointsLabel = totalPointsEarned == 1 ? " point" : " points";
-            var possiblePointsLabel = totalPointsPossible == 1 ? " point" : " points";
-            $("#user-points-earned").html(totalPointsEarned + earnedPointsLabel + " earned out of " 
-                    + totalPointsPossible + " total" + possiblePointsLabel + " possible (" + percent + "%)");
+            overallStats.add(pointsAchieved, currentQuestion.points)
+            $("#user-points-earned").html(overallStats.toString());
             // add to user's question history
             // we keep the answer text as-is and don't let the user change their display option for fill-in answers.
             // instead, we just keep it like the user had it and assume they will display it like they want it when checking
