@@ -1,6 +1,4 @@
 <?php
-    // TODO: upload wrong/right answer status
-
     require_once(dirname(__FILE__)."/init.php");
 
     if (!isset($_POST["max-questions"]) || !isset($_POST["max-points"]) || !isset($_POST["question-types"]) || !isset($_POST["order"])) {
@@ -115,8 +113,7 @@
                     </div>
                 </div>
                 <div class="divider"></div>
-                <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
-                <p class="" id="quiz-message"></p>
+                <p id="quiz-message"></p>
                 <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
                 <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
                 <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
@@ -257,7 +254,7 @@
         }, false);
 
         saveData.addEventListener('click', function() {
-            $(savingDataLabel).show();
+            showQuizMessage("Saving answers...");
             $.ajax({
                 type: "POST",
                 url: "ajax/save-answers.php",
@@ -265,7 +262,6 @@
                     answers: userAnswers
                 },
                 success: function(response) {
-                    $(savingDataLabel).hide();
                     if (response.status == 200) {
                         // successfully saved
                         saveData.disabled = true;
@@ -276,14 +272,13 @@
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    $(savingDataLabel).hide();
                     showQuizMessage("Unable to save answers. Please make sure you are connected to the internet or try again later.");
                 }
             });
         }, false);
 
         endQuiz.addEventListener('click', function() {
-            if (!saveData.disabled) {
+            if (!saveData.disabled && questions.length > 0) {
                 var result = confirm("You haven't saved your answers yet! Are you sure you want to leave this quiz?");
                 if (result) {
                     window.location.href = "quiz-setup.php";
@@ -332,6 +327,7 @@
                 error: function (xhr, ajaxOptions, thrownError) {
                     showQuizError("Unable to generate quiz. Please make sure you are connected to the internet or try again later.");
                     $("#loading-quiz").hide();
+                    $(endQuiz).show();
                 }
             });
         }
