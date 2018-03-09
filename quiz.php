@@ -365,9 +365,7 @@
                 outputAnswer = fillInAnswerString(currentQuestion.fillInData);
             }
             $questionAnswerText.html(answerIsPrefix + outputAnswer);
-            //historyFillInCheckbox.checked = checked;
         });
-
 
         $(historyFillInCheckbox).change(function() {
             for (var i = 0; i < history.length; i++) {
