@@ -394,7 +394,8 @@
             // their answer. 
             var answerText = $questionAnswerText.html();
             answerText = answerText.replace(answerIsPrefix, '');
-            addToHistory(currentQuestion.type, $("#question-text").html(), answerText, 
+            var questionText = isFillIn ? fillInText(currentQuestion.fillInData, false, true) : $("#question-text").html();
+            addToHistory(currentQuestion.type, questionText, answerText, 
                          userAnswer, correctAnswerCheckbox.checked, pointsAchieved,
                          currentQuestion.fillInData);
         }

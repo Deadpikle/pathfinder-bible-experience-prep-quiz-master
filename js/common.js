@@ -62,7 +62,7 @@ function createFillInInput(inputSelector, questionWords) {
 }
 
 // if shouldBoldWords is true, puts in answers as bold instead of as blanks
-function fillInText(questionWords, shouldBoldWords) {
+function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = false) {
     if (shouldBoldWords === undefined) {
         shouldBoldWords = false;
     }
@@ -77,6 +77,9 @@ function fillInText(questionWords, shouldBoldWords) {
                 if (shouldBoldWords) {
                     var html = '<b>' + wordData.word + '</b>';
                     output += html;
+                }
+                else if (shouldAvoidInputFields) {
+                    output += '________';
                 }
                 else {
                     var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
