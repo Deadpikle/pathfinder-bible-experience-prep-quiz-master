@@ -77,12 +77,12 @@ main {
     margin-bottom: 1em;
 }
 
-#start-quiz-btn, #flash-cards-btn {
+#start-quiz-btn, .flash-cards-btn {
     margin-top: 1em;
 }
 
-#flash-cards-btn {
-    margin-left: 1em;
+.flash-cards-btn, #start-quiz-btn {
+    margin-right: 1em;
 }
 
 #question-types {

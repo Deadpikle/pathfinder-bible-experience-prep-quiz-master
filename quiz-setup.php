@@ -128,7 +128,8 @@
         </div>
         <div class="input-field col s12 m10">
         <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
-        <button id="flash-cards-btn" class="btn waves-effect waves-light submit" type="button">Flash Cards</button>
+        <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Left/Right Flash Cards</button>
+        <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Front/Back Flash Cards</button>
         </div>
         <div class="divider"></div>
         <div class="input-field col s6">
@@ -170,8 +171,12 @@
             $('#quiz-setup-form').attr('action', 'quiz.php');
             $('#quiz-setup-form').submit();
         });
-        $('#flash-cards-btn').on("click", function() {
-            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php');
+        $('#lr-flash-cards-btn').on("click", function() {
+            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?lr');
+            $('#quiz-setup-form').submit();
+        });
+        $('#fb-flash-cards-btn').on("click", function() {
+            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?fb');
             $('#quiz-setup-form').submit();
         });
     });

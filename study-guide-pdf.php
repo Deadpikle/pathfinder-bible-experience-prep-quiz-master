@@ -5,7 +5,7 @@
     require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
-    class UCCPDF extends FPDF {
+    class ZarfyPDF extends FPDF {
 
         protected $B = 0;
         protected $I = 0;
@@ -106,7 +106,7 @@
             $this->SetY(15.4);
             $this->SetFont('Arial', 'B', 15);
             // Draw centered title
-            $this->Cell(165.1, 10, 'UCC PBE Study Guide', 0, 0, 'C');
+            $this->Cell(165.1, 10, 'PBE Study Guide', 0, 0, 'C');
             // Line break
             $this->Ln(15);
         }
@@ -366,11 +366,11 @@
         return ["question" => $blankedOutput, "answer" => $boldedOutput];
     }
 
-    $pdf = new UCCPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
-    $pdf->SetTitle("UCC PBE Study Guide");
-    $pdf->SetAuthor("UCC Quiz Engine");
-    $pdf->SetCreator("UCC Quiz Engine");
-    $pdf->SetKeywords("quiz study Bible UCC PBE Pathfinder");
+    $pdf = new ZarfyPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
+    $pdf->SetTitle("PBE Study Guide");
+    $pdf->SetAuthor("Quiz Engine");
+    $pdf->SetCreator("Quiz Engine");
+    $pdf->SetKeywords("quiz study Bible PBE Pathfinder");
     $pdf->SetSubject("PBE Study Guides");
     $pdf->AliasNbPages();
     $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
