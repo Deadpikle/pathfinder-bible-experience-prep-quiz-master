@@ -647,14 +647,6 @@
             return parseInt(a.volume, 10) - parseInt(b.volume, 10);
         }
 
-        /*
-
-                    bookName: currentQuestion.startBook,
-                    chapter: currentQuestion.startChapter,
-                    volume: currentQuestion.volume,
-                    topic: currentQuestion.topic
-        */
-
         function updateStatsTab(justUpdatedItem) {
             $("#stats-quiz-progress").html(overallStats.toString());
             var overallBibleStats = new Stats();
@@ -692,7 +684,7 @@
             for (var key in bibleStats) {
                 var item = bibleStats[key];
                 html += "<li>";
-                html += "<b>" + item.bookName + "</b>: " + item.stats.toString();
+                html += "<b>" + item.bookName + " " + item.chapter + "</b>: " + item.stats.toString();
                 html += "</li>";
             }
             $("#individual-bible-stats").html(html);
