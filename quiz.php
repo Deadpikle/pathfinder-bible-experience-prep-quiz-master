@@ -327,7 +327,6 @@
                 error: function (xhr, ajaxOptions, thrownError) {
                     showQuizError("Unable to generate quiz. Please make sure you are connected to the internet or try again later.");
                     $("#loading-quiz").hide();
-                    $(endQuiz).show();
                 }
             });
         }
