@@ -56,58 +56,76 @@
     </div>
 
     <div class="hidden" id="take-quiz">
-        <h4 id="quiz-progress"></h4>
-        <h5 id="question-points"></h5>
-        <h6 id="user-points-earned"></h6>
-        <div class="divider"></div>
-        <div id="qna-question" class="row">
-            <h5 id="question-text"></h5>
-            <div class="input-field col s12 m6">
-                <input type="text" id="quiz-answer" name="quiz-answer" required/>
-                <label for="quiz-answer">Answer</label>
+        <div class="row" id="quiz-tabs">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab"><a class="active teal-text" href="#current-question">Current</a></li>
+                    <li class="tab"><a class="teal-text" href="#history">History</a></li>
+                    <li class="tab"><a class="teal-text" href="#stats">Statistics</a></li>
+                    <div class="indicator teal" style="z-index:1"></div>
+                </ul>
+            </div>
+            <div class="col s12" id="current-question">
+                <h4 id="quiz-progress"></h4>
+                <h5 id="question-points"></h5>
+                <h6 id="user-points-earned"></h6>
+                <div class="divider"></div>
+                <div id="qna-question" class="row">
+                    <h5 id="question-text"></h5>
+                    <div class="input-field col s12 m6">
+                        <input type="text" id="quiz-answer" name="quiz-answer" required/>
+                        <label for="quiz-answer">Answer</label>
+                    </div>
+                </div>
+                <div id="fill-in-question">
+                    <h5 id="fill-in-title"></h5>
+                    <div class="row">
+                        <div id="fill-in-data" class="col s10"></div>
+                    </div>
+                </div>
+                <div id="show-answer-div" class="row">
+                    <div class="input-field col s12" id="">
+                        <button id="show-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
+                    </div>
+                </div>
+                <div id="answer-divider" class="divider"></div>
+                <div id="full-fill-in-div" class="input-field col s12 m4">
+                    <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
+                    <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+                </div>
+                <p id="quiz-question-show-answer">The answer is:</p>
+                <div id="points-earned-row" class="row">
+                    <div class="input-field col s6 m3" id="">
+                        <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
+                        <label class="black-text" for="correct-answer">Correct Answer</label>
+                    </div>
+                    <div class="input-field col s6 m2" id="points-earned-div">
+                        <input type="number" name="points-earned" id="points-earned" value="0" min="0" max="100"/>
+                        <label class="black-text" for="points-earned">Points earned</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
+                        <button id="tally-points" class="btn btn-flat blue white-text waves-effect blue-waves">Tally Points</button>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
+                <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
+                <p class="negative-top-margin" id="saving-data">Saving answers...</p>
+                <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
+                <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
+                <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
+                <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
             </div>
         </div>
-        <div id="fill-in-question">
-            <h5 id="fill-in-title"></h5>
-            <div class="row">
-                <div id="fill-in-data" class="col s10"></div>
-            </div>
+        <div class="col s12" id="history">
+            <p>history</p>
         </div>
-        <div id="show-answer-div" class="row">
-            <div class="input-field col s12" id="">
-                <button id="show-answer" class="btn btn-flat blue white-text waves-effect blue-waves">Show answer</button>
-            </div>
+        <div class="col s12" id="stats">
+            <p>stats</p>
         </div>
-        <div id="answer-divider" class="divider"></div>
-        <div id="full-fill-in-div" class="input-field col s12 m4">
-            <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
-            <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
-        </div>
-        <p id="quiz-question-show-answer">The answer is:</p>
-        <div id="points-earned-row" class="row">
-            <div class="input-field col s6 m3" id="">
-                <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
-                <label class="black-text" for="correct-answer">Correct Answer</label>
-            </div>
-            <div class="input-field col s6 m2" id="points-earned-div">
-                <input type="number" name="points-earned" id="points-earned" value="0" min="0" max="100"/>
-                <label class="black-text" for="points-earned">Points earned</label>
-            </div>
-            <div class="input-field col s12 m4">
-                <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
-                <button id="tally-points" class="btn btn-flat blue white-text waves-effect blue-waves">Tally Points</button>
-            </div>
-        </div>
-        <div class="divider"></div>
-        <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
-        <p class="negative-top-margin" id="question-flagged">Question successfully flagged!</p>
-        <p class="negative-top-margin" id="saving-data">Saving answers...</p>
-        <p class="negative-top-margin" id="data-saved">Answers successfully saved!</p>
-        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
-        <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
-        <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
+        <p id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
     </div>
-    <p id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
 </div>
 
 <script type="text/javascript">
@@ -232,6 +250,9 @@
                         currentQuestionIndex = 0;
                         showQuestionAtCurrentIndex();
                         $("#take-quiz").show();
+                        // make sure the first tab is visible selected. because it's hidden at first,
+                        // materialize doesn't draw the little indicator line.
+                        $('ul.tabs').tabs('select_tab', 'current-question');
                     }
                     else {
                         // no questions! user is done with all questions and should probably reset their saved question answers
@@ -461,4 +482,4 @@
     });
 </script>
 
-<?php include(dirname(__FILE__)."/footer.php") ?>
+<?php include(dirname(__FILE__)."/footer.php"); ?>
