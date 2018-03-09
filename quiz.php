@@ -720,6 +720,7 @@
             $("#stats-progress").show();
         }
 
+        // load that quiz!
         loadQuiz();
     });
 </script>
