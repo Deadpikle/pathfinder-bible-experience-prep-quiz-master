@@ -125,11 +125,16 @@
             </div>
         </div>
         <div class="col s12" id="history">
+            <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
+            <div id="history-fill-in">
+                <input type="checkbox" name="history-fill-in-bold" id="history-fill-in-bold" value="0"/>
+                <label class="black-text" for="history-fill-in-bold">View fill in the blank as full text with answers in <b>bold</b></label>
+            </div>
             <ol id="history-list">
             </ol>
         </div>
         <div class="col s12" id="stats">
-            <p>stats</p>
+            <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
         </div>
     </div>
     <p class="hidden" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
@@ -166,6 +171,9 @@
         var fullFillInDiv = document.getElementById('full-fill-in-div');
         var fullFillInCheckbox = document.getElementById('full-fill-in');
 
+        var historyFillInDiv = document.getElementById('history-fill-in');
+        var historyFillInCheckbox = document.getElementById('history-fill-in-bold');
+
         $(answersSavedLabel).hide();
         $(savingDataLabel).hide();
         $(tallyPoints).hide();
@@ -174,6 +182,7 @@
         $(saveData).hide();
         $(endQuiz).hide();
         $(noQuestionsError).hide();
+        $(historyFillInDiv).hide();
 
         var flagQuestion = document.getElementById('flag-question');
         flagQuestion.addEventListener('click', function() {
@@ -312,6 +321,25 @@
                 outputAnswer = fillInAnswerString(currentQuestion.fillInData);
             }
             $questionAnswerText.html(answerIsPrefix + outputAnswer);
+            //historyFillInCheckbox.checked = checked;
+        });
+
+
+        $(historyFillInCheckbox).change(function() {
+            for (var i = 0; i < history.length; i++) {
+                var isFillIn = isFillInQuestion(history[i].type);
+                if (isFillIn) {
+                    var answerText = "";
+                    if (this.checked) {
+                        answerText = fillInText(history[i].fillInData, true);
+                    }
+                    else {
+                        answerText = fillInAnswerString(history[i].fillInData);
+                    }
+                }
+                $("#history-" + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
+            }
+            //historyFillInCheckbox.checked = checked;
         });
 
         $(correctAnswerCheckbox).change(function() {
@@ -394,7 +422,19 @@
             // their answer. 
             var answerText = $questionAnswerText.html();
             answerText = answerText.replace(answerIsPrefix, '');
-            var questionText = isFillIn ? fillInText(currentQuestion.fillInData, false, true) : $("#question-text").html();
+            var questionText = "";
+            if (isFillIn) {
+                questionText = fillInText(currentQuestion.fillInData, false, true);
+                if (historyFillInCheckbox.checked) {
+                    answerText = fillInText(currentQuestion.fillInData, true);
+                }
+                else {
+                    answerText = fillInAnswerString(currentQuestion.fillInData);
+                }
+            }
+            else {
+                questionText = $("#question-text").html();
+            } 
             addToHistory(currentQuestion.type, questionText, answerText, 
                          userAnswer, correctAnswerCheckbox.checked, pointsAchieved,
                          currentQuestion.fillInData);
@@ -492,20 +532,22 @@
         }
 
         function addToHistory(questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData) {
-            var html = "<li><ul>";
+            var html = "<li><ul id='history-" + history.length + "'>";
             html += "<li>" + questionText + "</li>";
-            html += "<li><b>Answer:</b> " + answer + "</li>";
+            html += "<li class='history-answer'><b>Answer:</b> " + answer + "</li>";
             html += "<li><b>Your answer:</b> " + userAnswer + "</li>";
             var markedCorrectStr = markedCorrect ? "Yes" : "No";
             html += "<li><b>Marked correct?</b> " + markedCorrectStr + "</li>";
             html += "<li><b>Points gained:</b> " + pointsGained + "</li>";
-            html += "</ul></li>"
+            html += "</ul></li>";
+            $(historyFillInDiv).show();
+            $(".no-questions-answered-yet").hide();
             $("#history-list").append($(html));
             // this could be improved by not storing redundant info in the history array
             // and referencing the original question object,
             // but I also like the idea of having a separate object if I need it, so...
             history.push({
-                questionType: questionType,
+                type: questionType,
                 question: questionText,
                 answer: answer,
                 userAnswer: userAnswer,

@@ -240,3 +240,11 @@ h5#question-text {
 #correct-answer-div {
     padding-left: 0em;
 }
+
+#history-fill-in {
+    margin-left: 1.5em;
+}
+
+.no-questions-answered-yet {
+    margin-left: 1.5em;
+}
