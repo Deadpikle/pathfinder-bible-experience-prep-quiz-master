@@ -372,6 +372,10 @@
         }
 
         function saveQuestionResponse() {
+            if (pointsEarnedInput.value === "") {
+                pointsEarnedInput.value = 0;
+                Materialize.updateTextFields(); // fixes issue where label covers the input amount
+            }
             var pointsAchieved = Number(pointsEarnedInput.value);
             if (pointsAchieved > currentQuestion.points) {
                 pointsAchieved = currentQuestion.points;
@@ -414,7 +418,8 @@
             var percent = Math.round((totalPointsEarned / totalPointsPossible) * 100);
             var earnedPointsLabel = totalPointsEarned == 1 ? " point" : " points";
             var possiblePointsLabel = totalPointsPossible == 1 ? " point" : " points";
-            $("#user-points-earned").html(totalPointsEarned + earnedPointsLabel + " earned out of " + totalPointsPossible + " total" + possiblePointsLabel + " possible (" + percent + "%)");
+            $("#user-points-earned").html(totalPointsEarned + earnedPointsLabel + " earned out of " 
+                    + totalPointsPossible + " total" + possiblePointsLabel + " possible (" + percent + "%)");
             // add to user's question history
             // we keep the answer text as-is and don't let the user change their display option for fill-in answers.
             // instead, we just keep it like the user had it and assume they will display it like they want it when checking
