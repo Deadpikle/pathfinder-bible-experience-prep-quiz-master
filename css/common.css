@@ -248,3 +248,7 @@ h5#question-text {
 .no-questions-answered-yet {
     margin-left: 1.5em;
 }
+
+#stats-progress {
+    margin-left: 1.5em;
+}

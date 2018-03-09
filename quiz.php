@@ -135,6 +135,20 @@
         </div>
         <div class="col s12" id="stats">
             <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
+            <div id="stats-progress">
+                <h5>Overall Statistics</h5>
+                <p id="stats-quiz-progress"></p>
+                <h5>Overall Bible Statistics</h5>
+                <p id="bible-stats-quiz-progress"></p>
+                <h5>Overall Commentary Statistics</h5>
+                <p id="commentary-stats-quiz-progress"></p>
+                <h5>Individual Bible Statistics</h5>
+                <ul class="browser-default" id="individual-bible-stats">
+                </ul>
+                <h5>Individual SDA Commentary Statistics</h5>
+                <ul class="browser-default" id="individual-commentary-stats">
+                </ul>
+            </div>
         </div>
     </div>
     <p class="hidden" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
@@ -145,17 +159,23 @@
     function Stats() {
         this.earned = 0;
         this.possible = 0;
+        this.percent = 0; // whole number, not decimal
     }
     Stats.prototype.add = function(earnedPoints, possiblePoints) {
         this.earned += earnedPoints;
         this.possible += possiblePoints;
+        if (this.possible == 0) {
+            this.percent = 0;
+        }
+        else {
+            this.percent = Math.round((this.earned / this.possible) * 100);
+        }
         return this;
     }
     Stats.prototype.toString = function() {
         var earnedStr = this.earned == 1 ? "point" : "points";
         var possibleStr = this.possible == 1 ? "point" : "points";
-        var percent = Math.round((this.earned / this.possible) * 100);
-        return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + percent + "%)";
+        return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + this.percent + "%)";
     }
 </script>
 
@@ -163,6 +183,10 @@
     $(document).ready(function() {
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
+        
+        // chapter stats: key = Book.Chapter OR CommentaryVolume.Topic
+        //                value = { stats: Stats object, isBible, bookName, chapter, volume, topic }  
+        var chapterStats = {}; 
 
         var questions = [];
         var userAnswers = [];
@@ -389,6 +413,15 @@
             }
         }
 
+        function statsKeyForQuestion(question) {
+            if (isBibleQuestion(question.type)) {
+                return removeSpaces(question.startBook) + "." + question.startChapter;
+            }
+            else {
+                return question.volume + "." + removeSpaces(question.topic);
+            }
+        }
+
         function saveQuestionResponse() {
             if (pointsEarnedInput.value === "") {
                 pointsEarnedInput.value = 0;
@@ -433,10 +466,24 @@
             // update points earned & points possible
             overallStats.add(pointsAchieved, currentQuestion.points)
             $("#user-points-earned").html(overallStats.toString());
+            // Now update individual stats
+            var key = statsKeyForQuestion(currentQuestion);
+            // https://stackoverflow.com/a/1098955/3938401 -- checking for key in object
+            if (!(key in chapterStats)) {
+        //                value = { stats: Stats object, isBibleChapter, bookName, chapter, volume, topic }  
+                chapterStats[key] = {
+                    stats: new Stats(),
+                    isBible: isBibleQuestion(currentQuestion.type),
+                    bookName: currentQuestion.startBook,
+                    chapter: currentQuestion.startChapter,
+                    volume: currentQuestion.volume,
+                    topic: currentQuestion.topic
+                };
+            }
+            var item = chapterStats[key];
+            item.stats.add(pointsAchieved, currentQuestion.points);
+            updateStatsTab(item);
             // add to user's question history
-            // we keep the answer text as-is and don't let the user change their display option for fill-in answers.
-            // instead, we just keep it like the user had it and assume they will display it like they want it when checking
-            // their answer. 
             var answerText = $questionAnswerText.html();
             answerText = answerText.replace(answerIsPrefix, '');
             var questionText = "";
@@ -572,6 +619,32 @@
                 pointsGained: pointsGained,
                 fillInData: fillInData
             });
+        }
+
+        function updateStatsTab(justUpdatedItem) {
+            $("#stats-quiz-progress").html(overallStats.toString());
+            var overallBibleStats = new Stats();
+            var overallCommentaryStats = new Stats();
+
+            for (var key in chapterStats) {
+                var item = chapterStats[key];
+                var stats = item.stats;
+                if (item.isBible) {
+                    overallBibleStats.earned += stats.earned;
+                    overallBibleStats.possible += stats.possible;
+                }
+                else {
+                    overallCommentaryStats.earned += stats.earned;
+                    overallCommentaryStats.possible += stats.possible;
+                }
+            }
+
+            $("#bible-stats-quiz-progress").html(overallBibleStats.toString());
+            $("#commentary-stats-quiz-progress").html(overallCommentaryStats.toString());
+            
+            $("#individual-stats").empty();
+
+            var html = "";
         }
 
         loadQuiz();
