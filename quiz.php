@@ -339,7 +339,6 @@
                 }
                 $("#history-" + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
             }
-            //historyFillInCheckbox.checked = checked;
         });
 
         $(correctAnswerCheckbox).change(function() {
