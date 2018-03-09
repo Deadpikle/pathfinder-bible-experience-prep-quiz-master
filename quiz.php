@@ -336,8 +336,8 @@
                     else {
                         answerText = fillInAnswerString(history[i].fillInData);
                     }
+                    $("#history-" + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
                 }
-                $("#history-" + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
             }
         });
 
