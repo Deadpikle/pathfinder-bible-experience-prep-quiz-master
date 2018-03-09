@@ -470,7 +470,6 @@
             var key = statsKeyForQuestion(currentQuestion);
             // https://stackoverflow.com/a/1098955/3938401 -- checking for key in object
             if (!(key in chapterStats)) {
-        //                value = { stats: Stats object, isBibleChapter, bookName, chapter, volume, topic }  
                 chapterStats[key] = {
                     stats: new Stats(),
                     isBible: isBibleQuestion(currentQuestion.type),
