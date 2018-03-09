@@ -116,9 +116,7 @@
                 </div>
                 <div class="divider"></div>
                 <!-- TODO: use a single p element with a variety of error messages in JS instead :) -->
-                <p class="" id="question-flagged">Question successfully flagged!</p>
-                <p class="" id="saving-data">Saving answers...</p>
-                <p class="" id="data-saved">Answers successfully saved!</p>
+                <p class="" id="quiz-message"></p>
                 <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
                 <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
                 <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
@@ -143,15 +141,13 @@
                 <h5>Overall SDA Bible Commentary Statistics</h5>
                 <p id="commentary-stats-quiz-progress"></p>
                 <h5>Individual Bible Statistics</h5>
-                <ul class="browser-default" id="individual-bible-stats">
-                </ul>
+                <ul class="browser-default" id="individual-bible-stats"></ul>
                 <h5>Individual SDA Bible Commentary Statistics</h5>
-                <ul class="browser-default" id="individual-commentary-stats">
-                </ul>
+                <ul class="browser-default" id="individual-commentary-stats"></ul>
             </div>
         </div>
     </div>
-    <p class="hidden" id="no-questions-available">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p>
+    <p class="hidden" id="quiz-error"></p>
 </div>
 
 <script type="text/javascript">
@@ -201,9 +197,7 @@
         var qnaDiv = document.getElementById('qna-question');
         var fillInDiv = document.getElementById('fill-in-question');
 
-        var noQuestionsError = document.getElementById('no-questions-available');
-        var answersSavedLabel = document.getElementById('data-saved');
-        var savingDataLabel = document.getElementById('saving-data');
+        var quizMessageLabel = document.getElementById('quiz-message');
         var pointsEarnedInput = document.getElementById('points-earned');
         var correctAnswerCheckbox = document.getElementById('correct-answer');
         var nextQuestion = document.getElementById('next-question');
@@ -216,15 +210,26 @@
         var historyFillInDiv = document.getElementById('history-fill-in');
         var historyFillInCheckbox = document.getElementById('history-fill-in-bold');
 
-        $(answersSavedLabel).hide();
-        $(savingDataLabel).hide();
+        $(quizMessageLabel).hide();
+        $("#stats-progress").hide();
         $(tallyPoints).hide();
         var saveData = document.getElementById('save-data');
         var endQuiz = document.getElementById('end-quiz');
         $(saveData).hide();
         $(endQuiz).hide();
-        $(noQuestionsError).hide();
         $(historyFillInDiv).hide();
+
+        function showQuizError(message) {
+            $("#quiz-error").html(message).show();
+        }
+
+        function showQuizMessage(message) {
+            $(quizMessageLabel).html(message).show();
+        }
+
+        function hideQuizMessage() {
+            $(quizMessageLabel).hide();
+        }
 
         var flagQuestion = document.getElementById('flag-question');
         flagQuestion.addEventListener('click', function() {
@@ -238,7 +243,7 @@
                     if (response.status == 200) {
                         // successfully flagged
                         flagQuestion.disabled = true;
-                        $("#question-flagged").show();
+                        showQuizMessage("Question successfully flagged!");
                     }
                     else {
                         // 
@@ -264,15 +269,15 @@
                     if (response.status == 200) {
                         // successfully saved
                         saveData.disabled = true;
-                        $("#save-data").show();
+                        showQuizMessage("Answers successfully saved!");
                     }
                     else {
-                        alert("Error saving answers: " + response);
+                        showQuizMessage("Error saving answers: " + response);
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     $(savingDataLabel).hide();
-                    alert("Unable to save answers. Please make sure you are connected to the internet or try again later.");
+                    showQuizMessage("Unable to save answers. Please make sure you are connected to the internet or try again later.");
                 }
             });
         }, false);
@@ -319,13 +324,14 @@
                         // no questions! user is done with all questions and should probably reset their saved question answers
                         $(flagQuestion).hide();
                         $(nextQuestion).hide();
-                        $(noQuestionsError).show();
+                        showQuizError("No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!");
                         $(endQuiz).show();
                     }
                     $("#loading-quiz").hide();
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert("Unable to generate quiz. Please make sure you are connected to the internet or try again later.");
+                    showQuizError("Unable to generate quiz. Please make sure you are connected to the internet or try again later.");
+                    $("#loading-quiz").hide();
                 }
             });
         }
@@ -578,7 +584,7 @@
             nextQuestion.disabled = true;
             $("#qna-question :input").attr("disabled", false);
             $("#fill-in-question :input").attr("disabled", false);
-            $("#question-flagged").hide();
+            hideQuizMessage();
             $("#quiz-answer").val("");
             $("#points-earned-row").hide();
             $("#show-answer-div").show();
@@ -667,8 +673,21 @@
                 }
             }
 
-            $("#bible-stats-quiz-progress").html(overallBibleStats.toString());
-            $("#commentary-stats-quiz-progress").html(overallCommentaryStats.toString());
+            var noBibleAnsweredMsg = "<em>No Bible questions have been answered yet.</em>";
+            var noCommentaryAnsweredMsg = "<em>No SDA Bible Commentary questions have been answered yet.</em>";
+
+            if (bibleStats.length > 0) {
+                $("#bible-stats-quiz-progress").html(overallBibleStats.toString());
+            }
+            else {
+                $("#bible-stats-quiz-progress").html(noBibleAnsweredMsg);
+            }
+            if (commentaryStats.length > 0) {
+                $("#commentary-stats-quiz-progress").html(overallCommentaryStats.toString());
+            }
+            else {
+                $("#commentary-stats-quiz-progress").html(noCommentaryAnsweredMsg);
+            }
 
             // Ok, now have to figure out the individual stats
             // Sort the arrays, then output them
@@ -681,21 +700,32 @@
             $("#individual-commentary-stats").empty();
 
             var html = "";
-            for (var key in bibleStats) {
-                var item = bibleStats[key];
-                html += "<li>";
-                html += "<b>" + item.bookName + " " + item.chapter + "</b>: " + item.stats.toString();
-                html += "</li>";
+            if (bibleStats.length > 0) {
+                for (var key in bibleStats) {
+                    var item = bibleStats[key];
+                    html += "<li>";
+                    html += "<b>" + item.bookName + " " + item.chapter + "</b>: " + item.stats.toString();
+                    html += "</li>";
+                }
+                $("#individual-bible-stats").html(html);
             }
-            $("#individual-bible-stats").html(html);
+            else {
+                $("#individual-bible-stats").html("<li>" + noBibleAnsweredMsg + "</li>");
+            }
             html = "";
-            for (var key in commentaryStats) {
-                var item = commentaryStats[key];
-                html += "<li>";
-                html += "<b>Volume " + item.volume + " (" + item.topic + ")</b>: " + item.stats.toString();
-                html += "</li>";
+            if (commentaryStats.length > 0) {
+                for (var key in commentaryStats) {
+                    var item = commentaryStats[key];
+                    html += "<li>";
+                    html += "<b>Volume " + item.volume + " (" + item.topic + ")</b>: " + item.stats.toString();
+                    html += "</li>";
+                }
+                $("#individual-commentary-stats").html(html);
             }
-            $("#individual-commentary-stats").html(html);
+            else {
+                $("#individual-commentary-stats").html("<li>" + noCommentaryAnsweredMsg + "</li>");
+            }
+            $("#stats-progress").show();
         }
 
         loadQuiz();
