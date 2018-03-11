@@ -56,7 +56,7 @@
                     ?>
                     <optgroup label="SDA Bible Commentary">
                         <?php foreach ($volumes as $volume) { ?>
-                            <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?></option>
+                            <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</option>
                         <?php } ?>
                     </optgroup>
                 </select>
