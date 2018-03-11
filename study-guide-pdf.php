@@ -293,14 +293,18 @@
             $this->Ln($outputHeight + 4 + ($cellOffset / 2));
         }
 
-        private function outputAnswerPage($data, $i, $startIndexForAnswers, $cellOffset) {
+        private function outputAnswerPage($data, $outputUntilIndex, $startIndexForAnswers, $cellOffset) {
             $this->AddPage($this->CurOrientation);
+            $this->outputVerticalSeparatorLine();
+            $this->outputTopLine();
+            $this->outputMarginLines();
             $this->SetY($this->tMargin + 5);
             $lastColumn = -1;
-            for ($j = $startIndexForAnswers; $j < $i; $j++) {
+            for ($j = $startIndexForAnswers; $j < $outputUntilIndex; $j++) {
                 // output answers with answers in the opposite column as the question
                 $answer = $data[$j];
-                $outputColumn = $answer["column"] == 0 ? 1 : 0; // so front/back printing works
+                 // so front/back printing works, we have to swap the column that the answer is shown in (compared to the question's column)
+                $outputColumn = $answer["column"] == 0 ? 1 : 0;
                 if ($outputColumn == 1) {
                     $this->SetXY($this->lMargin + $this->widths[0], $this->GetY());
                 }
@@ -320,15 +324,55 @@
                 $isQuestionHeightBigger = $answer["q-taller"];
                 $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
                 $this->SetY($y);
+                $this->outputHorizontalSeparator($outputColumn, $outputHeight, $y);
                 // Go to the next line
                 $this->Ln($outputHeight + 4 + ($cellOffset / 2));
             }
+        }
+
+        function outputVerticalSeparatorLine() {
+            if (!$this->DRAW_RECT) {
+                $x = $this->lMargin + $this->widths[0];
+                $this->Line($x, $this->tMargin + 3, $x, $this->GetPageHeight() - $this->bMargin - 3);
+            }
+        }
+
+        function outputHorizontalSeparator($column, $outputHeight, $y) {
+            if ($column == 0) {
+                $startX = $this->lMargin;
+                $endX = $this->lMargin + $this->widths[0];
+                $yCoord = $y + $outputHeight + 2;
+                $this->Line($startX, $yCoord, $endX, $yCoord);
+            }
+            else {
+                $startX = $this->lMargin + $this->widths[0];
+                $endX = $this->lMargin + $this->widths[0] * 2;
+                $yCoord = $y + $outputHeight + 2;
+                $this->Line($startX, $yCoord, $endX, $yCoord);
+            }
+        }
+
+        function outputTopLine() {
+            $startX = $this->lMargin;
+            $endX = $this->lMargin + $this->widths[0] * 2;
+            $yCoord = $this->tMargin + 3;
+            $this->Line($startX, $yCoord, $endX, $yCoord);
+        }
+
+        function outputMarginLines() {
+            $startX = $this->lMargin;
+            $endX = $this->lMargin + $this->widths[0] * 2;
+            $this->Line($startX, $this->tMargin + 3, $startX, $this->GetPageHeight() - $this->bMargin - 3);
+            $this->Line($endX, $this->tMargin + 3, $endX, $this->GetPageHeight() - $this->bMargin - 3);
         }
 
         function OutputFrontBackPages($data) {
             $cellOffset = $this->USE_CELL_OFFSET ? 5 : 0;
             $currentColumn = 0;
             $startIndexForAnswers = 0;
+            $this->outputVerticalSeparatorLine();
+            $this->outputTopLine();
+            $this->outputMarginLines();
             for ($i = 0; $i < count($data); $i++) {
                 //echo $this->GetY() . "<br>";
                 $question = &$data[$i];
@@ -337,15 +381,15 @@
                 if ($this->WillAddedHeightExceedPage($question["output-height"])) {
                     if ($currentColumn == 0) {
                         $currentColumn = 1;
-                        $this->SetY($this->tMargin + 5);
-                        //echo "next col; y = " . $this->GetY() . "<br>";
+                        $this->SetY($this->tMargin + 5); // tbh I'm not sure why I need this magical # 5 right now...used a couple places
                     }
                     else if ($currentColumn == 1) {
-                        //echo "next pg<br>";
                         // need to page break and output answers
                         $this->outputAnswerPage($data, $i, $startIndexForAnswers, $cellOffset);
-                        //echo "done w/page<br>";
                         $this->AddPage($this->CurOrientation);
+                        $this->outputVerticalSeparatorLine();
+                        $this->outputTopLine();
+                        $this->outputMarginLines();
                         $currentColumn = 0;
                         $startIndexForAnswers = $i;
                     }
@@ -361,10 +405,6 @@
                 $x = $this->GetX();
                 $y = $this->GetY();
                 $firstWidth = $this->widths[0];
-                if (!$this->DRAW_RECT && $currentColumn != 1) {
-                    // TODO: just draw big vertical line on every page
-                    $this->Line($x + $firstWidth, $y, $x + $firstWidth, $y + $outputHeight);
-                }
                 // Draw the title portion of the question ("Question X -- Z Points")
                 if (!$isQuestionHeightBigger) {
                     // make sure title is centered properly
@@ -378,7 +418,8 @@
                 // offset question output by 1 row since the title was printed
                 $this->SetY($y + $this->lineHeight);
                 $this->DrawOutput($question["question-text"], $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
-                $this->SetXY($x + $this->widths[1], $y);
+                $this->SetY($y);
+                $this->outputHorizontalSeparator($currentColumn, $outputHeight, $y);
                 $this->Ln($outputHeight + 4 + ($cellOffset / 2));
             }
             // need to output final page of answers!
