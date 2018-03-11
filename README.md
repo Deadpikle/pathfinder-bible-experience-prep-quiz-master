@@ -16,4 +16,4 @@ Minimum requirements: PHP 7.1+ and a MariaDB database.
 
 If you have issues with the database migrations, https://stackoverflow.com/a/25782795/3938401 might be helpful, and you might want to use 127.0.0.1 instead of `localhost`
 
-You should now be able to login via `zarfy9`. I highly suggest changing that password.
+You should now be able to login via `pbedb7`. I highly suggest changing that password.
