@@ -113,7 +113,7 @@ class DefaultSeeder extends AbstractSeed
             ],
             [
                 'Username' => 'Web Admin #1',
-                'EntryCode' => 'zarfy9',
+                'EntryCode' => 'pbedb7',
                 'Password' => '',
                 'LastLoginDate' => date('Y-m-d H:i:s'),
                 'UserTypeID' => 5,

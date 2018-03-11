@@ -5,7 +5,7 @@
     require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
-    class ZarfyPDF extends FPDF {
+    class PBEPDF extends FPDF {
 
         protected $B = 0;
         protected $I = 0;
@@ -252,7 +252,6 @@
             $this->WriteHTML($text);
             $this->SetLeftMargin($lm);
             $this->SetRightMargin($rm);
-            // Put the position to the right of the cell
         }
 
         // $data[0] == question, $data[1] == answer
@@ -513,7 +512,7 @@
         return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
     }
 
-    $pdf = new ZarfyPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
+    $pdf = new PBEPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
     $pdf->SetTitle("PBE Study Guide");
     $pdf->SetAuthor("Quiz Engine");
     $pdf->SetCreator("Quiz Engine");
