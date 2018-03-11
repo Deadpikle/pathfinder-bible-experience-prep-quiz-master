@@ -22,7 +22,7 @@
     echo "Transferring old clubs...";
     $loadOldClubsQuery = '
         SELECT ClubID, Name, URL
-        FROM Clubs-Old
+        FROM `Clubs-Old`
     ';
     $insertIntoClubsQuery = '
         INSERT INTO Clubs (Name, URL, ConferenceID) VALUES (?, ?, ?)
@@ -46,7 +46,7 @@
     echo "Transferring old users...";
     $loadOldUsersQuery = '
         SELECT UserID, Username, LastLoginDate, EntryCode, Password, UserTypeID, ClubID, CreatedByID
-        FROM Users-Old
+        FROM `Users-Old`
     ';
     $insertIntoUsersQuery = '
         INSERT INTO Users (Username, LastLoginDate, EntryCode, Password, UserTypeID, ClubID, CreatedByID) VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -81,7 +81,7 @@
 
     $loadOldQuestionsQuery = '
         SELECT QuestionID, Question, Answer, NumberPoints, DateCreated, DateModified, Type, CommentaryVolume, CommentaryStartPage, CommentaryEndPage, CreatorID, LastEditedByID, StartVerseID, EndVerseID
-        FROM Questions-Old
+        FROM `Questions-Old`
     ';
     $insertIntoQuestionsQuery = '
         INSERT INTO Questions (Question, Answer, NumberPoints, DateCreated, DateModified, Type, CommentaryStartPage, CommentaryEndPage, IsDeleted, CreatorID, LastEditedByID, StartVerseID, EndVerseID, CommentaryID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -93,13 +93,13 @@
     $insertQuestionStmnt = $pdo->prepare($insertIntoQuestionsQuery);
     foreach ($oldQuestions as $oldQuestion) {
         if (isset($userIDMap[$oldQuestion["CreatorID"]])) {
-            $createdBy = $userIDMap[$oldUser["CreatorID"]];
+            $createdBy = $userIDMap[$oldQuestion["CreatorID"]];
         }
         else {
             $createdBy = 2;
         }
         if (isset($userIDMap[$oldQuestion["LastEditedByID"]])) {
-            $editedBy = $userIDMap[$oldUser["LastEditedByID"]];
+            $editedBy = $userIDMap[$oldQuestion["LastEditedByID"]];
         }
         else {
             $editedBy = 2;
@@ -134,7 +134,7 @@
     echo "Transferring old user answers...";
     $loadOldAnswersQuery = '
         SELECT Answer, DateAnswered, WasCorrect, QuestionID, UserID
-        FROM UserAnswers-Old
+        FROM `UserAnswers-Old`
     ';
     $insertIntoAnswersQuery = '
         INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)
@@ -173,10 +173,10 @@
     echo "Transferring old user flagged...";
     $loadOldFlaggedQuery = '
         SELECT UserID, QuestionID
-        FROM UserFlagged-Old
+        FROM `UserFlagged-Old`
     ';
     $insertIntoFlaggedQuery = '
-        INSERT INTO Users (UserID, QuestionID) VALUES (?, ?)
+        INSERT INTO UserFlagged (UserID, QuestionID) VALUES (?, ?)
     ';
     $params = [];
     $loadOldFlaggedStmnt = $pdo->prepare($loadOldFlaggedQuery);
