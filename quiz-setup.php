@@ -155,10 +155,9 @@
         fixRequiredSelectorCSS();
 
         $('#start-quiz-btn').click(function() {
-            $('form').attr('target', '').submit();
+            $('#quiz-setup-form').attr('target', '').submit();
         });
         $('#flash-quiz-btn').click(function() {
-            $('form').attr('target', '_blank').submit();
             return false;
         });
 
@@ -168,14 +167,17 @@
         })
         
         $('#start-quiz-btn').on("click", function() {
+            $('#quiz-setup-form').attr('target', '');
             $('#quiz-setup-form').attr('action', 'quiz.php');
             $('#quiz-setup-form').submit();
         });
         $('#lr-flash-cards-btn').on("click", function() {
+            $('#quiz-setup-form').attr('target', '_blank');
             $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=lr');
             $('#quiz-setup-form').submit();
         });
         $('#fb-flash-cards-btn').on("click", function() {
+            $('#quiz-setup-form').attr('target', '_blank');
             $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=fb');
             $('#quiz-setup-form').submit();
         });
