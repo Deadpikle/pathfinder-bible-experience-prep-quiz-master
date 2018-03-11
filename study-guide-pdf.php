@@ -153,10 +153,10 @@
             if ($w == 0) {
                 $w= $this->w - $this->rMargin - $this->x;
             }
-            $wmax = ($w-2 * $this->cMargin) * 1000 / $this->FontSize;
+            $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
             $s = str_replace("\r",'',$txt);
             $maxLines = strlen($s);
-            if ($maxLines > 0 and $s[$maxLines-1] == "\n") {
+            if ($maxLines > 0 and $s[$maxLines - 1] == "\n") {
                 $maxLines--;
             }
             $sep = -1;
@@ -199,23 +199,23 @@
             return $nl;
         }
 
-        function printTitle($title, $lineHeight, $x, $y, $w, $h) {
+        function printTitle($title, $x, $y, $w, $h) {
             if (!$this->DRAW_RECT) {
                 $this->Line($x + $w, $y, $x + $w, $y + $h);
             }
             $this->SetFont('Arial', 'B', 14);
             // print title
-            $this->Cell($w - $this->WIDTH_OFFSET, $lineHeight, $title, 0, 1, 'C');
+            $this->Cell($w - $this->WIDTH_OFFSET, $this->lineHeight, $title, 0, 1, 'C');
         }
 
-        function MeasureHeight($text, $columnIndex, $lineHeight) {
+        function MeasureHeight($text, $columnIndex) {
             $textToMeasure = strip_tags($text);
             $numberOfLines = $this->NbLines($this->widths[$columnIndex] - $this->WIDTH_OFFSET, $textToMeasure);
             return $numberOfLines * $this->lineHeight;
         }
 
         // $data[0] == question, $data[1] == answer
-        function OutputRow($data, $title) {
+        function OutputQuestionAnswerRow($question, $answer, $title) {
             // Calculate the height of the row
             $maxLines = 0;
             $numberOfLinesInCell = array();
@@ -230,7 +230,7 @@
                     $maxLines = $numberOfLines;
                 }
             }
-            $h = $lineHeight * $maxLines;
+            $h = $this->lineHeight * $maxLines;
             // Issue a page break first if needed
             $OFFSET = FALSE;
             $cellOffset = $OFFSET ? 5 : 0;
@@ -252,10 +252,10 @@
                 // Print the text
                 if ($i != $tallestCellIndex) {
                     // this isn't the tallest cell, so center the text vertically
-                    $this->SetY($y + (($h - ($lineHeight * $numberOfLinesInCell[$i])) / 2), false);
+                    $this->SetY($y + (($h - ($this->lineHeight * $numberOfLinesInCell[$i])) / 2), false);
                     if ($i == 0) { 
                         // printing the title portion of the question ("Question X -- Z Points")
-                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h);
+                        $this->printTitle($title, $this->lineHeight, $x, $y, $w, $h);
                     }
                     $this->SetFont('Arial', '', 14);
                     // have to set left margin and right margins properly so the html wrapping works just right and wraps
@@ -275,10 +275,10 @@
                 }
                 else {
                     if ($i == 0) {
-                        $this->printTitle($title, $lineHeight, $x, $y, $w, $h);
+                        $this->printTitle($title, $x, $y, $w, $h);
                     }
                     $this->SetFont('Arial', '', 14); // just in case
-                    $this->MultiCell($w, $lineHeight, $data[$i], 0, $a);
+                    $this->MultiCell($w, $this->lineHeight, $data[$i], 0, $a);
                 }
                 // Put the position to the right of the cell
                 $this->SetXY($x + $w, $y);
@@ -421,7 +421,7 @@
     }
     else {
         $questionNumber = 1;
-        if (!isset($_GET["type"]) || $_GET["type"] == "lr") {
+        if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
             // left/right questions; can just output normally
             foreach ($quizMaterials["questions"] as $question) {
                 //$question = $question["question"];
@@ -431,14 +431,14 @@
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
                 $text = get_question_text($question);
                 if (!is_fill_in($question["type"])) {
-                    $pdf->OutputRow([$text, $question["answer"]], $title);
+                    $pdf->OutputQuestionAnswerRow([$text, $question["answer"]], $title);
                 }
                 else {
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
                     $text .= "\n" . $fillIn["question"];
-                    $pdf->OutputRow([$text, $fillIn["answer"]], $title);
+                    $pdf->OutputQuestionAnswerRow([$text, $fillIn["answer"]], $title);
                 }
                 $questionNumber++;
             }
