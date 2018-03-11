@@ -253,7 +253,6 @@
             $this->SetLeftMargin($lm);
             $this->SetRightMargin($rm);
             // Put the position to the right of the cell
-            $this->SetXY($x + $w, $y);
         }
 
         // $data[0] == question, $data[1] == answer
@@ -286,25 +285,47 @@
             // offset question output by 1 row since the title was printed
             $this->SetY($y + $this->lineHeight);
             $this->DrawOutput($question, $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
+            $this->SetXY($x + $this->widths[0], $y);
             // Draw answer
-            $this->SetY($y); // don't need to center y beforehand since the vertical centering will be handled in DrawOutput
             $this->DrawOutput($answer, $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
+            $this->SetXY($x + $this->widths[1], $y);
             // Go to the next line
             $this->Ln($outputHeight + 4 + ($cellOffset / 2));
         }
 
+        private function outputAnswerPage($data, $i, $startIndexForAnswers, $cellOffset) {
+            $this->AddPage($this->CurOrientation);
+            $this->SetY($this->tMargin + 5);
+            $lastColumn = -1;
+            for ($j = $startIndexForAnswers; $j < $i; $j++) {
+                // output answers with answers in the opposite column as the question
+                $answer = $data[$j];
+                $outputColumn = $answer["column"] == 0 ? 1 : 0; // so front/back printing works
+                if ($outputColumn == 1) {
+                    $this->SetXY($this->lMargin + $this->widths[0], $this->GetY());
+                }
+                else if ($lastColumn != $outputColumn && $outputColumn == 0) {
+                    $this->SetXY($this->lMargin, $this->tMargin + 5);
+                }
+                else if ($outputColumn == 0) {
+                    $this->SetXY($this->lMargin, $this->GetY());
+                }
+                $lastColumn = $outputColumn;
+                $x = $this->GetX();
+                $y = $this->GetY();
+                $answerText = $answer["answer"];
+                $outputHeight = $answer["output-height"];
+                $answerHeight = $answer["a-height"];
+                $answerRowCount = $answer["a-row-count"];
+                $isQuestionHeightBigger = $answer["q-taller"];
+                $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
+                $this->SetY($y);
+                // Go to the next line
+                $this->Ln($outputHeight + 4 + ($cellOffset / 2));
+            }
+        }
+
         function OutputFrontBackPages($data) {
-            // WillAddedHeightExceedPage($h)
-            /*
-            $question["question-text"] = $questionText; // so we don't need to regenerate it again later
-            // measure measure measure
-            $question["q-row-count"] = $pdf->GetNumberOfLinesForOutput($title . "\n" . $questionText, 0);
-            $question["q-height"] = $pdf->GetHeight($questionRowCount);
-            $question["a-row-count"] = $pdf->GetNumberOfLinesForOutput($answer, 1);
-            $question["a-height"] = $pdf->GetHeight($answerRowCount);
-            $question["output-height"] = max($questionHeight, $answerHeight);
-            $question["q-taller"] = $questionHeight > $answerHeight;
-            */
             $cellOffset = $this->USE_CELL_OFFSET ? 5 : 0;
             $currentColumn = 0;
             $startIndexForAnswers = 0;
@@ -322,28 +343,7 @@
                     else if ($currentColumn == 1) {
                         //echo "next pg<br>";
                         // need to page break and output answers
-                        $this->AddPage($this->CurOrientation);
-                        $this->SetY($this->tMargin + 5);
-                        for ($j = $startIndexForAnswers; $j < $i; $j++) {
-                            // output answers with answers in the opposite column as the question
-                            $answer = $data[$j];
-                            $outputColumn = $answer["column"] == 0 ? 1 : 0; // so front/back printing works
-                            if ($outputColumn == 1) {
-                                $this->SetXY(0 + $this->widths[0], $y);
-                            }
-                            else {
-
-                            }
-                            //echo "answer on y = " . $this->GetY() . "<br>";
-                            $answerText = $answer["answer"];
-                            $outputHeight = $answer["output-height"];
-                            $answerHeight = $answer["a-height"];
-                            $answerRowCount = $answer["a-row-count"];
-                            $isQuestionHeightBigger = $answer["q-taller"];
-                            $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
-                            // Go to the next line
-                            $this->Ln($outputHeight + 4 + ($cellOffset / 2));
-                        }
+                        $this->outputAnswerPage($data, $i, $startIndexForAnswers, $cellOffset);
                         //echo "done w/page<br>";
                         $this->AddPage($this->CurOrientation);
                         $currentColumn = 0;
@@ -378,13 +378,11 @@
                 // offset question output by 1 row since the title was printed
                 $this->SetY($y + $this->lineHeight);
                 $this->DrawOutput($question["question-text"], $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
+                $this->SetXY($x + $this->widths[1], $y);
                 $this->Ln($outputHeight + 4 + ($cellOffset / 2));
             }
-            
-
-            // 1) determine which questions and answers can fit on a 2-column page
-            // 2) output a page of questions followed by a page of answers such that printing front/back works
-            // 3) continue until all questions are output
+            // need to output final page of answers!
+            $this->outputAnswerPage($data, count($data), $startIndexForAnswers, $cellOffset);
         }
     }
 
