@@ -1,12 +1,24 @@
 <?php
     require_once(dirname(__FILE__).'/init-admin.php');
     
+    if (!$isWebAdmin && !$isConferenceAdmin) {
+        header("Location: $basePath/index.php");
+        die();
+    }
+    
     $title = 'Manage Study Guides';
 
     $currentYear = get_active_year($pdo)["YearID"];
+    if (!$isWebAdmin) {
+        $whereClause = "WHERE y.YearID = " . $currentYear;
+    }
+    else {
+        $whereClause = '';
+    }
     $query = '
         SELECT StudyGuideID, DisplayName, FileName, y.Year
-        FROM StudyGuides sg JOIN Years y ON sg.YearID = y.YearID
+        FROM StudyGuides sg JOIN Years y ON sg.YearID = y.YearID '
+        . $whereClause . '
         ORDER BY Year DESC, DisplayName';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
