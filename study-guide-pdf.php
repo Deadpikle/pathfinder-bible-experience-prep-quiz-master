@@ -317,7 +317,7 @@
                 $lastColumn = $outputColumn;
                 $x = $this->GetX();
                 $y = $this->GetY();
-                $answerText = $answer["answer"];
+                $answerText = $answer["output-answer"];
                 $outputHeight = $answer["output-height"];
                 $answerHeight = $answer["a-height"];
                 $answerRowCount = $answer["a-row-count"];
@@ -408,7 +408,6 @@
                 // Draw the title portion of the question ("Question X -- Z Points")
                 if (!$isQuestionHeightBigger) {
                     // make sure title is centered properly
-                    $rowCount = $questionRowCount;
                     $this->SetY($y + (($outputHeight - ($this->lineHeight * $questionRowCount)) / 2), false);
                 }
                 if ($currentColumn == 1) {
@@ -563,7 +562,6 @@
         if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
             // left/right questions (question and answer on single row on same page)
             foreach ($quizMaterials["questions"] as $question) {
-                $answer = $question["answer"];
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
@@ -584,7 +582,6 @@
         else {
             // pre-measure everything and figure out question formatting so pdf can just handle output
             foreach ($quizMaterials["questions"] as &$question) {
-                $answer = $question["answer"];
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
@@ -592,13 +589,19 @@
                 if (is_fill_in($question["type"])) {
                     $fillIn = generate_fill_in($question);
                     $questionText .= "\n" . $fillIn["question"];
+                    $question["is-fill-in"] = true;
+                    $question["output-answer"] = $fillIn["answer"];
+                }
+                else {
+                    $question["output-answer"] = $question["answer"];
+                    $question["is-fill-in"] = false;
                 }
                 $question["title"] = $title;
                 $question["question-text"] = $questionText; // so we don't need to regenerate it again later
                 // measure measure measure
                 $question["q-row-count"] = $pdf->GetNumberOfLinesForOutput($title . "\n" . $questionText, 0);
                 $question["q-height"] = $pdf->GetHeight($question["q-row-count"]);
-                $question["a-row-count"] = $pdf->GetNumberOfLinesForOutput($answer, 1);
+                $question["a-row-count"] = $pdf->GetNumberOfLinesForOutput($question["output-answer"], 1);
                 $question["a-height"] = $pdf->GetHeight($question["a-row-count"]);
                 $question["output-height"] = max($question["q-height"], $question["a-height"]);
                 $question["q-taller"] = $question["q-height"] > $question["a-height"];
