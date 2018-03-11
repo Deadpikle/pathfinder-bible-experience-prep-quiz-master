@@ -126,10 +126,19 @@
                 <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
             </div>
         </div>
-        <div class="input-field col s12 m10">
-        <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
-        <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Left/Right Flash Cards</button>
-        <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Front/Back Flash Cards</button>
+        <div class="negative-top-margin row">
+            <div class="input-field col s12">
+                <input type="checkbox" id="flash-full-fill-in" name="flash-full-fill-in"/>
+                <label class="black-text" for="flash-full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row" id="quiz-setup-button-row">
+            <div class="input-field col s12 m10">
+                <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
+                <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Left/Right Flash Cards</button>
+                <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Front/Back Flash Cards</button>
+            </div>
         </div>
         <div class="divider"></div>
         <div class="input-field col s6">

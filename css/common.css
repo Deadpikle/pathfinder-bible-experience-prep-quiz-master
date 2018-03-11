@@ -121,6 +121,10 @@ main {
     margin-top: -1em;
 }
 
+#quiz-setup-button-row {
+    margin-top: -1.7em;
+}
+
 .right-margin {
     margin-right: 1em;
 }

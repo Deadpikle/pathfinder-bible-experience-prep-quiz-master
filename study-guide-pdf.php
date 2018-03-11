@@ -483,6 +483,7 @@
         $blankedOutput = "";
         $boldedOutput = "";
         $i = 0;
+        $blankedWords = [];
         foreach ($data as $questionWords) {
             if ($questionWords["before"] !== "") {
                 $blankedOutput .= $questionWords["before"];
@@ -490,6 +491,7 @@
             }
             if ($questionWords["word"] !== "") {
                 if ($questionWords["shouldBeBlanked"]) {
+                    $blankedWords[] = $questionWords["word"];
                     $blankedOutput .= "________";
                     $boldedOutput .= "<b>" . $questionWords["word"] . "</b>";
                 }
@@ -508,7 +510,7 @@
             }
             $i++;
         }
-        return ["question" => $blankedOutput, "answer" => $boldedOutput];
+        return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
     }
 
     $pdf = new ZarfyPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
@@ -559,6 +561,7 @@
     }
     else {
         $questionNumber = 1;
+        $outputBoldFillIn = isset($_POST["flash-full-fill-in"])  && $_POST["flash-full-fill-in"] != NULL ? $_POST["flash-full-fill-in"] : FALSE;
         if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
             // left/right questions (question and answer on single row on same page)
             foreach ($quizMaterials["questions"] as $question) {
@@ -574,7 +577,13 @@
                     // in the question field
                     $fillIn = generate_fill_in($question);
                     $questionText .= "\n" . $fillIn["question"];
-                    $pdf->OutputQuestionAnswerRow($questionText, $fillIn["answer"], $title);
+                    if ($outputBoldFillIn) {
+                        $pdf->OutputQuestionAnswerRow($questionText, $fillIn["answer"], $title);
+                    }
+                    else {
+                        $pdf->OutputQuestionAnswerRow($questionText, join(", ", $fillIn["blanked-words"]), $title);
+                    }
+                    //$pdf->OutputQuestionAnswerRow($questionText, $fillIn["answer"], $title);
                 }
                 $questionNumber++;
             }
@@ -590,7 +599,12 @@
                     $fillIn = generate_fill_in($question);
                     $questionText .= "\n" . $fillIn["question"];
                     $question["is-fill-in"] = true;
-                    $question["output-answer"] = $fillIn["answer"];
+                    if ($outputBoldFillIn) {
+                        $question["output-answer"] = $fillIn["answer"];
+                    }
+                    else {
+                        $question["output-answer"] = join(", ", $fillIn["blanked-words"]);
+                    }
                 }
                 else {
                     $question["output-answer"] = $question["answer"];
