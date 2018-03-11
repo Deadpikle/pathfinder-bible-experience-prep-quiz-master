@@ -19,15 +19,15 @@
     <div class="row">
         <div class="col s12 m8">
             
-        <h5>Adding new Website Administrators</h5>
+        <h5>Adding new website administrators</h5>
             <p>There is no limit to the number of website administrators that can be used in this system. However, make sure you trust any website administrators that you add to the system, as they will have full access to everything you have access to.</p>
             <p>To add a new website administrator, go to the <a href="create-edit-user.php?type=create">create users page</a> and add a user as you normally would. Make sure to add them to the "Website Administrators (Website Administrators)" club/conference, and set their user type to "Website Administrator". Once you click save, that user will be added to the system and will have full access.</p>
             <p>You can also edit a current user and change them to or from a website administrator via that user's user edit page.</p>
 
-            <h5>Managing Website Settings</h5>
+            <h5>Managing website settings</h5>
             <p>Most of the time, you won't need to touch the settings on the <a href="edit-settings.php">edit website settings page</a> at all. Only come here if you need to change the website contact name/email or if you know what you're doing. The "Website Name" setting is shown in the navigation bar on the left, and the "Website Title" is the name after the hyphen in your browser tab. The "Footer Text" is shown at the bottom of every page. Analytics settings should not be modified by anyone who does not manage the actual web server itself.</p>
 
-            <h5>Transitioning to a new PBE Year</h5>
+            <h5>Transitioning to a new PBE year</h5>
             <p>The PBE quiz engine website is set up such that each year of PBE questions can be hosted on the same website without doing a large amount of work to transition in between years. Each year can use different Bible books, commentary volumes, study guides, and quiz questions. Users, conferences, and administrator users remain the same. Admins can always view which books, commentaries, and study guides are available from the admin interface, but users who are not website administrators can only view the current year's information.</p>
             <p>To transition from the current PBE year to the upcoming year, perform the following operations:
                 <ol>
