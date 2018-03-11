@@ -140,9 +140,13 @@
             return $this->CurrentFont;
         }
 
-        function CheckPageBreak($h) {
+        function WillAddedHeightExceedPage($h) {
+            return $this->GetY() + $h > $this->PageBreakTrigger;
+        }
+
+        function MakePageBreakIfNeeded($h) {
             // If the height h would cause an overflow, add a new page immediately
-            if ($this->GetY() + $h > $this->PageBreakTrigger) {
+            if ($this->WillAddedHeightExceedPage($h)) {
                 $this->AddPage($this->CurOrientation);
             }
         }
@@ -264,7 +268,7 @@
 
             // Issue a page break first if needed
             $cellOffset = $this->USE_CELL_OFFSET ? 5 : 0;
-            $this->CheckPageBreak($outputHeight + $cellOffset);
+            $this->MakePageBreakIfNeeded($outputHeight + $cellOffset);
 
             // Draw separator line between question and answer
             $x = $this->GetX();
@@ -276,8 +280,7 @@
             // Draw the title portion of the question ("Question X -- Z Points")
             if (!$isQuestionHeightBigger) {
                 // make sure title is centered properly
-                $rowCount = $questionRowCount;
-                $this->SetY($y + (($outputHeight - ($this->lineHeight * $rowCount)) / 2), false);
+                $this->SetY($y + (($outputHeight - ($this->lineHeight * $questionRowCount)) / 2), false);
             }
             $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
             // offset question output by 1 row since the title was printed
@@ -288,6 +291,100 @@
             $this->DrawOutput($answer, $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
             // Go to the next line
             $this->Ln($outputHeight + 4 + ($cellOffset / 2));
+        }
+
+        function OutputFrontBackPages($data) {
+            // WillAddedHeightExceedPage($h)
+            /*
+            $question["question-text"] = $questionText; // so we don't need to regenerate it again later
+            // measure measure measure
+            $question["q-row-count"] = $pdf->GetNumberOfLinesForOutput($title . "\n" . $questionText, 0);
+            $question["q-height"] = $pdf->GetHeight($questionRowCount);
+            $question["a-row-count"] = $pdf->GetNumberOfLinesForOutput($answer, 1);
+            $question["a-height"] = $pdf->GetHeight($answerRowCount);
+            $question["output-height"] = max($questionHeight, $answerHeight);
+            $question["q-taller"] = $questionHeight > $answerHeight;
+            */
+            $cellOffset = $this->USE_CELL_OFFSET ? 5 : 0;
+            $currentColumn = 0;
+            $startIndexForAnswers = 0;
+            for ($i = 0; $i < count($data); $i++) {
+                //echo $this->GetY() . "<br>";
+                $question = &$data[$i];
+                // fit as many into first column as possible, then fit as many into second column as possible
+                $y = $this->GetY();
+                if ($this->WillAddedHeightExceedPage($question["output-height"])) {
+                    if ($currentColumn == 0) {
+                        $currentColumn = 1;
+                        $this->SetY($this->tMargin + 5);
+                        //echo "next col; y = " . $this->GetY() . "<br>";
+                    }
+                    else if ($currentColumn == 1) {
+                        //echo "next pg<br>";
+                        // need to page break and output answers
+                        $this->AddPage($this->CurOrientation);
+                        $this->SetY($this->tMargin + 5);
+                        for ($j = $startIndexForAnswers; $j < $i; $j++) {
+                            // output answers with answers in the opposite column as the question
+                            $answer = $data[$j];
+                            $outputColumn = $answer["column"] == 0 ? 1 : 0; // so front/back printing works
+                            if ($outputColumn == 1) {
+                                $this->SetXY(0 + $this->widths[0], $y);
+                            }
+                            else {
+
+                            }
+                            //echo "answer on y = " . $this->GetY() . "<br>";
+                            $answerText = $answer["answer"];
+                            $outputHeight = $answer["output-height"];
+                            $answerHeight = $answer["a-height"];
+                            $answerRowCount = $answer["a-row-count"];
+                            $isQuestionHeightBigger = $answer["q-taller"];
+                            $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
+                            // Go to the next line
+                            $this->Ln($outputHeight + 4 + ($cellOffset / 2));
+                        }
+                        //echo "done w/page<br>";
+                        $this->AddPage($this->CurOrientation);
+                        $currentColumn = 0;
+                        $startIndexForAnswers = $i;
+                    }
+                }
+                // OK, output next question
+                $question["column"] = $currentColumn;
+                $title = $question["title"];
+                $outputHeight = $question["output-height"];
+                $questionHeight = $question["q-height"];
+                $questionRowCount = $question["q-row-count"];
+                $isQuestionHeightBigger = $question["q-taller"];
+                 // Draw separator line between question and answer
+                $x = $this->GetX();
+                $y = $this->GetY();
+                $firstWidth = $this->widths[0];
+                if (!$this->DRAW_RECT && $currentColumn != 1) {
+                    // TODO: just draw big vertical line on every page
+                    $this->Line($x + $firstWidth, $y, $x + $firstWidth, $y + $outputHeight);
+                }
+                // Draw the title portion of the question ("Question X -- Z Points")
+                if (!$isQuestionHeightBigger) {
+                    // make sure title is centered properly
+                    $rowCount = $questionRowCount;
+                    $this->SetY($y + (($outputHeight - ($this->lineHeight * $questionRowCount)) / 2), false);
+                }
+                if ($currentColumn == 1) {
+                    $this->SetXY($x + $this->widths[0], $y);
+                }
+                $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
+                // offset question output by 1 row since the title was printed
+                $this->SetY($y + $this->lineHeight);
+                $this->DrawOutput($question["question-text"], $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
+                $this->Ln($outputHeight + 4 + ($cellOffset / 2));
+            }
+            
+
+            // 1) determine which questions and answers can fit on a 2-column page
+            // 2) output a page of questions followed by a page of answers such that printing front/back works
+            // 3) continue until all questions are output
         }
     }
 
@@ -427,30 +524,47 @@
         if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
             // left/right questions (question and answer on single row on same page)
             foreach ($quizMaterials["questions"] as $question) {
-                //$question = $question["question"];
                 $answer = $question["answer"];
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $text = get_question_text($question);
+                $questionText = get_question_text($question);
                 if (!is_fill_in($question["type"])) {
-                    $pdf->OutputQuestionAnswerRow($text, $question["answer"], $title);
+                    $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
                 }
                 else {
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
-                    $text .= "\n" . $fillIn["question"];
-                    $pdf->OutputQuestionAnswerRow($text, $fillIn["answer"], $title);
+                    $questionText .= "\n" . $fillIn["question"];
+                    $pdf->OutputQuestionAnswerRow($questionText, $fillIn["answer"], $title);
                 }
                 $questionNumber++;
             }
         }
         else {
-            // 1) measure everything
-            // 2) determine which questions and answers can fit on a 2-column page
-            // 3) output a page of questions followed by a page of answers such that printing front/back works
-            // 4) continue until all questions are output
+            // pre-measure everything and figure out question formatting so pdf can just handle output
+            foreach ($quizMaterials["questions"] as &$question) {
+                $answer = $question["answer"];
+                $points = $question["points"];
+                $pointsStr = $points == 1 ? "point" : "points";
+                $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
+                $questionText = get_question_text($question);
+                if (is_fill_in($question["type"])) {
+                    $fillIn = generate_fill_in($question);
+                    $questionText .= "\n" . $fillIn["question"];
+                }
+                $question["title"] = $title;
+                $question["question-text"] = $questionText; // so we don't need to regenerate it again later
+                // measure measure measure
+                $question["q-row-count"] = $pdf->GetNumberOfLinesForOutput($title . "\n" . $questionText, 0);
+                $question["q-height"] = $pdf->GetHeight($question["q-row-count"]);
+                $question["a-row-count"] = $pdf->GetNumberOfLinesForOutput($answer, 1);
+                $question["a-height"] = $pdf->GetHeight($question["a-row-count"]);
+                $question["output-height"] = max($question["q-height"], $question["a-height"]);
+                $question["q-taller"] = $question["q-height"] > $question["a-height"];
+            }
+            $pdf->OutputFrontBackPages($quizMaterials["questions"]);
         }
     }
 
