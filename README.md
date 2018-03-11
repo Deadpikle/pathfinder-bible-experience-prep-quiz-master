@@ -2,6 +2,8 @@
 
 ## Setup
 
+Minimum requirements: PHP 7.1+ and a MariaDB database.
+
 1. `curl -s https://getcomposer.org/installer | php`
 2. `php composer.phar install --no-dev`
 3. `vendor/bin/phinx init .`
