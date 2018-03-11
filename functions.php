@@ -405,7 +405,7 @@
             $quizItems = $params["quizItems"];
         }
         $chapterIDs = array();
-        $volumeNumbers = array();
+        $commentaryIDs = array();
         if (count($quizItems) > 0) {
             // user wants to load specific things!
             // figure out which chapter IDs and volume numbers they want to load
@@ -416,19 +416,19 @@
                 }
                 else if (strpos($item, 'commentary-') !== false) {
                     $text = str_replace('commentary-', '', $item);
-                    $volumeNumbers[] = (int)$text;
+                    $commentaryIDs[] = (int)$text;
                 }
             }
         }
         $shouldLoadBibleQnA = (count($quizItems) == 0 || count($chapterIDs) > 0) && $userWantsNormalQuestions;
-        $shouldLoadCommentaryQnA = (count($quizItems) == 0 || count($volumeNumbers) > 0) && $userWantsNormalQuestions;
+        $shouldLoadCommentaryQnA = (count($quizItems) == 0 || count($commentaryIDs) > 0) && $userWantsNormalQuestions;
         $disableBibleFillInLoading = FALSE;
         $disableCommentaryFillInLoading = FALSE;
-        if (count($chapterIDs) > 0 && count($volumeNumbers) == 0) {
+        if (count($chapterIDs) > 0 && count($commentaryIDs) == 0) {
             $shouldLoadCommentaryQnA = FALSE;
             $disableCommentaryFillInLoading = TRUE;
         }
-        if (count($volumeNumbers) > 0 && count($chapterIDs) == 0) {
+        if (count($commentaryIDs) > 0 && count($chapterIDs) == 0) {
             $shouldLoadBibleQnA = FALSE;
             $disableBibleFillInLoading = TRUE;
         }
@@ -512,8 +512,8 @@
         }
         $whereClause = ' 
             WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
-        if (count($volumeNumbers) > 0) {
-            $whereClause .= ' AND CommentaryNumber IN (' . implode(',', $volumeNumbers) . ') ';
+        if (count($commentaryIDs) > 0) {
+            $whereClause .= ' AND comm.CommentaryID IN (' . implode(',', $commentaryIDs) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
             $whereClause .= '  AND (ua.UserAnswerID IS NULL 
