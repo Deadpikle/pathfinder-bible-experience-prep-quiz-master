@@ -14,6 +14,7 @@
         protected $lineHeight = 7;
         protected $WIDTH_OFFSET = 0;
         protected $DRAW_RECT = false;
+        protected $USE_CELL_OFFSET = FALSE;
         
         function WriteHTML($html) {
             // HTML parser
@@ -199,92 +200,94 @@
             return $nl;
         }
 
-        function printTitle($title, $x, $y, $w, $h) {
-            if (!$this->DRAW_RECT) {
-                $this->Line($x + $w, $y, $x + $w, $y + $h);
-            }
+        function DrawQuestionTitle($title, $x, $y, $w, $h) {
+            //echo $this->GetY() . "<br>";
             $this->SetFont('Arial', 'B', 14);
             // print title
             $this->Cell($w - $this->WIDTH_OFFSET, $this->lineHeight, $title, 0, 1, 'C');
         }
 
-        function MeasureHeight($text, $columnIndex) {
+        function GetNumberOfLinesForOutput($text, $columnIndex) {
             $textToMeasure = strip_tags($text);
-            $numberOfLines = $this->NbLines($this->widths[$columnIndex] - $this->WIDTH_OFFSET, $textToMeasure);
+            return $this->NbLines($this->widths[$columnIndex] - $this->WIDTH_OFFSET, $textToMeasure);
+        }
+
+        function GetHeight($numberOfLines) {
             return $numberOfLines * $this->lineHeight;
+        }
+
+        function DrawOutput($text, $height, $numberOfLines, $cellOffset, $columnIndex, $shouldVerticallyCenter, $rowHeight) {
+            $w = $this->widths[$columnIndex];
+            $a = isset($this->aligns[$columnIndex]) ? $this->aligns[$columnIndex] : 'L';
+            // Save the current position
+            $x = $this->GetX();
+            $y = $this->GetY();
+            // Draw the border
+            if ($this->DRAW_RECT) {
+                $this->Rect($x, $y, $w, $height + $cellOffset);
+            }
+            else {
+                $this->SetY($y + ($cellOffset / 2), FALSE);
+            }
+            // center the text vertically as needed
+            if ($shouldVerticallyCenter) {
+                $this->SetY($y + (($rowHeight - ($this->lineHeight * $numberOfLines)) / 2), false);
+            }
+            $this->SetFont('Arial', '', 14);
+            // have to set left margin and right margins properly so the html wrapping works just right and wraps
+            // text to the correct location
+            $lm = $this->lMargin;
+            $rm = $this->rMargin;
+            if ($columnIndex == 0) {
+                $this->SetLeftMargin($lm);
+                $this->SetRightMargin($w + $rm);
+            }
+            else {
+                $this->SetLeftMargin($w + $lm);
+            }
+            $this->WriteHTML($text);
+            $this->SetLeftMargin($lm);
+            $this->SetRightMargin($rm);
+            // Put the position to the right of the cell
+            $this->SetXY($x + $w, $y);
         }
 
         // $data[0] == question, $data[1] == answer
         function OutputQuestionAnswerRow($question, $answer, $title) {
             // Calculate the height of the row
-            $maxLines = 0;
-            $numberOfLinesInCell = array();
-            $tallestCellIndex = 0;
-            for ($i = 0; $i < count($data); $i++) {
-                $outputToCheck = $i == 0 ? $title . "\n" . $data[$i] : $data[$i];
-                $outputToCheck = strip_tags($outputToCheck);
-                $numberOfLines = $this->NbLines($this->widths[$i] - $this->WIDTH_OFFSET, $outputToCheck);
-                $numberOfLinesInCell[] = $numberOfLines;
-                if ($numberOfLines > $maxLines) {
-                    $tallestCellIndex = $i;
-                    $maxLines = $numberOfLines;
-                }
-            }
-            $h = $this->lineHeight * $maxLines;
+            $questionRowCount = $this->GetNumberOfLinesForOutput($title . "\n" . $question, 0);
+            $questionHeight = $this->GetHeight($questionRowCount);
+            $answerRowCount = $this->GetNumberOfLinesForOutput($answer, 1);
+            $answerHeight = $this->GetHeight($answerRowCount);
+            $outputHeight = max($questionHeight, $answerHeight);
+            $isQuestionHeightBigger = $questionHeight > $answerHeight;
+
             // Issue a page break first if needed
-            $OFFSET = FALSE;
-            $cellOffset = $OFFSET ? 5 : 0;
-            $this->CheckPageBreak($h + $cellOffset);
-            // Draw the cells of the row
-            for ($i = 0; $i < count($data); $i++) {
-                $w = $this->widths[$i];
-                $a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
-                // Save the current position
-                $x = $this->GetX();
-                $y = $this->GetY();
-                // Draw the border
-                if ($this->DRAW_RECT) {
-                    $this->Rect($x, $y, $w, $h + $cellOffset);
-                }
-                else {
-                    $this->SetY($y + ($cellOffset / 2), FALSE);
-                }
-                // Print the text
-                if ($i != $tallestCellIndex) {
-                    // this isn't the tallest cell, so center the text vertically
-                    $this->SetY($y + (($h - ($this->lineHeight * $numberOfLinesInCell[$i])) / 2), false);
-                    if ($i == 0) { 
-                        // printing the title portion of the question ("Question X -- Z Points")
-                        $this->printTitle($title, $this->lineHeight, $x, $y, $w, $h);
-                    }
-                    $this->SetFont('Arial', '', 14);
-                    // have to set left margin and right margins properly so the html wrapping works just right and wraps
-                    // text to the correct location
-                    $lm = $this->lMargin;
-                    $rm = $this->rMargin;
-                    if ($i == 0) {
-                        $this->SetLeftMargin($lm);
-                        $this->SetRightMargin($w + $rm);
-                    }
-                    else {
-                        $this->SetLeftMargin($w + $lm);
-                    }
-                    $this->WriteHTML($data[$i]);
-                    $this->SetLeftMargin($lm);
-                    $this->SetRightMargin($rm);
-                }
-                else {
-                    if ($i == 0) {
-                        $this->printTitle($title, $x, $y, $w, $h);
-                    }
-                    $this->SetFont('Arial', '', 14); // just in case
-                    $this->MultiCell($w, $this->lineHeight, $data[$i], 0, $a);
-                }
-                // Put the position to the right of the cell
-                $this->SetXY($x + $w, $y);
+            $cellOffset = $this->USE_CELL_OFFSET ? 5 : 0;
+            $this->CheckPageBreak($outputHeight + $cellOffset);
+
+            // Draw separator line between question and answer
+            $x = $this->GetX();
+            $y = $this->GetY();
+            $firstWidth = $this->widths[0];
+            if (!$this->DRAW_RECT) {
+                $this->Line($x + $firstWidth, $y, $x + $firstWidth, $y + $outputHeight);
             }
+            // Draw the title portion of the question ("Question X -- Z Points")
+            if (!$isQuestionHeightBigger) {
+                // make sure title is centered properly
+                $rowCount = $questionRowCount;
+                $this->SetY($y + (($outputHeight - ($this->lineHeight * $rowCount)) / 2), false);
+            }
+            $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
+            // offset question output by 1 row since the title was printed
+            $this->SetY($y + $this->lineHeight);
+            $this->DrawOutput($question, $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
+            // Draw answer
+            $this->SetY($y); // don't need to center y beforehand since the vertical centering will be handled in DrawOutput
+            $this->DrawOutput($answer, $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
             // Go to the next line
-            $this->Ln($h + 4 + ($cellOffset / 2));
+            $this->Ln($outputHeight + 4 + ($cellOffset / 2));
         }
     }
 
@@ -422,7 +425,7 @@
     else {
         $questionNumber = 1;
         if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
-            // left/right questions; can just output normally
+            // left/right questions (question and answer on single row on same page)
             foreach ($quizMaterials["questions"] as $question) {
                 //$question = $question["question"];
                 $answer = $question["answer"];
@@ -431,14 +434,14 @@
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
                 $text = get_question_text($question);
                 if (!is_fill_in($question["type"])) {
-                    $pdf->OutputQuestionAnswerRow([$text, $question["answer"]], $title);
+                    $pdf->OutputQuestionAnswerRow($text, $question["answer"], $title);
                 }
                 else {
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
                     $text .= "\n" . $fillIn["question"];
-                    $pdf->OutputQuestionAnswerRow([$text, $fillIn["answer"]], $title);
+                    $pdf->OutputQuestionAnswerRow($text, $fillIn["answer"], $title);
                 }
                 $questionNumber++;
             }
