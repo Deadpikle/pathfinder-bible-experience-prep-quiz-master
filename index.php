@@ -30,16 +30,20 @@
     </div>
 </div>
 
-<!-- <div id="extra-home-info">
+<div id="extra-home-info">
     <div class="row">
-        <p class="col s12">
-            Recent website updates:
-        </p>
-        <ul class="col s12 browser-default">
-            <li>2017-11-12: Allowed flash card generation of those questions that have been recently added (within the last 1 to 31 days)</li>
-            <li>2017-09-27: Added filter for Bible book/chapter or commentary volume on the questions page</li>
+        <p class="col s12 m8">
+            The website was given a huge upgrade on March 11, 2018! Some exciting updates include:</p>
+        <ul class="browser-default col s12 m9">
+            <li>Search for question by question text, answer, or by Chapter:Verse on the main questions page</li>
+            <li>Flash card fill-in-the-blank answers can now be either the full sentence with answers in <b>bold</b> or just a comma-separated list of words</li>
+            <li>You can now print flash cards that can be printed as front/back flash cards rather than having the question/answer to the left/right of each other (on the same page as one another)! Remember to print double sided or this option won't work correctly!</li>
+            <li>When taking a quiz, you can now review questions that you've already answered along with info on whether you got those questions correct or not</li>
+            <li>When taking a quiz, you can now view chapter-by-chapter statistics for how well you're doing on the quiz</li>
+            <li>Lots of little fixes and tweaks here and there for an improved user experience</li>
+            <li>Many behind-the-scenes updates for administrators</li>
         </ul>
     </div>
-</div> -->
+</div>
 
 <?php include(dirname(__FILE__)."/footer.php") ?>
