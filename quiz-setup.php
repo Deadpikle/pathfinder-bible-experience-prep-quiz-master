@@ -154,12 +154,7 @@
         $(bibleQuestionType).material_select();
         fixRequiredSelectorCSS();
 
-        $('#start-quiz-btn').click(function() {
-            $('#quiz-setup-form').attr('target', '').submit();
-        });
-        $('#flash-quiz-btn').click(function() {
-            return false;
-        });
+        var quizForm = document.getElementById('quiz-setup-form');
 
         var buttonID = '';
         $(':submit').click(function() {
@@ -167,19 +162,19 @@
         })
         
         $('#start-quiz-btn').on("click", function() {
-            $('#quiz-setup-form').attr('target', '');
-            $('#quiz-setup-form').attr('action', 'quiz.php');
-            $('#quiz-setup-form').submit();
+            $(quizForm).attr('target', '');
+            $(quizForm).attr('action', 'quiz.php');
+            $(quizForm).submit();
         });
         $('#lr-flash-cards-btn').on("click", function() {
-            $('#quiz-setup-form').attr('target', '_blank');
-            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=lr');
-            $('#quiz-setup-form').submit();
+            $(quizForm).attr('target', '_blank');
+            $(quizForm).attr('action', 'study-guide-pdf.php?type=lr');
+            $(quizForm).submit();
         });
         $('#fb-flash-cards-btn').on("click", function() {
-            $('#quiz-setup-form').attr('target', '_blank');
-            $('#quiz-setup-form').attr('action', 'study-guide-pdf.php?type=fb');
-            $('#quiz-setup-form').submit();
+            $(quizForm).attr('target', '_blank');
+            $(quizForm).attr('action', 'study-guide-pdf.php?type=fb');
+            $(quizForm).submit();
         });
     });
 </script>
