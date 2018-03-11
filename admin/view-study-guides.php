@@ -5,10 +5,9 @@
 
     $currentYear = get_active_year($pdo)["YearID"];
     $query = '
-        SELECT StudyGuideID, DisplayName, FileName
-        FROM StudyGuides 
-        WHERE YearID = ' . $currentYear . '
-        ORDER BY DisplayName';
+        SELECT StudyGuideID, DisplayName, FileName, y.Year
+        FROM StudyGuides sg JOIN Years y ON sg.YearID = y.YearID
+        ORDER BY Year DESC, DisplayName';
     $stmt = $pdo->prepare($query);
     $stmt->execute([]);
     $files = $stmt->fetchAll();
@@ -27,6 +26,7 @@
             <thead>
                 <tr>
                     <th>Display Name</th>
+                    <th>Year</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -35,6 +35,7 @@
                 <?php foreach ($files as $file) { ?>
                     <tr>
                         <td><a target="_blank" class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $basePath . '/' .$file['FileName'] ?>"><?= $file['DisplayName'] ?></a></td> 
+                        <td><?= $file['Year'] ?></td>
                         <td><a class="btn waves-effect" 
                                 href="rename-study-guide.php?id=<?= $file['StudyGuideID'] ?>">Rename</a></td> 
                         <td><a class="btn red white-text waves-effect waves-light" 

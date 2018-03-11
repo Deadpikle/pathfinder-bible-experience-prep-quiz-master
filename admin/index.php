@@ -25,6 +25,7 @@
     <?php } ?>
     <?php if ($isWebAdmin) { ?>
         <h4>Web Administrator Functions</h4>
+        <a class="btn blue white-text waves-effect waves-light" href="web-admin-help.php">Web Admin Help</a>
         <ul>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-books.php">Bible Books</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-commentaries.php">Commentaries</a></li>

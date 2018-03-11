@@ -23,7 +23,7 @@
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-<p><a href="./view-study-guides.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-study-guides.php">Back</a></p>
 
 <h4>Rename Study Guide</h4>
 
