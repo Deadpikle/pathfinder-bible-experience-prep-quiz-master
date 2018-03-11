@@ -118,24 +118,25 @@
 
         if ($isUsingCustomSearchText) {
             $tmpQuestions = [];
+            $searchText = strtolower($searchText);
             foreach ($questions as $question) {
                 // see if it matches the search text
-                $questionText = $question["Question"];
-                $answer = $question["Answer"];
-                $startBook = $question["StartBook"];
-                $startVerse = $question["StartChapter"] . ":" . $question["StartVerse"];
-                $startFull = $startBook . " " . $startVerse;
+                $questionText = strtolower($question["Question"]);
+                $answer = strtolower($question["Answer"]);
+                $startBook = strtolower($question["StartBook"]);
+                $startVerse = strtolower($question["StartChapter"]) . ":" . $question["StartVerse"];
+                $startFull = strtolower($startBook) . " " . $startVerse;
                 $endBook = "";
                 $endVerse = "";
                 if ($question["EndBook"] !== "") {
-                    $endBook = $question["EndBook"];
+                    $endBook = strtolower($question["EndBook"]);
                 }
                 if ($question["EndChapter"] !== "") {
-                    $endVerse = $question["EndChapter"] . ":" . $question["EndVerse"];
+                    $endVerse = strtolower($question["EndChapter"]) . ":" . $question["EndVerse"];
                 }
                 $endFull = "";
                 if ($endBook !== "" && $endVerse !== "") {
-                    $endFull = $endBook . " " . $endVerse;
+                    $endFull = strtolower($endBook) . " " . $endVerse;
                 }
 
                 if (strpos($questionText, $searchText) !== FALSE) {
