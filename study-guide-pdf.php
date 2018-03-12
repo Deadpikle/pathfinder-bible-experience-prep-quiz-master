@@ -567,7 +567,7 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = utf8(trim(get_question_text($question)));
+                $questionText = trim(get_question_text($question));
                 if (!is_fill_in($question["type"])) {
                     $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
                 }
@@ -575,9 +575,9 @@
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . utf8(trim($fillIn["question"]));
+                    $questionText .= "\n" . trim($fillIn["question"]);
                     if ($outputBoldFillIn) {
-                        $pdf->OutputQuestionAnswerRow($questionText, utf8(trim($fillIn["answer"])), $title);
+                        $pdf->OutputQuestionAnswerRow($questionText, trim($fillIn["answer"]), $title);
                     }
                     else {
                         $pdf->OutputQuestionAnswerRow($questionText, join(", ", $fillIn["blanked-words"]), $title);
@@ -593,20 +593,20 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = utf8(trim(get_question_text($question)));
+                $questionText = trim(get_question_text($question));
                 if (is_fill_in($question["type"])) {
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . utf8(trim($fillIn["question"]));
+                    $questionText .= "\n" . trim($fillIn["question"]);
                     $question["is-fill-in"] = true;
                     if ($outputBoldFillIn) {
-                        $question["output-answer"] = utf8(trim($fillIn["answer"]));
+                        $question["output-answer"] = trim($fillIn["answer"]);
                     }
                     else {
                         $question["output-answer"] = join(", ", $fillIn["blanked-words"]);
                     }
                 }
                 else {
-                    $question["output-answer"] = utf8(trim($question["answer"]));
+                    $question["output-answer"] = trim($question["answer"]);
                     $question["is-fill-in"] = false;
                 }
                 $question["title"] = $title;
