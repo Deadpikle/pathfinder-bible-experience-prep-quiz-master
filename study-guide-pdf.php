@@ -567,17 +567,17 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = trim(get_question_text($question));
+                $questionText = utf8_decode(trim(get_question_text($question)));
                 if (!is_fill_in($question["type"])) {
-                    $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
+                    $pdf->OutputQuestionAnswerRow($questionText, utf8_decode($question["answer"]), $title);
                 }
                 else {
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . trim($fillIn["question"]);
+                    $questionText .= "\n" . utf8_decode(trim($fillIn["question"]));
                     if ($outputBoldFillIn) {
-                        $pdf->OutputQuestionAnswerRow($questionText, trim($fillIn["answer"]), $title);
+                        $pdf->OutputQuestionAnswerRow($questionText, utf8_decode(trim($fillIn["answer"])), $title);
                     }
                     else {
                         $pdf->OutputQuestionAnswerRow($questionText, join(", ", $fillIn["blanked-words"]), $title);
@@ -593,24 +593,24 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = trim(get_question_text($question));
+                $questionText = utf8_decode(trim(get_question_text($question)));
                 if (is_fill_in($question["type"])) {
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . trim($fillIn["question"]);
+                    $questionText .= "\n" . utf8_decode(trim($fillIn["question"]));
                     $question["is-fill-in"] = true;
                     if ($outputBoldFillIn) {
-                        $question["output-answer"] = trim($fillIn["answer"]);
+                        $question["output-answer"] = utf8_decode(trim($fillIn["answer"]));
                     }
                     else {
                         $question["output-answer"] = join(", ", $fillIn["blanked-words"]);
                     }
                 }
                 else {
-                    $question["output-answer"] = trim($question["answer"]);
+                    $question["output-answer"] = utf8_decode(trim($question["answer"]));
                     $question["is-fill-in"] = false;
                 }
                 $question["title"] = $title;
-                $question["question-text"] = trim($questionText); // so we don't need to regenerate it again later
+                $question["question-text"] = utf8_decode(trim($questionText)); // so we don't need to regenerate it again later
                 // measure measure measure
                 $question["q-row-count"] = $pdf->GetNumberOfLinesForOutput($title . "\n" . $questionText, 0);
                 $question["q-height"] = $pdf->GetHeight($question["q-row-count"]);
