@@ -593,20 +593,20 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = trim(get_question_text($question));
+                $questionText = utf8(trim(get_question_text($question)));
                 if (is_fill_in($question["type"])) {
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . trim($fillIn["question"]);
+                    $questionText .= "\n" . utf8(trim($fillIn["question"]));
                     $question["is-fill-in"] = true;
                     if ($outputBoldFillIn) {
-                        $question["output-answer"] = trim($fillIn["answer"]);
+                        $question["output-answer"] = utf8(trim($fillIn["answer"]));
                     }
                     else {
                         $question["output-answer"] = join(", ", $fillIn["blanked-words"]);
                     }
                 }
                 else {
-                    $question["output-answer"] = trim($question["answer"]);
+                    $question["output-answer"] = utf8(trim($question["answer"]));
                     $question["is-fill-in"] = false;
                 }
                 $question["title"] = $title;
