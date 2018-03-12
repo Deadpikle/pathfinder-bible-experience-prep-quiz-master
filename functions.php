@@ -664,8 +664,8 @@
                 "id" => $question["QuestionID"],
                 "isFlagged" => $question["IsFlagged"],
                 "points" => $question["NumberPoints"],
-                "question" => $question["Question"],
-                "answer" => $question["Answer"]
+                "question" => trim($question["Question"]),
+                "answer" => trim($question["Answer"])
             );
             if (is_bible_qna($question["Type"])) {
                 // Bible Q&A
@@ -684,7 +684,7 @@
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
             if (is_fill_in($question["Type"])) {
-                $fillInData = generate_fill_in_question($question["Question"], $percentFillIn, $words);
+                $fillInData = generate_fill_in_question(trim($question["Question"]), $percentFillIn, $words);
                 $data["fillInData"] = $fillInData["data"];
                 $data["points"] = $fillInData["blank-count"];
             }
