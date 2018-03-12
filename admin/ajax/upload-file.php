@@ -61,7 +61,7 @@
     try {
         $params = [
             'uploads/' . $fileName,
-            $displayName,
+            trim($displayName),
             $currentYear
         ];
         $query = 'INSERT INTO StudyGuides (FileName, DisplayName, YearID) VALUES (?, ?, ?)';

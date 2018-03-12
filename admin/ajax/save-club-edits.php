@@ -2,8 +2,8 @@
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
         $params = [
-            $_POST["club-name"],
-            $_POST["club-url"]
+            trim($_POST["club-name"]),
+            trim($_POST["club-url"])
         ];
         if ($_GET["type"] == "update") {
             $conferenceIDText = $isWebAdmin ? ', ConferenceID = ?' : '';

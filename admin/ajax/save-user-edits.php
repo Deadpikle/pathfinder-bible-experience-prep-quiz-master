@@ -60,7 +60,7 @@
         }
 
         $params = [
-            $_POST["username"],
+            trim($_POST["username"]),
             $userTypeID,
             $clubID
         ];

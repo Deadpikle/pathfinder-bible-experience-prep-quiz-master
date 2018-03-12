@@ -22,7 +22,7 @@
             die();
         }
         $params = [
-            $bookName,
+            trim($bookName),
             intval($numberChapters), 
             $activeYearID
         ];

@@ -42,8 +42,8 @@
 
     $params = [
         $questionType, // either bible-qna or bible-qna-fill or commentary-qna or commentary-qna-fill right now
-        $_POST["question-text"],
-        isset($_POST["question-answer"]) ? $_POST["question-answer"] : "",
+        trim($_POST["question-text"]),
+        isset($_POST["question-answer"]) ? trim($_POST["question-answer"]) : "",
         $_POST["number-of-points"],
         $_SESSION["UserID"],
         $startVerseID,

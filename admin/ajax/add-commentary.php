@@ -18,7 +18,7 @@
         }
         $params = [
             intval($commentaryNumber), 
-            $topic,
+            trim($topic),
             $activeYearID
         ];
         $query = '

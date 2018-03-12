@@ -2,10 +2,10 @@
     require_once(dirname(__FILE__)."/../init-admin.php");
     try {
         $params = [
-            filter_var($_POST["name"], FILTER_SANITIZE_STRING),
-            filter_var($_POST["url"], FILTER_SANITIZE_STRING),
-            filter_var($_POST["contact-name"], FILTER_SANITIZE_STRING),
-            filter_var($_POST["contact-email"], FILTER_SANITIZE_EMAIL)
+            trim(filter_var($_POST["name"], FILTER_SANITIZE_STRING)),
+            trim(filter_var($_POST["url"], FILTER_SANITIZE_STRING)),
+            trim(filter_var($_POST["contact-name"], FILTER_SANITIZE_STRING)),
+            trim(filter_var($_POST["contact-email"], FILTER_SANITIZE_EMAIL))
         ];
         if ($_GET["type"] == "update") {
             $query = '
