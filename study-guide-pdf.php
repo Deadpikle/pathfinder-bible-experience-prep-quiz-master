@@ -427,7 +427,7 @@
 
     function get_question_text($question) {
         $type = $question["type"];
-        $output = $question["question"];
+        $output = trim($question["question"]);
         $isFillIn = is_fill_in($type);
         if (!$isFillIn && !ends_with($output, "?")) {
             $output .= "?";
