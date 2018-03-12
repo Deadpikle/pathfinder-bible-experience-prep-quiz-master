@@ -567,7 +567,7 @@
                 $points = $question["points"];
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                $questionText = trim(get_question_text($question));
+                $questionText = utf8(trim(get_question_text($question)));
                 if (!is_fill_in($question["type"])) {
                     $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
                 }
@@ -575,9 +575,9 @@
                     // for fill in the blanks, the full answer is stored
                     // in the question field
                     $fillIn = generate_fill_in($question);
-                    $questionText .= "\n" . trim($fillIn["question"]);
+                    $questionText .= "\n" . utf8(trim($fillIn["question"]));
                     if ($outputBoldFillIn) {
-                        $pdf->OutputQuestionAnswerRow($questionText, trim($fillIn["answer"]), $title);
+                        $pdf->OutputQuestionAnswerRow($questionText, utf8(trim($fillIn["answer"])), $title);
                     }
                     else {
                         $pdf->OutputQuestionAnswerRow($questionText, join(", ", $fillIn["blanked-words"]), $title);
