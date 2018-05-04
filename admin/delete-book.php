@@ -26,6 +26,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$bookID]);
         header("Location: view-books.php");
+        die();
     }
 
 ?>
