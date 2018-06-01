@@ -345,7 +345,9 @@
         if ($lastSectionID !== -1) {
             echo "</ul>";
         }
-        echo "</div>";
+        if (count($sections) > 0) {
+            echo "</div>";
+        }
     }
 
     function generate_quiz_questions($pdo, $params) {
