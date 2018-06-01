@@ -26,7 +26,6 @@
             }
         });
         array_shift($csv); // remove column header (yay http://php.net/manual/en/function.str-getcsv.php)
-
         // get all the commentary
         $params = [];
         $query = '
@@ -279,7 +278,7 @@
             <li><b>End Page</b>: End page reference for the question. Only use on questions of type "Commentary". Should be a number like 32 and not "thirty-two". Can be any number. Can be left blank.</li>
         </ul>
     </li>
-    <li>Type in as many questions into the upload form as you like. Each question should take one row. Remember to avoid deleting the header row! <b>Do not type any commas into any of the column data for any question. If you must add a comma to a question/answer, you must do so on this website and not via the upload form.</b> This is a limitation of this process. Sorry!</li>
+    <li>Type in as many questions into the upload form as you like. Each question should take one row. Remember to avoid deleting the header row!</li>
     <li>When you're ready to upload the file, choose "File" -> "Save As" from the menu. Save the document as a CSV (Comma delimited) CSV file. <b>If you see an option for CSV UTF-8, do not choose this option. Choose the "CSV (Comma delimited)" on Windows or the "Comma Separated Values (.csv)" option on macOS.</b> Save the file in a location you can find because you'll need it in the next step. If Excel warns you that some features of the worksheet may be lost, just say OK.</li>
     <li>Once you've got the file, simply use the form above to upload the questions. Click "Choose CSV File", find the file that you saved in the previous step, and choose that one. Then click "Upload Questions" and wait. The web page will tell you if any questions were unable to be added as well as the number of questions successfully added. Keep in the mind that the upload questions form does not care if you're adding questions for old years, so if you add questions to another year's books/commentaries, those questions will still upload properly!</li>
 </ol>
