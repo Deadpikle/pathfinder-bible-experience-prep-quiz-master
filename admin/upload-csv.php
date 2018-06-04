@@ -16,6 +16,8 @@
         $contents = file_get_contents($tmpName);
         // split file by items
         $rows = explode("\r", $contents);
+        print_r($rows);
+        die();
         // get csv data
         $csv = array_map('str_getcsv', $rows);
         // make it an associate array with csv keys => values
@@ -68,8 +70,8 @@
         // prepare the statement
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsFlagged, IsDeleted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsDeleted) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
         $stmt = $pdo->prepare($query);
         foreach ($csv as $row) {
@@ -197,7 +199,6 @@
                     $commentaryStartPage,
                     $commentaryEndPage,
                     $_SESSION["UserID"],
-                    FALSE,
                     FALSE
                 ];
                 //print_r($params);
