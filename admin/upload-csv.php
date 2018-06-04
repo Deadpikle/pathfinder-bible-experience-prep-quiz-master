@@ -16,18 +16,19 @@
         $contents = file_get_contents($tmpName);
         // split file by items
         $rows = explode("\r", $contents);
-        print_r($rows);
-        die();
         // get csv data
         $csv = array_map('str_getcsv', $rows);
         // make it an associate array with csv keys => values
         array_walk($csv, function(&$a) use ($csv) {
-            $a = array_combine($csv[0], $a);
-            foreach ($a as $key => $value) {
-                $a[trim($key)] = trim($value);
+            if (count($a) == count($csv[0])) {
+                $a = array_combine($csv[0], $a);
+                foreach ($a as $key => $value) {
+                    $a[trim($key)] = trim($value);
+                }
             }
         });
         array_shift($csv); // remove column header (yay http://php.net/manual/en/function.str-getcsv.php)
+        
         // get all the commentary
         $params = [];
         $query = '
@@ -75,6 +76,15 @@
         ';
         $stmt = $pdo->prepare($query);
         foreach ($csv as $row) {
+            if (!isset($row["Question"]) || !isset($row["Start Book"]) || !isset($row["Fill in?"])
+                || !isset($row["Start Chapter"]) || !isset($row["Start Verse"]) || !isset($row["Type"])) {
+                if (count($row) > 1) {
+                    $questionsFailedToAdd++;
+                    $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid column data.<br>";
+                }
+                // else it was probably just a blank row!
+                continue; // get rid of blank rows.
+            }
             /*$keys = array_keys($row);
             print_r($keys);
             echo "<br><br>";
@@ -91,6 +101,10 @@
             die();*/
             try {
                 $questionType = "";
+                if (!isset($row["Fill in?"])) {
+                    print_r($row);
+                    die();
+                }
                 $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
                 $row["Type"] = trim($row["Type"]);
                 if ($row["Type"] === "Bible") {
@@ -111,7 +125,7 @@
                 }
                 if ($questionType === "") {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . $row["Question"] . ". Invalid question type.<br>";
+                    $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid question type.<br>";
                     continue;
                 }
 
@@ -128,7 +142,7 @@
                     }
                     else {
                         $questionsFailedToAdd++;
-                        $errors .= "Unable to add Bible question: " . $row["Question"] . ". Invalid book name, chapter, and/or verse.<br>";
+                        $errors .= "Unable to add Bible question: " . $row["Question"] . " -- Invalid book name, chapter, and/or verse.<br>";
                         continue;
                     }
                     $bookName = $row["End Book"];
@@ -163,7 +177,7 @@
                     }
                     else {
                         $questionsFailedToAdd++;
-                        $errors .= "Unable to add commentary question: " . $row["Question"] . ". Invalid number and/or topic.<br>";
+                        $errors .= "Unable to add commentary question: " . $row["Question"] . " -- Invalid number and/or topic.<br>";
                         continue;
                     }
 
@@ -203,7 +217,7 @@
                 ];
                 //print_r($params);
                 //die();
-                $stmt->execute($params);
+                //$stmt->execute($params);
                 $questionsSuccessfullyAdded++;
             }
             catch (PDOException $e) {
