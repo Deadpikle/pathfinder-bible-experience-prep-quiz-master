@@ -217,7 +217,7 @@
                 ];
                 //print_r($params);
                 //die();
-                //$stmt->execute($params);
+                $stmt->execute($params);
                 $questionsSuccessfullyAdded++;
             }
             catch (PDOException $e) {
