@@ -33,14 +33,28 @@
 
 <h4>Bible Fill in the Blank Questions</h4>
 
-<p>There are a total of <b><?= $total ?></b> fill in the blank Bible questions in the system out of a maximum of 500.</p>
+<p>There are a total of <b><?= $total ?></b> Bible fill in the blank questions in the system out of a maximum of 500.</p>
 
 <div id="bible-fill-in-div">
-    <ul>
-        <?php foreach ($bookQuestionData as $data) { ?>
-            <li><b><?= $data['Name'] ?></b>  -  <?= $data['QuestionCount'] ?> questions</li>
-        <?php } ?>
-    </ul>
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Number of Questions</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($bookQuestionData as $data) { ?>
+                <tr>
+                    <td><b><?= $data['Name'] ?></b></td>
+                    <td><?= $data['QuestionCount'] ?> questions</li></td>
+                    <td><a class="waves-effect waves-light btn red white-text" href="delete-bible-fill.php?type=book&id=<?= $data['BookID'] ?>">Delete</a></td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+    <a class="waves-effect waves-light btn red white-text" href="delete-bible-fill.php?type=all">Delete All Bible Fill In Questions</a>
 </div>
 
 <script type="text/javascript">
