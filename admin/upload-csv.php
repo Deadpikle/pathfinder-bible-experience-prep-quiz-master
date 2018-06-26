@@ -12,6 +12,7 @@
     $questionsFailedToAdd = 0;
     $errors = "";
     if ($isPostRequest) {
+        $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
         // split file by items
@@ -109,6 +110,12 @@
                 $row["Type"] = trim($row["Type"]);
                 if ($row["Type"] === "Bible") {
                     if ($isFillInTheBlank) {
+                        if ($totalBibleFillInQuestions >= 500) {
+                            $questionsFailedToAdd++;
+                            $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions.<br>";
+                            continue;
+                        }
+                        $totalBibleFillInQuestions++;
                         $questionType = "bible-qna-fill";
                     }
                     else {
