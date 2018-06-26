@@ -1,6 +1,7 @@
 <?php
     require_once(dirname(__FILE__)."/../init.php");
     
+    $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
     $startVerseID = isset($_POST["start-verse-id"]) ? $_POST["start-verse-id"] : NULL;
     if ($_POST["start-verse-id"] == -1 || $_POST["start-verse-id"] == NULL) {
         $startVerseID = NULL;
@@ -24,12 +25,28 @@
     else {
         $isFillInTheBlank = TRUE;
     }
+    $formType = $_GET["type"];
     if ($questionType == "bible-qna") {
         $commentaryID = NULL;
         $commentaryStartPage = NULL;
         $commentaryEndPage = NULL;
         if ($isFillInTheBlank) {
             $questionType = "bible-qna-fill";
+            if ($totalBibleFillInQuestions >= 500) {
+                if ($formType == "create") {
+                    die("Maximum amount of Bible questions reached");
+                }
+                else if ($formType == "update") { 
+                    // it's only OK if the current question is already a bible-qna-fill
+                    $query = 'SELECT Type FROM Questions WHERE QuestionID = ?';
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute([$_POST["question-id"]]);
+                    $questionData = $stmt->fetch();
+                    if ($questionData !== NULL && $questionData['Type'] !== 'bible-qna-fill') {
+                        die("Maximum amount of Bible questions reached (changing question type)");
+                    }
+                }
+            }
         }
     }
     else if ($questionType == "commentary-qna") {
@@ -53,14 +70,14 @@
         $commentaryEndPage
     ];
     
-    if ($_GET["type"] == "update") {
+    if ($formType == "update") {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
             CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?';
         $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
-    else if ($_GET["type"] == "create") {
+    else if ($formType == "create") {
         $params[] = $_SESSION["UserID"];
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
