@@ -13,12 +13,12 @@
         FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
             JOIN Chapters c ON c.ChapterID = v.ChapterID
             JOIN Books b ON b.BookID = c.BookID
-        WHERE b.YearID = ' . $currentYear . ' 
+        WHERE b.YearID = ?
               AND q.Type = "bible-qna-fill"
         GROUP BY c.ChapterID, c.Number
         ORDER BY b.Name, c.Number';
     $stmt = $pdo->prepare($query);
-    $stmt->execute([]);
+    $stmt->execute([$currentYear]);
     $bookQuestionData = $stmt->fetchAll();
 
     $total = 0;
