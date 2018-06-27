@@ -108,6 +108,7 @@
                 }
                 $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
                 $row["Type"] = trim($row["Type"]);
+                $needsToSubtractTotalBibleFillInIfFailed = false;
                 if ($row["Type"] === "Bible") {
                     if ($isFillInTheBlank) {
                         if ($totalBibleFillInQuestions >= 500) {
@@ -116,6 +117,7 @@
                             continue;
                         }
                         $totalBibleFillInQuestions++;
+                        $needsToSubtractTotalBibleFillInIfFailed = true;
                         $questionType = "bible-qna-fill";
                     }
                     else {
@@ -133,6 +135,9 @@
                 if ($questionType === "") {
                     $questionsFailedToAdd++;
                     $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid question type.<br>";
+                    if ($needsToSubtractTotalBibleFillInIfFailed) {
+                        $totalBibleFillInQuestions--;
+                    }
                     continue;
                 }
 
@@ -150,6 +155,9 @@
                     else {
                         $questionsFailedToAdd++;
                         $errors .= "Unable to add Bible question: " . $row["Question"] . " -- Invalid book name, chapter, and/or verse.<br>";
+                        if ($needsToSubtractTotalBibleFillInIfFailed) {
+                            $totalBibleFillInQuestions--;
+                        }
                         continue;
                     }
                     $bookName = $row["End Book"];
@@ -185,6 +193,9 @@
                     else {
                         $questionsFailedToAdd++;
                         $errors .= "Unable to add commentary question: " . $row["Question"] . " -- Invalid number and/or topic.<br>";
+                        if ($needsToSubtractTotalBibleFillInIfFailed) {
+                            $totalBibleFillInQuestions--;
+                        }
                         continue;
                     }
 
@@ -230,6 +241,9 @@
             catch (PDOException $e) {
                 $errors .= "Error inserting question " . $row["Question"] . ": " . $e->getMessage() . "<br>";
                 $questionsFailedToAdd++;
+                if (isset($needsToSubtractTotalBibleFillInIfFailed) && $needsToSubtractTotalBibleFillInIfFailed) {
+                    $totalBibleFillInQuestions--;
+                }
                 //print_r($e);
                 //die();
             }
