@@ -35,7 +35,7 @@
 <div id="start-quiz">
     <h4>Quiz Setup</h4>
     <form id="quiz-setup-form" method="post">
-        <p>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</p>
+        <p><b>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</b></p>
         <div class="row">
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
@@ -70,11 +70,11 @@
                 <label class="black-text" for="enable-question-distribution">Enable weighted question distribution</label>
             </div>
         </div>
-        <p class="weighted-distribution-help">For weighted question distribution, questions will be drawn from all of the chosen chapters or commentaries with the given percentage weights applied to the number of questions for the quiz. For instance, if there are 90 total questions, and the weight for 2 Kings 3 is 10%, then 9 questions from 2 Kings 3 (10% of 90) will show up in the quiz. For any chapter/commentary weight percentages left blank, the quiz generator will attempt to select an equal amount of questions for each area.</p>
-        <p class="weighted-distribution-help">You must have at least one Bible chapter or commentary selected for the weighted distribution option to work.</p>
+        <p class="weighted-distribution-help">For weighted question distribution, questions will be drawn from all of the chosen chapters or commentaries with the given percentage weights applied to the number of questions for the quiz. For instance, if there are 90 total questions, and the weight for 2 Kings 3 is 10%, then 9 questions from 2 Kings 3 (10% of 90) will show up in the quiz. For any chapter/commentary weight percentages left blank, the quiz generator will attempt to select an equal amount of questions for each area. As another example, for an even question distrubution between 3 chapters, simply choose those three chapters and do not enter any weights by leaving them blank (0% is treated as blank).</p>
+        <p class="weighted-distribution-help">You must have at least one Bible chapter or commentary selected for the weighted distribution option to work. If weights do not equal 100% or there is no chapter with a weight left blank or at 0% for the quiz engine to know which chapters/commentaries to choose for the remaining questions, the total number of questions in the quiz will not be equal to the total amount of quiz questions requested below.</p>
         <div class="row">
-            <div class="col m6 s12">
-                <table id="weighted-question-table" class="bordered responsive-table">
+            <div class="col l5 m7 s12">
+                <table id="weighted-question-table" class="bordered highlight responsive-table">
                     <thead id="weighted-question-table-header">
                         <tr>
                             <th>Chapter/Commentary</th>
@@ -85,20 +85,20 @@
                         <?php foreach ($chapters as $chapter) { ?>
                             <tr id="table-chapter-<?= $chapter['id'] ?>">
                                 <td><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></td>
-                                <td><input type="number" value="0" min="0" max="100"></input></td>
+                                <td><input class="table-input" type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
                         <?php foreach ($volumes as $volume) { ?>
                             <tr id="table-commentary-<?= $volume['id'] ?>">
                                 <td><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</td>
-                                <td><input type="number" value="0" min="0" max="100"></input></td>
+                                <td><input class="table-input" type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
                     </tbody>
                 </table>    
             </div>
         </div>
-        <p class="negative-top-margin"><b>Maximum number of questions and maximum number of points per question</b></p>
+        <p class=""><b>Maximum number of questions and maximum number of points per question</b></p>
         <div class="row">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
@@ -192,40 +192,100 @@
 
 
 <script type="text/javascript">
-    // http://stackoverflow.com/a/15965470/3938401
     $(document).ready(function() {
-        // hide stuff that needs to be hidden
-        $('#weighted-question-table').hide();
-        $('.weighted-distribution-help').hide();
-
         var bibleQuestionType = document.getElementById('quiz-items');
         $(bibleQuestionType).material_select();
         fixRequiredSelectorCSS();
 
         var quizForm = document.getElementById('quiz-setup-form');
+        var quizItemSelector = document.getElementById('quiz-items');
 
         var buttonID = '';
         $(':submit').click(function() {
-            buttonID = $(this).attr('id');
+            buttonID = $(this).attr('id'); // ...I can't remember what this is for...
         })
         
+        var enableQuestionDistributionCheckbox = document.getElementById('enable-question-distribution');
+
+        function calculateQuestionDistributionTotal() {
+            if (enableQuestionDistributionCheckbox.checked) {
+                var total = 0;
+                $('#weighted-question-table input:visible').each(function(index, element) {
+                    if (element.value != "") {
+                        total += parseInt(element.value);
+                    }
+                });
+                return total;
+            }
+            return 0;
+        }
+
+        function hasNegativeQuestionDistribution() {
+            if (enableQuestionDistributionCheckbox.checked) {
+                var hasNegativeQuestionDistribution = false;
+                $('#weighted-question-table input:visible').each(function(index, element) {
+                    if (element.value != "") {
+                        var number = parseInt(element.value);
+                        if (number < 0) {
+                            hasNegativeQuestionDistribution = true;
+                            return false;
+                        }
+                    }
+                });
+                return hasNegativeQuestionDistribution;
+            }
+            return false;
+        }
+
+        // return true if OK to go ahead with form submit; false otherwise
+        function checkQuestionDistributionTotal() {
+            if (enableQuestionDistributionCheckbox.checked) {
+                var hasItemSelected = false;
+                for (var i = 0; i < quizItemSelector.options.length; i++) {
+                    var option = quizItemSelector.options[i];
+                    if (option.value !== "" && option.value !== "All" && option.selected) {
+                        hasItemSelected = true;
+                        break;
+                    }
+                }
+                if (hasItemSelected) {
+                    if (hasNegativeQuestionDistribution()) {
+                        alert('Negative question distribution weights are not allowed.');
+                        return false;
+                    }
+                    var total = calculateQuestionDistributionTotal();
+                    if (total < 0 || total > 100) {
+                        alert('Question distribution total must be between 0% and 100%. It is currently at ' + total + '%.');
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         $('#start-quiz-btn').on("click", function() {
-            $(quizForm).attr('target', '_blank');
-            $(quizForm).attr('action', 'quiz.php');
-            $(quizForm).submit();
+            if (checkQuestionDistributionTotal()) {
+                $(quizForm).attr('target', '_blank');
+                $(quizForm).attr('action', 'quiz.php');
+                $(quizForm).submit();
+            }
         });
         $('#lr-flash-cards-btn').on("click", function() {
-            $(quizForm).attr('target', '_blank');
-            $(quizForm).attr('action', 'study-guide-pdf.php?type=lr');
-            $(quizForm).submit();
+            if (checkQuestionDistributionTotal()) {
+                $(quizForm).attr('target', '_blank');
+                $(quizForm).attr('action', 'study-guide-pdf.php?type=lr');
+                $(quizForm).submit();
+            }
         });
         $('#fb-flash-cards-btn').on("click", function() {
-            $(quizForm).attr('target', '_blank');
-            $(quizForm).attr('action', 'study-guide-pdf.php?type=fb');
-            $(quizForm).submit();
+            if (checkQuestionDistributionTotal()) {
+                $(quizForm).attr('target', '_blank');
+                $(quizForm).attr('action', 'study-guide-pdf.php?type=fb');
+                $(quizForm).submit();
+            }
         });
 
-        $('#enable-question-distribution').change(function() {
+        $(enableQuestionDistributionCheckbox).change(function() {
             if (this.checked) {
                 $('#weighted-question-table').show();
                 $('.weighted-distribution-help').show();
@@ -236,7 +296,7 @@
             }
         });
 
-        $('#quiz-items').change(function() {
+        $(quizItemSelector).change(function() {
             var isShowingWeightedDistributionItem = false;
             for (var i = 0; i < this.options.length; i++) {
                 var option = this.options[i];
@@ -259,6 +319,8 @@
                 $('#weighted-question-table-header').hide();
             }
         });
+
+        $("#enable-question-distribution").trigger("change");
         $("#quiz-items").trigger("change");
     });
 </script>

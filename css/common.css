@@ -256,3 +256,12 @@ h5#question-text {
 #stats-progress {
     margin-left: 1.5em;
 }
+
+.table-input[type=number]:not(.browser-default) {
+    margin-bottom: 0em;
+}
+
+#weighted-question-table td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
