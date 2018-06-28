@@ -63,7 +63,42 @@
                 <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
             </div>
         </div>
-        <p class="negative-top-margin">Maximum number of questions and maximum number of points per question</p>
+        <p class="negative-top-margin"><b>Weighted Question Distribution</b></p>
+        <div class="row negative-top-margin">
+            <div class="input-field col s12">
+                <input type="checkbox" id="enable-question-distribution" name="enable-question-distribution"/>
+                <label class="black-text" for="enable-question-distribution">Enable weighted question distribution</label>
+            </div>
+        </div>
+        <p class="weighted-distribution-help">For weighted question distribution, questions will be drawn from all of the chosen chapters or commentaries with the given percentage weights applied to the number of questions for the quiz. For instance, if there are 90 total questions, and the weight for 2 Kings 3 is 10%, then 9 questions from 2 Kings 3 (10% of 90) will show up in the quiz. For any chapter/commentary weight percentages left blank, the quiz generator will attempt to select an equal amount of questions for each area.</p>
+        <p class="weighted-distribution-help">You must have at least one Bible chapter or commentary selected for the weighted distribution option to work.</p>
+        <div class="row">
+            <div class="col m6 s12">
+                <table id="weighted-question-table" class="bordered responsive-table">
+                    <thead id="weighted-question-table-header">
+                        <tr>
+                            <th>Chapter/Commentary</th>
+                            <th>Weight (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weighted-question-table-body">
+                        <?php foreach ($chapters as $chapter) { ?>
+                            <tr id="table-chapter-<?= $chapter['id'] ?>">
+                                <td><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></td>
+                                <td><input type="number" value="0" min="0" max="100"></input></td>
+                            </tr>
+                        <?php } ?>
+                        <?php foreach ($volumes as $volume) { ?>
+                            <tr id="table-commentary-<?= $volume['id'] ?>">
+                                <td><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</td>
+                                <td><input type="number" value="0" min="0" max="100"></input></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>    
+            </div>
+        </div>
+        <p class="negative-top-margin"><b>Maximum number of questions and maximum number of points per question</b></p>
         <div class="row">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
@@ -74,7 +109,7 @@
                 <label for="max-points">Maximum Points</label>
             </div>
         </div>
-        <p id="question-types">Question types</p>
+        <p id="question-types"><b>Question types</b></p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap" name="question-types" id="both" value="both"/>
@@ -93,7 +128,7 @@
                 <label class="" for="fill-in-percent">% Blanks</label>
             </div>
         </div>
-        <p id="question-order">Question selection and order</p>
+        <p id="question-order"><b>Question selection and order</b></p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />
@@ -108,14 +143,14 @@
                 <label class="black-text" for="random-random">Random selection and random order</label>
             </div>
         </div>
-        <p id="question-filtering">Question history</p>
+        <p id="question-filtering"><b>Question history</b></p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct"/>
                 <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>
-        <p id="question-filtering">Flash card options (Only apply to flash cards)</p>
+        <p id="question-filtering"><b>Flash card options (<em>Only apply to flash cards</em>)</b></p>
         <div class="row">
             <div class="input-field col s12">
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
@@ -159,6 +194,10 @@
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
     $(document).ready(function() {
+        // hide stuff that needs to be hidden
+        $('#weighted-question-table').hide();
+        $('.weighted-distribution-help').hide();
+
         var bibleQuestionType = document.getElementById('quiz-items');
         $(bibleQuestionType).material_select();
         fixRequiredSelectorCSS();
@@ -171,7 +210,7 @@
         })
         
         $('#start-quiz-btn').on("click", function() {
-            $(quizForm).attr('target', '');
+            $(quizForm).attr('target', '_blank');
             $(quizForm).attr('action', 'quiz.php');
             $(quizForm).submit();
         });
@@ -185,5 +224,41 @@
             $(quizForm).attr('action', 'study-guide-pdf.php?type=fb');
             $(quizForm).submit();
         });
+
+        $('#enable-question-distribution').change(function() {
+            if (this.checked) {
+                $('#weighted-question-table').show();
+                $('.weighted-distribution-help').show();
+            }
+            else {
+                $('#weighted-question-table').hide();
+                $('.weighted-distribution-help').hide();
+            }
+        });
+
+        $('#quiz-items').change(function() {
+            var isShowingWeightedDistributionItem = false;
+            for (var i = 0; i < this.options.length; i++) {
+                var option = this.options[i];
+                var value = option.value;
+                if (value !== "" && value !== "All") {
+                    var tableSelector = 'table-' + value;
+                    if (option.selected) {
+                        $('#' + tableSelector).show();
+                        isShowingWeightedDistributionItem = true;
+                    }
+                    else {
+                        $('#' + tableSelector).hide();
+                    }
+                }
+            }
+            if (isShowingWeightedDistributionItem) {
+                $('#weighted-question-table-header').show();
+            }
+            else {
+                $('#weighted-question-table-header').hide();
+            }
+        });
+        $("#quiz-items").trigger("change");
     });
 </script>
