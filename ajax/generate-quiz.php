@@ -44,11 +44,24 @@
         }
         // Make sure submitted percentage not below 0 or above 100
         $totalPercent = 0;
+        $hasNegativePercent = false;
         foreach($bibleWeights as $key => $value) {
             $totalPercent += (int)$value;
+            if ((int)$value < 0) {
+                $hasNegativePercent = true;
+            }
         }
         foreach($commentaryWeights as $key => $value) {
             $totalPercent += (int)$value;
+            if ((int)$value < 0) {
+                $hasNegativePercent = true;
+            }
+        }
+        if ($hasNegativePercent) {
+            die("Invalid weighted question percent given. All percents must be above positive or 0.");
+        }
+        if ($totalPercent < 0 || $totalPercent > 100) {
+            die("Invalid weighted question percent given. Value must be between 0 and 100 inclusive.");
         }
         // // // //
         // For each quizItems item that has a specific weight set in bibleWeights/commentaryWeights,
@@ -156,6 +169,7 @@
                     }
                     else {
                         // pick the first $numberOfQuestionsForEachPortion out of the questions array
+                        // as they are already in sequential order
                         $pickedQuestions = array_slice($item["questions"], 0, $numberOfQuestionsForEachPortion);
                     }
                     $questionsLeft -= $numberOfQuestionsForEachPortion;
@@ -217,17 +231,120 @@
         echo "After all done, " . count($output["questions"]) . " questions generated \n";
         echo "There are " . $questionsLeft .  " questions left to generate \n";
         echo "-------" . "\n";
-        die();
+        
+        //die();
         // ok, everything is generated. However, now we need to resort 
         // everything so that the output is what the user expects!
-        // TODO: see quiz func in functions.php and refactor to avoid duplicate code
-        // if random output, shuffle questions array 2x (2x just for fun) and be done with it
-        // if sequential output, need to sort first then grab questions in sequential order
-        // like we do in the quiz engine
 
-        
+        if ($isOutputSequential) {
+            // have to break questions out into each kind and then sort and then reorder them
+            $totalQuestions = count($output["questions"]);
+            $bibleQnA = [];
+            $bibleFillIn = [];
+            $commentaryQnA = [];
+            $commentaryFillIn = [];
+            foreach ($output["questions"] as $question) {
+                if ($question["type"] == "bible-qna") {
+                    $bibleQnA[] = $question;
+                }
+                else if ($question["type"] == "bible-qna-fill") {
+                    $bibleFillIn[] = $question;
+                }
+                else if ($question["type"] == "commentary-qna") {
+                    $commentaryQnA[] = $question;
+                }
+                else if ($question["type"] == "commentary-qna-fill") {
+                    $commentaryFillIn[] = $question;
+                }
+            }
+            // sort!
+            array_multisort(
+                array_column($bibleQnA, 'startBook'), SORT_ASC, 
+                array_column($bibleQnA, 'startChapter'), SORT_ASC, 
+                array_column($bibleQnA, 'startVerse'), SORT_ASC,
+                array_column($bibleQnA, 'endBook'), SORT_ASC,
+                array_column($bibleQnA, 'endChapter'), SORT_ASC,
+                array_column($bibleQnA, 'endVerse'), SORT_ASC,
+                array_column($bibleQnA, 'id'), SORT_ASC,
+                $bibleQnA);
+            array_multisort(
+                array_column($bibleFillIn, 'startBook'), SORT_ASC, 
+                array_column($bibleFillIn, 'startChapter'), SORT_ASC, 
+                array_column($bibleFillIn, 'startVerse'), SORT_ASC,
+                array_column($bibleFillIn, 'endBook'), SORT_ASC,
+                array_column($bibleFillIn, 'endChapter'), SORT_ASC,
+                array_column($bibleFillIn, 'endVerse'), SORT_ASC,
+                array_column($bibleFillIn, 'id'), SORT_ASC,
+                $bibleFillIn);
+            array_multisort(
+                array_column($commentaryQnA, 'number'), SORT_ASC, 
+                array_column($commentaryQnA, 'topic'), SORT_ASC, 
+                array_column($commentaryQnA, 'startPage'), SORT_ASC, 
+                array_column($commentaryQnA, 'endPage'), SORT_ASC,
+                array_column($commentaryQnA, 'id'), SORT_ASC,
+                $commentaryQnA);
+            array_multisort(
+                array_column($commentaryFillIn, 'number'), SORT_ASC, 
+                array_column($commentaryFillIn, 'topic'), SORT_ASC, 
+                array_column($commentaryFillIn, 'startPage'), SORT_ASC, 
+                array_column($commentaryFillIn, 'endPage'), SORT_ASC,
+                array_column($commentaryFillIn, 'id'), SORT_ASC,
+                $commentaryFillIn);
+            // now mash them back into a quiz.
+            $reorderedQuestions = [];
+            $bibleIndex = 0;
+            $bibleFillInIndex = 0;
+            $commentaryIndex = 0;
+            $commentaryFillInIndex = 0;
+            $bibleCount = count($bibleQnA);
+            $bibleFillInCount = count($bibleFillIn);
+            $commentaryCount = count($commentaryQnA);
+            $commentaryFillInCount = count($commentaryFillIn);
+            for ($i = 0; $i < $totalQuestions; $i++) {
+                $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
+                $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
+                $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
+                $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
 
-        $generated = $allGenerated;
+                $availableArraysOfQuestions = [];
+                if ($hasBibleQuestionLeft) {
+                    $availableArraysOfQuestions[] = "bible-qna";
+                }
+                if ($hasBibleFillInLeft) {
+                    $availableArraysOfQuestions[] = "bible-qna-fill";
+                }
+                if ($hasCommentaryQuestionLeft) {
+                    $availableArraysOfQuestions[] = "commentary-qna";
+                }
+                if ($hasCommentaryFillInQuestionLeft) {
+                    $availableArraysOfQuestions[] = "commentary-qna-fill";
+                }
+                echo "i = " . $i . "\n";
+                echo "bible = " . $bibleIndex . ", bible fill = " . $bibleFillInIndex . ", commentary = " . $commentaryIndex . ", comm fill = ". $commentaryFillInIndex . "\n";
+                $index = random_int(0, count($availableArraysOfQuestions) - 1);
+                $typeToAdd = $availableArraysOfQuestions[$index];
+                if ($typeToAdd == "bible-qna") {
+                    $reorderedQuestions[] = $bibleQnA[$bibleIndex++];
+                }
+                else if ($typeToAdd == "bible-qna-fill") {
+                    $reorderedQuestions[] = $bibleFillIn[$bibleFillInIndex++];
+                }
+                else if ($typeToAdd == "commentary-qna") {
+                    $reorderedQuestions[] = $commentaryQnA[$commentaryIndex++];
+                }
+                else if ($typeToAdd == "commentary-qna-fill") {
+                    $reorderedQuestions[] = $commentaryFillIn[$commentaryFillInIndex++];
+                }
+            }
+            $output["questions"] = $reorderedQuestions;
+        }
+        else {
+            // random output! shuffle 2x (2x because 1x is boring)
+            shuffle($output["questions"]);
+            shuffle($output["questions"]);
+        }
+        $generated = $output;
+        print_r($output);
     }
     else {
         $generated = generate_quiz_questions($pdo, $_POST);
