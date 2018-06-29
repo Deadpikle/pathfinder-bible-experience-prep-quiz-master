@@ -85,13 +85,15 @@
                         <?php foreach ($chapters as $chapter) { ?>
                             <tr id="table-chapter-<?= $chapter['id'] ?>">
                                 <td><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></td>
-                                <td><input class="table-input" type="number" value="" min="0" max="100"></input></td>
+                                <td><input name="table-input-chapter-<?= $chapter['id'] ?>" class="table-input" 
+                                           type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
                         <?php foreach ($volumes as $volume) { ?>
                             <tr id="table-commentary-<?= $volume['id'] ?>">
                                 <td><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</td>
-                                <td><input class="table-input" type="number" value="" min="0" max="100"></input></td>
+                                <td><input name="table-input-commentary-<?= $volume['id'] ?>" class="table-input" 
+                                           type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
                     </tbody>

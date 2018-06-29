@@ -17,7 +17,26 @@
         $quizItems = $_POST["quiz-items"];
     }
     else {
-        $quizItems = array();
+        $quizItems = [];
+    }
+
+    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != NULL) {
+        $enableQuestionDistribution = "true";
+    }
+    else {
+        $enableQuestionDistribution = "true";
+    }
+
+    // figure out weights for Bible, commentaries
+    $bibleWeights = [];
+    $commentaryWeights = [];
+    foreach ($_POST as $key => $value) {
+        if (str_contains("table-input-chapter-", $key)) {
+            $bibleWeights[$key] = $value;
+        }
+        else if (str_contains("table-input-commentary-", $key)) {
+            $commentaryWeights[$key] = $value;
+        }
     }
 
 ?>
@@ -33,6 +52,9 @@
     var shouldAvoidPastCorrect = <?= $shouldAvoidPastCorrect ?>;
     var quizItems = <?= json_encode($quizItems) ?>;
     var userID = <?= $_SESSION["UserID"] ?>; // is this really wise?
+    var enableQuestionDistribution = <?= $enableQuestionDistribution ?>;
+    var bibleWeights = <?= json_encode($bibleWeights) ?>;
+    var commentaryWeights = <?= json_encode($commentaryWeights) ?>;
 </script>
 
 <div id="quiz-taking">
@@ -303,7 +325,10 @@
                     fillInPercent: fillInPercent,
                     shouldAvoidPastCorrect: shouldAvoidPastCorrect,
                     quizItems: quizItems,
-                    userID: userID
+                    userID: userID,
+                    enableQuestionDistribution: enableQuestionDistribution,
+                    bibleWeights: bibleWeights,
+                    commentaryWeights: commentaryWeights
                 },
                 success: function(response) {
                     if (typeof response.questions !== "undefined" && response.questions.length > 0) {
