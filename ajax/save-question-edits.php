@@ -32,7 +32,7 @@
         $commentaryEndPage = NULL;
         if ($isFillInTheBlank) {
             $questionType = "bible-qna-fill";
-            if ($totalBibleFillInQuestions >= 500) {
+            if ($totalBibleFillInQuestions >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
                 if ($formType == "create") {
                     die("Maximum amount of Bible questions reached");
                 }

@@ -43,4 +43,8 @@
     $yearData = get_active_year($pdo);
     $activeYearID = $yearData["YearID"];
     $activeYearNumber = $yearData["Year"];
+
+    if (!isset($ENABLE_NKJV_RESTRICTIONS)) {
+        $ENABLE_NKJV_RESTRICTIONS = true;
+    }
 ?>

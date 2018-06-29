@@ -111,7 +111,7 @@
                 $needsToSubtractTotalBibleFillInIfFailed = false;
                 if ($row["Type"] === "Bible") {
                     if ($isFillInTheBlank) {
-                        if ($totalBibleFillInQuestions >= 500) {
+                        if ($totalBibleFillInQuestions >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
                             $questionsFailedToAdd++;
                             $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions.<br>";
                             continue;
