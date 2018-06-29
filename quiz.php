@@ -38,7 +38,6 @@
             $commentaryWeights[$key] = $value;
         }
     }
-
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
