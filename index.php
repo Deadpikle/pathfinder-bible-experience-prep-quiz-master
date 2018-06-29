@@ -33,6 +33,15 @@
 <div id="extra-home-info">
     <div class="row">
         <p class="col s12 m8">
+           Updates <b>June 29, 2018</b>:</p>
+        <ul class="browser-default col s12 m9">
+            <li>Weighted question distribution</li>
+            <li>Home page information can now have subtitles</li>
+            <li>Miscellaneous fixes/adjustments</li>
+        </ul>
+    </div>
+    <div class="row">
+        <p class="col s12 m8">
             The website was given a huge upgrade on March 11, 2018! Some exciting updates include:</p>
         <ul class="browser-default col s12 m9">
             <li>Search for question by question text, answer, or by Chapter:Verse on the main questions page</li>
