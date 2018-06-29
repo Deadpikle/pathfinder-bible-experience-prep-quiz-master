@@ -75,6 +75,12 @@
                 }
                 else {
                     $postCopy["maxQuestions"] = floor($maxQuestions * ((int)$allWeights[$allWeightsKey] / 100));
+                    if ($postCopy["maxQuestions"] == 0) {
+                        $postCopy["maxQuestions"] = 1;
+                    }
+                    if ($postCopy["maxQuestions"] == 1 && $postCopy["maxQuestions"] + $totalGenerated > $maxQuestions) {
+                        break;
+                    }
                 }
                 $generatedQuestions = generate_quiz_questions($pdo, $postCopy);
                 $allGenerated[] = $generatedQuestions;
@@ -98,6 +104,9 @@
 
         if ($questionsLeft > 0) {
             $numberOfQuestionsForEachPortion = round($questionsLeft / count($quizItems));
+            if ($numberOfQuestionsForEachPortion == 0) {
+                $numberOfQuestionsForEachPortion = 1;
+            }
             echo "There are " . $numberOfQuestionsForEachPortion .  " questions for each item to generate \n";
 
             // OK INSTEAD ALWAYS GENERATE $QUESTIONSLEFT 
@@ -127,6 +136,9 @@
                     $questionsLeft -= $item["totalQuestions"];
                     if ($i != count($otherGenerated) - 1) {
                         $numberOfQuestionsForEachPortion = round($questionsLeft / (count($quizItems) - ($i + 1)));
+                        if ($numberOfQuestionsForEachPortion == 0) {
+                            $numberOfQuestionsForEachPortion = 1;
+                        }
                     }
                     // else we just flat out don't have enough questions. Sorry.
                     // don't have to worry about random selection or in order selection as we are choosing all of them,
@@ -212,6 +224,8 @@
         // if random output, shuffle questions array 2x (2x just for fun) and be done with it
         // if sequential output, need to sort first then grab questions in sequential order
         // like we do in the quiz engine
+
+        
 
         $generated = $allGenerated;
     }
