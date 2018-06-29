@@ -3,11 +3,12 @@
     $toConferenceID = $_POST["to-conference-id"];
     try {
         $params = [
-            $_POST["section-name"]
+            $_POST["section-name"],
+            $_POST["section-subtitle"] ? $_POST["section-subtitle"] : ""
         ];
         if ($_GET["type"] == "update") {
             $query = '
-                UPDATE HomeInfoSections SET Name = ? WHERE HomeInfoSectionID = ?
+                UPDATE HomeInfoSections SET Name = ?, Subtitle = ? WHERE HomeInfoSectionID = ?
             ';
             $params[] = $_POST["section-id"];
         }
@@ -23,7 +24,7 @@
             $params[] = get_active_year($pdo)["YearID"];
             $params[] = $_POST["to-conference-id"];
             $query = '
-                INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)
+                INSERT INTO HomeInfoSections (Name, Subtitle, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?, ?)
             ';
         }
         else {

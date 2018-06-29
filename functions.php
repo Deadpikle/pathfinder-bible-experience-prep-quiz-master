@@ -129,7 +129,9 @@
             $params[] = $conferenceID;
         }
         $query = '
-            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.SortOrder AS SectionSortOrder,
+            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, 
+                his.Subtitle AS SectionSubtitle,
+                his.SortOrder AS SectionSortOrder,
                 hil.HomeInfoLineID AS LineID,
                 hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
             FROM HomeInfoSections his 
@@ -312,12 +314,15 @@
                 $lastSectionID = $sectionID;
                 echo "<div class='sortable-item' id='section-$lastSectionID'>";
                 echo "<h5>" . $section["SectionName"] . "</h5>";
+                if ($section["SectionSubtitle"] && trim($section["SectionSubtitle"]) !== "") {
+                    echo "<h6>" . $section["SectionSubtitle"] . "</h6>";
+                }
                 $extraULClass = "";
                 if ($isAdminPage) {
                     $extraULClass = "browser-default";
                     echo "<div class='section-buttons'>";
                         echo "<div class='row'>";
-                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='create-edit-section.php?type=update&id=$sectionID&conferenceID=$conferenceID'>Edit Section Name</a>";
+                            echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='create-edit-section.php?type=update&id=$sectionID&conferenceID=$conferenceID'>Edit Section</a>";
                             echo "<a class='add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align' href='view-home-section-items.php?sectionID=$sectionID&conferenceID=$conferenceID'>Edit Line Items</a>";
                             echo "<a class='add waves-effect waves-teal btn-flat red white-text col s12 m2 center-align' href='delete-section.php?id=$sectionID&conferenceID=$conferenceID'>Delete Section</a>";
                         echo "</div>";

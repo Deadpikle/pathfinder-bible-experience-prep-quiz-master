@@ -56,6 +56,10 @@
                     <label for="section-name">Section Name</label>
                 </div>
                 <div class="input-field col s6 m4">
+                    <input type="text" id="section-subtitle" name="section-subtitle" value="" data-length="300"/>
+                    <label for="section-subtitle">Section Subtitle</label>
+                </div>
+                <div class="input-field col s6 m4">
                     <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Create Section</button>
                 </div>
             </div>

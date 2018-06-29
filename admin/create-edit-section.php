@@ -13,7 +13,7 @@
 
     if ($_GET["type"] == "update") {
         $query = '
-            SELECT Name, SortOrder
+            SELECT Name, Subtitle, SortOrder
             FROM HomeInfoSections his
             WHERE HomeInfoSectionID = ?';
         $stmt = $pdo->prepare($query);
@@ -24,6 +24,7 @@
         }
         $sectionID = $_GET["id"];
         $sectionName = $section["Name"];
+        $sectionSubtitle = $section["Subtitle"] ? $section["Subtitle"] : "";
         $sortOrder = $section["SortOrder"];
         $postType = "update";
         $titleString = "Edit";
@@ -31,6 +32,7 @@
     else {
         $sectionID = "";
         $sectionName = "";
+        $sectionSubtitle = "";
         $sortOrder = -1;
         $postType = "create";
         $titleString = "Create";
@@ -54,6 +56,10 @@
             <div class="input-field col s12 m4">
                 <input type="text" id="section-name" name="section-name" value="<?= $sectionName ?>" required data-length="150"/>
                 <label for="section-name">Section Name</label>
+            </div>
+            <div class="input-field col s12 m4">
+                <input type="text" id="section-subtitle" name="section-subtitle" value="<?= $sectionSubtitle ?>" data-length="300"/>
+                <label for="section-subtitle">Section Subtitle</label>
             </div>
         </div>
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
