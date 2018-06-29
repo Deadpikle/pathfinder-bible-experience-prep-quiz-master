@@ -178,7 +178,7 @@
         $toYearID = get_active_year($pdo)["YearID"];
         // load all sections from other conference and year
         $sectionQuery = '
-            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName
+            SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, his.Subtitle AS SectionSubtitle
             FROM HomeInfoSections his 
             WHERE ConferenceID = ? AND YearID = ?
             ORDER BY SortOrder';
@@ -210,7 +210,7 @@
         }
         //die("order = " .$nextSectionSortOrder);
 
-        $insertSection = 'INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?)';
+        $insertSection = 'INSERT INTO HomeInfoSections (Name, Subtitle, SortOrder, YearID, ConferenceID) VALUES (?, ?, ?, ?, ?)';
         $insertSectionStmnt = $pdo->prepare($insertSection);
         // --
         $lineMaxSortOrderQuery = '
@@ -256,6 +256,7 @@
                 // insert it into the HomeInfoSections table for the given year and conference
                 $insertSectionParams = [
                     $section["SectionName"],
+                    $section["SectionSubtitle"] ? $section["SectionSubtitle"] : "",
                     $nextSectionSortOrder++,
                     $toYearID,
                     $toConferenceID
