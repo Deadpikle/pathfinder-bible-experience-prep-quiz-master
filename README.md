@@ -19,6 +19,10 @@ The Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bib
 * Website administrators can edit pretty much everything from an Admin panel
 * Responsive website -- use on your tablet or phone!
 
+## Demo
+
+You can view a read-only demo of the website at [https://babien.co/pbe](https://babien.co/pbe).
+
 ## Notes about the website code
 
 The website features are working as one would expect, but the website has gained some technical debt due to its fast development cycle. It could really use an MVC refactor and some unit tests! That would go a long way towards improving this project. The main code and ideas though should all be set.
