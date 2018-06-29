@@ -25,8 +25,6 @@
         die("userID is required");
     }
 
-    $DEBUG = false;
-    
     if (isset($_POST["enableQuestionDistribution"]) && 
         filter_var($_POST["enableQuestionDistribution"], FILTER_VALIDATE_BOOLEAN) &&
         isset($_POST["quizItems"]) && count($_POST["quizItems"]) > 0) {

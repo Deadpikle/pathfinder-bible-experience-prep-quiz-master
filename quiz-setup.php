@@ -156,7 +156,7 @@
         <div class="row">
             <div class="input-field col s12">
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
-                <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings!)</label>
+                <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings, including weighted question distribution!)</label>
             </div>
             <div class="input-field col s12 m4" id="fill-in-percent-div">
                 <input type="number" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31"/>

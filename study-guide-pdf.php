@@ -552,8 +552,32 @@
     $params["shouldAvoidPastCorrect"] = $shouldAvoidPastCorrect;
     $params["quizItems"] = isset($_POST["quiz-items"]) ? $_POST["quiz-items"] : array();
     $params["userID"] = $_SESSION["UserID"];
+
+    $isGeneratingWeighted = false;
+    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != NULL &&
+        isset($params["quizItems"]) && count($params["quizItems"]) > 0 && !$params["flashShowOnlyRecent"]) {
+        $isGeneratingWeighted = true;
+        $bibleWeights = [];
+        $commentaryWeights = [];
+        foreach ($_POST as $key => $value) {
+            if (str_contains("table-input-chapter-", $key)) {
+                $bibleWeights[$key] = $value;
+            }
+            else if (str_contains("table-input-commentary-", $key)) {
+                $commentaryWeights[$key] = $value;
+            }
+        }
+        $params["bibleWeights"] = $bibleWeights;
+        $params["commentaryWeights"] = $bibleWeights;
+    }
+
     // generate the quiz
-    $quizMaterials = generate_quiz_questions($pdo, $params);
+    if ($isGeneratingWeighted) {
+        $quizMaterials = generate_weighted_quiz_questions($pdo, $params);
+    }
+    else {
+        $quizMaterials = generate_quiz_questions($pdo, $params);
+    }
     if ($quizMaterials["totalQuestions"] <= 0) {
         $pdf->MultiCell(165.1, 10, 
         'No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!');        

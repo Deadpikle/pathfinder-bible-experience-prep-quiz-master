@@ -726,6 +726,7 @@
     }
 
     function generate_weighted_quiz_questions($pdo, $params) {
+        $DEBUG = false;
         // performing custom question distribution!
         $bibleWeights = [];
         $commentaryWeights = [];
