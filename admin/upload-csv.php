@@ -149,9 +149,9 @@
 
                 if ($questionType === "bible-qna" || $questionType === "bible-qna-fill") {
                     // find verse id for start
-                    $bookName = $row["Start Book"];
-                    $chapterNumber = $row["Start Chapter"];
-                    $verseNumber = $row["Start Verse"];
+                    $bookName = trim($row["Start Book"]);
+                    $chapterNumber = trim($row["Start Chapter"]);
+                    $verseNumber = trim($row["Start Verse"]);
                     if (isset($rawBooks[$bookName]) 
                         && isset($rawBooks[$bookName][$chapterNumber]) 
                         && isset($rawBooks[$bookName][$chapterNumber][$verseNumber])) {
@@ -165,9 +165,9 @@
                         }
                         continue;
                     }
-                    $bookName = $row["End Book"];
-                    $chapterNumber = $row["End Chapter"];
-                    $verseNumber = $row["End Verse"];
+                    $bookName = trim($row["End Book"]);
+                    $chapterNumber = trim($row["End Chapter"]);
+                    $verseNumber = trim($row["End Verse"]);
                     if ($bookName !== "") {
                         if (isset($rawBooks[$bookName]) 
                             && isset($rawBooks[$bookName][$chapterNumber]) 
@@ -187,8 +187,8 @@
                     $commentaryEndPage = NULL;
                 }
                 else if ($questionType === "commentary-qna" || $questionType === "commentary-qna-fill") {
-                    $commentaryNumber = $row["Commentary Number"];
-                    $commentaryTopic = $row["Commentary Topic"];
+                    $commentaryNumber = trim($row["Commentary Number"]);
+                    $commentaryTopic = trim($row["Commentary Topic"]);
                     $commentaryStartPage = $row["Start Page"];
                     $commentaryEndPage = $row["End Page"];
                     $commentaryKey = $commentaryNumber . $commentaryTopic;
