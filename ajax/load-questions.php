@@ -44,7 +44,7 @@
         }
         else if (strpos($questionType, 'commentary') !== FALSE) {
             if (isset($_POST["volumeFilter"]) && is_numeric($_POST["volumeFilter"]) && $_POST["volumeFilter"] != -1) {
-                $whereClause .= " AND comm.Number = " . $_POST["volumeFilter"];
+                $whereClause .= " AND comm.CommentaryID = " . $_POST["volumeFilter"];
             }
         }
 
