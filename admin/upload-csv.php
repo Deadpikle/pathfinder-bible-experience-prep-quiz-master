@@ -13,6 +13,7 @@
     $errors = "";
     if ($isPostRequest) {
         $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
+        $currentYear = get_active_year($pdo)["YearID"];
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
         // split file by items
@@ -31,10 +32,11 @@
         array_shift($csv); // remove column header (yay http://php.net/manual/en/function.str-getcsv.php)
         
         // get all the commentary
-        $params = [];
+        $params = [$currentYear];
         $query = '
             SELECT CommentaryID, Number, Year, TopicName
             FROM Commentaries c JOIN Years y ON c.YearID = y.YearID
+            WHERE c.YearID = ?
             ORDER BY Year, Number';
         $commentaryStmt = $pdo->prepare($query);
         $commentaryStmt->execute($params);
@@ -52,8 +54,11 @@
         FROM Books b 
             JOIN Chapters c ON b.BookID = c.BookID
             LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
+        WHERE b.YearID = ?
         ORDER BY b.Name, ChapterNumber, VerseNumber';
-        $bookData = $pdo->query($bookQuery)->fetchAll();
+        $bookStmnt = $pdo->prepare($bookQuery);
+        $bookStmnt->execute($params);
+        $bookData = $bookStmnt->fetchAll();
         // put it in a nice format for easily querying later
         $rawBooks = [];
         foreach ($bookData as $bookRow) {
