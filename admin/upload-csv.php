@@ -1,7 +1,7 @@
 <?php
     // if "Type" is undefined, check for an invisible bullet char at gist.github.com -> if exists, erase with hex editor (can show up if exported as UTF8 CSV file)
     require_once(dirname(__FILE__)."/init-admin.php");
-    if (!$isWebAdmin) {
+    if (!$isAdmin) {
         header("Location: $basePath/index.php");
         die();
     }
