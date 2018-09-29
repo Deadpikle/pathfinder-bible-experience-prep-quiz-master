@@ -4,3 +4,4 @@ uploads/*
 config.php
 vendor/*
 phinx.yml
+composer.phar
