@@ -63,7 +63,7 @@ class DefaultSeeder extends AbstractSeed
             ],
             [
                 'SettingKey' => 'AnalyticsURL',
-                'SettingValue' => '//babien.co/analytics/',
+                'SettingValue' => '',
                 'DisplayName' => 'Analytics URL'
             ],
             [
@@ -83,7 +83,7 @@ class DefaultSeeder extends AbstractSeed
         $conferencesData = [
             [
                 'Name' => 'Website Administrators',
-                'URL' => 'https://babien.co',
+                'URL' => 'https://example.com',
                 'ContactName' => '-',
                 'ContactEmail' => '-'
             ]
@@ -94,7 +94,7 @@ class DefaultSeeder extends AbstractSeed
         $clubsData = [
             [
                 'Name' => 'Website Administrators',
-                'URL' => 'https://babien.co',
+                'URL' => 'https://example.com',
                 'ConferenceID' => 1
             ]
         ];
