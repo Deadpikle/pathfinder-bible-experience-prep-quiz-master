@@ -21,7 +21,7 @@ The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bi
 
 ## Demo
 
-You can view a read-only demo of the website at [https://babien.co/pbe](https://babien.co/pbe).
+You can view a read-only demo of the website at [https://babien.co/pbe](https://babien.co/pbe) with the password '4guest'.
 
 ## Notes about the website code
 
