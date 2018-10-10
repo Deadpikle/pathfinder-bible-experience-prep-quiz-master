@@ -4,6 +4,11 @@
     session_start();
 
     require_once("../database.php");
+
+    if (!isset($_SESSION["UserID"])) {
+        die();
+    }
+    
         // prepare everything
         // we don't want to add duplicate rows for a question
         // so that generate-quiz has a bit easier of a time.

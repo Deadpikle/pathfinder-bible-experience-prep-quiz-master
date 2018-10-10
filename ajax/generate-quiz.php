@@ -6,6 +6,10 @@
     require_once("../database.php");
     require_once("../functions.php");
 
+    if (!isset($_SESSION["UserID"])) {
+        die();
+    }
+
     if (!isset($_POST["maxQuestions"])) {
         die("maxQuestions is required");
     }
