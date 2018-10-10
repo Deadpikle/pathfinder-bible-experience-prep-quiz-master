@@ -4,6 +4,10 @@
     session_start();
 
     require_once("../database.php");
+
+    if (!isset($_SESSION["UserID"])) {
+        die();
+    }
     
     try {
         // Make sure it's not in the table already!

@@ -1,5 +1,9 @@
 <?php
     require_once(dirname(__FILE__)."/../init.php");
+
+    if (!isset($_SESSION["UserID"])) {
+        die();
+    }
     
     $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
     $startVerseID = isset($_POST["start-verse-id"]) ? $_POST["start-verse-id"] : NULL;
