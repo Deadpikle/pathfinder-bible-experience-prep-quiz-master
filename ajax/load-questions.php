@@ -7,6 +7,10 @@
     require_once("../database.php");
     require_once("../functions.php");
 
+    if (!isset($_SESSION["UserID"])) {
+        die();
+    }
+
     try {
         $whereClause = "";
         $isFlagged = FALSE;
