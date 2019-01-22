@@ -25,7 +25,8 @@
         $extraJoin = "LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID";
     }
     $query = '
-        SELECT UserID, Username, EntryCode, ut.Type, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName ' . $extraSelect . '
+        SELECT UserID, Username, EntryCode, ut.Type, ut.DisplayName AS UserTypeDisplayName, c.Name AS ClubName, 
+                u.LastLoginDate ' . $extraSelect . '
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
             ' . $extraJoin . '
@@ -68,6 +69,7 @@
                 <?php if ($isWebAdmin) { ?>
                     <th data-placeholder="Conference">Conference</th>
                 <?php } ?>
+                <th data-placeholder="Last Login">Last Login</th>
                 <th data-sorter="false" data-filter="false"></th>
                 <th data-sorter="false" data-filter="false"></th>
             </tr>
@@ -98,6 +100,7 @@
                         <?php if ($isWebAdmin) { ?>
                             <td><?= $user["ConferenceName"] ?></td>
                         <?php } ?>
+                        <td><?= (new DateTime($user["LastLoginDate"]))->format('D, M d, Y') ?></td>
                         <td>
                             <!-- edit this to not let you edit people above you -->
                             <?php if ($_SESSION["UserID"] != $user["UserID"] && $canEdit) { ?> 
