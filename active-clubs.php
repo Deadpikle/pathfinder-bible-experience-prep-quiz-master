@@ -7,7 +7,7 @@
     $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
 
     $query = '
-        SELECT DISTINCT c.Name, c.URL, conf.Name AS ConferenceName
+        SELECT DISTINCT c.Name, c.URL, conf.Name AS ConferenceName, conf.URL AS ConferenceURL
         FROM Users u JOIN Clubs c ON u.ClubID = c.ClubID
             LEFT JOIN Conferences conf ON conf.ConferenceID = c.ConferenceID
         WHERE LastLoginDate > ?
@@ -20,9 +20,12 @@
     $conferences = [];
     foreach ($clubs as $club) {
         if (!isset($conferences[$club['ConferenceName']])) {
-            $conferences[$club['ConferenceName']] = 1;
+            $conferences[$club['ConferenceName']] = [
+                'count' => 1,
+                'url' => $club['ConferenceURL']
+            ];
         } else {
-            $conferences[$club['ConferenceName']] += 1;
+            $conferences[$club['ConferenceName']]['count'] += 1;
         }
     }
     ksort($conferences);
@@ -50,8 +53,8 @@
     </ul>
     <h4>Active Conferences</h4>
     <ul class="browser-default">
-        <?php foreach ($conferences as $conferenceName => $numberOfClubs) { ?>
-            <li><?= $conferenceName ?> (<?= $numberOfClubs ?> Pathfinder <?= $numberOfClubs == 1 ? 'club' : 'clubs' ?>)</li>
+        <?php foreach ($conferences as $conferenceName => $data) { ?>
+            <li><a href="<?= $data['url'] ?>"><?= $conferenceName ?></a> (<?= $data['count'] ?> Pathfinder <?= $data['count'] == 1 ? 'club' : 'clubs' ?>)</li>
         <?php } ?>
     </ul>
 </div>
