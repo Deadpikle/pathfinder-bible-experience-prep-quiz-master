@@ -42,7 +42,7 @@
             foreach ($clubs as $club) { 
                 if ($club["URL"] != NULL) {
         ?>
-                    <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a> | (<?= $club["ConferenceName"] ?>)</li>
+                    <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a> (<?= $club["ConferenceName"] ?>)</li>
             <?php } else { ?>
                     <li><?= $club["Name"] ?></li>
             <?php } ?>
