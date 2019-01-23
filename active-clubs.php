@@ -7,8 +7,9 @@
     $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
 
     $query = '
-        SELECT DISTINCT c.Name, c.URL 
+        SELECT DISTINCT c.Name, c.URL, conf.Name AS ConferenceName
         FROM Users u JOIN Clubs c ON u.ClubID = c.ClubID
+            LEFT JOIN Conferences conf ON conf.ConferenceID = c.ConferenceID
         WHERE LastLoginDate > ?
         ORDER BY c.Name';
     $stmt = $pdo->prepare($query);
@@ -16,6 +17,15 @@
     $stmt->execute($params);
     $clubs = $stmt->fetchAll();
 
+    $conferences = [];
+    foreach ($clubs as $club) {
+        if (!isset($conferences[$club['ConferenceName']])) {
+            $conferences[$club['ConferenceName']] = 1;
+        } else {
+            $conferences[$club['ConferenceName']] += 1;
+        }
+    }
+    ksort($conferences);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -32,10 +42,16 @@
             foreach ($clubs as $club) { 
                 if ($club["URL"] != NULL) {
         ?>
-                    <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a></li>
+                    <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a> | (<?= $club["ConferenceName"] ?>)</li>
             <?php } else { ?>
                     <li><?= $club["Name"] ?></li>
             <?php } ?>
+        <?php } ?>
+    </ul>
+    <h4>Active Conferences</h4>
+    <ul class="browser-default">
+        <?php foreach ($conferences as $conferenceName => $numberOfClubs) { ?>
+            <li><?= $conferenceName ?> (<?= $numberOfClubs ?> Pathfinder <?= $numberOfClubs == 1 ? 'club' : 'clubs' ?>)</li>
         <?php } ?>
     </ul>
 </div>
