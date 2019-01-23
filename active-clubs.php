@@ -29,6 +29,7 @@
         }
     }
     ksort($conferences);
+    $clubCount = count($clubs);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -37,7 +38,7 @@
 
 <h3>Active Pathfinder Clubs</h3>
 
-<p>Here is a list of Pathfinder clubs that have been active on this website within the last 30 days:</p>
+<p>Here is <?= $clubCount == 1 ? '' : 'a list of' ?> the <?= $clubCount ?> Pathfinder <?= $clubCount == 1 ? 'club' : 'clubs' ?> that <?= $clubCount == 1 ? 'has' : 'have' ?> been active on this website within the last 30 days:</p>
 
 <div id="active-clubs">
     <ul class="browser-default">
@@ -53,8 +54,17 @@
     </ul>
     <h4>Active Conferences</h4>
     <ul class="browser-default">
-        <?php foreach ($conferences as $conferenceName => $data) { ?>
-            <li><a href="<?= $data['url'] ?>"><?= $conferenceName ?></a> (<?= $data['count'] ?> Pathfinder <?= $data['count'] == 1 ? 'club' : 'clubs' ?>)</li>
+        <?php foreach ($conferences as $conferenceName => $data) {
+                if ($data['url'] != null && $data['url'] !== '') {
+        ?>
+            <li>
+                <a href="<?= $data['url'] ?>"><?= $conferenceName ?></a> (<?= $data['count'] ?> Pathfinder <?= $data['count'] == 1 ? 'club' : 'clubs' ?>)
+            </li>
+            <?php } else { ?>
+            <li>
+                <?= $conferenceName ?> (<?= $data['count'] ?> Pathfinder <?= $data['count'] == 1 ? 'club' : 'clubs' ?>)
+            </li>
+            <?php } ?>
         <?php } ?>
     </ul>
 </div>
