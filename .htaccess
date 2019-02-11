@@ -1,1 +1,6 @@
 Options -Indexes
+
+RewriteRule ^phinx\.yml$ - [F]
+RewriteRule ^config\.php$ - [F]
+RewriteRule ^config.sample\.php$ - [F]
+RewriteRule ^database\.php$ - [F]
