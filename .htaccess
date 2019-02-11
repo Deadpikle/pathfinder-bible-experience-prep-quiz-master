@@ -1,6 +1,10 @@
-Options -Indexes
+<IfModule mod_rewrite.c>
 
-RewriteRule ^phinx\.yml$ - [F]
-RewriteRule ^config\.php$ - [F]
-RewriteRule ^config.sample\.php$ - [F]
-RewriteRule ^database\.php$ - [F]
+    RewriteEngine On
+    Options -Indexes
+
+    RewriteRule ^phinx\.yml$ - [F]
+    RewriteRule ^config\.php$ - [F]
+    RewriteRule ^config.sample\.php$ - [F]
+    RewriteRule ^database\.php$ - [F]
+</IfModule>
