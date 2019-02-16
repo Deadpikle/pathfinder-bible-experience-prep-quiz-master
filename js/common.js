@@ -130,3 +130,12 @@ function lowercaseFirstLetter(string) {
 function removeSpaces(str) {
     return str.replace(/ /g,'');
 }
+/*
+$(document).ready(function() {
+    $(".dropdown-button").dropdown({gutter: 0, hover: false, belowOrigin: true});
+    $(".dropdown-button").parent().find('li').click(function(e) {
+        var id = e.currentTarget.id; // the actual language ID is the last element
+        var languageID = id.split('-')[3];
+        
+    });
+});*/

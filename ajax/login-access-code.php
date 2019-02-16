@@ -7,7 +7,7 @@
 
     $query = '
         SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
-            conf.ConferenceID, conf.Name AS ConferenceName
+            conf.ConferenceID, conf.Name AS ConferenceName, u.PreferredLanguageID
         FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
             LEFT JOIN Clubs c ON u.ClubID = c.ClubID
             LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
@@ -44,6 +44,7 @@
             $_SESSION["ConferenceID"] = -1;
         }
         $_SESSION["ConferenceName"] = $row["ConferenceName"];
+        $_SESSION["PreferredLanguageID"] = $row["LanguageID"];
         
         header("Location: ../index.php");
     }

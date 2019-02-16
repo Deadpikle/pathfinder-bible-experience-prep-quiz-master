@@ -70,6 +70,20 @@
         return ["LanguageID" => 1, "Name" => "English", "AltName" => ""];
     }
 
+    function get_user_language($pdo) {
+        $query = '
+            SELECT LanguageID, Name, AltName
+            FROM Languages
+            WHERE LanguageID = ?';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$_SESSION["PreferredLanguageID"]]);
+        $data = $stmt->fetchAll();
+        if (count($data) > 0) {
+            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], "IsDefault" => 1, "AltName" => $data[0]["AltName"]];
+        }
+        return ["LanguageID" => 1, "Name" => "English", "AltName" => ""];
+    }
+
     function is_bible_qna($type) {
         return $type === "bible-qna" || $type == "bible-qna-fill";
     }

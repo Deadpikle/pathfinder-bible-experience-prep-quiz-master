@@ -31,6 +31,11 @@
     if ($aboutHeaderActiveStatus === "" && $adminHeaderActiveStatus === "") {
         $homeHeaderActiveStatus = "active";
     }
+
+    $languages = get_languages($pdo);
+    if ($isLoggedIn) {
+        $userLanguage = get_user_language($pdo);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -92,6 +97,11 @@
     </head>
     <body>
         <header>
+            <!-- <ul id="languages" class="dropdown-content">
+                <?php foreach ($languages as $language) { ?>
+                    <li id="user-lang-selector-<?= $language["LanguageID"] ?>"><a><?= $language["Name"] ?></a></li>
+                <?php } ?>
+            </ul> -->
             <nav>
                 <div class="nav-wrapper teal lighten-2">
                     <div class="container">
@@ -101,6 +111,7 @@
                             <?php if ($isLoggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
+                                <!-- <li><a class="dropdown-button" href="#!" data-activates="languages"><?= $userLanguage["Name"] ?><i class="material-icons right">arrow_drop_down</i></a></li> -->
                             <?php } ?>
                             <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?=$basePath?>/about.php">About</a></li>
                             <?php if ($isLoggedIn) { ?>
