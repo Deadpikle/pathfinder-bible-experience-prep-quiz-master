@@ -201,6 +201,8 @@
                 <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
                 <label for="number-of-points">Number of Points</label>
             </div>
+        </div>
+        <div class="row" id="language-select-add-edit-question-container">
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
                     <?php foreach ($languages as $language) { 
