@@ -38,6 +38,8 @@
             $commentaryWeights[$key] = $value;
         }
     }
+
+    $languageID = $_POST["language-select"];
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -54,6 +56,7 @@
     var enableQuestionDistribution = <?= $enableQuestionDistribution ?>;
     var bibleWeights = <?= json_encode($bibleWeights) ?>;
     var commentaryWeights = <?= json_encode($commentaryWeights) ?>;
+    var languageID = <?= $languageID ?>;
 </script>
 
 <div id="quiz-taking">
@@ -327,7 +330,8 @@
                     userID: userID,
                     enableQuestionDistribution: enableQuestionDistribution,
                     bibleWeights: bibleWeights,
-                    commentaryWeights: commentaryWeights
+                    commentaryWeights: commentaryWeights,
+                    languageID: languageID
                 },
                 success: function(response) {
                     if (typeof response.questions !== "undefined" && response.questions.length > 0) {

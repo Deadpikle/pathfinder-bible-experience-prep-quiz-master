@@ -536,6 +536,7 @@
     $params["questionTypes"] = $_POST["question-types"];
     $params["questionOrder"] = $_POST["order"];
     $params["fillInPercent"] = $_POST["fill-in-percent"];
+    $params["languageID"] = $_POST["language-select"];
     // TODO: use filter_var instead of this ? : chain (I'm in a rush right now :sweat_smile:)
     $params["flashShowOnlyRecent"] = isset($_POST["flash-show-recently-added"])  && $_POST["flash-show-recently-added"] != NULL
          ? $_POST["flash-show-recently-added"] : FALSE;
