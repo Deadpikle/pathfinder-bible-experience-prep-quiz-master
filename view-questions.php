@@ -46,6 +46,8 @@
         $books[] = $book; // make sure to get the last item
     }
     $volumes = load_commentaries($pdo);
+
+    $userLanguage = get_user_language($pdo);
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -90,9 +92,8 @@
 <div class="row" id="language-select-container">
     <div class="input-field col s12 m4">
         <select id="language-select">
-            <option value="-1" selected>No language filter</option>
             <?php foreach ($languages as $language) { 
-                    $selected = $language["LanguageID"] == $languageID ? 'selected' : '';
+                    $selected = $language["LanguageID"] == $userLanguage["LanguageID"] ? 'selected' : '';
                     $name = $language["Name"];
                     if ($language["AltName"] !== "") {
                         $name .= " (" . $language["AltName"] . ")";
@@ -100,6 +101,7 @@
             ?>
                 <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
             <?php } ?>
+            <option value="-1">No language filter</option>
         </select>
         <label for="language-select">Filter by language</label>
     </div>
