@@ -278,3 +278,8 @@ h5#question-text {
 #quiz-setup-language-select-container {
     margin-top: -1.2em;
 }
+
+#language-select-add-edit-question-container {
+    margin-top: -1.2em;
+    margin-bottom: -1em;
+}
