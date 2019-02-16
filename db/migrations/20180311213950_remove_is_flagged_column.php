@@ -26,10 +26,17 @@ class RemoveIsFlaggedColumn extends AbstractMigration
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function change()
+    public function up()
     {
         $table = $this->table('Questions');
         $table->removeColumn('IsFlagged');
+        $table->update();
+    }
+
+    public function down()
+    {
+        $table = $this->table('Questions');
+        $table->addColumn('IsFlagged', 'boolean', ['default' => false]);
         $table->update();
     }
 }
