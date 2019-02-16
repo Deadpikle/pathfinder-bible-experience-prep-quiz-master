@@ -86,6 +86,16 @@
             $pageOffset = $_POST["pageOffset"];
         }
 
+        // check if need to filter by language
+        if ($_POST["languageID"] != -1) {
+            if ($whereClause == "") {
+                $whereClause = " WHERE l.LanguageID = " . $_POST["languageID"] . ' ';
+            }
+            else {
+                $whereClause .= " AND l.LanguageID = " . $_POST["languageID"] . ' ';
+            }
+        }
+
         $selectPortion = '
             SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
