@@ -246,6 +246,7 @@
                 html += '<th>Start</th>';
                 html += '<th>End</th>';
                 html += '<th>Points</th>';
+                html += '<th>Language</th>';
             }
             else if (isCommentaryQuestion(questionType)) {
                 html += '<th>Question</th>';
@@ -253,6 +254,7 @@
                 html += '<th class="nowrap">Fill-in?</th>';
                 html += '<th>Volume</th>';
                 html += '<th>Points</th>';
+                html += '<th>Language</th>';
             }
             if (isAdmin && !isGuestMode) {
                 html += '<th></th>';
@@ -280,6 +282,10 @@
                 var isFillIn = isFillInQuestion(question.Type);
                 var checkboxTypeForFillIn = isFillIn ? checked : unchecked;
                 var answer = isFillIn ? "[Fill in the blanks]" : question.Answer;
+                var languageName = question.LanguageName;
+                if (question.LanguageAltName != '') {
+                    languageName += ' (' + question.LanguageAltName + ')';
+                }
                 if (isBibleQuestion(question.Type)) {
                     var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
                     var endVerse = "";
@@ -292,6 +298,7 @@
                     html += '<td>' + startVerse + '</td>';
                     html += '<td>' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
+                    html += '<td>' + languageName + '</td>';
                 }
                 else if (isCommentaryQuestion(question.Type)) {
                     var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
@@ -301,6 +308,7 @@
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
                     html += '<td>' + volume + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
+                    html += '<td>' + languageName + '</td>';
                 }
                 if (isAdmin && !isGuestMode) {
                     html += '<td><a class="waves-effect waves-light btn" href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
