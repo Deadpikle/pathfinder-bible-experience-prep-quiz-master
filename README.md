@@ -18,6 +18,7 @@ The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bi
 * Admins can upload study materials for other users to download
 * Website administrators can edit pretty much everything from an Admin panel
 * Responsive website -- use on your tablet or phone!
+* Add questions in English, Spanish, or French
 
 ## Demo
 
