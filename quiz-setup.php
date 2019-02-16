@@ -6,7 +6,10 @@
     // load possible books and commentary volumes
 
     $currentYear = get_active_year($pdo)["YearID"];
+
     $languages = get_languages($pdo);
+    $userLanguage = get_user_language($pdo);
+
     $chapterQuery = '
         SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
             c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
@@ -65,10 +68,10 @@
             </div>
         </div>
         <div class="row negat-" id="quiz-setup-language-select-container">
-            <div class="input-field col s12 m4">
+            <div class="input-field col s12 m3">
                 <select id="language-select" name="language-select">
                     <?php foreach ($languages as $language) { 
-                            $selected = $language["IsDefault"] == 1 ? 'selected' : '';
+                            $selected = $language["LanguageID"] == $userLanguage["LanguageID"] ? 'selected' : '';
                             $name = $language["Name"];
                             if ($language["AltName"] !== "") {
                                 $name .= " (" . $language["AltName"] . ")";

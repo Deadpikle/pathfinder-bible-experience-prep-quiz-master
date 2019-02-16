@@ -56,15 +56,9 @@
         $commentaryEndPage = "";
         $postType = "create";
         $titleString = "Create";
-        foreach ($languages as $language) {
-            if ($language["IsDefault"] == 1) {
-                $languageID = $language["LanguageID"];
-                break;
-            }
-        }
-        if (!isset($languageID)) {
-            $languageID = 1;
-        }
+        $userLanguage = get_user_language($pdo);
+        $languageID = $userLanguage["LanguageID"];
+        
     }
     
     $title = $titleString . ' Question';
