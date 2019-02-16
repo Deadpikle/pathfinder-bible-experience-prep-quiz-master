@@ -267,5 +267,10 @@ h5#question-text {
 }
 
 #language-select-container {
-    padding-top: .5em;
+    padding-top: 1em;
+}
+
+#book-select-container {
+    margin-top: -1.2em;
+    margin-bottom: -1em;
 }

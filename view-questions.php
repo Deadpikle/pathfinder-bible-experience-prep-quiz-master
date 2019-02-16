@@ -105,21 +105,25 @@
     </div>
 </div>
 
-<div class="row">
-    <p class="left-margin-fix" id="filter-by-text"><b>Filter by Book/Chapter</b></p>
-    <div class="input-field col s12 m4">
+<div class="row" id="book-select-container">
+    <div class="input-field col s12 m4" id="book-select-field">
         <select id="book-select">
             <option value="-1" selected>No book filter</option>
         </select>
+        <label id="book-select-label" for="book-select">Book Filter</lable>
+    </div>
+    <div class="input-field col s12 m4" id="commentary-select-field">
         <select id="volume-select" class="">
             <option value="-1" selected>No commentary filter</option>
         </select>
+        <label id="volume-select-label" for="volume-select">Commentary Filter</lable>
     </div>
     <!-- <label>Book Filter</label> -->
     <div class="input-field col s12 m4">
         <select id="chapter-select">
             <option value="-1" selected>No chapter filter</option>
         </select>
+        <label id="chapter-select-label" for="chapter-select">Chapter Filter</lable>
     </div>
     <!-- <label>Chapter Filter</label> -->
     <div class="input-field col s12 m4">
@@ -455,6 +459,8 @@
             chapterFilter = -1;
             chapterIndex = 0;
             volumeFilter = -1;
+            $('#book-select-label').hide();
+            $('#chapter-select-label').hide();
         }
 
         function setupBookSelector() {
@@ -466,6 +472,10 @@
             }
             $('#volume-select').material_select("destroy");
             $('#book-select').material_select();
+            $('#book-select-label').show();
+            $('#volume-select-label').hide();
+            $('#book-select-field').show();
+            $('#commentary-select-field').hide();
         }
 
         function setupChapterSelectForBook(book) {
@@ -477,6 +487,9 @@
                 }
             }
             $('#chapter-select').material_select();
+            $('#chapter-select-label').show();
+            $('#volume-select-label').hide();
+            $('#commentary-select-field').hide();
         }
 
         function setupVolumeSelector() {
@@ -489,6 +502,11 @@
             $('#book-select').material_select("destroy");
             $('#chapter-select').material_select("destroy");
             $('#volume-select').material_select();
+            $('#book-select-label').hide();
+            $('#chapter-select-label').hide();
+            $('#book-select-field').hide();
+            $('#volume-select-label').show();
+            $('#commentary-select-field').show();
         }
 
         // language selector
@@ -516,6 +534,7 @@
                 chapterFilter = -1;
                 chapterIndex = 0;
                 $('#chapter-select').material_select('destroy');
+                $('#chapter-select-label').hide();
             }
             loadQuestions();
         }); 
@@ -548,6 +567,8 @@
         setupBookSelector();
         
         $('#language-select').material_select();
+        $('#chapter-select-label').hide();
+        $('#volume-select-label').hide();
 
         // load questions
         loadQuestions();
