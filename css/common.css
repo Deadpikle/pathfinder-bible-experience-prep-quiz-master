@@ -274,3 +274,7 @@ h5#question-text {
     margin-top: -1.2em;
     margin-bottom: -1em;
 }
+
+#quiz-setup-language-select-container {
+    margin-top: -1.2em;
+}

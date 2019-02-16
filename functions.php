@@ -503,6 +503,7 @@
                 JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
                 JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
                 JOIN Books bStart ON bStart.BookID = cStart.BookID
+                JOIN Languages l ON q.LanguageID = l.LanguageID
 
                 LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID 
                 LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID 
@@ -525,6 +526,10 @@
         }
 
         $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS NULL OR bEnd.YearID = ' . $currentYear . ')';
+
+        if ($params["languageID"] != -1 && is_numeric($params["languageID"])) {
+            $whereClause .= " AND l.LanguageID = " . $params["languageID"];
+        }
 
         $orderByPortion = '';
         if ($areRandomQuestionsPulled) {
@@ -562,7 +567,8 @@
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
-                JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID';
+                JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
+                JOIN Languages l ON q.LanguageID = l.LanguageID';
         if ($shouldAvoidPastCorrectAnswers) {
             $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
         }
@@ -579,6 +585,10 @@
             $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
         $whereClause .= ' AND IsDeleted = 0 AND comm.YearID = ' . $currentYear;
+
+        if ($params["languageID"] != -1 && is_numeric($params["languageID"])) {
+            $whereClause .= " AND l.LanguageID = " . $params["languageID"];
+        }
 
         if (!$areRandomQuestionsPulled) {
             $orderByPortion = ' ORDER BY CommentaryNumber, CommentaryStartPage, CommentaryEndPage';

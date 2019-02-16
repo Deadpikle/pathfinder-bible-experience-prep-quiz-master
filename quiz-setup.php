@@ -6,6 +6,7 @@
     // load possible books and commentary volumes
 
     $currentYear = get_active_year($pdo)["YearID"];
+    $languages = get_languages($pdo);
     $chapterQuery = '
         SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
             c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
@@ -61,6 +62,23 @@
                     </optgroup>
                 </select>
                 <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
+            </div>
+        </div>
+        <div class="row negat-" id="quiz-setup-language-select-container">
+            <div class="input-field col s12 m4">
+                <select id="language-select" name="language-select">
+                    <?php foreach ($languages as $language) { 
+                            $selected = $language["IsDefault"] == 1 ? 'selected' : '';
+                            $name = $language["Name"];
+                            if ($language["AltName"] !== "") {
+                                $name .= " (" . $language["AltName"] . ")";
+                            }
+                    ?>
+                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
+                    <?php } ?>
+                    <option value="-1">No language filter</option>
+                </select>
+                <label for="language-select">Filter by language</label>
             </div>
         </div>
         <p class="negative-top-margin"><b>Weighted Question Distribution</b></p>
@@ -324,5 +342,6 @@
 
         $("#enable-question-distribution").trigger("change");
         $("#quiz-items").trigger("change");
+        $("#language-select").material_select();
     });
 </script>
