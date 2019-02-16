@@ -42,7 +42,7 @@
 
     function get_languages($pdo) {
         $query = '
-            SELECT LanguageID, Name, IsDefault
+            SELECT LanguageID, Name, IsDefault, AltName
             FROM Languages
             ORDER BY Name';
         $stmt = $pdo->prepare($query);
@@ -50,23 +50,24 @@
         $data = $stmt->fetchAll();
         $languages = [];
         foreach ($data as $row) {
-            $languages[] = ["LanguageID" => $row["LanguageID"], "Name" => $row["Name"], "IsDefault" => $row["IsDefault"]];
+            $languages[] = ["LanguageID" => $row["LanguageID"], "Name" => $row["Name"], "IsDefault" => $row["IsDefault"],
+                "AltName" => $row["AltName"]];
         }
         return $languages;
     }
 
     function get_default_language($pdo) {
         $query = '
-            SELECT LanguageID, Name
+            SELECT LanguageID, Name, AltName
             FROM Languages
             WHERE IsDefault = 1';
         $stmt = $pdo->prepare($query);
         $stmt->execute([]);
         $data = $stmt->fetchAll();
         if (count($data) > 0) {
-            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], "IsDefault" => 1];
+            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], "IsDefault" => 1, "AltName" => $data[0]["AltName"]];
         }
-        return ["LanguageID" => 1, "Name" => "English"];
+        return ["LanguageID" => 1, "Name" => "English", "AltName" => ""];
     }
 
     function is_bible_qna($type) {

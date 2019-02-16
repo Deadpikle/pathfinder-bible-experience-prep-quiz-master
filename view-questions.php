@@ -409,9 +409,11 @@
         });
 
         onlineSearchClear.addEventListener('click', function() {
-            $("#online-search-input").val('');
-            searchText = '';
-            loadQuestions();
+            if ($("#online-search-input").val().trim() != '') {
+                $("#online-search-input").val('');
+                searchText = '';
+                loadQuestions();
+            }
         });
 
         $("#questions").hide();
