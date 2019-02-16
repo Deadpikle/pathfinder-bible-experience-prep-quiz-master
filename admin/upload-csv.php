@@ -133,7 +133,9 @@
                     }
                 }
                 if ($languageID == -1) {
-                    $languageID = $defaultLanguage["LanguageID"];
+                    $questionsFailedToAdd++;
+                    $errors .= "Unable to add question: " . $row["Question"] . " -- Couldn't find language " . $language . ".<br>";
+                    continue;
                 }
                 $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
                 $row["Type"] = trim($row["Type"]);
