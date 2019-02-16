@@ -29,6 +29,7 @@
     else {
         $isFillInTheBlank = TRUE;
     }
+    $languageID = $_POST["language-select"];
     $formType = $_GET["type"];
     if ($questionType == "bible-qna") {
         $commentaryID = NULL;
@@ -71,13 +72,14 @@
         $endVerseID,
         $commentaryID,
         $commentaryStartPage,
-        $commentaryEndPage
+        $commentaryEndPage,
+        $languageID
     ];
     
     if ($formType == "update") {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
-            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?';
+            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ?';
         $query .= ' WHERE QuestionID = ?';
         $params[] = $_POST["question-id"];
     }
@@ -85,8 +87,8 @@
         $params[] = $_SESSION["UserID"];
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, LanguageID, CreatorID) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
     }
     else {

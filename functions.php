@@ -40,6 +40,35 @@
         return ["YearID" => 1, "Year" => 2018];
     }
 
+    function get_languages($pdo) {
+        $query = '
+            SELECT LanguageID, Name, IsDefault
+            FROM Languages
+            ORDER BY Name';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([]);
+        $data = $stmt->fetchAll();
+        $languages = [];
+        foreach ($data as $row) {
+            $languages[] = ["LanguageID" => $row["LanguageID"], "Name" => $row["Name"], "IsDefault" => $row["IsDefault"]];
+        }
+        return $languages;
+    }
+
+    function get_default_language($pdo) {
+        $query = '
+            SELECT LanguageID, Name
+            FROM Languages
+            WHERE IsDefault = 1';
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([]);
+        $data = $stmt->fetchAll();
+        if (count($data) > 0) {
+            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], "IsDefault" => 1];
+        }
+        return ["LanguageID" => 1, "Name" => "English"];
+    }
+
     function is_bible_qna($type) {
         return $type === "bible-qna" || $type == "bible-qna-fill";
     }
