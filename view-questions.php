@@ -7,6 +7,7 @@
     $GUEST_MODEJS = $isGuest ? "true" : "false";
 
     $currentYear = get_active_year($pdo)["YearID"];
+    $languages = get_languages($pdo);
     // TODO: refactor book loading to a function
     // Load all book, chapter, and verse information
     $bookQuery = '
@@ -84,6 +85,24 @@
     <a id="all-questions" class="btn-flat blue white-text">All</a>
     <a id="recently-added-questions" class="btn-flat waves-effect waves-blue">Recently Added</a>
     <a id="flagged-questions" class="btn-flat waves-effect waves-blue">Flagged</a>
+</div>
+
+<div class="row" id="language-select-container">
+    <div class="input-field col s12 m4">
+        <select id="language-select">
+            <option value="-1" selected>No language filter</option>
+            <?php foreach ($languages as $language) { 
+                    $selected = $language["LanguageID"] == $languageID ? 'selected' : '';
+                    $name = $language["Name"];
+                    if ($language["AltName"] !== "") {
+                        $name .= " (" . $language["AltName"] . ")";
+                    }
+            ?>
+                <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
+            <?php } ?>
+        </select>
+        <label for="language-select">Filter by language</label>
+    </div>
 </div>
 
 <div class="row">
@@ -194,7 +213,8 @@
                     bookFilter: bookFilter,
                     chapterFilter: chapterFilter,
                     volumeFilter: volumeFilter,
-                    searchText: searchText
+                    searchText: searchText,
+                    languageID: $("#language-select").val()
                 },
                 success: function(response) {
                     if (typeof response == 'undefined' || typeof response.questions == 'undefined'){
@@ -471,6 +491,12 @@
             $('#volume-select').material_select();
         }
 
+        // language selector
+
+        $('#language-select').change(function() { 
+            loadQuestions();
+        });
+
         // setup the book selector
         $('#book-select').change(function() { 
             currentPageNumber = 0;
@@ -521,6 +547,8 @@
         }); 
         setupBookSelector();
         
+        $('#language-select').material_select();
+
         // load questions
         loadQuestions();
     });
