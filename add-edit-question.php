@@ -211,8 +211,12 @@
                 <select class="" id="language-select" name="language-select" required>
                     <?php foreach ($languages as $language) { 
                             $selected = $language["LanguageID"] == $languageID ? 'selected' : '';
+                            $name = $language["Name"];
+                            if ($language["AltName"] !== "") {
+                                $name .= " (" . $language["AltName"] . ")";
+                            }
                     ?>
-                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $language['Name'] ?></option>
+                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
                     <?php } ?>
                 </select>
                 <label for="language-select">Language</label>

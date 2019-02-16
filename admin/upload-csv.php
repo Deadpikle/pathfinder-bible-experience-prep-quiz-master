@@ -6,16 +6,27 @@
         die();
     }
 
+    // getHexChar from http://forums.devshed.com/php-development-5/comparing-hex-values-comprising-string-249095.html
+    function getHexChar($hexCode) {
+        return chr(hexdec($hexCode));
+    } 
+
     $title = "Upload Questions";
 
     $questionsSuccessfullyAdded = 0;
     $questionsFailedToAdd = 0;
     $errors = "";
+    $defaultLanguage = get_default_language($pdo);
+    $allLanguages = get_languages($pdo);
     if ($isPostRequest) {
         $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
         $currentYear = get_active_year($pdo)["YearID"];
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
+        // check if UTF-8 encoded file
+        if ($contents[0] == getHexChar('EF') && $contents[1] == getHexChar('BB') && $contents[2] == getHexChar('BF')) {
+            $contents = substr($contents, 3);
+        }
         // split file by items
         $rows = explode("\r", $contents);
         // get csv data
@@ -77,8 +88,8 @@
         // prepare the statement
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsDeleted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsDeleted, LanguageID) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
         $stmt = $pdo->prepare($query);
         foreach ($csv as $row) {
@@ -86,7 +97,7 @@
                 || !isset($row["Start Chapter"]) || !isset($row["Start Verse"]) || !isset($row["Type"])) {
                 if (count($row) > 1) {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid column data.<br>";
+                    $errors .= "Unable to add question: " . (isset($row["Question"]) ? $row["Questions"] : "(question unavailable)") . " -- Invalid column data.<br>";
                 }
                 // else it was probably just a blank row!
                 continue; // get rid of blank rows.
@@ -110,6 +121,19 @@
                 if (!isset($row["Fill in?"])) {
                     print_r($row);
                     die();
+                }
+                $language = trim($row["Language"]);
+                $languageID = -1;
+                foreach ($allLanguages as $availableLanguage) {
+                    //echo $availableLanguage["Name"] . ' vs ' . $language . '<br>';
+                    if ($language == $availableLanguage["Name"] || $language == $availableLanguage["AltName"]) {
+                        //echo 'found it' . '<br>';
+                        $languageID = $availableLanguage["LanguageID"];
+                        break;
+                    }
+                }
+                if ($languageID == -1) {
+                    $languageID = $defaultLanguage["LanguageID"];
                 }
                 $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
                 $row["Type"] = trim($row["Type"]);
@@ -236,7 +260,8 @@
                     $commentaryStartPage,
                     $commentaryEndPage,
                     $_SESSION["UserID"],
-                    FALSE
+                    FALSE, 
+                    $languageID
                 ];
                 //print_r($params);
                 //die();
@@ -304,6 +329,7 @@
         <ul class="browser-default">
             <li><b>Type</b>: "Bible" or "Commentary"</li>
             <li><b>Fill in?</b>: "True" if adding a fill in the blank question or "False" otherwise.</li>
+            <li><b>Language</b>: "English", "French", or "Spanish" -- defaults to "<?= $defaultLanguage["Name"] ?>"</li>
             <li><b>Question</b>: Question text. The maximum length for a question is 10,000 characters. (A character is one letter, such as 'A'.)</li>
             <li><b>Answer</b>: Answer text for the question. Do not use if adding a fill in the blank question. The maximum length for an answer is 10,000 characters. (A character is one letter, such as 'A'.)</li>
             <li><b>Points</b>: Number of points for the question. Should be a number like 32 and not "thirty-two". If left blank, this value defaults to 1.</li>

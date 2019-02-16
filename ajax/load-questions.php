@@ -90,12 +90,14 @@
             SELECT q.QuestionID, Question, Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
                 bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
-                Type, comm.Number AS CommentaryVolume, comm.TopicName, CommentaryStartPage, CommentaryEndPage ';
+                Type, comm.Number AS CommentaryVolume, comm.TopicName, CommentaryStartPage, CommentaryEndPage,
+                l.LanguageID, l.Name AS LanguageName, l.AltName AS LanguageAltName ';
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
                 LEFT JOIN Chapters cStart on vStart.ChapterID = cStart.ChapterID
                 LEFT JOIN Books bStart ON bStart.BookID = cStart.BookID
+                LEFT JOIN Languages l ON q.LanguageID = l.LanguageID
 
                 LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID
                 LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID
