@@ -9,6 +9,7 @@
     $questionID = isset($_GET['id']) ? $_GET['id'] : "";
     $startVerseID = -1;
     $endVerseID = -1;
+    $languages = get_languages($pdo);
     if ($_GET["type"] == "update") {
         if (!$isAdmin) {
             header("Location: " . $basePath . "/view-questions.php");            
@@ -16,7 +17,7 @@
         }
         $query = '
             SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
-                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage
+                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
                 LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
@@ -37,6 +38,7 @@
         $commentaryID = $question["CommentaryID"];
         $commentaryStartPage = $question["CommentaryStartPage"];
         $commentaryEndPage = $question["CommentaryEndPage"];
+        $languageID = $question["LanguageID"];
         $postType = "update";
         $titleString = "Edit";
     }
@@ -54,6 +56,15 @@
         $commentaryEndPage = "";
         $postType = "create";
         $titleString = "Create";
+        foreach ($languages as $language) {
+            if ($language["IsDefault"] == 1) {
+                $languageID = $language["LanguageID"];
+                break;
+            }
+        }
+        if (!isset($languageID)) {
+            $languageID = 1;
+        }
     }
     
     $title = $titleString . ' Question';
@@ -136,6 +147,7 @@
 
     $commentaries = load_commentaries($pdo); // keys: id, name, topic
     $commentaryJSON = json_encode($commentaries);
+
 ?>
 
 <?php include(dirname(__FILE__)."/header.php"); ?>
@@ -194,6 +206,16 @@
             <div class="input-field col s12 m3">
                 <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
                 <label for="number-of-points">Number of Points</label>
+            </div>
+            <div class="input-field col s12 m2">
+                <select class="" id="language-select" name="language-select" required>
+                    <?php foreach ($languages as $language) { 
+                            $selected = $language["LanguageID"] == $languageID ? 'selected' : '';
+                    ?>
+                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $language['Name'] ?></option>
+                    <?php } ?>
+                </select>
+                <label for="language-select">Language</label>
             </div>
         </div>
         <div class="row" id="start-verse-div">
@@ -415,6 +437,7 @@
         }
         $('#start-book-select').material_select();
         $('#end-book-select').material_select();
+        $('#language-select').material_select();
 
         if (startVerseID != -1 || endVerseID != -1) {
             var didFindStart = false;
