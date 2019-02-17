@@ -2,7 +2,7 @@
     $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder" 
         && $_SESSION["UserType"] !== "Guest";
     $headerIsGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
-    $isLoggedIn = $loggedIn;
+    $isLoggedIn = $app->loggedIn;
 
     $localHostList = array(
         '127.0.0.1',
@@ -14,12 +14,12 @@
         $isLocalHost = FALSE;
     }
 
-    $homePath = $basePath == "" ? "/" : $basePath;
+    $homePath = $app->basePath == "" ? "/" : $app->basePath;
 
-    $htmlTitle = isset($title) ? $title . ' - ' . $websiteTabTitle : $websiteTabTitle;
+    $htmlTitle = isset($title) ? $title . ' - ' . $app->websiteTabTitle : $app->websiteTabTitle;
 
 
-    $currentRequest = str_replace($basePath, '', $_SERVER['REQUEST_URI']);
+    $currentRequest = str_replace($app->basePath, '', $_SERVER['REQUEST_URI']);
     if (ends_with($currentRequest, '/')) {
         $currentRequest = substr($currentRequest, 0, -1);
     }
@@ -32,9 +32,9 @@
         $homeHeaderActiveStatus = "active";
     }
 
-    $languages = get_languages($pdo);
+    $languages = get_languages($app->db);
     if ($isLoggedIn) {
-        $userLanguage = get_user_language($pdo);
+        $userLanguage = get_user_language($app->db);
     }
 ?>
 
@@ -45,25 +45,25 @@
         <link rel="stylesheet" href="<?=$basePath?>/css/normalize.css" />
 
         <!-- Favicon Items -->
-        <link rel="apple-touch-icon" sizes="180x180" href="<?=$basePath?>/files/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="<?=$basePath?>/files/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="<?=$basePath?>/files/favicon-16x16.png">
-        <link rel="manifest" href="<?=$basePath?>/files/site.webmanifest">
-        <link rel="mask-icon" href="<?=$basePath?>/files/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?=$app->basePath?>/files/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="<?=$app->basePath?>/files/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="<?=$app->basePath?>/files/favicon-16x16.png">
+        <link rel="manifest" href="<?=$app->basePath?>/files/site.webmanifest">
+        <link rel="mask-icon" href="<?=$app->basePath?>/files/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#00aba9">
         <meta name="theme-color" content="#ffffff">
 
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="<?=$basePath?>/lib/materialize/css/materialize.min.css?v=20171204a" media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="<?=$app->basePath?>/lib/materialize/css/materialize.min.css?v=20171204a" media="screen,projection"/>
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <link rel="stylesheet" href="<?=$basePath?>/css/common.css?<?= filemtime(dirname(__FILE__) . "/css/common.css") ?>" />
-        <script src="<?=$basePath?>/lib/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="<?=$basePath?>/lib/materialize/js/materialize.min.js"></script>
-        <script type="text/javascript" src="<?=$basePath?>/lib/autosize.min.js"></script>
+        <link rel="stylesheet" href="<?=$app->basePath?>/css/common.css?<?= filemtime(dirname(__FILE__) . "/css/common.css") ?>" />
+        <script src="<?=$app->basePath?>/lib/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="<?=$app->basePath?>/lib/materialize/js/materialize.min.js"></script>
+        <script type="text/javascript" src="<?=$app->basePath?>/lib/autosize.min.js"></script>
 
         <!-- For admin pages -->
         <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
@@ -105,34 +105,34 @@
             <nav>
                 <div class="nav-wrapper teal lighten-2">
                     <div class="container">
-                        <a href="<?=$homePath?>" class="brand-logo"><?= $websiteName ?></a>
+                        <a href="<?=$homePath?>" class="brand-logo"><?= $app->websiteName ?></a>
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                         <ul class="right hide-on-med-and-down">
                             <?php if ($isLoggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a href="<?=$homePath?>">Home</a></li>
-                                <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
+                                <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
                                 <!-- <li><a class="dropdown-button" href="#!" data-activates="languages"><?= $userLanguage["Name"] ?><i class="material-icons right">arrow_drop_down</i></a></li> -->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?=$basePath?>/about.php">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?=$app->basePath?>/about.php">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?=$app->basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a href="<?=$basePath?>/logout.php">Logout</a></li>
+                                <li><a href="<?=$app->basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
                         </ul>
                         <ul class="side-nav teal darken-1" id="mobile-demo">
-                            <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $websiteName ?></a></li>
+                            <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $app->websiteName ?></a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a class="white-text" href="<?=$homePath?>">Home</a></li>
-                                <!--li><a href="<?=$basePath?>/view-questions.php">View Questions</a></li-->
+                                <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?=$basePath?>/about.php">About</a></li>
-                            <?php if ($isLoggedIn) { ?>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?=$app->basePath?>/about.php">About</a></li>
+                            <?php if ($app->isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?=$basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?=$app->basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a class="white-text" href="<?=$basePath?>/logout.php">Logout</a></li>
+                                <li><a class="white-text" href="<?=$app->basePath?>/logout.php">Logout</a></li>
                             <?php } ?>
                         </ul>
                     </div>

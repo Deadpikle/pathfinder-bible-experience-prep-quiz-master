@@ -1,5 +1,15 @@
 {
     "require": {
+        "php": "^7.1",
+        "ext-pdo": "*",
+        "ext-json": "*",
         "robmorgan/phinx": "^0.10.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yamf\\": "yamf/",
+            "Controllers\\": "controllers/",
+            "Models\\": "models/"
+        }
     }
 }

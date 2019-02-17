@@ -1,7 +1,5 @@
-database.php
 *.DS_Store
 uploads/*
-config.php
 vendor/*
 phinx.yml
 composer.phar

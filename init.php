@@ -1,50 +1,25 @@
 <?php
-
-    $basePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
-
-    require_once("config.php");
-    session_name($SESSION_NAME);
-    session_start();
-
-    require_once("database.php");
-    require_once("functions.php");
-
-    $loggedIn = FALSE;
-    $isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
-    $isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
-    $isUserIDSessionSet = isset($_SESSION["UserID"]);
-    if (!isset($_SESSION["UserID"]) && !$isOnLoginPage && !$isOnOtherNonLoginPage) {
-        header("Location: login.php");
-    }
-    if ($isUserIDSessionSet) {
-        $loggedIn = TRUE;
-    }
-
-    $isPostRequest = $_SERVER['REQUEST_METHOD'] === 'POST';
     
-    $isGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
-    $isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";
-    $isConferenceAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ConferenceAdmin";
-    $isWebAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "WebAdmin";
-    $isAdmin = $isClubAdmin || $isWebAdmin || $isConferenceAdmin;
-    $isPathfinder = !($isAdmin);
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} else {
+    echo 'Please install <a href="https://getcomposer.org">Composer</a> and run `composer install`! Thanks!';
+    die();
+}
 
-    // init settings
-    $settings = get_settings($pdo);
-    $contactName = isset($settings['AboutContactName']) ? $settings['AboutContactName'] : '[name redacted]';
-    $contactEmail = isset($settings['AboutContactEmail']) ? $settings['AboutContactEmail'] : '[email redacted]';
-    $websiteName = isset($settings['WebsiteName']) ? $settings['WebsiteName'] : 'UCC Quiz Engine';
-    $websiteTabTitle = isset($settings['WebsiteTabTitle']) ? $settings['WebsiteTabTitle'] : 'UCC PBE';
-    $analyticsURL = isset($settings['AnalyticsURL']) ? $settings['AnalyticsURL'] : '';
-    $analyticsSiteID = isset($settings['AnalyticsSiteID']) ? $settings['AnalyticsSiteID'] : '1';
-    $footerText = isset($settings['FooterText']) ? $settings['FooterText'] : '';
+// Setup $app variable for application wide variables that you might need in
+// controllers or in views (e.g. database connection)
+$app = new stdClass;
 
-    // get active year
-    $yearData = get_active_year($pdo);
-    $activeYearID = $yearData["YearID"];
-    $activeYearNumber = $yearData["Year"];
+$whitelist = [
+    '127.0.0.1',
+    '::1'
+];
 
-    if (!isset($ENABLE_NKJV_RESTRICTIONS)) {
-        $ENABLE_NKJV_RESTRICTIONS = true;
-    }
-?>
+$app->isLocalHost = in_array($_SERVER['REMOTE_ADDR'], $whitelist);
+$app->basePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
+
+// load user configuration files
+require_once 'config.php';
+
+require_once 'yamf/router.php';
