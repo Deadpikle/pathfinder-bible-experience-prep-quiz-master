@@ -20,6 +20,12 @@
     $allLanguages = get_languages($pdo);
     if ($isPostRequest) {
         $bibleFillIns = get_total_number_of_bible_fill_questions_by_language_for_current_year($pdo);
+        $languagesByID = [];
+        $languages = get_languages($pdo);
+        foreach ($languages as $language) {
+            $languagesByID[$language["LanguageID"]] = $language;
+        }
+
         $currentYear = get_active_year($pdo)["YearID"];
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
@@ -61,12 +67,12 @@
 
         // get all the chapter-verse-data
         $bookQuery = '
-        SELECT b.Name AS BookName, c.Number AS ChapterNumber, v.VerseID, v.Number AS VerseNumber
-        FROM Books b 
-            JOIN Chapters c ON b.BookID = c.BookID
-            LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
-        WHERE b.YearID = ?
-        ORDER BY b.Name, ChapterNumber, VerseNumber';
+            SELECT b.Name AS BookName, c.Number AS ChapterNumber, v.VerseID, v.Number AS VerseNumber
+            FROM Books b 
+                JOIN Chapters c ON b.BookID = c.BookID
+                LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
+            WHERE b.YearID = ?
+            ORDER BY b.Name, ChapterNumber, VerseNumber';
         $bookStmnt = $pdo->prepare($bookQuery);
         $bookStmnt->execute($params);
         $bookData = $bookStmnt->fetchAll();
@@ -144,7 +150,8 @@
                     if ($isFillInTheBlank) {
                         if ($bibleFillIns[$languageID] >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
                             $questionsFailedToAdd++;
-                            $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions.<br>";
+                            $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions for " 
+                                . language_display_name($languagesByID[$languageID]) . ".<br>";
                             continue;
                         }
                         $bibleFillIns[$languageID]++;
