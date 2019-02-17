@@ -81,7 +81,10 @@
             </tbody>
         </table>
         <div class="divider"></div>
-        <a class="waves-effect waves-light btn red white-text" href="delete-bible-fill.php?type=all">Delete All Bible Fill In Questions</a>
+
+        <?php foreach ($languages as $language) { ?>
+            <p><a class="waves-effect waves-light btn red white-text" href="delete-bible-fill.php?type=all&languageID=<?= $language['LanguageID'] ?>">Delete All <?= language_display_name($language) ?> Bible Fill In Questions</a></p>
+        <?php } ?>
     </div>
 <?php } ?>
 

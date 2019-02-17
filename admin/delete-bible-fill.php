@@ -10,6 +10,18 @@
     // type can be "chapter" (deleting just one chapter's worth of questions) or "all" (deleting all questions)
     $type = $_GET["type"];
 
+    $languages = get_languages($pdo);
+    $selectedLanguage = null;
+    foreach ($languages as $language) {
+        if ($language["LanguageID"] == $_GET["languageID"]) {
+            $selectedLanguage = $language;
+            break;
+        }
+    }
+    if ($selectedLanguage == NULL) {
+        die("Invalid language id");
+    }
+
     if ($type === "chapter") {
         $chapterID = $_GET["id"];
         $query = '
@@ -22,22 +34,11 @@
         if ($data == NULL) {
             die("Invalid chapter id");
         }
-        $languages = get_languages($pdo);
-        $selectedLanguage = null;
-        foreach ($languages as $language) {
-            if ($language["LanguageID"] == $_GET["languageID"]) {
-                $selectedLanguage = $language;
-                break;
-            }
-        }
-        if ($selectedLanguage == NULL) {
-            die("Invalid language id");
-        }
         $warning = "Are you sure you want to delete all of the Bible fill in the blank questions for <b>" . $data['Name'] . " Chapter " . $data["Number"] . "</b> in the " . language_display_name($selectedLanguage) . " language?";
     }
     else if ($type === "all") {
         $chapterID = -1;
-        $warning = "Are you sure you want to delete <b>all</b> Bible fill in the blank questions?";
+        $warning = "Are you sure you want to delete <b>all</b> Bible fill in the blank questions in the " . language_display_name($selectedLanguage) . " language?";
     }
     else {
         // ?? invalid data
@@ -45,7 +46,7 @@
         die();
     }
     
-    if ($isPostRequest && $type == $_POST["type"]) {
+    if ($isPostRequest && $type == $_POST["type"] && $selectedLanguage["LanguageID"] == $_POST["language-id"]) {
         $currentYear = get_active_year($pdo)["YearID"];
         // the weird subquery SELECT * was due to a workaround
         // for the error discussed here: https://stackoverflow.com/q/44970574/3938401
@@ -58,9 +59,10 @@
                             JOIN Chapters c ON c.ChapterID = v.ChapterID
                             JOIN Books b ON b.BookID = c.BookID
                         WHERE q.Type = "bible-qna-fill"
-                            AND b.YearID = ?)';
+                            AND b.YearID = ?
+                            AND q.LanguageID = ?)';
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$currentYear]);
+            $stmt->execute([$currentYear, $selectedLanguage["LanguageID"]]);
             header("Location: view-bible-fill-in.php");
             die();
         }
