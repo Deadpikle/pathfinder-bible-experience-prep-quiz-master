@@ -19,7 +19,7 @@
     $defaultLanguage = get_default_language($pdo);
     $allLanguages = get_languages($pdo);
     if ($isPostRequest) {
-        $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
+        $bibleFillIns = get_total_number_of_bible_fill_questions_by_language_for_current_year($pdo);
         $currentYear = get_active_year($pdo)["YearID"];
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
@@ -142,12 +142,12 @@
                 $needsToSubtractTotalBibleFillInIfFailed = false;
                 if ($row["Type"] === "Bible") {
                     if ($isFillInTheBlank) {
-                        if ($totalBibleFillInQuestions >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
+                        if ($bibleFillIns[$languageID] >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
                             $questionsFailedToAdd++;
                             $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions.<br>";
                             continue;
                         }
-                        $totalBibleFillInQuestions++;
+                        $bibleFillIns[$languageID]++;
                         $needsToSubtractTotalBibleFillInIfFailed = true;
                         $questionType = "bible-qna-fill";
                     }
@@ -167,7 +167,7 @@
                     $questionsFailedToAdd++;
                     $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid question type.<br>";
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
-                        $totalBibleFillInQuestions--;
+                        $bibleFillIns[$languageID]--;
                     }
                     continue;
                 }
@@ -187,7 +187,7 @@
                         $questionsFailedToAdd++;
                         $errors .= "Unable to add Bible question: " . $row["Question"] . " -- Invalid book name, chapter, and/or verse.<br>";
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
-                            $totalBibleFillInQuestions--;
+                            $bibleFillIns[$languageID]--;
                         }
                         continue;
                     }
@@ -225,7 +225,7 @@
                         $questionsFailedToAdd++;
                         $errors .= "Unable to add commentary question: " . $row["Question"] . " -- Invalid number and/or topic.<br>";
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
-                            $totalBibleFillInQuestions--;
+                            $bibleFillIns[$languageID]--;
                         }
                         continue;
                     }
@@ -274,7 +274,7 @@
                 $errors .= "Error inserting question " . $row["Question"] . ": " . $e->getMessage() . "<br>";
                 $questionsFailedToAdd++;
                 if (isset($needsToSubtractTotalBibleFillInIfFailed) && $needsToSubtractTotalBibleFillInIfFailed) {
-                    $totalBibleFillInQuestions--;
+                    $bibleFillIns[$languageID]--;
                 }
                 //print_r($e);
                 //die();
