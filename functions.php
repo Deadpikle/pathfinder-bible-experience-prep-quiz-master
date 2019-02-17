@@ -79,9 +79,18 @@
         $stmt->execute([$_SESSION["PreferredLanguageID"]]);
         $data = $stmt->fetchAll();
         if (count($data) > 0) {
-            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], "IsDefault" => 1, "AltName" => $data[0]["AltName"]];
+            return ["LanguageID" => $data[0]["LanguageID"], "Name" => $data[0]["Name"], 
+                "IsDefault" => 1, "AltName" => $data[0]["AltName"]];
         }
         return ["LanguageID" => 1, "Name" => "English", "AltName" => ""];
+    }
+
+    function language_display_name($language) {
+        $output = $language["Name"];
+        if ($language["AltName"] != "") {
+            $output .= " (" . $language["AltName"] . ")";
+        }
+        return $output;
     }
 
     function is_bible_qna($type) {

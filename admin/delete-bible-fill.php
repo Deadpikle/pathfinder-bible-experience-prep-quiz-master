@@ -22,7 +22,18 @@
         if ($data == NULL) {
             die("Invalid chapter id");
         }
-        $warning = "Are you sure you want to delete all of the Bible fill in the blank questions for <b>" . $data['Name'] . " Chapter " . $data["Number"] . "</b>?";
+        $languages = get_languages($pdo);
+        $selectedLanguage = null;
+        foreach ($languages as $language) {
+            if ($language["LanguageID"] == $_GET["languageID"]) {
+                $selectedLanguage = $language;
+                break;
+            }
+        }
+        if ($selectedLanguage == NULL) {
+            die("Invalid language id");
+        }
+        $warning = "Are you sure you want to delete all of the Bible fill in the blank questions for <b>" . $data['Name'] . " Chapter " . $data["Number"] . "</b> in the " . language_display_name($selectedLanguage) . " language?";
     }
     else if ($type === "all") {
         $chapterID = -1;
@@ -42,7 +53,8 @@
             $query = 'DELETE FROM Questions
                       WHERE QuestionID IN (
                         SELECT q.QuestionID 
-                        FROM (SELECT * FROM Questions) q JOIN Verses v ON q.StartVerseID = v.VerseID
+                        FROM (SELECT * FROM Questions) q 
+                            JOIN Verses v ON q.StartVerseID = v.VerseID
                             JOIN Chapters c ON c.ChapterID = v.ChapterID
                             JOIN Books b ON b.BookID = c.BookID
                         WHERE q.Type = "bible-qna-fill"
@@ -52,17 +64,18 @@
             header("Location: view-bible-fill-in.php");
             die();
         }
-        else if ($type === "chapter" && $chapterID == $_POST["chapter-id"]) {
+        else if ($type === "chapter" && $chapterID == $_POST["chapter-id"] && $selectedLanguage["LanguageID"] == $_POST["language-id"]) {
             $query = 'DELETE FROM Questions 
                       WHERE QuestionID IN (
                         SELECT q.QuestionID 
-                        FROM (SELECT * FROM Questions) q JOIN Verses v ON q.StartVerseID = v.VerseID
+                        FROM (SELECT * FROM Questions) q 
+                            JOIN Verses v ON q.StartVerseID = v.VerseID
                             JOIN Chapters c ON c.ChapterID = v.ChapterID
                             JOIN Books b ON b.BookID = c.BookID
                         WHERE c.ChapterID = ? AND q.Type = "bible-qna-fill"
-                            AND b.YearID = ?)';
+                            AND b.YearID = ? AND q.LanguageID = ?)';
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$chapterID, $currentYear]);
+            $stmt->execute([$chapterID, $currentYear, $selectedLanguage["LanguageID"]]);
             header("Location: view-bible-fill-in.php");
             die();
         }
@@ -79,6 +92,9 @@
     <form method="post">
         <input type="hidden" name="type" value="<?= $type ?>"/>
         <input type="hidden" name="chapter-id" value="<?= $chapterID ?>"/>
+        <?php if (isset($_GET["languageID"])) { ?>
+            <input type="hidden" name="language-id" value="<?= $selectedLanguage["LanguageID"] ?>"/>
+        <?php } ?>
         <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Questions</button>
     </form>
 </div>
