@@ -54,7 +54,7 @@
             $query = 'DELETE FROM Questions
                       WHERE QuestionID IN (
                         SELECT q.QuestionID 
-                        FROM (SELECT * FROM Questions) q 
+                        FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "bible-qna-fill" AND LanguageID = ?) q 
                             JOIN Verses v ON q.StartVerseID = v.VerseID
                             JOIN Chapters c ON c.ChapterID = v.ChapterID
                             JOIN Books b ON b.BookID = c.BookID
@@ -62,7 +62,7 @@
                             AND b.YearID = ?
                             AND q.LanguageID = ?)';
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$currentYear, $selectedLanguage["LanguageID"]]);
+            $stmt->execute([$selectedLanguage["LanguageID"], $currentYear, $selectedLanguage["LanguageID"]]);
             header("Location: view-bible-fill-in.php");
             die();
         }
@@ -70,14 +70,14 @@
             $query = 'DELETE FROM Questions 
                       WHERE QuestionID IN (
                         SELECT q.QuestionID 
-                        FROM (SELECT * FROM Questions) q 
+                        FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "bible-qna-fill" AND LanguageID = ?) q 
                             JOIN Verses v ON q.StartVerseID = v.VerseID
                             JOIN Chapters c ON c.ChapterID = v.ChapterID
                             JOIN Books b ON b.BookID = c.BookID
                         WHERE c.ChapterID = ? AND q.Type = "bible-qna-fill"
                             AND b.YearID = ? AND q.LanguageID = ?)';
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$chapterID, $currentYear, $selectedLanguage["LanguageID"]]);
+            $stmt->execute([$selectedLanguage["LanguageID"], $chapterID, $currentYear, $selectedLanguage["LanguageID"]]);
             header("Location: view-bible-fill-in.php");
             die();
         }
