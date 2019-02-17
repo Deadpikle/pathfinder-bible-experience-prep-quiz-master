@@ -207,6 +207,35 @@
         return 0;
     }
 
+    function get_total_number_of_bible_fill_questions_by_language_for_current_year($pdo) {
+        $currentYear = get_active_year($pdo)["YearID"];
+        $languages = get_languages($pdo);
+        $fillIns = [];
+        $query = '
+            SELECT COUNT(q.QuestionID) AS QuestionCount
+            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+                JOIN Chapters c ON c.ChapterID = v.ChapterID
+                JOIN Books b ON b.BookID = c.BookID
+            WHERE b.YearID = ? 
+                AND q.LanguageID = ?
+                AND q.Type = "bible-qna-fill"';
+        $stmt = $pdo->prepare($query);
+        foreach ($languages as $language) {
+            $stmt->execute([
+                $currentYear,
+                $language["LanguageID"]
+            ]);
+            $bookQuestionData = $stmt->fetch();
+            if ($bookQuestionData != NULL) {
+                $fillIns[$language["LanguageID"]] = $bookQuestionData["QuestionCount"];
+            }
+            else {
+                $fillIns[$language["LanguageID"]] = 0;
+            }
+        }
+        return $fillIns;
+    }
+
     function get_web_admin_conference_id($pdo) {
         $query = 'SELECT ConferenceID FROM Conferences WHERE Name = "Website Administrators"';
         $conferenceStmnt = $pdo->prepare($query);
