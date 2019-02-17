@@ -1,25 +1,10 @@
-<?php
-    // TODO: clickless reCaptcha
-
-    require_once(dirname(__FILE__)."/init.php");
-    
-    $title = 'Login';
-
-    if (isset($_GET["error"])) {
-        $error = $_GET["error"];
-    }
-
-?>
-
-<?php include("header.php"); ?>
-
 <h2>Welcome!</h2>
 
 <?php if (isset($error)) { ?>
-        <p class="error-message"> <?=$error?> </p>
+        <p class="error-message"> <?= $error ?> </p>
 <?php } ?>
 
-<form action="ajax/login-access-code.php" method="post">
+<form method="post">
     <div class="row">
         <div class="input-field col s12 m4">
             <input type="password" id="access-code" name="access-code" required/>
@@ -28,5 +13,3 @@
     </div>
     <button class="btn waves-effect waves-light submit" type="submit" name="action">Login</button>
 </form>
-
-<?php include("footer.php") ?>

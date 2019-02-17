@@ -46,17 +46,16 @@ $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp*/
 // Examples of settings or other config parameters you might want:
 // $app->isAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'WebAdmin';
 
-$SESSION_NAME = "pbe";
+$app->SESSION_NAME = "pbe";
 
 $basePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
 
-require_once("config.php");
-session_name($SESSION_NAME);
+require_once("functions.php");
+session_name($app->SESSION_NAME);
 session_start();
 
-require_once("functions.php");
 
-$app->loggedIn = FALSE;
+$app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
 $app->isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
 $app->isUserIDSessionSet = isset($_SESSION["UserID"]);
@@ -64,7 +63,7 @@ if (!isset($_SESSION["UserID"]) && !$app->isOnLoginPage && !$app->isOnOtherNonLo
     header("Location: login.php");
 }
 if ($app->isUserIDSessionSet) {
-    $app->loggedIn = TRUE;
+    $app->loggedIn = true;
 }
 
 //$isPostRequest = $_SERVER['REQUEST_METHOD'] === 'POST';

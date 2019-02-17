@@ -25,8 +25,8 @@
     }
     $currentRequest = str_replace("/", "", $currentRequest);
     
-    $homeHeaderActiveStatus = str_contains("home.php", $currentRequest) || $currentRequest == "" ? "active" : "";
-    $aboutHeaderActiveStatus = str_contains("about.php", $currentRequest) ? "active" : "";
+    $homeHeaderActiveStatus = str_contains("home", $currentRequest) || $currentRequest == "" ? "active" : "";
+    $aboutHeaderActiveStatus = str_contains("about", $currentRequest) ? "active" : "";
     $adminHeaderActiveStatus = str_contains("admin", $currentRequest) ? "active" : "";
     if ($aboutHeaderActiveStatus === "" && $adminHeaderActiveStatus === "") {
         $homeHeaderActiveStatus = "active";
@@ -113,12 +113,12 @@
                                 <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
                                 <!-- <li><a class="dropdown-button" href="#!" data-activates="languages"><?= $userLanguage["Name"] ?><i class="material-icons right">arrow_drop_down</i></a></li> -->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?=$app->basePath?>/about.php">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?= $app->basePath ?>/about">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?=$app->basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?= $app->basePath ?>/admin">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a href="<?=$app->basePath?>/logout.php">Logout</a></li>
+                                <li><a href="<?= $app->basePath ?>/logout">Logout</a></li>
                             <?php } ?>
                         </ul>
                         <ul class="side-nav teal darken-1" id="mobile-demo">
@@ -127,12 +127,12 @@
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a class="white-text" href="<?=$homePath?>">Home</a></li>
                                 <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?=$app->basePath?>/about.php">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->basePath ?>/about">About</a></li>
                             <?php if ($app->isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
                                     <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?=$app->basePath?>/admin">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a class="white-text" href="<?=$app->basePath?>/logout.php">Logout</a></li>
+                                <li><a class="white-text" href="<?= $app->basePath ?>/logout">Logout</a></li>
                             <?php } ?>
                         </ul>
                     </div>
