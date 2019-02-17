@@ -44,7 +44,7 @@
             $_SESSION["ConferenceID"] = -1;
         }
         $_SESSION["ConferenceName"] = $row["ConferenceName"];
-        $_SESSION["PreferredLanguageID"] = $row["LanguageID"];
+        $_SESSION["PreferredLanguageID"] = $row["PreferredLanguageID"];
         
         header("Location: ../index.php");
     }
