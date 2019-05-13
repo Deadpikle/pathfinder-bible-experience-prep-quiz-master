@@ -85,7 +85,7 @@ class HomeController
 
     public function about(PBEAppConfig $app, Request $request)
     {
-        $conferences = Conference::loadConferences($app->db);
+        $conferences = Conference::loadNonWebsiteConferences($app->db);
         return new View('home/about', compact('conferences'), 'About');
     }
 }

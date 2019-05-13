@@ -18,16 +18,16 @@ class Conference
         $this->name = $name;
     }
 
-    public function loadConferences(PDO $db) : array
+    private function loadConferences(string $whereClause, array $whereParams, PDO $db) : array
     {
         $conferences = [];
         $query = '
             SELECT ConferenceID, Name, URL, ContactName, ContactEmail
             FROM Conferences
-            WHERE Name NOT LIKE "%Website%"
+            ' . $whereClause . '
             ORDER BY Name';
         $stmt = $db->prepare($query);
-        $stmt->execute([]);
+        $stmt->execute($whereParams);
         $data = $stmt->fetchAll();
         $output = [];
         foreach ($data as $row) {
@@ -38,5 +38,15 @@ class Conference
             $output[] = $conference;
         }
         return $output;
+    }
+
+    public function loadAllConferences(PDO $db) : array
+    {
+        return Conference::loadConferences('', [], $db);
+    }
+
+    public function loadNonWebsiteConferences(PDO $db) : array
+    {
+        return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);
     }
 }
