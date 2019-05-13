@@ -4,20 +4,9 @@
     $headerIsGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
     $isLoggedIn = $app->loggedIn;
 
-    $localHostList = array(
-        '127.0.0.1',
-        '::1'
-    );
-    $isLocalHost = TRUE;
-    if(!in_array($_SERVER['REMOTE_ADDR'], $localHostList)){
-        // not valid
-        $isLocalHost = FALSE;
-    }
-
     $homePath = $app->basePath == "" ? "/" : $app->basePath;
 
     $htmlTitle = isset($title) ? $title . ' - ' . $app->websiteTabTitle : $app->websiteTabTitle;
-
 
     $currentRequest = str_replace($app->basePath, '', $_SERVER['REQUEST_URI']);
     if (ends_with($currentRequest, '/')) {
@@ -42,31 +31,31 @@
 <html>
     <head>
         <title><?= $htmlTitle ?></title>
-        <link rel="stylesheet" href="<?=$basePath?>/css/normalize.css" />
+        <link rel="stylesheet" href="<?= $app->yurl('/css/normalize.css') ?>" />
 
         <!-- Favicon Items -->
-        <link rel="apple-touch-icon" sizes="180x180" href="<?=$app->basePath?>/files/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="<?=$app->basePath?>/files/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="<?=$app->basePath?>/files/favicon-16x16.png">
-        <link rel="manifest" href="<?=$app->basePath?>/files/site.webmanifest">
-        <link rel="mask-icon" href="<?=$app->basePath?>/files/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?= $app->yurl('/files/apple-touch-icon.png') ?>">
+        <link rel="icon" type="image/png" sizes="32x32" href="<?= $app->yurl('/files/favicon-32x32.png') ?>">
+        <link rel="icon" type="image/png" sizes="16x16" href="<?= $app->yurl('/files/favicon-16x16.png') ?>">
+        <link rel="manifest" href="<?= $app->yurl('/files/site.webmanifest') ?>">
+        <link rel="mask-icon" href="<?= $app->yurl('/files/safari-pinned-tab.svg') ?>" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#00aba9">
         <meta name="theme-color" content="#ffffff">
 
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="<?=$app->basePath?>/lib/materialize/css/materialize.min.css?v=20171204a" media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="<?= $app->yurl('/lib/materialize/css/materialize.min.css?v=20171204a') ?>" media="screen,projection"/>
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <link rel="stylesheet" href="<?=$app->basePath?>/css/common.css?<?= filemtime(dirname(__FILE__) . "/css/common.css") ?>" />
-        <script src="<?=$app->basePath?>/lib/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="<?=$app->basePath?>/lib/materialize/js/materialize.min.js"></script>
-        <script type="text/javascript" src="<?=$app->basePath?>/lib/autosize.min.js"></script>
+        <link rel="stylesheet" href="<?= $app->yurl('/css/common.css') ?>?<?= filemtime("css/common.css") ?>" />
+        <script src="<?= $app->yurl('/lib/jquery-3.2.1.min.js') ?>"></script>
+        <script type="text/javascript" src="<?= $app->yurl('/lib/materialize/js/materialize.min.js') ?>"></script>
+        <script type="text/javascript" src="<?= $app->yurl('/lib/autosize.min.js') ?>"></script>
 
         <!-- For admin pages -->
-        <script type="text/javascript" src="<?=$basePath?>/lib/html.sortable.min.js"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
+        <script type="text/javascript" src="<?= $app->yurl('/lib/html.sortable.min.js') ?>"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <!-- tablesorter.js -->
         <?php if ($adminHeaderActiveStatus === "active") { ?>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/theme.materialize.min.css" integrity="sha256-jUiCvjE6E8l+KScSvjq5Sq28mU+/yFJNhxqcFPyvKJc=" crossorigin="anonymous" />
@@ -76,8 +65,8 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/widgets/widget-filter-formatter-html5.min.js" integrity="sha256-tP9/Kjrq6K2IGcLqni6LTTPGTthgtxb7omdC3RNyQW8=" crossorigin="anonymous"></script>
         <?php } ?>
 
-        <script src="<?=$basePath?>/js/common.js?<?= filemtime(dirname(__FILE__) . "/js/common.js") ?>"></script>
-        <?php if (!$isLocalHost && !$headerIsGuest && $analyticsURL !== '') { ?>
+        <script src="<?= $app->yurl('/js/common.js') ?>?<?= filemtime("js/common.js") ?>"></script>
+        <?php if (!$app->isLocalHost && !$headerIsGuest && $analyticsURL !== '') { ?>
             <!-- Piwik -->
             <script type="text/javascript">
                 var _paq = _paq || [];
@@ -110,29 +99,26 @@
                         <ul class="right hide-on-med-and-down">
                             <?php if ($isLoggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a href="<?=$homePath?>">Home</a></li>
-                                <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
-                                <!-- <li><a class="dropdown-button" href="#!" data-activates="languages"><?= $userLanguage["Name"] ?><i class="material-icons right">arrow_drop_down</i></a></li> -->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?= $app->basePath ?>/about">About</a></li>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?= $app->yurl('/about') ?>">About</a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?= $app->basePath ?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?= $app->yurl('/admin') ?>">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a href="<?= $app->basePath ?>/logout">Logout</a></li>
+                                <li><a href="<?= $app->yurl('/logout') ?>">Logout</a></li>
                             <?php } ?>
                         </ul>
                         <ul class="side-nav teal darken-1" id="mobile-demo">
                             <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $app->websiteName ?></a></li>
                             <?php if ($isLoggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a class="white-text" href="<?=$homePath?>">Home</a></li>
-                                <!--li><a href="<?=$app->basePath?>/view-questions.php">View Questions</a></li-->
                             <?php } ?>
-                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->basePath ?>/about">About</a></li>
-                            <?php if ($app->isLoggedIn) { ?>
+                            <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->yurl('/about') ?>">About</a></li>
+                            <?php if ($isLoggedIn) { ?>
                                 <?php if ($canViewAdminPanel) { ?>
-                                    <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?=$app->basePath?>/admin">Admin Panel</a></li>
+                                    <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->yurl('/admin') ?>">Admin Panel</a></li>
                                 <?php } ?>
-                                <li><a class="white-text" href="<?= $app->basePath ?>/logout">Logout</a></li>
+                                <li><a class="white-text" href="<?= $app->yurl('/logout') ?>">Logout</a></li>
                             <?php } ?>
                         </ul>
                     </div>
