@@ -23,8 +23,13 @@ class QuestionController
         return new View('user/questions/view-questions', compact('currentYear', 'languages', 'bookData'), 'Questions');
     }
 
+    // TODO: better response instead of echo
     public function loadQuestions(PBEAppConfig $app, Request $request)
     {
+        if (!isset($_SESSION["UserID"])) {
+            die();
+        }
+
         $questionData = Question::loadQuestions(
             $request->post['questionFilter'],
             $request->post['questionType'],
