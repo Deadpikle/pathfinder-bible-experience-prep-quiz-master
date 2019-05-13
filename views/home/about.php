@@ -7,7 +7,7 @@
             <?php if (count($conferences) > 0) { ?>
                 <p class="flow-text">If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact the adminstrator for your conference:</p>
                 <?php foreach ($conferences as $conference) { ?>
-                    <p class="flow-text"><a href="<?= $conference["URL"] ?>" target="_blank"><b><?= $conference["Name"] ?></b></a><br><?= $conference["ContactName"] ?><br><?= $conference["ContactEmail"] ?></p>
+                    <p class="flow-text"><a href="<?= $conference->url ?>" target="_blank"><b><?= $conference->name ?></b></a><br><?= $conference->contactName ?><br><?= $conference->contactEmail ?></p>
                 <?php } ?>
                 <p class="flow-text">For all other questions, or to have your conference added to this system, please contact:</p>
             <?php } else { ?>

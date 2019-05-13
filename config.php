@@ -92,9 +92,9 @@ $app->analyticsSiteID = isset($app->settings['AnalyticsSiteID']) ? $app->setting
 $app->footerText = isset($app->settings['FooterText']) ? $app->settings['FooterText'] : '';
 
 // get active year
-$app->yearData = get_active_year($app->db);
-$app->activeYearID = $app->yearData["YearID"];
-$app->activeYearNumber = $app->yearData["Year"];
+$app->yearData = \App\Models\Year::loadCurrentYear($app->db);
+$app->activeYearID = $app->yearData->yearID;
+$app->activeYearNumber = $app->yearData->year;
 
 if (!isset($ENABLE_NKJV_RESTRICTIONS)) {
     $ENABLE_NKJV_RESTRICTIONS = true;
