@@ -6,6 +6,7 @@ use Yamf\Request;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
 
+use App\Models\Conference;
 use App\Models\PBEAppConfig;
 
 class HomeController
@@ -84,15 +85,7 @@ class HomeController
 
     public function about(PBEAppConfig $app, Request $request)
     {
-        $conferences = [];
-        $query = '
-            SELECT Name, URL, ContactName, ContactEmail
-            FROM Conferences
-            WHERE Name NOT LIKE "%Website%"
-            ORDER BY Name';
-        $conferencesStmt = $app->db->prepare($query);
-        $conferencesStmt->execute([]);
-        $conferences = $conferencesStmt->fetchAll();
+        $conferences = Conference::loadConferences($app->db);
         return new View('home/about', compact('conferences'), 'About');
     }
 }
