@@ -3,3 +3,4 @@ uploads/*
 vendor/*
 phinx.yml
 composer.phar
+database.php
