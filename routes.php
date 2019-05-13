@@ -59,4 +59,5 @@
         '/login' => [['GET', 'HomeController', 'showLoginScreen'],
                      ['POST', 'HomeController', 'attemptLogin']],
         '/logout' => ['HomeController', 'logout'],
+        '/about' => ['HomeController', 'about'],
     ];

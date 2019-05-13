@@ -81,4 +81,18 @@ class HomeController
         session_destroy();
         return new Redirect('login');
     }
+
+    public function about(PBEAppConfig $app, Request $request)
+    {
+        $conferences = [];
+        $query = '
+            SELECT Name, URL, ContactName, ContactEmail
+            FROM Conferences
+            WHERE Name NOT LIKE "%Website%"
+            ORDER BY Name';
+        $conferencesStmt = $app->db->prepare($query);
+        $conferencesStmt->execute([]);
+        $conferences = $conferencesStmt->fetchAll();
+        return new View('home/about', compact('conferences'), 'About');
+    }
 }
