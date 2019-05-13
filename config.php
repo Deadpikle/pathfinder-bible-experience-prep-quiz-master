@@ -17,18 +17,30 @@
 // have been made!
 
 // First, load private config so that we have a db connection if we need one for any initialization.
+
+$appConfigClass = 'App\Models\PBEAppConfig';
+
+$whitelist = [
+    '127.0.0.1',
+    '::1'
+];
+
+$app = new $appConfigClass(
+    in_array($_SERVER['REMOTE_ADDR'], $whitelist), 
+    str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__)
+));
+
 if (file_exists('config-private.php')) {
     require_once 'config-private.php';
 }
 
 // // // // // // // Session Settings // // // // // // //
 
-/*
 // What follows is some very basic session logic that you can use to start your PHP session logic.
 // It's not guaranteed to be very good, but should get you started. (Open to pull request improvements!)
 $sessionTime = 3600 * 24;
 ini_set('session.gc_maxlifetime', $sessionTime);
-session_name('yamf');
+session_name('pbe');
 session_start();
 
 // https://stackoverflow.com/a/1270960/3938401
@@ -39,21 +51,17 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
     session_destroy();   // destroy session data in storage
     session_start();
 }
-$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp*/
+$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 
 // // // // // // // User Settings // // // // // // //
 
 // Examples of settings or other config parameters you might want:
 // $app->isAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'WebAdmin';
 
-$app->SESSION_NAME = "pbe";
 
 $basePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
 
 require_once("functions.php");
-session_name($app->SESSION_NAME);
-session_start();
-
 
 $app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
@@ -122,7 +130,12 @@ $app->defaultFooterName = 'footer'; // change this value if you want a different
 $app->staticPageHeaderName = 'header'; // change this value if you want a different header for static pages
 $app->staticPageFooterName = 'footer'; // change this value if you want a different footer for static pages
 
-$app->_404HeaderName = 'header'; // change this value if you want a different 404 header to be used by the router
-$app->_404Name = '404'; // change this value if you want a different 404 page to be used by the router
-$app->_404FooterName = 'footer'; // change this value if you want a different 404 footer to be used by the router
+$app->notFoundHeaderName = 'header'; // change this value if you want a different 404 header to be used by the router
+$app->notFoundViewName = '404'; // change this value if you want a different 404 page to be used by the router
+$app->notFoundFooterName = 'footer'; // change this value if you want a different 404 footer to be used by the router
 
+$app->viewsFolderName = 'views/'; // this is the folder path (including trailing slash) from the root dir to the views directory
+$app->staticViewsFolderName = 'views/static/'; // this is the folder path (including trailing slash) from the root dir to the static views directory
+
+$app->viewExtension = '.php'; // change this value if you want to use a different file extension for your views
+$app->staticViewExtension = '.php'; // change this value if you want to use a different file extension for your static views

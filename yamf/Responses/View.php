@@ -1,6 +1,8 @@
 <?php
 
-namespace Yamf\Models;
+namespace Yamf\Responses;
+
+use Yamf\AppConfig;
 
 class View extends Response
 {
@@ -25,7 +27,7 @@ class View extends Response
         $this->canUseDefaultFooter = true;
     }
 
-    public function output($app)
+    public function output(AppConfig $app)
     {
         parent::output($app);
         
@@ -38,17 +40,17 @@ class View extends Response
         }
 
         if ($this->headerName != null && $this->headerName !== '') {
-            require 'views/' . $this->headerName . '.php';
+            require $app->viewsFolderName . $this->headerName . $app->viewExtension;
         } elseif ($this->canUseDefaultHeader && $app->defaultHeaderName !== null) {
-            require 'views/' . $app->defaultHeaderName . '.php';
+            require $app->viewsFolderName . $app->defaultHeaderName . $app->viewExtension;
         }
         
-        require 'views/' . $this->name . '.php';
+        require $app->viewsFolderName . $this->name . $app->viewExtension;
 
         if ($this->footerName != null && $this->footerName !== '') {
-            require 'views/' . $this->footerName . '.php';
+            require $app->viewsFolderName . $this->footerName . $app->viewExtension;
         } elseif ($this->canUseDefaultFooter && $app->defaultFooterName !== null) {
-            require 'views/' . $app->defaultFooterName . '.php';
+            require $app->viewsFolderName . $app->defaultFooterName . $app->viewExtension;
         }
     }
 }

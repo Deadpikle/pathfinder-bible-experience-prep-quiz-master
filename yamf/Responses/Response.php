@@ -1,6 +1,8 @@
 <?php
 
-namespace Yamf\Models;
+namespace Yamf\Responses;
+
+use Yamf\AppConfig;
 
 class Response
 {
@@ -11,7 +13,7 @@ class Response
         $this->statusCode = $statusCode;
     }
 
-    public function output($app)
+    public function output(AppConfig $app)
     {
         http_response_code($this->statusCode);
     }

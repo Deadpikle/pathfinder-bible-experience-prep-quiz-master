@@ -1,13 +1,16 @@
 <?php
 
-namespace Controllers;
+namespace App\Controllers;
 
-use Yamf\Models\Request;
-use Yamf\Models\View;
+use Yamf\Request;
+use Yamf\Responses\Redirect;
+use Yamf\Responses\View;
+
+use App\Models\PBEAppConfig;
 
 class HomeController
 {
-    public function index($app, Request $request)
+    public function index(PBEAppConfig $app, Request $request)
     {
         if (!$app->loggedIn) {
             return new View('home/index', compact('sections'), 'Cow');
@@ -19,12 +22,12 @@ class HomeController
         return new View('home/index', compact('sections'), 'Home');
     }
 
-    public function showLoginScreen($app, Request $request)
+    public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
         return new View('home/login', null, 'Login');
     }
 
-    public function attemptLogin($app, Request $request)
+    public function attemptLogin(PBEAppConfig $app, Request $request)
     {
         // TODO: refactor to models
         $query = '
@@ -72,10 +75,9 @@ class HomeController
         }
     }
 
-    public function logout($app, Request $request)
+    public function logout(PBEAppConfig $app, Request $request)
     {
-        session_name($app->SESSION_NAME);
-        session_start();
+        session_regenerate_id(false);
         session_destroy();
         return new Redirect('login');
     }
