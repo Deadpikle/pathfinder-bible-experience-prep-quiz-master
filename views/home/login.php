@@ -1,7 +1,7 @@
 <h2>Welcome!</h2>
 
 <?php if (isset($error)) { ?>
-        <p class="error-message"> <?= $error ?> </p>
+    <p class="error-message"> <?= $error ?> </p>
 <?php } ?>
 
 <form method="post">

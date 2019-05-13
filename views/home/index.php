@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col s12 m4">
             <ul>
-                <li class="home-buttons"><a class='btn waves-effect waves-light' href="view-questions.php">Questions</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/questions') ?>">Questions</a></li>
                 <li class="home-buttons"><a class='btn waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
                 <li class="home-buttons"><a class='btn waves-effect waves-light' href="active-clubs.php">Clubs</a></li>
                 <li class="home-buttons"><a class='btn waves-effect waves-light' href="study-guides.php">Study Guides</a></li>

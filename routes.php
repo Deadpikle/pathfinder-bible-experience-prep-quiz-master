@@ -60,4 +60,6 @@
                      ['POST', 'HomeController', 'attemptLogin']],
         '/logout' => ['HomeController', 'logout'],
         '/about' => ['HomeController', 'about'],
+        '/questions' => ['User/QuestionController', 'viewQuestions'],
+        '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions']
     ];

@@ -10,6 +10,8 @@ class Chapter
     public $number;
     public $numberVerses;
 
+    public $verses; // array of Verse objects
+
     public $bookID;
 
     public function __construct(int $chapterID, int $number)

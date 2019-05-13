@@ -21,7 +21,6 @@
         $homeHeaderActiveStatus = "active";
     }
 
-    $languages = get_languages($app->db);
     if ($isLoggedIn) {
         $userLanguage = get_user_language($app->db);
     }
@@ -86,11 +85,6 @@
     </head>
     <body>
         <header>
-            <!-- <ul id="languages" class="dropdown-content">
-                <?php foreach ($languages as $language) { ?>
-                    <li id="user-lang-selector-<?= $language["LanguageID"] ?>"><a><?= $language["Name"] ?></a></li>
-                <?php } ?>
-            </ul> -->
             <nav>
                 <div class="nav-wrapper teal lighten-2">
                     <div class="container">
