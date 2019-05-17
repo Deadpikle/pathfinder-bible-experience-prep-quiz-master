@@ -23,4 +23,9 @@ class User
         $this->userID = $userID;
         $this->username = $username;
     }
+
+    public static function isLoggedIn()
+    {
+        return isset($_SESSION["UserID"]);
+    }
 }

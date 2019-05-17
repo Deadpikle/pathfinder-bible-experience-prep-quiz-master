@@ -17,7 +17,7 @@
     $stmt->execute([$bookID]);
     $book = $stmt->fetch();
 
-    if ($book == NULL) {
+    if ($book == null) {
         die("Invalid book id");
     }
     

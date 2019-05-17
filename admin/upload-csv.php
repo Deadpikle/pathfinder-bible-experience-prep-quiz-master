@@ -208,16 +208,16 @@
                             $endVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
                         }
                         else {
-                            $endVerseID = NULL;
+                            $endVerseID = null;
                         }
                     }
                     else {
-                        $endVerseID = NULL;
+                        $endVerseID = null;
                     }
                     
-                    $commentaryID = NULL;
-                    $commentaryStartPage = NULL;
-                    $commentaryEndPage = NULL;
+                    $commentaryID = null;
+                    $commentaryStartPage = null;
+                    $commentaryEndPage = null;
                 }
                 else if ($questionType === "commentary-qna" || $questionType === "commentary-qna-fill") {
                     $commentaryNumber = trim($row["Commentary Number"]);
@@ -237,8 +237,8 @@
                         continue;
                     }
 
-                    $startVerseID = NULL;
-                    $endVerseID = NULL;
+                    $startVerseID = null;
+                    $endVerseID = null;
                 }
 
                 $points = isset($row["Points"]) ? $row["Points"] : "";
@@ -269,7 +269,7 @@
                     $commentaryStartPage,
                     $commentaryEndPage,
                     $_SESSION["UserID"],
-                    FALSE, 
+                    false, 
                     $languageID
                 ];
                 //print_r($params);

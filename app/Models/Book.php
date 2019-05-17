@@ -40,15 +40,15 @@ class Book
         $lastBookID = -1;
         $lastChapterID = -1;
         $books = array();
-        $book = NULL;
-        $chapter = NULL;
+        $book = null;
+        $chapter = null;
         foreach ($data as $row) {
             if ($row['BookID'] != $lastBookID) {
                 $lastBookID = $row['BookID'];
-                if ($chapter != NULL) {
+                if ($chapter != null) {
                     $book->chapters[] = $chapter;
                 }
-                if ($book != NULL) {
+                if ($book != null) {
                     $books[] = $book;
                 }
                 $book = new Book($row['BookID'], $row['Name']);
@@ -58,7 +58,7 @@ class Book
             }
             if ($row['ChapterID'] != $lastChapterID) {
                 $lastChapterID = $row['ChapterID'];
-                if ($chapter != NULL) {
+                if ($chapter != null) {
                     $book->chapters[] = $chapter;
                 }
                 $chapter = new Chapter($row['ChapterID'], $row['ChapterNumber']);
@@ -73,7 +73,7 @@ class Book
             $chapter->verses[] = $verse;
         }
         // wrap it up
-        if ($chapter != NULL && $book != NULL) {
+        if ($chapter != null && $book != null) {
             $book->chapters[] = $chapter;
             $books[] = $book;
         }

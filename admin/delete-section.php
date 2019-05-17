@@ -9,7 +9,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$sectionID]);
     $section = $stmt->fetch();
-    if ($section == NULL) {
+    if ($section == null) {
         die("invalid section id");
     }
     

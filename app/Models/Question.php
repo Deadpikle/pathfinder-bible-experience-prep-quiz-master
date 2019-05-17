@@ -30,11 +30,24 @@ class Question
         $this->questionID = $questionID;
     }
 
+    // TODO: rename function :sweat_smile: have to quit and don't have time to rename things
+    private function loadQuestionss(string $whereClause, array $whereParams, PDO $db) : array
+    {
+        $query = '
+            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
+                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID
+            FROM Questions q 
+                LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
+                LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
+            WHERE q.QuestionID = ?
+        ';
+    }
+    
     public function loadQuestions(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
     {
         try {
             $whereClause = '';
-            $isFlagged = FALSE;
+            $isFlagged = false;
             $flaggedJoinClause = '';
             $questionType = 'bible-qna';
             if (isset($questionFilter)) {
@@ -44,7 +57,7 @@ class Question
                     $whereClause = ' WHERE DateCreated >= "' . $eightDaysAgo . '"';
                 }
                 else if ($questionFilter == 'flagged') {
-                    $isFlagged = TRUE;
+                    $isFlagged = true;
                     $flaggedJoinClause =  ' JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID ';
                     $whereClause = ' WHERE UserID = ' . $userID;
                 }
@@ -59,7 +72,7 @@ class Question
                 $whereClause .= ' WHERE (Type = "' . $questionType . '" OR Type = "' . $questionType . '-fill") ';
             }
             // TODO: why are these if/else things in two separate sections exactly?
-            if (strpos($questionType, 'bible') !== FALSE) {
+            if (strpos($questionType, 'bible') !== false) {
                 if (isset($bookFilter) && is_numeric($bookFilter) && $bookFilter != -1) {
                     $whereClause .= ' AND bStart.BookID = ' . $bookFilter;
                 }
@@ -67,13 +80,13 @@ class Question
                     $whereClause .= ' AND cStart.ChapterID = ' . $chapterFilter;
                 }
             }
-            else if (strpos($questionType, 'commentary') !== FALSE) {
+            else if (strpos($questionType, 'commentary') !== false) {
                 if (isset($volumeFilter) && is_numeric($volumeFilter) && $volumeFilter != -1) {
                     $whereClause .= ' AND comm.CommentaryID = ' . $volumeFilter;
                 }
             }
     
-            $isUsingCustomSearchText = FALSE;
+            $isUsingCustomSearchText = false;
             $searchText = '';
             if (isset($searchText)) {
                 $text = trim($searchText);
@@ -87,7 +100,7 @@ class Question
     
             if ($questionType == 'bible-qna' || $questionType == 'bible-qna-fill') {
                 $orderByClause = ' ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number, q.QuestionID ';
-                $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS NULL OR bEnd.YearID = ' . $currentYear . ')';
+                $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
             }
             else if ($questionType == 'commentary-qna' || $questionType == 'commentary-qna-fill') {
                 $orderByClause = ' ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage, q.QuestionID ';
@@ -176,28 +189,28 @@ class Question
                         $endFull = strtolower($endBook) . ' ' . $endVerse;
                     }
     
-                    if (strpos($questionText, $searchText) !== FALSE) {
+                    if (strpos($questionText, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if (strpos($answer, $searchText) !== FALSE) {
+                    else if (strpos($answer, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if (strpos($startBook, $searchText) !== FALSE) {
+                    else if (strpos($startBook, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if (strpos($startVerse, $searchText) !== FALSE) {
+                    else if (strpos($startVerse, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if ($endBook !== '' && strpos($endBook, $searchText) !== FALSE) {
+                    else if ($endBook !== '' && strpos($endBook, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if ($endVerse !== '' && strpos($endVerse, $searchText) !== FALSE) {
+                    else if ($endVerse !== '' && strpos($endVerse, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if ($startFull !== '' && strpos($startFull, $searchText) !== FALSE) {
+                    else if ($startFull !== '' && strpos($startFull, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
-                    else if ($endFull !== '' && strpos($endFull, $searchText) !== FALSE) {
+                    else if ($endFull !== '' && strpos($endFull, $searchText) !== false) {
                         $tmpQuestions[] = $question;
                     }
                 }

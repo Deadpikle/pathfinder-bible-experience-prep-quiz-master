@@ -17,7 +17,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $club = $stmt->fetch();
-        if ($club == NULL) {
+        if ($club == null) {
             die("invalid club id"); // TODO: better error
         }
         $clubID = $_GET["id"];

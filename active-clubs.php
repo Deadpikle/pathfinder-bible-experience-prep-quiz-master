@@ -44,7 +44,7 @@
     <ul class="browser-default">
         <?php 
             foreach ($clubs as $club) { 
-                if ($club["URL"] != NULL) {
+                if ($club["URL"] != null) {
         ?>
                     <li><a href="<?= $club['URL'] ?>"><?= $club["Name"] ?></a> (<?= $club["ConferenceName"] ?>)</li>
             <?php } else { ?>

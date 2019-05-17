@@ -8,7 +8,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$id]);
     $studyGuide = $stmt->fetch();
-    if ($studyGuide == NULL) {
+    if ($studyGuide == null) {
         die("Invalid study guide id");
     }
     

@@ -211,7 +211,7 @@ class Router
     }
 
     /**
-     * Returns NULL if no shorter URL found; destination as string if found
+     * Returns null if no shorter URL found; destination as string if found
      * @param string $url
      * @param PDO $db
      * @return string

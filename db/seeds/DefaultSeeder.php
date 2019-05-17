@@ -109,7 +109,7 @@ class DefaultSeeder extends AbstractSeed
                 'LastLoginDate' => date('Y-m-d H:i:s'),
                 'UserTypeID' => 1,
                 'ClubID' => 1,
-                'CreatedByID' => NULL
+                'CreatedByID' => null
             ],
             [
                 'Username' => 'Web Admin #1',
@@ -118,7 +118,7 @@ class DefaultSeeder extends AbstractSeed
                 'LastLoginDate' => date('Y-m-d H:i:s'),
                 'UserTypeID' => 5,
                 'ClubID' => 1,
-                'CreatedByID' => NULL
+                'CreatedByID' => null
             ]
         ];
         $users = $this->table('Users');

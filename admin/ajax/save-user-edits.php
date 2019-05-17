@@ -25,7 +25,7 @@
     }
 
     function get_entry_code($pdo) {
-        $didFindNewCode = FALSE;
+        $didFindNewCode = false;
         // pre-create the sql statement for faster queries in the db
         $entryCodeQuery = 'SELECT 1 FROM Users WHERE EntryCode = ?';
         $entryCodeStmt = $pdo->prepare($entryCodeQuery);
@@ -34,7 +34,7 @@
             $entryCode = random_str(6);
             // Make sure entry code doesn't already exist in the db
             $entryCodeStmt->execute([$entryCode]);
-            $didFindNewCode = count($entryCodeStmt->fetchAll()) == 1 ? FALSE : TRUE;
+            $didFindNewCode = count($entryCodeStmt->fetchAll()) == 1 ? false : true;
         }
         return $entryCode;
     }

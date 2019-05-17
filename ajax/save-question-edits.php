@@ -6,35 +6,35 @@
     }
     
     $totalBibleFillInQuestions = get_total_number_of_bible_fill_questions_for_current_year($pdo);
-    $startVerseID = isset($_POST["start-verse-id"]) ? $_POST["start-verse-id"] : NULL;
-    if ($_POST["start-verse-id"] == -1 || $_POST["start-verse-id"] == NULL) {
-        $startVerseID = NULL;
+    $startVerseID = isset($_POST["start-verse-id"]) ? $_POST["start-verse-id"] : null;
+    if ($_POST["start-verse-id"] == -1 || $_POST["start-verse-id"] == null) {
+        $startVerseID = null;
     }
-    $endVerseID = isset($_POST["end-verse-id"]) ? $_POST["end-verse-id"] : NULL;
-    if ($_POST["end-verse-id"] == -1 || $_POST["end-verse-id"] == NULL) {
-        $endVerseID = NULL;
+    $endVerseID = isset($_POST["end-verse-id"]) ? $_POST["end-verse-id"] : null;
+    if ($_POST["end-verse-id"] == -1 || $_POST["end-verse-id"] == null) {
+        $endVerseID = null;
     }
-    $shouldRemoveFlag = FALSE;
-    if (isset($_POST["remove-question-flag"]) && $_POST["remove-question-flag"] != NULL) {
-        $shouldRemoveFlag = TRUE;
+    $shouldRemoveFlag = false;
+    if (isset($_POST["remove-question-flag"]) && $_POST["remove-question-flag"] != null) {
+        $shouldRemoveFlag = true;
     }
     $commentaryID = $_POST["commentary-volume"];
     $commentaryStartPage = $_POST["commentary-start"];
     $commentaryEndPage = $_POST["commentary-end"];
     $questionType = $_POST["question-type"];
     // see if fill in the blank
-    if (!isset($_POST["question-is-fill-in-blank"]) || $_POST["question-is-fill-in-blank"] == NULL) {
-        $isFillInTheBlank = FALSE;
+    if (!isset($_POST["question-is-fill-in-blank"]) || $_POST["question-is-fill-in-blank"] == null) {
+        $isFillInTheBlank = false;
     }
     else {
-        $isFillInTheBlank = TRUE;
+        $isFillInTheBlank = true;
     }
     $languageID = $_POST["language-select"];
     $formType = $_GET["type"];
     if ($questionType == "bible-qna") {
-        $commentaryID = NULL;
-        $commentaryStartPage = NULL;
-        $commentaryEndPage = NULL;
+        $commentaryID = null;
+        $commentaryStartPage = null;
+        $commentaryEndPage = null;
         if ($isFillInTheBlank) {
             $questionType = "bible-qna-fill";
             if ($totalBibleFillInQuestions >= 500 && $ENABLE_NKJV_RESTRICTIONS) {
@@ -47,7 +47,7 @@
                     $stmt = $pdo->prepare($query);
                     $stmt->execute([$_POST["question-id"]]);
                     $questionData = $stmt->fetch();
-                    if ($questionData !== NULL && $questionData['Type'] !== 'bible-qna-fill') {
+                    if ($questionData !== null && $questionData['Type'] !== 'bible-qna-fill') {
                         die("Maximum amount of Bible questions reached (changing question type)");
                     }
                 }
@@ -55,8 +55,8 @@
         }
     }
     else if ($questionType == "commentary-qna") {
-        $startVerseID = NULL;
-        $endVerseID = NULL;
+        $startVerseID = null;
+        $endVerseID = null;
         if ($isFillInTheBlank) {
             $questionType = "commentary-qna-fill";
         }

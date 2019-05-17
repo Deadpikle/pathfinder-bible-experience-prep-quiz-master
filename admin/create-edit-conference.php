@@ -15,7 +15,7 @@
         $conferenceID = $_GET["id"];
         $stmt->execute([$conferenceID]);
         $conference = $stmt->fetch();
-        if ($conference == NULL) {
+        if ($conference == null) {
             die("Invalid conference id");
         }
         $name = $conference["Name"];

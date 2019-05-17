@@ -19,7 +19,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $section = $stmt->fetch();
-        if ($section == NULL) {
+        if ($section == null) {
             die("invalid section id"); // TODO: better error
         }
         $sectionID = $_GET["id"];

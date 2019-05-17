@@ -8,7 +8,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$wordID]);
     $word = $stmt->fetch();
-    if ($word == NULL) {
+    if ($word == null) {
         die("invalid word id");
     }
     

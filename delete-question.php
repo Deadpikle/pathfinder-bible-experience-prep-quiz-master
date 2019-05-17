@@ -14,7 +14,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$questionID]);
     $question = $stmt->fetch();
-    if ($question == NULL) {
+    if ($question == null) {
         die("invalid question id");
     }
     

@@ -210,7 +210,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$currentYear]);
         $bookQuestionData = $stmt->fetch();
-        if ($bookQuestionData != NULL) {
+        if ($bookQuestionData != null) {
             return $bookQuestionData['QuestionCount'];
         }
         return 0;
@@ -235,7 +235,7 @@
                 $language["LanguageID"]
             ]);
             $bookQuestionData = $stmt->fetch();
-            if ($bookQuestionData != NULL) {
+            if ($bookQuestionData != null) {
                 $fillIns[$language["LanguageID"]] = $bookQuestionData["QuestionCount"];
             }
             else {
@@ -413,10 +413,10 @@
                 }
                 echo "<ul class='section-items $extraULClass'>";
             }
-            if ($section["Text"] != NULL) {
-                $isFirstLineItem = FALSE;
+            if ($section["Text"] != null) {
+                $isFirstLineItem = false;
                 if ($lastLineID !== $lineID) {
-                    $isFirstLineItem = TRUE;
+                    $isFirstLineItem = true;
                     if ($lastLineID !== -1) {
                         echo "</li>";
                     }
@@ -480,7 +480,7 @@
         }
         $percentFillIn = $percentFillIn / 100;
 
-        $shouldShowOnlyRecentlyAdded = isset($params["flashShowOnlyRecent"]) ? filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN) : FALSE;
+        $shouldShowOnlyRecentlyAdded = isset($params["flashShowOnlyRecent"]) ? filter_var($params["flashShowOnlyRecent"], FILTER_VALIDATE_BOOLEAN) : false;
         $recentlyAddedAmount = isset($params["flashShowOnlyRecentDayAmount"]) ? filter_var($params["flashShowOnlyRecentDayAmount"], FILTER_VALIDATE_INT, array("options" => array(
             "default" => 30,
             "min_range" => 1,
@@ -496,7 +496,7 @@
             $questionTypes = "both"; 
             $questionOrder = "sequential-sequential";
             unset($params["quizItems"]);
-            $shouldAvoidPastCorrectAnswers = FALSE;
+            $shouldAvoidPastCorrectAnswers = false;
             $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-' . $recentlyAddedAmount . ' days'));
         }
         $userWantsNormalQuestions = $params["questionTypes"] === "qa-only" || $params["questionTypes"] === "both";
@@ -530,15 +530,15 @@
         }
         $shouldLoadBibleQnA = (count($quizItems) == 0 || count($chapterIDs) > 0) && $userWantsNormalQuestions;
         $shouldLoadCommentaryQnA = (count($quizItems) == 0 || count($commentaryIDs) > 0) && $userWantsNormalQuestions;
-        $disableBibleFillInLoading = FALSE;
-        $disableCommentaryFillInLoading = FALSE;
+        $disableBibleFillInLoading = false;
+        $disableCommentaryFillInLoading = false;
         if (count($chapterIDs) > 0 && count($commentaryIDs) == 0) {
-            $shouldLoadCommentaryQnA = FALSE;
-            $disableCommentaryFillInLoading = TRUE;
+            $shouldLoadCommentaryQnA = false;
+            $disableCommentaryFillInLoading = true;
         }
         if (count($commentaryIDs) > 0 && count($chapterIDs) == 0) {
-            $shouldLoadBibleQnA = FALSE;
-            $disableBibleFillInLoading = TRUE;
+            $shouldLoadBibleQnA = false;
+            $disableBibleFillInLoading = true;
         }
         // // // // //
         // load Bible questions
@@ -549,7 +549,7 @@
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
                 bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
-                IFNULL(uf.UserFlaggedID, 0) AS IsFlagged ';
+                IFnull(uf.UserFlaggedID, 0) AS IsFlagged ';
         $fromPortion = '
             FROM Questions q 
                 JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
@@ -570,14 +570,14 @@
             $whereClause .= ' AND cStart.ChapterID IN (' . implode(',', $chapterIDs) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
-            $whereClause .= '  AND (ua.UserAnswerID IS NULL 
-                OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
+            $whereClause .= '  AND (ua.UserAnswerID IS null 
+                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
         }
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "bible-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
 
-        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS NULL OR bEnd.YearID = ' . $currentYear . ')';
+        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
 
         if ($params["languageID"] != -1 && is_numeric($params["languageID"])) {
             $whereClause .= " AND l.LanguageID = " . $params["languageID"];
@@ -614,7 +614,7 @@
         $commentaryQnA = array();
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
-                IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
+                IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
                 comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage, comm.TopicName AS CommentaryTopic ';
         $fromPortion = '
             FROM Questions q 
@@ -630,8 +630,8 @@
             $whereClause .= ' AND comm.CommentaryID IN (' . implode(',', $commentaryIDs) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
-            $whereClause .= '  AND (ua.UserAnswerID IS NULL 
-                OR (ua.UserAnswerID IS NOT NULL AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
+            $whereClause .= '  AND (ua.UserAnswerID IS null 
+                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0 AND ua.UserID = ' . $params["userID"] . '))'; 
         }
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
@@ -787,12 +787,12 @@
             );
             if (is_bible_qna($question["Type"])) {
                 // Bible Q&A
-                $data["startBook"] = $question["StartBook"] != NULL ? $question["StartBook"] : "";
-                $data["startChapter"] = $question["StartChapter"] != NULL ? $question["StartChapter"] : "";
-                $data["startVerse"] = $question["StartVerse"] != NULL ? $question["StartVerse"] : "";
-                $data["endBook"] = $question["EndBook"] != NULL ? $question["EndBook"] : "";
-                $data["endChapter"] = $question["EndChapter"] != NULL ? $question["EndChapter"] : "";
-                $data["endVerse"] = $question["EndVerse"] != NULL ? $question["EndVerse"] : "";
+                $data["startBook"] = $question["StartBook"] != null ? $question["StartBook"] : "";
+                $data["startChapter"] = $question["StartChapter"] != null ? $question["StartChapter"] : "";
+                $data["startVerse"] = $question["StartVerse"] != null ? $question["StartVerse"] : "";
+                $data["endBook"] = $question["EndBook"] != null ? $question["EndBook"] : "";
+                $data["endChapter"] = $question["EndChapter"] != null ? $question["EndChapter"] : "";
+                $data["endVerse"] = $question["EndVerse"] != null ? $question["EndVerse"] : "";
             }
             else if (is_commentary_qna($question["Type"])) {
                 // commentary Q&A

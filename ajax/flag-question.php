@@ -19,7 +19,7 @@
         $query = 'SELECT 1 FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
-        $didFind = count($stmt->fetchAll()) >= 1 ? TRUE : FALSE;
+        $didFind = count($stmt->fetchAll()) >= 1 ? true : false;
         if (!$didFind) {
             $query = ' INSERT INTO UserFlagged (QuestionID, UserID) VALUES (?, ?) ';
             $stmt = $pdo->prepare($query);

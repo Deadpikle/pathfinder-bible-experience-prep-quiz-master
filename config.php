@@ -106,12 +106,12 @@ if (!isset($ENABLE_NKJV_RESTRICTIONS)) {
     logic for shortened URLs. You'll want a table with the following
     schema available in the db with the a PDO $app->db connection:
     CREATE TABLE `ShortURLs` (
-    `ShortURLID` int(11) NOT NULL,
-    `Slug` varchar(1000) NOT NULL,
-    `Destination` varchar(7500) NOT NULL,
-    `DateCreated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `DateLastUsed` datetime DEFAULT NULL,
-    `TimesUsed` int(11) NOT NULL DEFAULT '0'
+    `ShortURLID` int(11) NOT null,
+    `Slug` varchar(1000) NOT null,
+    `Destination` varchar(7500) NOT null,
+    `DateCreated` datetime NOT null DEFAULT CURRENT_TIMESTAMP,
+    `DateLastUsed` datetime DEFAULT null,
+    `TimesUsed` int(11) NOT null DEFAULT '0'
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8; */
 
 $app->isShortURLEnabled = false;    

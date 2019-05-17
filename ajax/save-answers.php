@@ -32,7 +32,7 @@
                     $answer["userID"]
                 ];
                 $searchStmt->execute($searchParams);
-                $didFind = count($searchStmt->fetchAll()) >= 1 ? TRUE : FALSE;
+                $didFind = count($searchStmt->fetchAll()) >= 1 ? true : false;
                 $insertUpdateParams = [
                     $answer["userAnswer"],
                     $answer["dateAnswered"],

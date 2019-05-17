@@ -16,7 +16,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$commentaryID]);
     $commentary = $stmt->fetch();
-    if ($commentary == NULL) {
+    if ($commentary == null) {
         die("Invalid commentary id");
     }
     

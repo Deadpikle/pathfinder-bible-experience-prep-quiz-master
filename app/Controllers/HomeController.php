@@ -14,7 +14,7 @@ class HomeController
     public function index(PBEAppConfig $app, Request $request)
     {
         if (!$app->loggedIn) {
-            return new Redirect('login');
+            return new Redirect('/login');
         }
         $title = 'Home';
         
@@ -55,13 +55,13 @@ class HomeController
             $_SESSION['UserID'] = $row['UserID'];
             $_SESSION['Username'] = $row['Username'];
             $_SESSION['UserType'] = $row['UserType'];
-            if ($row['ClubID'] != NULL) {
+            if ($row['ClubID'] != null) {
                 $_SESSION['ClubID'] = $row['ClubID'];
             } else {
                 $_SESSION['ClubID'] = -1;
             }
             $_SESSION['ClubName'] = $row['ClubName'];
-            if ($row['ConferenceID'] != NULL) {
+            if ($row['ConferenceID'] != null) {
                 $_SESSION['ConferenceID'] = $row['ConferenceID'];
             } else {
                 $_SESSION['ConferenceID'] = -1;
@@ -79,7 +79,7 @@ class HomeController
     {
         session_regenerate_id(false);
         session_destroy();
-        return new Redirect('login');
+        return new Redirect('/login');
     }
 
     public function about(PBEAppConfig $app, Request $request)

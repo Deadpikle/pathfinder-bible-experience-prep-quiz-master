@@ -14,7 +14,7 @@
         protected $lineHeight = 7;
         protected $WIDTH_OFFSET = 0;
         protected $DRAW_RECT = false;
-        protected $USE_CELL_OFFSET = FALSE;
+        protected $USE_CELL_OFFSET = false;
         
         function WriteHTML($html) {
             // HTML parser
@@ -231,7 +231,7 @@
                 $this->Rect($x, $y, $w, $height + $cellOffset);
             }
             else {
-                $this->SetY($y + ($cellOffset / 2), FALSE);
+                $this->SetY($y + ($cellOffset / 2), false);
             }
             // center the text vertically as needed
             if ($shouldVerticallyCenter) {
@@ -459,9 +459,9 @@
         else if (is_commentary_qna($type)) {
             $volume = $question["volume"];
             $startPage = $question["startPage"];
-            $endPage = isset($question["endPage"]) ? $question["endPage"] : NULL;
+            $endPage = isset($question["endPage"]) ? $question["endPage"] : null;
             $pageStr = "";
-            if ($endPage != NULL && $endPage != "" && $endPage > $startPage) {
+            if ($endPage != null && $endPage != "" && $endPage > $startPage) {
                 $pageStr = "pp. " . $startPage . "-" . $endPage;
             }
             else {
@@ -538,16 +538,16 @@
     $params["fillInPercent"] = $_POST["fill-in-percent"];
     $params["languageID"] = $_POST["language-select"];
     // TODO: use filter_var instead of this ? : chain (I'm in a rush right now :sweat_smile:)
-    $params["flashShowOnlyRecent"] = isset($_POST["flash-show-recently-added"])  && $_POST["flash-show-recently-added"] != NULL
-         ? $_POST["flash-show-recently-added"] : FALSE;
+    $params["flashShowOnlyRecent"] = isset($_POST["flash-show-recently-added"])  && $_POST["flash-show-recently-added"] != null
+         ? $_POST["flash-show-recently-added"] : false;
     $numberOfRecentDaysForShowOnlyRecent = 30;
-    if (isset($_POST["flash-recently-added-days"]) && $_POST["flash-recently-added-days"] != NULL) {
+    if (isset($_POST["flash-recently-added-days"]) && $_POST["flash-recently-added-days"] != null) {
         $numberOfRecentDaysForShowOnlyRecent = $_POST["flash-recently-added-days"];
     }
     $params["flashShowOnlyRecentDayAmount"] = $numberOfRecentDaysForShowOnlyRecent;
 
     $shouldAvoidPastCorrect = "false";
-    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
+    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != null) {
         $shouldAvoidPastCorrect = "true";
     }
     $params["shouldAvoidPastCorrect"] = $shouldAvoidPastCorrect;
@@ -555,7 +555,7 @@
     $params["userID"] = $_SESSION["UserID"];
 
     $isGeneratingWeighted = false;
-    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != NULL &&
+    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != null &&
         isset($params["quizItems"]) && count($params["quizItems"]) > 0 && !$params["flashShowOnlyRecent"]) {
         $isGeneratingWeighted = true;
         $bibleWeights = [];
@@ -585,7 +585,7 @@
     }
     else {
         $questionNumber = 1;
-        $outputBoldFillIn = isset($_POST["flash-full-fill-in"])  && $_POST["flash-full-fill-in"] != NULL ? $_POST["flash-full-fill-in"] : FALSE;
+        $outputBoldFillIn = isset($_POST["flash-full-fill-in"])  && $_POST["flash-full-fill-in"] != null ? $_POST["flash-full-fill-in"] : false;
         if (!isset($_GET["type"]) || $_GET["type"] == "lr" || $_GET["type"] !== "fb") {
             // left/right questions (question and answer on single row on same page)
             foreach ($quizMaterials["questions"] as $question) {

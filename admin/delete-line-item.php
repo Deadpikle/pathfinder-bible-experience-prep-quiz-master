@@ -15,7 +15,7 @@
     $itemStmt = $pdo->prepare($query);
     $itemStmt->execute([$itemID]);
     $item = $itemStmt->fetch();
-    if ($item == NULL) {
+    if ($item == null) {
         die("invalid line id"); // TODO: better error
     }
 

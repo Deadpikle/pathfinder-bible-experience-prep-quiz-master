@@ -18,7 +18,7 @@
     $stmt->execute([$chapterID]);
     $chapter = $stmt->fetch();
 
-    if ($chapter == NULL) {
+    if ($chapter == null) {
         die("Invalid book id");
     }
     

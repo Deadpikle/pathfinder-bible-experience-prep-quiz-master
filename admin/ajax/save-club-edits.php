@@ -23,7 +23,7 @@
                 $params[] = $_POST["conference"];
             }
             else {
-                $params[] = $_SESSION["ConferenceID"] != -1 ? $_SESSION["ConferenceID"] : NULL;
+                $params[] = $_SESSION["ConferenceID"] != -1 ? $_SESSION["ConferenceID"] : null;
             }
         }
         else {

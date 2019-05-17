@@ -10,7 +10,7 @@
     $questionOrder = $_POST["order"];
     $fillInPercent = $_POST["fill-in-percent"];
     $shouldAvoidPastCorrect = "false";
-    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != NULL) {
+    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != null) {
         $shouldAvoidPastCorrect = "true";
     }
     if (isset($_POST["quiz-items"])) {
@@ -20,7 +20,7 @@
         $quizItems = [];
     }
 
-    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != NULL) {
+    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != null) {
         $enableQuestionDistribution = "true";
     }
     else {

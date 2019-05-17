@@ -1,28 +1,21 @@
 <?php
-    require_once(dirname(__FILE__)."/init.php");
-
-    if ($isGuest) {
-        header('Location: index.php');
-        die();
-    }
 
     $questionID = isset($_GET['id']) ? $_GET['id'] : "";
     $startVerseID = -1;
     $endVerseID = -1;
-    $languages = get_languages($pdo);
-    if ($_GET["type"] == "update") {
+    if (!$isCreating) {
         if (!$isAdmin) {
             header("Location: " . $basePath . "/view-questions.php");            
             die();
         }
         $query = '
-            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFNULL(uf.UserFlaggedID, 0) AS IsFlagged,
+            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
                 comm.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
                 LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
             WHERE q.QuestionID = ?';
-        $stmt = $pdo->prepare($query);
+        $stmt = $app->db->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $question = $stmt->fetch();
         $questionType = $question["Type"];
@@ -34,134 +27,45 @@
         $numberOfPoints = $question["NumberPoints"];
         $startVerseID = $question["StartVerseID"];
         $endVerseID = $question["EndVerseID"];
-        $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? TRUE : FALSE;
+        $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? true : false;
         $commentaryID = $question["CommentaryID"];
         $commentaryStartPage = $question["CommentaryStartPage"];
         $commentaryEndPage = $question["CommentaryEndPage"];
         $languageID = $question["LanguageID"];
-        $postType = "update";
-        $titleString = "Edit";
     }
     else {
         $questionType = "bible-qna";
         $questionText = "";
-        $isFillIn = FALSE;
+        $isFillIn = false;
         $isFillInText = "false"; // because javascript
         $isFillInCheckedText = "";
         $answer = "";
         $numberOfPoints = "1";
-        $isFlagged = FALSE;
+        $isFlagged = false;
         $commentaryID = "";
         $commentaryStartPage = "";
         $commentaryEndPage = "";
-        $postType = "create";
-        $titleString = "Create";
-        $userLanguage = get_user_language($pdo);
         $languageID = $userLanguage["LanguageID"];
         
     }
     
-    $title = $titleString . ' Question';
-
-    if ($startVerseID == NULL) {
+    if ($startVerseID == null) {
         $startVerseID = -1;
     }
-    if ($endVerseID == NULL) {
+    if ($endVerseID == null) {
         $endVerseID = -1;
     }
-    if ($commentaryID == NULL) {
+    if ($commentaryID == null) {
         $commentaryID = -1;
     }
-
-    // TODO: refactor to a function
-    $currentYear = get_active_year($pdo)["YearID"];
-    // Load all book, chapter, and verse information
-    $bookQuery = '
-    SELECT b.BookID, b.Name, b.NumberChapters,
-        c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses,
-        v.VerseID, v.Number AS VerseNumber
-    FROM Books b 
-        JOIN Chapters c ON b.BookID = c.BookID
-        LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
-    WHERE b.YearID = ' . $currentYear . '
-    ORDER BY b.Name, ChapterNumber, VerseNumber';
-    $bookData = $pdo->query($bookQuery)->fetchAll();
-
-    $lastBookID = -1;
-    $lastChapterID = -1;
-    $books = array();
-    $book = NULL;
-    $chapter = NULL;
-    foreach ($bookData as $row) {
-        if ($row["BookID"] != $lastBookID) {
-            $lastBookID = $row["BookID"];
-            if ($chapter != NULL) {
-                $book["chapters"][] = $chapter;
-            }
-            if ($book != NULL) {
-                $books[] = $book;
-            }
-            $book = array(
-                "bookID" => $row["BookID"],
-                "name" => $row["Name"], 
-                "numberChapters" => $row["NumberChapters"],
-                "chapters" => array()
-            );
-            $chapter = NULL;
-        }
-        if ($row["ChapterID"] != $lastChapterID) {
-            $lastChapterID = $row["ChapterID"];
-            if ($chapter != NULL) {
-                $book["chapters"][] = $chapter;
-            }
-            $chapter = array(
-                "chapterID" => $row["ChapterID"],
-                "number" => $row["ChapterNumber"],
-                "numberVerses" => $row["NumberVerses"],
-                "verses" => array()
-            );
-        }
-        
-        // create verse
-        $verse = array(
-            "verseID" => $row["VerseID"],
-            "number" => $row["VerseNumber"]
-        );
-       // echo($row["VerseID"]."<br>");
-        $chapter["verses"][] = $verse;
-        // echo(json_encode($chapter));
-    }
-    // wrap it up
-    if ($chapter != NULL && $book != NULL) {
-        $book["chapters"][] = $chapter;
-        $books[] = $book;
-    }
-
-    $bookJSON = json_encode($books);
-
-    $commentaries = load_commentaries($pdo); // keys: id, name, topic
-    $commentaryJSON = json_encode($commentaries);
-
 ?>
-
-<?php include(dirname(__FILE__)."/header.php"); ?>
-
-<script type="text/javascript">
-    var books = <?= $bookJSON ?>;
-    var commentaries = <?= $commentaryJSON ?>;
-    var questionType = '<?= $questionType ?>';
-    var isFillInInitially = <?= $isFillInText ?>;
-    var startVerseID = <?= $startVerseID ?>;
-    var endVerseID = <?= $endVerseID ?>;
-    var commentaryID = <?= $commentaryID ?>;
-</script>
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-questions.php">Back</a></p>
 
-<h4><?= $titleString ?> Question</h4>
+<h4><?= $isCreating ? 'Add' : 'Edit' ?> Question</h4>
 
 <div id="edit-question">
-    <form action="ajax/save-question-edits.php?type=<?= $postType ?>" method="post">
+    <form method="post">
         <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
@@ -206,13 +110,13 @@
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
                     <?php foreach ($languages as $language) { 
-                            $selected = $language["LanguageID"] == $languageID ? 'selected' : '';
-                            $name = $language["Name"];
-                            if ($language["AltName"] !== "") {
-                                $name .= " (" . $language["AltName"] . ")";
+                            $selected = $language->languageID == $languageID ? 'selected' : '';
+                            $name = $language->name;
+                            if ($language->altName !== "") {
+                                $name .= " (" . $language->altName . ")";
                             }
                     ?>
-                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
+                        <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $name ?></option>
                     <?php } ?>
                 </select>
                 <label for="language-select">Language</label>
@@ -253,7 +157,7 @@
             <select class="col s12 m4" id="commentary-volume" name="commentary-volume" required>
                 <option id="commentary-no-selection-option" value="">Select commentary...</option>
                 <?php foreach ($commentaries as $commentary) { ?>
-                        <option id="" value="<?= $commentary['id'] ?>"><?= $commentary['name'] ?> - <?= $commentary['topic'] ?></option>
+                        <option id="" value="<?= $commentary->commentaryID ?>"><?= $commentary->getDisplayValue() ?></option>
                 <?php } ?>
             </select>
         </div>
@@ -282,6 +186,13 @@
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
     var selectedVerse = null;
+    var books = <?= json_encode($bookData) ?>;
+    var commentaries = <?= json_encode($commentaries) ?>;
+    var questionType = '<?= $questionType ?>';
+    var isFillInInitially = <?= $isFillInText ?>;
+    var startVerseID = <?= $startVerseID ?>;
+    var endVerseID = <?= $endVerseID ?>;
+    var commentaryID = <?= $commentaryID ?>;
     $(document).ready(function() {
 
         var bibleQuestionType = document.getElementById('bible-qna');
@@ -505,5 +416,3 @@
 
     }); 
 </script>
-
-<?php include(dirname(__FILE__)."/footer.php"); ?>

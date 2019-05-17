@@ -118,7 +118,7 @@
             <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
             <div class="sortable">
                 <?php 
-                    output_home_sections($sections, TRUE, $selectedConferenceID);
+                    output_home_sections($sections, true, $selectedConferenceID);
                 ?>
             </div>
         </div>

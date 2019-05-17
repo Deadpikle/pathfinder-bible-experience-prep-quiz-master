@@ -17,7 +17,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $word = $stmt->fetch();
-        if ($word == NULL) {
+        if ($word == null) {
             die("invalid word id");
         }
         $wordID = $_GET["id"];

@@ -18,7 +18,7 @@
             break;
         }
     }
-    if ($selectedLanguage == NULL) {
+    if ($selectedLanguage == null) {
         die("Invalid language id");
     }
 
@@ -31,7 +31,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$chapterID]);
         $data = $stmt->fetch();
-        if ($data == NULL) {
+        if ($data == null) {
             die("Invalid chapter id");
         }
         $warning = "Are you sure you want to delete all of the Bible fill in the blank questions for <b>" . $data['Name'] . " Chapter " . $data["Number"] . "</b> in the " . language_display_name($selectedLanguage) . " language?";

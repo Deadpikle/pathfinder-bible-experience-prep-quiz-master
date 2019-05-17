@@ -53,10 +53,10 @@
         <?php 
             $i = 0;
             foreach ($lines as $line) { 
-                $isFirstLineItem = FALSE;
+                $isFirstLineItem = false;
                 $lineID = $line["LineID"];
                 if ($lineID != $lastLineID) {
-                    $isFirstLineItem = TRUE;
+                    $isFirstLineItem = true;
                     if ($lastLineID !== -1) {
                         echo "</li></ul>";
                     }
@@ -67,7 +67,7 @@
                     echo "<ul class='browser-default sortable'>";
                     $lastLineID = $lineID;
                 }
-                if ($line["Text"] != NULL) {
+                if ($line["Text"] != null) {
                     $itemID = $line["ItemID"];
                     if ($line["IsLink"]) {
                         $url = $line["URL"];

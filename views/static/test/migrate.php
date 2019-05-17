@@ -104,11 +104,11 @@
         else {
             $editedBy = 2;
         }
-        if (isset($oldQuestion["CommentaryVolume"]) && $oldQuestion["CommentaryVolume"] != NULL && $oldQuestion["CommentaryVolume"] != "") {
+        if (isset($oldQuestion["CommentaryVolume"]) && $oldQuestion["CommentaryVolume"] != null && $oldQuestion["CommentaryVolume"] != "") {
             $commentaryID = $commentaryMap[(int)$oldQuestion["CommentaryVolume"]];
         }
         else {
-            $commentaryID = NULL;
+            $commentaryID = null;
         }
         $params = [
             $oldQuestion["Question"],

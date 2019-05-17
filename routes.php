@@ -61,5 +61,8 @@
         '/logout' => ['HomeController', 'logout'],
         '/about' => ['HomeController', 'about'],
         '/questions' => ['User/QuestionController', 'viewQuestions'],
-        '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions']
+        '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions'],
+
+        '/questions/add' => [['GET', 'User/QuestionController', 'createNewQuestion'],
+                             ['POST', 'User/QuestionController', 'saveNewQuestion']]
     ];

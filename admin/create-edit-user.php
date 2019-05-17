@@ -19,7 +19,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$_GET["id"]]);
         $user = $stmt->fetch();
-        if ($user == NULL) {
+        if ($user == null) {
             die("invalid user id"); // TODO: better error
         }
         $userID = $user["UserID"];

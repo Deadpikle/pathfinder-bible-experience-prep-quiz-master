@@ -16,7 +16,7 @@
             </ul>
         </div>
         <div class="col s12 m8">
-            <?php output_home_sections($sections, FALSE, $_SESSION["ConferenceID"]); ?>
+            <?php output_home_sections($sections, false, $_SESSION["ConferenceID"]); ?>
         </div>
     </div>
 </div>

@@ -20,7 +20,7 @@
         $stmt = $pdo->prepare($query);
         $stmt->execute([$itemID]);
         $lineItem = $stmt->fetch();
-        if ($lineItem == NULL) {
+        if ($lineItem == null) {
             die("invalid line id");
         }
         $itemID = $lineItem["HomeInfoItemID"];

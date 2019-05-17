@@ -42,4 +42,20 @@ class Language
     {
         return Language::loadLanguages('', [], $db);
     }
+
+    public function loadLanguageWithID(int $languageID, PDO $db) : ?Language
+    {
+        $data = Language::loadLanguages(' WHERE LanguageID = ? ', [$languageID], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public function findLanguageWithID(int $languageID, array $languages) : ?Language
+    {
+        foreach ($languages as $language) {
+            if ($language->languageID === $languageID) {
+                return $language;
+            }
+        }
+        return null;
+    }
 }

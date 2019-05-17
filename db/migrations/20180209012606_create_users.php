@@ -36,9 +36,9 @@ class CreateUsers extends AbstractMigration
         $table->addColumn('UserTypeID', 'integer', ['null' => true]);
         $table->addColumn('ClubID', 'integer');
         $table->addColumn('CreatedByID', 'integer', ['null' => true]);
-        $table->addForeignKey('UserTypeID', 'UserTypes', 'UserTypeID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
+        $table->addForeignKey('UserTypeID', 'UserTypes', 'UserTypeID', ['delete'=> 'SET_null', 'update' => 'NO_ACTION']);
         $table->addForeignKey('ClubID', 'Clubs', 'ClubID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
-        $table->addForeignKey('CreatedByID', 'Users', 'UserID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
+        $table->addForeignKey('CreatedByID', 'Users', 'UserID', ['delete'=> 'SET_null', 'update' => 'NO_ACTION']);
         $table->create();
     }
 }

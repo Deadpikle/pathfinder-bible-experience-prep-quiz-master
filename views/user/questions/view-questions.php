@@ -1,18 +1,3 @@
-<?php
-    $isAdminJS = $app->isAdmin ? "true" : "false";
-    $GUEST_MODEJS = $app->isGuest ? "true" : "false";
-
-    $volumes = load_commentaries($app->db);
-
-    $userLanguage = get_user_language($app->db);
-?>
-
-<script type="text/javascript">
-    var books = <?= json_encode($bookData) ?>;
-    var volumes = <?= json_encode($volumes) ?>;
-    var isAdmin = <?= $app->isAdmin ? 'true' : 'false' ?>;
-    var isGuestMode = <?= $app->isGuest ? 'true' : 'false' ?>;
-</script>
 
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
 <style type="text/css">
@@ -26,11 +11,11 @@
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
 
 <?php if (!$app->isGuest) { ?>
-<div id="create" class="row">
-    <div class="col s12"> 
-        <a class="waves-effect waves-light btn" href="add-edit-question.php?type=create">Add Question</a>
+    <div id="create" class="row">
+        <div class="col s12"> 
+            <a class="waves-effect waves-light btn" href="<?= $app->yurl('/questions/add') ?>">Add Question</a>
+        </div>
     </div>
-</div>
 <?php } ?>
 
 <div id="question-type-choice">
@@ -136,6 +121,10 @@
 </div>
 
 <script type="text/javascript">
+    var books = <?= json_encode($bookData) ?>;
+    var volumes = <?= json_encode($volumes) ?>;
+    var isAdmin = <?= $app->isAdmin ? 'true' : 'false' ?>;
+    var isGuestMode = <?= $app->isGuest ? 'true' : 'false' ?>;
     $(document).ready(function() {
 
         var questionType = "bible-qna";

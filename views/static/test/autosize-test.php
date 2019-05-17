@@ -34,7 +34,7 @@
                 "word" => $actualWord,
                 "after" => trim($matches[3]),
                 "blankable" => $isBlankable,
-                "shouldBeBlanked" => FALSE
+                "shouldBeBlanked" => false
 */
 
 

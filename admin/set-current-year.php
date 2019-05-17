@@ -9,7 +9,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$yearID]);
     $year = $stmt->fetch();
-    if ($year == NULL) {
+    if ($year == null) {
         die("invalid user id"); // TODO: better error
     }
 

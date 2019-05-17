@@ -4,11 +4,11 @@
         $conferenceID = $_POST["conference-id"];
         $sectionID = $_POST["section-id"];
         $lineID = $_POST["line-id"];
-        if (!isset($_POST["line-is-link"]) || $_POST["line-is-link"] == NULL) {
-            $_POST["line-is-link"] = FALSE;
+        if (!isset($_POST["line-is-link"]) || $_POST["line-is-link"] == null) {
+            $_POST["line-is-link"] = false;
         }
         else {
-            $_POST["line-is-link"] = TRUE;
+            $_POST["line-is-link"] = true;
         }
         $params = [
             $_POST["line-text"],
@@ -28,7 +28,7 @@
             $stmt->execute([$lineID]);
             $row = $stmt->fetch();
             $sortOrder = 1;
-            if ($row != NULL) {
+            if ($row != null) {
                 $sortOrder = intval($row["MaxSort"]) + 1;
             }
             $params[] = $sortOrder;

@@ -8,7 +8,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$clubID]);
     $club = $stmt->fetch();
-    if ($club == NULL) {
+    if ($club == null) {
         die("invalid club id");
     }
     

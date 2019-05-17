@@ -9,7 +9,7 @@
     $stmt = $pdo->prepare($query);
     $stmt->execute([$userID]);
     $user = $stmt->fetch();
-    if ($user == NULL) {
+    if ($user == null) {
         die("invalid user id"); // TODO: better error
     }
 
