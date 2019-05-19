@@ -125,6 +125,7 @@
     var volumes = <?= json_encode($volumes) ?>;
     var isAdmin = <?= $app->isAdmin ? 'true' : 'false' ?>;
     var isGuestMode = <?= $app->isGuest ? 'true' : 'false' ?>;
+    var questionURLBase = '<?= $app->yurl('/questions/') ?>';
     $(document).ready(function() {
 
         var questionType = "bible-qna";
@@ -167,24 +168,29 @@
                     languageID: $("#language-select").val()
                 },
                 success: function(response) {
-                    if (typeof response == 'undefined' || typeof response.questions == 'undefined'){
+                    if (typeof response == 'undefined') {
                         showLoadError(response);
                     }
                     else {
-                        setupTable(response.questions);
-                        var totalQuestions = response.questions.length != 0 ? response.questions.length : 0;
-                        maxPageNumber = totalQuestions != 0 ? Math.ceil(response.totalQuestions / pageSize) - 1 : 0;
-                        if (currentPageNumber == 0) {
-                            previousPage.disabled = true;
-                        }
-                        else {
-                            previousPage.disabled = false;
-                        }
-                        if (maxPageNumber == currentPageNumber) {
-                            nextPage.disabled = true;
-                        }
-                        else {
-                            nextPage.disabled = false;
+                        try {
+                            var data = JSON.parse(response);
+                            setupTable(data.questions);
+                            var totalQuestions = data.questions.length != 0 ? data.questions.length : 0;
+                            maxPageNumber = totalQuestions != 0 ? Math.ceil(data.totalQuestions / pageSize) - 1 : 0;
+                            if (currentPageNumber == 0) {
+                                previousPage.disabled = true;
+                            }
+                            else {
+                                previousPage.disabled = false;
+                            }
+                            if (maxPageNumber == currentPageNumber) {
+                                nextPage.disabled = true;
+                            }
+                            else {
+                                nextPage.disabled = false;
+                            }
+                        } catch (e) {
+                            showLoadError(e);
                         }
                     }
                 },
@@ -281,8 +287,8 @@
                     html += '<td>' + languageName + '</td>';
                 }
                 if (isAdmin && !isGuestMode) {
-                    html += '<td><a class="waves-effect waves-light btn" href="add-edit-question.php?type=update&id=' + id + '">Edit</a></td>';
-                    html += '<td><a class="waves-effect waves-light btn red" href="delete-question.php?id=' + id + '">Delete</a></td>';
+                    html += '<td><a class="waves-effect waves-light btn" href="' + questionURLBase + id + '/edit">Edit</a></td>';
+                    html += '<td><a class="waves-effect waves-light btn red" href="' + questionURLBase + id + '/delete">Delete</a></td>';
                 }
                 html += '</tr>';
                 $questionsBody.append(html);
@@ -443,7 +449,7 @@
             $('#volume-select option').not(':first').remove();
             $("#filter-by-text").html("<b>Filter by Commentary Volume</b>");
             for (var i = 0; i < volumes.length; i++) {
-                $('#volume-select').append("<option value='" + i + "'>" + volumes[i].name + " - " + volumes[i].topic + "</option>");
+                $('#volume-select').append("<option value='" + i + "'>" + volumes[i].displayName + "</option>");
             }
             $('#book-select').material_select("destroy");
             $('#chapter-select').material_select("destroy");

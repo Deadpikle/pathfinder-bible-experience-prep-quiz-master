@@ -12,10 +12,8 @@ class Question
     public $numberPoints;
     public $dateCreated;
     public $dateModified;
-    public $isFlagged;
+    public $isFlagged; // TODO: fix flagging questions
     public $type;
-    public $commentaryStartPage;
-    public $commentaryEndPage;
     public $isDeleted;
     
     public $creatorID;
@@ -23,6 +21,8 @@ class Question
     public $startVerseID;
     public $endVerseID;
     public $commentaryID;
+    public $commentaryStartPage;
+    public $commentaryEndPage;
     public $languageID;
 
     public function __construct(int $questionID)
@@ -31,25 +31,93 @@ class Question
     }
 
     // TODO: rename function :sweat_smile: have to quit and don't have time to rename things
-    private function loadQuestionss(string $whereClause, array $whereParams, PDO $db) : array
+    private function loadQuestions(string $whereClause, array $whereParams, PDO $db) : array
     {
+        // IFnull(uf.UserFlaggedID, 0) AS IsFlagged
         $query = '
-            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
-                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID
-            FROM Questions q 
-                LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
-                LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
-            WHERE q.QuestionID = ?
-        ';
+            SELECT q.QuestionID, Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID,
+                q.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID, DateCreated, DateModified,
+                IsDeleted, LanguageID, CreatorID, LastEditedByID
+            FROM Questions q '
+            . $whereClause;
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute($whereParams);
+        $data = $stmt->fetchAll();
+
+        $output = [];
+        foreach ($data as $row) {
+            $question = new Question($row['QuestionID']);
+            $question->question = $row['Question'];
+            $question->answer = $row['Answer'];
+            $question->numberPoints = $row['NumberPoints'];
+            $question->dateCreated = $row['DateCreated'];
+            $question->dateModified = $row['DateModified'];
+            $question->isFlagged = false;
+            $question->type = $row['Type'];
+            $question->isDeleted = $row['IsDeleted'];
+            
+            $question->creatorID = $row['CreatorID'];
+            $question->lastEditedByID = $row['LastEditedByID'];
+            $question->startVerseID = $row['StartVerseID'] ?? -1;
+            $question->endVerseID = $row['EndVerseID'] ?? -1;
+            $question->commentaryID = $row['CommentaryID'] ?? -1;
+            $question->commentaryStartPage = $row['CommentaryStartPage'];
+            $question->commentaryEndPage = $row['CommentaryEndPage'];
+            $question->languageID = $row['LanguageID'];
+
+            $output[] = $question;
+        }
+        return $output;
+    }
+
+    public function loadAllNonDeletedQuestions(PDO $db) : array
+    {
+        return Question::loadQuestions('WHERE IsDeleted = 0', [], $db);
+    }
+
+    public function loadQuestionWithID(int $questionID, PDO $db) : ?Question
+    {
+        $data = Question::loadQuestions('WHERE QuestionID = ?', [$questionID], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public function isTypeBibleQnA(string $type) : bool
+    {
+        return $type === "bible-qna" || $type == "bible-qna-fill";
+    }
+
+    public function isBibleQnA() : bool
+    {
+        return Question::isTypeBibleQnA($this->type);
+    }
+
+    public function isTypeCommentaryQnA(string $type) : bool
+    {
+        return $type === "commentary-qna" || $type == "commentary-qna-fill";
+    }
+
+    public function isCommentaryQnA() : bool
+    {
+        return Question::isTypeCommentaryQnA($this->type);
+    }
+
+    public function isTypeFillIn(string $type) : bool
+    {
+        return $type === "bible-qna-fill" || $type === "commentary-qna-fill";
+    }
+
+    public function isFillIn() : bool
+    {
+        return Question::isTypeFillIn($this->type);
     }
     
-    public function loadQuestions(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
+    public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
     {
         try {
             $whereClause = '';
             $isFlagged = false;
             $flaggedJoinClause = '';
-            $questionType = 'bible-qna';
             if (isset($questionFilter)) {
                 $questionFilter = $questionFilter;
                 if ($questionFilter == 'recent') {
@@ -62,9 +130,7 @@ class Question
                     $whereClause = ' WHERE UserID = ' . $userID;
                 }
             }
-            if (isset($questionType)) {
-                $questionType = $questionType;
-            }
+            $questionType = $questionType ?? 'bible-qna';
             if ($whereClause == '') {
                 $whereClause = ' WHERE (Type = "' . $questionType . '" OR Type = "' . $questionType . '-fill") ';
             }
@@ -87,12 +153,11 @@ class Question
             }
     
             $isUsingCustomSearchText = false;
-            $searchText = '';
             if (isset($searchText)) {
                 $text = trim($searchText);
                 if ($text !== '') {
                     $isUsingCustomSearchText = true;
-                    $searchText = trim($text);
+                    $searchText = $text;
                 }
             }
     
@@ -110,14 +175,12 @@ class Question
                 $orderByClause = '';
             }
     
-            $pageSize = 10;
-            if (isset($pageSize)) {
-                $pageSize = $pageSize;
+            if (!isset($pageSize)) {
+                $pageSize = 10;
             }
     
-            $pageOffset = 0;
-            if (isset($pageOffset)) {
-                $pageOffset = $pageOffset;
+            if (!isset($pageOffset)) {
+                $pageOffset = 0;
             }
     
             // check if need to filter by language
@@ -236,7 +299,6 @@ class Question
                 'questions' => $questions,
                 'totalQuestions' => $totalQuestions
             ));
-            header('Content-Type: application/json; charset=utf-8');
             return $output;
         }
         catch (PDOException $e) {

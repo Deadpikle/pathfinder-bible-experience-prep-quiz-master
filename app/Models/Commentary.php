@@ -12,6 +12,8 @@ class Commentary
 
     public $yearID;
 
+    public $displayName; // set once on load for easier JS usage (this is not very clean but oh well; easier to fix after refactor)
+
     public function __construct(int $commentaryID, int $number)
     {
         $this->commentaryID = $commentaryID;
@@ -44,6 +46,7 @@ class Commentary
             $commentary = new Commentary($row['CommentaryID'], $row['Number']);
             $commentary->topicName = $row['TopicName'];
             $commentary->yearID = $row['YearID'];
+            $commentary->displayName = $commentary->getDisplayValue();
             $output[] = $commentary;
         }
         return $output;

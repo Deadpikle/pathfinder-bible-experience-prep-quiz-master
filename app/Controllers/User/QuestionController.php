@@ -38,7 +38,7 @@ class QuestionController
             die();
         }
 
-        $questionData = Question::loadQuestions(
+        $questionData = Question::loadQuestionsWithFilters(
             $request->post['questionFilter'],
             $request->post['questionType'],
             $request->post['bookFilter'],
@@ -53,23 +53,48 @@ class QuestionController
         echo $questionData;
     }
 
+    private function loadQuestionEditingData(PBEAppConfig $app)
+    {
+        $currentYear = Year::loadCurrentYear($app->db);
+        $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
+        $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
+        $languages = Language::loadAllLanguages($app->db);
+        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        return compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage');
+    }
+
     public function createNewQuestion(PBEAppConfig $app, Request $request)
     {
         if ($app->isGuest) {
             return new Redirect('/');
         }
 
-        $isCreating = true;
-        $currentYear = Year::loadCurrentYear($app->db);
-        $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
-        $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
-        $languages = Language::loadAllLanguages($app->db);
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        $editData = $this->loadQuestionEditingData($app);
+        $editData['isCreating'] = true;
 
-        return new View('user/questions/create-edit-question', compact('isCreating', 'bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage'), 'Add Question');
+        return new View('user/questions/create-edit-question', $editData, 'Add Question');
     }
     
     public function saveNewQuestion(PBEAppConfig $app, Request $request)
+    {
+        if ($app->isGuest) {
+            return new Redirect('/');
+        }
+    }
+    
+    public function editQuestion(PBEAppConfig $app, Request $request)
+    {
+        if ($app->isGuest) {
+            return new Redirect('/');
+        }
+        $editData = $this->loadQuestionEditingData($app);
+        $editData['isCreating'] = false;
+        $editData['question'] = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
+
+        return new View('user/questions/create-edit-question', $editData, 'Add Question');
+    }
+    
+    public function saveQuestionEdits(PBEAppConfig $app, Request $request)
     {
         if ($app->isGuest) {
             return new Redirect('/');

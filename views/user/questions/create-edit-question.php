@@ -1,88 +1,27 @@
-<?php
 
-    $questionID = isset($_GET['id']) ? $_GET['id'] : "";
-    $startVerseID = -1;
-    $endVerseID = -1;
-    if (!$isCreating) {
-        if (!$isAdmin) {
-            header("Location: " . $basePath . "/view-questions.php");            
-            die();
-        }
-        $query = '
-            SELECT Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID, IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
-                comm.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID
-            FROM Questions q 
-                LEFT JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID 
-                LEFT JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
-            WHERE q.QuestionID = ?';
-        $stmt = $app->db->prepare($query);
-        $stmt->execute([$_GET["id"]]);
-        $question = $stmt->fetch();
-        $questionType = $question["Type"];
-        $isFillIn = is_fill_in($questionType);
-        $isFillInText = $isFillIn ? "true" : "false"; // because javascript
-        $isFillInCheckedText = $isFillIn ? " checked " : "";
-        $questionText = $question["Question"];
-        $answer = $question["Answer"];
-        $numberOfPoints = $question["NumberPoints"];
-        $startVerseID = $question["StartVerseID"];
-        $endVerseID = $question["EndVerseID"];
-        $isFlagged = $question["IsFlagged"] != "0" && $question["IsFlagged"] != 0 ? true : false;
-        $commentaryID = $question["CommentaryID"];
-        $commentaryStartPage = $question["CommentaryStartPage"];
-        $commentaryEndPage = $question["CommentaryEndPage"];
-        $languageID = $question["LanguageID"];
-    }
-    else {
-        $questionType = "bible-qna";
-        $questionText = "";
-        $isFillIn = false;
-        $isFillInText = "false"; // because javascript
-        $isFillInCheckedText = "";
-        $answer = "";
-        $numberOfPoints = "1";
-        $isFlagged = false;
-        $commentaryID = "";
-        $commentaryStartPage = "";
-        $commentaryEndPage = "";
-        $languageID = $userLanguage["LanguageID"];
-        
-    }
-    
-    if ($startVerseID == null) {
-        $startVerseID = -1;
-    }
-    if ($endVerseID == null) {
-        $endVerseID = -1;
-    }
-    if ($commentaryID == null) {
-        $commentaryID = -1;
-    }
-?>
-
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-questions.php">Back</a></p>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/questions') ?>">Back</a></p>
 
 <h4><?= $isCreating ? 'Add' : 'Edit' ?> Question</h4>
 
 <div id="edit-question">
     <form method="post">
-        <input type="hidden" name="question-id" value="<?= $questionID ?>"/>
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <?php $checked = is_bible_qna($questionType) ? "checked" : ""; ?>
+                <?php $checked = isset($question) && $question->isBibleQnA() ? 'checked' : ''; ?>
                 <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" <?= $checked ?>/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>
             <div class="input-field col s12">
-                <?php $checked = is_commentary_qna($questionType) ? "checked" : ""; ?>
+                <?php $checked = isset($question) && $question->isCommentaryQnA() ? 'checked' : ''; ?>
                 <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" <?= $checked ?>/>
                 <label class="black-text" for="commentary-qna">SDA Bible Commentary</label>
             </div>
         </div>
         <div id="question-fill-in" class="row">
             <div class="input-field col s12 m4">
-                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" <?= $isFillInCheckedText ?> />
+                <?php $checked = isset($question) && $question->isFillIn() ? 'checked' : ''; ?>
+                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" <?= $checked ?> />
                 <label class="black-text" for="question-is-fill-in-blank">Fill in the blank</label>
             </div>
         </div>
@@ -91,18 +30,19 @@
             <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" 
-                        required placeholder="What is the name of Esther's uncle?" data-length="10000"><?= $questionText ?></textarea>
+                        required placeholder="What is the name of Esther's uncle?" 
+                        data-length="10000"><?= isset($question) ? $question->question : '' ?></textarea>
                 <label for="question-text">Question</label>
             </div>
             <div id="question-answer-div" class="input-field col s12 m6">
                 <textarea id="question-answer" name="question-answer" class="materialize-textarea" 
-                        required placeholder="Mordecai" data-length="3000"><?= $answer ?></textarea>
+                        required placeholder="Mordecai" data-length="3000"><?= isset($question) ? $question->answer : '' ?></textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
         <div id="number-of-points-div" class="row negative-top-margin">
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= $numberOfPoints ?>" required/>
+                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= isset($question) ? $question->numberPoints : '' ?>" required/>
                 <label for="number-of-points">Number of Points</label>
             </div>
         </div>
@@ -110,7 +50,7 @@
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
                     <?php foreach ($languages as $language) { 
-                            $selected = $language->languageID == $languageID ? 'selected' : '';
+                            $selected = $language->languageID == (isset($question) ? $question->languageID : -1) ? 'selected' : '';
                             $name = $language->name;
                             if ($language->altName !== "") {
                                 $name .= " (" . $language->altName . ")";
@@ -163,15 +103,15 @@
         </div>
         <div class="row commentary-inputs negative-top-margin">
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= $commentaryStartPage ?>" required placeholder="12"/>
+                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= isset($question) ? $question->commentaryStartPage : '' ?>" required placeholder="12"/>
                 <label for="commentary-start">Start Page</label>
             </div>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= $commentaryEndPage ?>" placeholder="15"/>
+                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= isset($question) ? $question->commentaryEndPage : '' ?>" placeholder="15"/>
                 <label for="commentary-end">End Page</label>
             </div>
         </div>
-        <?php if ($isFlagged) { ?>
+        <?php if (isset($question) ? $question->isFlagged : '') { ?>
             <div class="row" id="unflag-question">
                 <div class="input-field col s12">
                     <input type="checkbox" id="remove-question-flag" name="remove-question-flag"/>
@@ -188,11 +128,11 @@
     var selectedVerse = null;
     var books = <?= json_encode($bookData) ?>;
     var commentaries = <?= json_encode($commentaries) ?>;
-    var questionType = '<?= $questionType ?>';
-    var isFillInInitially = <?= $isFillInText ?>;
-    var startVerseID = <?= $startVerseID ?>;
-    var endVerseID = <?= $endVerseID ?>;
-    var commentaryID = <?= $commentaryID ?>;
+    var questionType = '<?= isset($question) ? $question->type : 'bible-qna' ?>';
+    var isFillInInitially = <?= isset($question) ? ($question->isFillIn() ? 'true' : 'false') : 'false' ?>;
+    var startVerseID = <?= isset($question) ? $question->startVerseID : -1 ?>;
+    var endVerseID = <?= isset($question) ? $question->endVerseID : -1 ?>;
+    var commentaryID = <?= isset($question) ? $question->commentaryID : -1 ?>;
     $(document).ready(function() {
 
         var bibleQuestionType = document.getElementById('bible-qna');
