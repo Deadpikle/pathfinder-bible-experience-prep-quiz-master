@@ -1,9 +1,4 @@
 <?php
-    $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder" 
-        && $_SESSION["UserType"] !== "Guest";
-    $headerIsGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
-    $isLoggedIn = $app->loggedIn;
-
     $homePath = $app->basePath == "" ? "/" : $app->basePath;
 
     $htmlTitle = isset($title) ? $title . ' - ' . $app->websiteTabTitle : $app->websiteTabTitle;
@@ -21,7 +16,7 @@
         $homeHeaderActiveStatus = "active";
     }
 
-    if ($isLoggedIn) {
+    if ($app->loggedIn) {
         $userLanguage = get_user_language($app->db);
     }
 ?>
@@ -65,7 +60,7 @@
         <?php } ?>
 
         <script src="<?= $app->yurl('/js/common.js') ?>?<?= filemtime("js/common.js") ?>"></script>
-        <?php if (!$app->isLocalHost && !$headerIsGuest && $analyticsURL !== '') { ?>
+        <?php if (!$app->isLocalHost && !$app->isGuest && $analyticsURL !== '') { ?>
             <!-- Piwik -->
             <script type="text/javascript">
                 var _paq = _paq || [];
@@ -91,12 +86,12 @@
                         <a href="<?=$homePath?>" class="brand-logo"><?= $app->websiteName ?></a>
                         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                         <ul class="right hide-on-med-and-down">
-                            <?php if ($isLoggedIn) { ?>
+                            <?php if ($app->loggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a href="<?=$homePath?>">Home</a></li>
                             <?php } ?>
                             <li class="<?= $aboutHeaderActiveStatus ?>"><a href="<?= $app->yurl('/about') ?>">About</a></li>
-                            <?php if ($isLoggedIn) { ?>
-                                <?php if ($canViewAdminPanel) { ?>
+                            <?php if ($app->loggedIn) { ?>
+                                <?php if ($app->isAdmin) { ?>
                                     <li class="<?= $adminHeaderActiveStatus ?>"><a href="<?= $app->yurl('/admin') ?>">Admin Panel</a></li>
                                 <?php } ?>
                                 <li><a href="<?= $app->yurl('/logout') ?>">Logout</a></li>
@@ -104,12 +99,12 @@
                         </ul>
                         <ul class="side-nav teal darken-1" id="mobile-demo">
                             <li><a class="center-align white-text" id="side-nav-title" href="<?=$homePath?>"><?= $app->websiteName ?></a></li>
-                            <?php if ($isLoggedIn) { ?>
+                            <?php if ($app->loggedIn) { ?>
                                 <li class="<?= $homeHeaderActiveStatus ?>"><a class="white-text" href="<?=$homePath?>">Home</a></li>
                             <?php } ?>
                             <li class="<?= $aboutHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->yurl('/about') ?>">About</a></li>
-                            <?php if ($isLoggedIn) { ?>
-                                <?php if ($canViewAdminPanel) { ?>
+                            <?php if ($app->loggedIn) { ?>
+                                <?php if ($app->isAdmin) { ?>
                                     <li class="<?= $adminHeaderActiveStatus ?>"><a class="white-text" href="<?= $app->yurl('/admin') ?>">Admin Panel</a></li>
                                 <?php } ?>
                                 <li><a class="white-text" href="<?= $app->yurl('/logout') ?>">Logout</a></li>
