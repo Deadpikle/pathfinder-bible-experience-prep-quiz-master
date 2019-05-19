@@ -66,5 +66,7 @@
         '/questions/add' => [['GET', 'User/QuestionController', 'createNewQuestion'],
                              ['POST', 'User/QuestionController', 'saveNewQuestion']],
         '/questions/{questionID}/edit' => [['GET', 'User/QuestionController', 'editQuestion'],
-                                           ['POST', 'User/QuestionController', 'saveQuestionEdits']]
+                                           ['POST', 'User/QuestionController', 'saveQuestionEdits']],
+        '/questions/{questionID}/delete' => [['GET', 'User/QuestionController', 'verifyDeleteQuestion'],
+                                            ['POST', 'User/QuestionController', 'deleteQuestion']]
     ];

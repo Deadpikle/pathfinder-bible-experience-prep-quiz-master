@@ -111,6 +111,13 @@ class Question
     {
         return Question::isTypeFillIn($this->type);
     }
+
+    public function updateDeletedFlag(bool $flag, PDO $db)
+    {
+        $query = 'Update Questions SET IsDeleted = ? WHERE QuestionID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([$flag, $this->questionID]);
+    }
     
     public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
     {

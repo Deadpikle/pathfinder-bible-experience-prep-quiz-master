@@ -3,6 +3,7 @@
 namespace App\Controllers\User;
 
 use Yamf\Request;
+use Yamf\Responses\NotFound;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
 
@@ -87,6 +88,10 @@ class QuestionController
         if ($app->isGuest) {
             return new Redirect('/');
         }
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        if ($question === null) {
+            return new NotFound();
+        }
         $editData = $this->loadQuestionEditingData($app);
         $editData['isCreating'] = false;
         $editData['question'] = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
@@ -99,5 +104,34 @@ class QuestionController
         if ($app->isGuest) {
             return new Redirect('/');
         }
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        if ($question === null) {
+            return new NotFound();
+        }
+    }
+
+    public function verifyDeleteQuestion(PBEAppConfig $app, Request $request)
+    {
+        if ($app->isGuest) {
+            return new Redirect('/');
+        }
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        if ($question === null) {
+            return new NotFound();
+        }
+        return new View('user/questions/verify-delete-question', compact('question'), 'Delete Question');
+    }
+
+    public function deleteQuestion(PBEAppConfig $app, Request $request)
+    {
+        if ($app->isGuest) {
+            return new Redirect('/');
+        }
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        if ($question === null || $question->questionID != $request->post['question-id']) {
+            return new NotFound();
+        }
+        $question->updateDeletedFlag(true, $app->db);
+        return new Redirect('/questions');
     }
 }
