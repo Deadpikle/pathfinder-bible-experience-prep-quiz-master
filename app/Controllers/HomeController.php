@@ -9,6 +9,8 @@ use Yamf\Responses\View;
 use App\Models\Club;
 use App\Models\Conference;
 use App\Models\PBEAppConfig;
+use App\Models\StudyGuide;
+use App\Models\Year;
 
 class HomeController
 {
@@ -105,5 +107,12 @@ class HomeController
         $clubCount = count($clubs);
 
         return new View('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
+    }
+
+    public function studyGuides(PBEAppConfig $app, Request $request)
+    {
+        $currentYear = Year::loadCurrentYear($app->db);
+        $guides = StudyGuide::loadCurrentStudyGuides($currentYear, $app->db);
+        return new View('home/study-guides', compact('guides'), 'Study Guides');
     }
 }

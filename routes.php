@@ -61,6 +61,7 @@
         '/logout' => ['HomeController', 'logout'],
         '/about' => ['HomeController', 'about'],
         '/active-clubs' => ['HomeController', 'activeClubs'],
+        '/study-guides' => ['HomeController', 'studyGuides'],
         '/questions' => ['User/QuestionController', 'viewQuestions'],
         '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions'],
 
