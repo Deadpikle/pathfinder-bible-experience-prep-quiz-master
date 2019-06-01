@@ -15,10 +15,6 @@
     if ($aboutHeaderActiveStatus === "" && $adminHeaderActiveStatus === "") {
         $homeHeaderActiveStatus = "active";
     }
-
-    if ($app->loggedIn) {
-        $userLanguage = get_user_language($app->db);
-    }
 ?>
 
 <!DOCTYPE html>

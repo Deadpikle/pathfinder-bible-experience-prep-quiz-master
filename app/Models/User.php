@@ -26,6 +26,21 @@ class User
 
     public static function isLoggedIn()
     {
-        return isset($_SESSION["UserID"]);
+        return isset($_SESSION['UserID']);
+    }
+
+    public static function currentUserID()
+    {
+        return isset($_SESSION['UserID']) ? $_SESSION['UserID'] : -1;
+    }
+
+    public static function updatePreferredLanguage(int $userID, int $languageID, PDO $db)
+    {
+        $query = 'UPDATE Users SET PreferredLanguageID = ? WHERE UserID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $languageID, 
+            $userID
+        ]);
     }
 }

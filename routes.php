@@ -62,6 +62,8 @@
         '/about' => ['HomeController', 'about'],
         '/active-clubs' => ['HomeController', 'activeClubs'],
         '/study-guides' => ['HomeController', 'studyGuides'],
+        '/settings' => [['GET', 'HomeController', 'viewSettings'],
+                        ['POST', 'HomeController', 'updateSettings']],
         '/questions' => ['User/QuestionController', 'viewQuestions'],
         '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions'],
 

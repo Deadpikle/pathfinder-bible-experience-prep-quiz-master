@@ -33,13 +33,9 @@
     <div class="input-field col s12 m4">
         <select id="language-select">
             <?php foreach ($languages as $language) {
-                    $selected = $language->languageID == $userLanguage["LanguageID"] ? 'selected' : '';
-                    $name = $language->name;
-                    if ($language->altName !== "") {
-                        $name .= " (" . $language->altName . ")";
-                    }
+                    $selected = $language->languageID == $userLanguage->languageID ? 'selected' : '';
             ?>
-                <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $name ?></option>
+                <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $language->getDisplayName() ?></option>
             <?php } ?>
             <option value="-1">No language filter</option>
         </select>

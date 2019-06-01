@@ -18,6 +18,15 @@ class Language
         $this->isDefault = false;
     }
 
+    public function getDisplayName() : string
+    {
+        $name = $this->name;
+        if ($this->altName !== "") {
+            $name .= " (" . $this->altName . ")";
+        }
+        return $name;
+    }
+
     private function loadLanguages(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '

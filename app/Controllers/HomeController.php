@@ -8,8 +8,10 @@ use Yamf\Responses\View;
 
 use App\Models\Club;
 use App\Models\Conference;
+use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\StudyGuide;
+use App\Models\User;
 use App\Models\Year;
 
 class HomeController
@@ -112,5 +114,34 @@ class HomeController
         $currentYear = Year::loadCurrentYear($app->db);
         $guides = StudyGuide::loadCurrentStudyGuides($currentYear, $app->db);
         return new View('home/study-guides', compact('guides'), 'Study Guides');
+    }
+
+    public function viewSettings(PBEAppConfig $app, Request $request)
+    {
+        if (!$app->loggedIn) {
+            return new Redirect('/login');
+        }
+        $languages = Language::loadAllLanguages($app->db);
+        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+
+        $didUpdate = false;
+        return new View('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+    }
+
+    public function updateSettings(PBEAppConfig $app, Request $request)
+    {
+        if (!$app->loggedIn) {
+            return new Redirect('/login');
+        }
+        $languages = Language::loadAllLanguages($app->db);
+        $languageIDToUse = $request->post['language-select'];
+        User::updatePreferredLanguage(User::currentUserID(), $languageIDToUse, $app->db);
+        
+        $_SESSION['PreferredLanguageID'] = $languageIDToUse; // TODO: refactor to User somewhere
+        
+        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+
+        $didUpdate = true;
+        return new View('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 }
