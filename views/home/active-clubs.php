@@ -19,8 +19,11 @@
     </ul>
     <h4>Active Conferences</h4>
     <ul class="browser-default">
-        <?php foreach ($conferenceCounts as $conferenceID => $count) {
-                $conference = $conferences[$conferenceID];
+        <?php foreach ($conferences as $conference) { // loop through conferences for alphabetical order
+                if (!isset($conferenceCounts[$conference->conferenceID])) {
+                    continue;
+                }
+                $count = $conferenceCounts[$conference->conferenceID];
                 if ($conference->url != null && $conference->url !== '') {
         ?>
             <li>
