@@ -58,17 +58,9 @@ class HomeController
             $_SESSION['UserID'] = $row['UserID'];
             $_SESSION['Username'] = $row['Username'];
             $_SESSION['UserType'] = $row['UserType'];
-            if ($row['ClubID'] != null) {
-                $_SESSION['ClubID'] = $row['ClubID'];
-            } else {
-                $_SESSION['ClubID'] = -1;
-            }
+            $_SESSION['ClubID'] = $row['ClubID'] != null ? $row['ClubID'] : -1;
             $_SESSION['ClubName'] = $row['ClubName'];
-            if ($row['ConferenceID'] != null) {
-                $_SESSION['ConferenceID'] = $row['ConferenceID'];
-            } else {
-                $_SESSION['ConferenceID'] = -1;
-            }
+            $_SESSION['ConferenceID'] = $row['ConferenceID'] != null ? $row['ConferenceID'] : -1;
             $_SESSION['ConferenceName'] = $row['ConferenceName'];
             $_SESSION['PreferredLanguageID'] = $row['PreferredLanguageID'];
             return new Redirect('/');
@@ -93,6 +85,9 @@ class HomeController
 
     public function activeClubs(PBEAppConfig $app, Request $request)
     {
+        if (!$app->loggedIn) {
+            return new Redirect('/login');
+        }
         $clubs = Club::loadRecentlyActiveClubs($app->db);
         $conferences = Conference::loadAllConferencesByID($app->db);
 
@@ -111,6 +106,9 @@ class HomeController
 
     public function studyGuides(PBEAppConfig $app, Request $request)
     {
+        if (!$app->loggedIn) {
+            return new Redirect('/login');
+        }
         $currentYear = Year::loadCurrentYear($app->db);
         $guides = StudyGuide::loadCurrentStudyGuides($currentYear, $app->db);
         return new View('home/study-guides', compact('guides'), 'Study Guides');
