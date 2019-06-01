@@ -23,7 +23,7 @@ class HomeController
         }
         $title = 'Home';
         
-        $sections = load_home_sections($app->db, $_SESSION["ConferenceID"]);
+        $sections = load_home_sections($app->db, $_SESSION["ConferenceID"]); // TODO: refactor to models and use model instead
         return new View('home/index', compact('sections'), 'Home');
     }
 
