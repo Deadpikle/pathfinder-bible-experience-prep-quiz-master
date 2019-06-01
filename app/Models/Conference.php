@@ -49,4 +49,17 @@ class Conference
     {
         return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);
     }
+
+    /**
+     * Returns array of conferences with keys being the ConferenceID and values being the Conference
+     */
+    public function loadAllConferencesByID(PDO $db) : array
+    {
+        $conferences = Conference::loadConferences('', [], $db);
+        $output = [];
+        foreach ($conferences as $conference) {
+            $output[$conference->conferenceID] = $conference;
+        }
+        return $output;
+    }
 }

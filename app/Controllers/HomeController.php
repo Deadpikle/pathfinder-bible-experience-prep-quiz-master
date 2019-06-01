@@ -6,6 +6,7 @@ use Yamf\Request;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
 
+use App\Models\Club;
 use App\Models\Conference;
 use App\Models\PBEAppConfig;
 
@@ -86,5 +87,23 @@ class HomeController
     {
         $conferences = Conference::loadNonWebsiteConferences($app->db);
         return new View('home/about', compact('conferences'), 'About');
+    }
+
+    public function activeClubs(PBEAppConfig $app, Request $request)
+    {
+        $clubs = Club::loadRecentlyActiveClubs($app->db);
+        $conferences = Conference::loadAllConferencesByID($app->db);
+
+        $conferenceCounts = [];
+        foreach ($clubs as $club) {
+            if (!isset($conferenceCounts[$club->conferenceID])) {
+                $conferenceCounts[$club->conferenceID] = 1;
+            } else {
+                $conferenceCounts[$club->conferenceID] += 1;
+            }
+        }
+        $clubCount = count($clubs);
+
+        return new View('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
     }
 }

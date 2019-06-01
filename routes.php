@@ -60,6 +60,7 @@
                      ['POST', 'HomeController', 'attemptLogin']],
         '/logout' => ['HomeController', 'logout'],
         '/about' => ['HomeController', 'about'],
+        '/active-clubs' => ['HomeController', 'activeClubs'],
         '/questions' => ['User/QuestionController', 'viewQuestions'],
         '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions'],
 
