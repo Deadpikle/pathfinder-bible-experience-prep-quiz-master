@@ -84,7 +84,7 @@ class Question
 
     public function isTypeBibleQnA(string $type) : bool
     {
-        return $type === "bible-qna" || $type == "bible-qna-fill";
+        return $type === 'bible-qna' || $type == 'bible-qna-fill';
     }
 
     public function isBibleQnA() : bool
@@ -94,7 +94,7 @@ class Question
 
     public function isTypeCommentaryQnA(string $type) : bool
     {
-        return $type === "commentary-qna" || $type == "commentary-qna-fill";
+        return $type === 'commentary-qna' || $type == 'commentary-qna-fill';
     }
 
     public function isCommentaryQnA() : bool
@@ -104,7 +104,7 @@ class Question
 
     public function isTypeFillIn(string $type) : bool
     {
-        return $type === "bible-qna-fill" || $type === "commentary-qna-fill";
+        return $type === 'bible-qna-fill' || $type === 'commentary-qna-fill';
     }
 
     public function isFillIn() : bool
@@ -289,14 +289,14 @@ class Question
                 $totalQuestions = $row['QuestionCount'];
             }
     
-            $output = json_encode(array(
+            $output = json_encode(array( // TODO: return array and let controller do the json_encode
                 'questions' => $questions,
                 'totalQuestions' => $totalQuestions
             ));
             return $output;
         }
         catch (PDOException $e) {
-            return print_r($e, true);
+            return print_r($e, true); // TODO: return an actual error!
         }
         catch (Exception $e) {
             return print_r($e, true);
