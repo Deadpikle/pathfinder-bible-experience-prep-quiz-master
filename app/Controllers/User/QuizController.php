@@ -54,4 +54,21 @@ class QuizController
         UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
         return new Redirect('/quiz/setup');
     }
+
+    public function takeQuiz(PBEAppConfig $app, Request $request)
+    {
+        if (!User::isLoggedIn()) {
+            return new Redirect('/');
+        }
+    }
+
+    public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
+    {
+        
+    }
+
+    public function generateFrontBackFlashCards(PBEAppConfig $app, Request $request)
+    {
+        
+    }
 }

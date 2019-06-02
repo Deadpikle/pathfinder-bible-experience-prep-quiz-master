@@ -1,5 +1,4 @@
 <?php
-    require_once(dirname(__FILE__)."/init.php");
 
     if (!isset($_POST["max-questions"]) || !isset($_POST["max-points"]) || !isset($_POST["question-types"]) || !isset($_POST["order"])) {
         header("Location: quiz-setup.php");
@@ -41,8 +40,6 @@
 
     $languageID = $_POST["language-select"];
 ?>
-
-<?php include(dirname(__FILE__)."/header.php"); ?>
 
 <script type="text/javascript">
     var maxQuestions = <?= $maxQuestions ?>;
@@ -752,5 +749,3 @@
         loadQuiz();
     });
 </script>
-
-<?php include(dirname(__FILE__)."/footer.php"); ?>

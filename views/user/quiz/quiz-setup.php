@@ -1,7 +1,7 @@
 <?php
     $lastBookSeen = "";
 
-    $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;
+    $areAnyQuestionsAvailable = count($chapters) > 0 || count($commentaries) > 0;
 ?>
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/') ?>">Back</a></p>
@@ -27,7 +27,9 @@
                     ?>
                             <option value="chapter-<?= $chapter->chapterID ?>"><?= $booksByBookID[$chapter->bookID]->name ?>&nbsp;<?= $chapter->number ?></option>
                     <?php } 
-                        echo '</optgroup>';
+                        if (count($chapters) > 0) {
+                            echo '</optgroup>';
+                        }
                     ?>
                     <optgroup label="SDA Bible Commentary">
                         <?php foreach ($commentaries as $commentary) { ?>
@@ -252,21 +254,21 @@
         $('#start-quiz-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', 'quiz.php');
+                $(quizForm).attr('action', '<?= $app->yurl('/quiz/take') ?>');
                 $(quizForm).submit();
             }
         });
         $('#lr-flash-cards-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', 'study-guide-pdf.php?type=lr');
+                $(quizForm).attr('action', '<?= $app->yurl('/quiz/flash-cards/left-right') ?>');
                 $(quizForm).submit();
             }
         });
         $('#fb-flash-cards-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', 'study-guide-pdf.php?type=fb');
+                $(quizForm).attr('action', '<?= $app->yurl('/quiz/flash-cards/front-back') ?>');
                 $(quizForm).submit();
             }
         });

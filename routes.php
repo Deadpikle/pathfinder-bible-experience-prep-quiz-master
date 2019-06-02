@@ -74,6 +74,9 @@
         '/questions/{questionID}/delete' => [['GET', 'User/QuestionController', 'verifyDeleteQuestion'],
                                             ['POST', 'User/QuestionController', 'deleteQuestion']],
         '/quiz/setup' => ['User/QuizController', 'setupQuiz'],
+        '/quiz/take' => ['POST', 'User/QuizController', 'takeQuiz'],
+        '/quiz/flash-cards/left-right' => ['POST', 'User/QuizController', 'generateLeftRightFlashCards'],
+        '/quiz/flash-cards/front-back' => ['POST', 'User/QuizController', 'generateFrontBackFlashCards'],
         '/quiz/answers/remove' => [['GET', 'User/QuizController', 'checkBeforeRemovingAnswers'],
                                    ['POST', 'User/QuizController', 'removeAnswers']]
     ];
