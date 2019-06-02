@@ -9,10 +9,10 @@
         <div class="col s12 m4">
             <ul>
                 <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/questions') ?>">Questions</a></li>
-                <li class="home-buttons"><a class='btn waves-effect waves-light' href="quiz-setup.php">Quiz me!</a></li>
-                <li class="home-buttons"><a class='btn waves-effect waves-light' href="active-clubs.php">Clubs</a></li>
-                <li class="home-buttons"><a class='btn waves-effect waves-light' href="study-guides.php">Study Guides</a></li>
-                <li class="home-buttons"><a class='btn waves-effect waves-light' href="settings.php">Settings</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/quiz/setup') ?>">Quiz me!</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/active-clubs') ?>">Clubs</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/study-guides') ?>">Study Guides</a></li>
+                <li class="home-buttons"><a class='btn waves-effect waves-light' href="<?= $app->yurl('/settings') ?>">Settings</a></li>
             </ul>
         </div>
         <div class="col s12 m8">

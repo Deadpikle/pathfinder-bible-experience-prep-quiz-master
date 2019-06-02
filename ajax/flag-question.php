@@ -27,12 +27,12 @@
         }
 
         header('Content-Type: application/json; charset=utf-8');
-        $output = array ( "status" => 200 );
+        $output = ['status' => 200];
         echo json_encode($output);
     }
     catch (PDOException $e) {
         header('Content-Type: application/json; charset=utf-8');
-        $output = array ( "status" => 400 );
+        $output = ['status' => 400];
         echo json_encode($output);
     }
 ?>

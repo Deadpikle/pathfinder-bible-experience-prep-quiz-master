@@ -1,43 +1,14 @@
 <?php
-    require_once(dirname(__FILE__)."/init.php");
-    
-    $title = 'Quiz Setup';
-    
-    // load possible books and commentary volumes
-
-    $currentYear = get_active_year($pdo)["YearID"];
-
-    $languages = get_languages($pdo);
-    $userLanguage = get_user_language($pdo);
-
-    $chapterQuery = '
-        SELECT DISTINCT b.BookID, b.Name, b.NumberChapters,
-            c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
-        FROM Books b 
-            JOIN Chapters c ON b.BookID = c.BookID
-            JOIN Verses v ON c.ChapterID = v.ChapterID
-            JOIN Questions q ON v.VerseID = q.StartVerseID
-        WHERE b.YearID = ' . $currentYear . ' AND q.IsDeleted = 0
-        ORDER BY b.Name, ChapterNumber';
-    $chapterData = $pdo->query($chapterQuery)->fetchAll();
-    $chapters = array();
-    foreach ($chapterData as $chapter) {
-        $chapters[] =  array('id' => $chapter["ChapterID"], 'name' => $chapter["Name"], 'chapter' => $chapter["ChapterNumber"]);
-    }
-
-    $volumes = load_commentaries($pdo, true);
     $lastBookSeen = "";
 
     $areAnyQuestionsAvailable = count($chapters) > 0 || count($volumes) > 0;
 ?>
 
-<?php include(dirname(__FILE__)."/header.php"); ?>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/') ?>">Back</a></p>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
-
+<h4>Quiz Setup</h4>
 <?php if ($areAnyQuestionsAvailable) { ?>
 <div id="start-quiz">
-    <h4>Quiz Setup</h4>
     <form id="quiz-setup-form" method="post">
         <p><b>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</b></p>
         <div class="row">
@@ -46,21 +17,21 @@
                     <option value="" disabled selected>All</option>
                     <?php 
                         foreach ($chapters as $chapter) { 
-                            if ($lastBookSeen != $chapter['name']) {
-                                if ($lastBookSeen != "" && $lastBookSeen != $chapter['name']) {
+                            if ($lastBookSeen != $chapter->bookID) {
+                                if ($lastBookSeen != "" && $lastBookSeen != $chapter->bookID) {
                                     echo '</optgroup>';
                                 }
-                                echo '<optgroup label="' . $chapter['name'] . '">';
-                                $lastBookSeen = $chapter['name'];
+                                echo '<optgroup label="' . $booksByBookID[$chapter->bookID]->name. '">';
+                                $lastBookSeen = $chapter->bookID;
                             }
                     ?>
-                            <option value="chapter-<?= $chapter['id'] ?>"><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></option>
+                            <option value="chapter-<?= $chapter->chapterID ?>"><?= $booksByBookID[$chapter->bookID]->name ?>&nbsp;<?= $chapter->number ?></option>
                     <?php } 
                         echo '</optgroup>';
                     ?>
                     <optgroup label="SDA Bible Commentary">
-                        <?php foreach ($volumes as $volume) { ?>
-                            <option value="commentary-<?= $volume['id'] ?>"><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</option>
+                        <?php foreach ($commentaries as $commentary) { ?>
+                            <option value="commentary-<?= $commentary->commentaryID ?>"><?= $commentary->getDisplayValue() ?></option>
                         <?php } ?>
                     </optgroup>
                 </select>
@@ -71,13 +42,9 @@
             <div class="input-field col s12 m3">
                 <select id="language-select" name="language-select">
                     <?php foreach ($languages as $language) { 
-                            $selected = $language["LanguageID"] == $userLanguage["LanguageID"] ? 'selected' : '';
-                            $name = $language["Name"];
-                            if ($language["AltName"] !== "") {
-                                $name .= " (" . $language["AltName"] . ")";
-                            }
+                            $selected = $language->languageID == $userLanguage->languageID ? 'selected' : '';
                     ?>
-                        <option value="<?= $language['LanguageID'] ?>" <?= $selected ?>><?= $name ?></option>
+                        <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $language->getDisplayName() ?></option>
                     <?php } ?>
                     <option value="-1">No language filter</option>
                 </select>
@@ -104,16 +71,16 @@
                     </thead>
                     <tbody id="weighted-question-table-body">
                         <?php foreach ($chapters as $chapter) { ?>
-                            <tr id="table-chapter-<?= $chapter['id'] ?>">
-                                <td><?= $chapter['name'] ?>&nbsp;<?= $chapter['chapter'] ?></td>
-                                <td><input name="table-input-chapter-<?= $chapter['id'] ?>" class="table-input" 
+                            <tr id="table-chapter-<?= $chapter->chapterID ?>">
+                                <td><?= $booksByBookID[$chapter->bookID]->name ?>&nbsp;<?= $chapter->number ?></td>
+                                <td><input name="table-input-chapter-<?= $chapter->chapterID ?>" class="table-input" 
                                            type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
-                        <?php foreach ($volumes as $volume) { ?>
-                            <tr id="table-commentary-<?= $volume['id'] ?>">
-                                <td><?= $volume['name'] ?> (<?= $volume['topic'] ?>)</td>
-                                <td><input name="table-input-commentary-<?= $volume['id'] ?>" class="table-input" 
+                        <?php foreach ($commentaries as $commentary) { ?>
+                            <tr id="table-commentary-<?= $commentary->commentaryID ?>">
+                                <td><?= $commentary->getDisplayValue() ?></td>
+                                <td><input name="table-input-commentary-<?= $commentary->commentaryID ?>" class="table-input" 
                                            type="number" value="" min="0" max="100"></input></td>
                             </tr>
                         <?php } ?>
@@ -200,19 +167,15 @@
         </div>
         <div class="divider"></div>
         <div class="input-field col s6">
-            <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="delete-user-answers.php">Erase previously saved answers</a>
+            <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="<?= $app->yurl('/quiz/answers/remove') ?>">Erase previously saved answers</a>
         </div>
     </form>
 </div>
 <?php } else { ?>
 <div id="start-quiz">
-    <h4>Quiz Setup</h4>
-    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="add-edit-question.php?type=create">create one</a>?</p>
+    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="<?= $app->yurl('/questions/add') ?>">create one</a>?</p>
 </div>
 <?php } ?>
-
-<?php include(dirname(__FILE__)."/footer.php") ?>
-
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -226,7 +189,7 @@
         var buttonID = '';
         $(':submit').click(function() {
             buttonID = $(this).attr('id'); // ...I can't remember what this is for...
-        })
+        });
         
         var enableQuestionDistributionCheckbox = document.getElementById('enable-question-distribution');
 

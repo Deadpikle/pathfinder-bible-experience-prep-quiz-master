@@ -1,0 +1,10 @@
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/quiz/setup') ?>">Back</a></p>
+
+<div id="delete-user">
+    <h4> Are you sure you want to delete all of your previously saved answers?</h4>
+    <p>Questions you have answered correctly in the past will once again show up in quizzes if you choose to delete all of your answers. </p>
+    <form method="post">
+        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Answers</button>
+    </form>
+</div>

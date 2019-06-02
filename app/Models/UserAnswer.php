@@ -19,4 +19,11 @@ class UserAnswer
         $this->userAnswerID = $userAnswerID;
         $this->answer = $answer;
     }
+
+    public static function deleteUserAnswers(int $userID, PDO $db)
+    {
+        $query = 'DELETE FROM UserAnswers WHERE UserID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([$userID]);
+    }
 }

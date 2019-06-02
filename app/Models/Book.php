@@ -22,6 +22,36 @@ class Book
         $this->name = $name;
     }
 
+    private function loadBooks(string $whereClause, array $whereParams, PDO $db) : array
+    {
+        $query = '
+            SELECT BookID, Name, NumberChapters, YearID
+            FROM Books
+            ' . $whereClause . '
+            ORDER BY Name, NumberChapters';
+        $stmt = $db->prepare($query);
+        $stmt->execute($whereParams);
+        $data = $stmt->fetchAll();
+        $output = [];
+        foreach ($data as $row) {
+            $book = new Book($row['BookID'], $row['Name']);
+            $book->numberChapters = $row['NumberChapters'];
+            $book->yearID = $row['YearID'];
+            $output[] = $book;
+        }
+        return $output;
+    }
+
+    public function loadAllBooks(PDO $db) : array
+    {
+        return Book::loadBooks('', [], $db);
+    }
+
+    public function loadBooksForYear(Year $year, PDO $db) : array
+    {
+        return Book::loadBooks(' WHERE YearID = ? ', [ $year->yearID ], $db);
+    }
+
     public function loadAllBookChapterVerseDataForYear(Year $year, PDO $db) : array
     {
         $query = '

@@ -72,5 +72,8 @@
         '/questions/{questionID}/edit' => [['GET', 'User/QuestionController', 'editQuestion'],
                                            ['POST', 'User/QuestionController', 'saveQuestionEdits']],
         '/questions/{questionID}/delete' => [['GET', 'User/QuestionController', 'verifyDeleteQuestion'],
-                                            ['POST', 'User/QuestionController', 'deleteQuestion']]
+                                            ['POST', 'User/QuestionController', 'deleteQuestion']],
+        '/quiz/setup' => ['User/QuizController', 'setupQuiz'],
+        '/quiz/answers/remove' => [['GET', 'User/QuizController', 'checkBeforeRemovingAnswers'],
+                                   ['POST', 'User/QuizController', 'removeAnswers']]
     ];
