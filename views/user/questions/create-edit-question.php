@@ -3,12 +3,21 @@
 
 <h4><?= $isCreating ? 'Add' : 'Edit' ?> Question</h4>
 
+<?php if (isset($error) && $error !== '') { ?>
+    <div class="row">
+        <div class="col s8 m4 red">
+            <p class="white-text"><?= $error ?></p>
+        </div>
+    </div>
+<?php } ?>
+
 <div id="edit-question">
     <form method="post">
+        <input type="hidden" name="question-id" value="<?= isset($question) ? $question->questionID : -1 ?>"/>
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <?php $checked = isset($question) && $question->isBibleQnA() ? 'checked' : ''; ?>
+                <?php $checked = (isset($question) && $question->isBibleQnA()) || !isset($question) ? 'checked' : ''; ?>
                 <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" <?= $checked ?>/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>

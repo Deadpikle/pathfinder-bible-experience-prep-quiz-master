@@ -4,6 +4,8 @@ namespace App\Models;
 
 use PDO;
 
+use App\Models\Year;
+
 class Question
 {
     public $questionID;
@@ -84,7 +86,27 @@ class Question
 
     public function isTypeBibleQnA(string $type) : bool
     {
-        return $type === 'bible-qna' || $type == 'bible-qna-fill';
+        return $type === Question::getBibleQnAType() || $type == Question::getBibleQnAFillType();
+    }
+
+    public static function getBibleQnAType() : string
+    {
+        return 'bible-qna';
+    }
+
+    public static function getBibleQnAFillType() : string
+    {
+        return 'bible-qna-fill';
+    }
+
+    public static function getCommentaryQnAType() : string
+    {
+        return 'commentary-qna';
+    }
+
+    public static function getCommentaryQnAFillType() : string
+    {
+        return 'commentary-qna-fill';
     }
 
     public function isBibleQnA() : bool
@@ -94,7 +116,7 @@ class Question
 
     public function isTypeCommentaryQnA(string $type) : bool
     {
-        return $type === 'commentary-qna' || $type == 'commentary-qna-fill';
+        return $type === Question::getCommentaryQnAType() || $type == Question::getCommentaryQnAFillType();
     }
 
     public function isCommentaryQnA() : bool
@@ -104,7 +126,7 @@ class Question
 
     public function isTypeFillIn(string $type) : bool
     {
-        return $type === 'bible-qna-fill' || $type === 'commentary-qna-fill';
+        return $type === Question::getBibleQnAFillType() || $type === Question::getCommentaryQnAFillType();
     }
 
     public function isFillIn() : bool
@@ -114,9 +136,82 @@ class Question
 
     public function updateDeletedFlag(bool $flag, PDO $db)
     {
-        $query = 'Update Questions SET IsDeleted = ? WHERE QuestionID = ?';
+        $query = 'UPDATE Questions SET IsDeleted = ? WHERE QuestionID = ?';
         $stmt = $db->prepare($query);
         $stmt->execute([$flag, $this->questionID]);
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, LanguageID, CreatorID) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ';
+        $params = [
+            $this->type,
+            $this->question,
+            $this->answer,
+            $this->numberPoints,
+            $this->lastEditedByID,
+            $this->startVerseID,
+            $this->endVerseID,
+            $this->commentaryID,
+            $this->commentaryStartPage,
+            $this->commentaryEndPage,
+            $this->languageID,
+            $this->creatorID
+        ];
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $this->questionID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
+            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ? WHERE QuestionID = ?';
+        $params = [
+            $this->type,
+            $this->question,
+            $this->answer,
+            $this->numberPoints,
+            $this->lastEditedByID,
+            $this->startVerseID,
+            $this->endVerseID,
+            $this->commentaryID,
+            $this->commentaryStartPage,
+            $this->commentaryEndPage,
+            $this->languageID,
+            $this->questionID
+        ];
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+    }
+
+    public function getNumberOfFillInBibleQuestionsForCurrentYear(PDO $db) : int
+    {
+        $currentYear = Year::loadCurrentYear($db);
+        return Question::getNumberOfFillInBibleQuestions($currentYear, $db);
+    }
+
+    public function getNumberOfFillInBibleQuestions(Year $year, PDO $db) : int
+    {
+        $query = '
+            SELECT COUNT(q.QuestionID) AS QuestionCount
+            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+                JOIN Chapters c ON c.ChapterID = v.ChapterID
+                JOIN Books b ON b.BookID = c.BookID
+            WHERE b.YearID = ? 
+                AND q.Type = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([ $year->yearID, Question::getBibleQnAFillType() ]);
+        $bookQuestionData = $stmt->fetch();
+        if ($bookQuestionData != null) {
+            return $bookQuestionData['QuestionCount'];
+        }
+        return 0;
     }
     
     public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
@@ -135,7 +230,7 @@ class Question
                     $whereClause = ' WHERE UserID = ' . $userID;
                 }
             }
-            $questionType = $questionType ?? 'bible-qna';
+            $questionType = $questionType ?? Question::getBibleQnAType();
             if ($whereClause == '') {
                 $whereClause = ' WHERE (Type = "' . $questionType . '" OR Type = "' . $questionType . '-fill") ';
             } else {
@@ -164,12 +259,12 @@ class Question
                 }
             }
     
-            $currentYear = get_active_year($db)['YearID'];
+            $currentYear = (Year::loadCurrentYear($db))->yearID;
     
-            if ($questionType == 'bible-qna' || $questionType == 'bible-qna-fill') {
+            if ($questionType == Question::getBibleQnAType() || $questionType == Question::getBibleQnAFillType()) {
                 $orderByClause = ' ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number, q.QuestionID ';
                 $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
-            } else if ($questionType == 'commentary-qna' || $questionType == 'commentary-qna-fill') {
+            } else if ($questionType == Question::getCommentaryQnAType() || $questionType == Question::getCommentaryQnAFillType()) {
                 $orderByClause = ' ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage, q.QuestionID ';
                 $whereClause .= ' AND IsDeleted = 0 AND comm.YearID = ' . $currentYear;
             } else {

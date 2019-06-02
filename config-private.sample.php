@@ -38,4 +38,4 @@ catch (Exception $e) {
 // being thrown from a controller. You probably want this set to true while developing,
 // and you probably want this set to false on a production server.
 $app->shouldShowErrorOnExceptionThrown = false;
-$ENABLE_NKJV_RESTRICTIONS = true; // DO NOT DISABLE THIS UNLESS YOU HAVE THE LEGAL RIGHT TO DO SO. YOU HAVE BEEN WARNED.
+$app->ENABLE_NKJV_RESTRICTIONS = true; // DO NOT DISABLE THIS UNLESS YOU HAVE THE LEGAL RIGHT TO DO SO. YOU HAVE BEEN WARNED.

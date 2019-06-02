@@ -504,7 +504,7 @@
             currentPageNumber = 0;
             var volumeArrayIndex = $(this).val();
             if (volumeArrayIndex != -1 && volumeArrayIndex !== "") {
-                volumeFilter = volumes[volumeArrayIndex].id;
+                volumeFilter = volumes[volumeArrayIndex].commentaryID;
                 currentPageNumber = 0;
             }
             else {

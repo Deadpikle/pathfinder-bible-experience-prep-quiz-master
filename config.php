@@ -96,8 +96,8 @@ $app->yearData = \App\Models\Year::loadCurrentYear($app->db);
 $app->activeYearID = $app->yearData->yearID;
 $app->activeYearNumber = $app->yearData->year;
 
-if (!isset($ENABLE_NKJV_RESTRICTIONS)) {
-    $ENABLE_NKJV_RESTRICTIONS = true;
+if (!isset($app->ENABLE_NKJV_RESTRICTIONS)) {
+    $app->ENABLE_NKJV_RESTRICTIONS = true;
 }
 
 // // // // // YAMF Settings v1.0 // // // // //

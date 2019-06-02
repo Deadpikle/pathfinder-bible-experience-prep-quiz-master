@@ -16,4 +16,15 @@ class UserFlagged
         $this->userID = $userID;
         $this->questionID = $questionID;
     }
+
+    public static function deleteFlag(int $questionID, int $userID, PDO $db)
+    {
+        $query = 'DELETE FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';
+        $params = [
+            $questionID,
+            $userID
+        ];
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+    }
 }
