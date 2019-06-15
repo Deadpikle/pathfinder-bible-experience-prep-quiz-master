@@ -187,11 +187,6 @@
 
         var quizForm = document.getElementById('quiz-setup-form');
         var quizItemSelector = document.getElementById('quiz-items');
-
-        var buttonID = '';
-        $(':submit').click(function() {
-            buttonID = $(this).attr('id'); // ...I can't remember what this is for...
-        });
         
         var enableQuestionDistributionCheckbox = document.getElementById('enable-question-distribution');
 

@@ -656,7 +656,9 @@
             // no questions! user is done with all questions and should probably reset their saved question answers
             $(flagQuestion).hide();
             $(nextQuestion).hide();
-            showQuizError("No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!");
+            var urlForSetup = '<?= $app->yurl('/quiz/setup') ?>';
+            var error = "<p>No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class='btn btn-small btn-flat blue white-text waves-effect blue-waves' href='" + urlForSetup + "'>Back to quiz setup</a></p>"
+            showQuizError(error);
             $(endQuiz).show();
         }
         $("#loading-quiz").hide();
