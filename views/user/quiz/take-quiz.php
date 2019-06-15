@@ -1,60 +1,3 @@
-<?php
-
-    if (!isset($_POST["max-questions"]) || !isset($_POST["max-points"]) || !isset($_POST["question-types"]) || !isset($_POST["order"])) {
-        header("Location: quiz-setup.php");
-    }    
-    $maxQuestions = $_POST["max-questions"];
-    $maxPoints = $_POST["max-points"];
-    $questionTypes = $_POST["question-types"];
-    $questionOrder = $_POST["order"];
-    $fillInPercent = $_POST["fill-in-percent"];
-    $shouldAvoidPastCorrect = "false";
-    if (isset($_POST["no-questions-answered-correct"]) && $_POST["no-questions-answered-correct"] != null) {
-        $shouldAvoidPastCorrect = "true";
-    }
-    if (isset($_POST["quiz-items"])) {
-        $quizItems = $_POST["quiz-items"];
-    }
-    else {
-        $quizItems = [];
-    }
-
-    if (isset($_POST["enable-question-distribution"]) && $_POST["enable-question-distribution"] != null) {
-        $enableQuestionDistribution = "true";
-    }
-    else {
-        $enableQuestionDistribution = "true";
-    }
-
-    // figure out weights for Bible, commentaries
-    $bibleWeights = [];
-    $commentaryWeights = [];
-    foreach ($_POST as $key => $value) {
-        if (str_contains("table-input-chapter-", $key)) {
-            $bibleWeights[$key] = $value;
-        }
-        else if (str_contains("table-input-commentary-", $key)) {
-            $commentaryWeights[$key] = $value;
-        }
-    }
-
-    $languageID = $_POST["language-select"];
-?>
-
-<script type="text/javascript">
-    var maxQuestions = <?= $maxQuestions ?>;
-    var maxPoints = <?= $maxPoints ?>;
-    var questionTypes = "<?= $questionTypes ?>";
-    var questionOrder = "<?= $questionOrder ?>";
-    var fillInPercent = <?= $fillInPercent ?>;
-    var shouldAvoidPastCorrect = <?= $shouldAvoidPastCorrect ?>;
-    var quizItems = <?= json_encode($quizItems) ?>;
-    var userID = <?= $_SESSION["UserID"] ?>; // is this really wise?
-    var enableQuestionDistribution = <?= $enableQuestionDistribution ?>;
-    var bibleWeights = <?= json_encode($bibleWeights) ?>;
-    var commentaryWeights = <?= json_encode($commentaryWeights) ?>;
-    var languageID = <?= $languageID ?>;
-</script>
 
 <div id="quiz-taking">
     <div id="loading-quiz">
@@ -195,6 +138,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var userID = <?= $userID ?>;
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
         
@@ -253,7 +197,7 @@
         flagQuestion.addEventListener('click', function() {
             $.ajax({
                 type: "POST",
-                url: "ajax/flag-question.php",
+                url: '<?= $app->yurl('/quiz/questions/flag') ?>',
                 data: {
                     questionID: currentQuestion.id
                 },
@@ -278,7 +222,7 @@
             showQuizMessage("Saving answers...");
             $.ajax({
                 type: "POST",
-                url: "ajax/save-answers.php",
+                url: '<?= $app->yurl('/quiz/answers/save') ?>',
                 data: {
                     answers: userAnswers
                 },
@@ -302,59 +246,13 @@
             if (!saveData.disabled && questions.length > 0) {
                 var result = confirm("You haven't saved your answers yet! Are you sure you want to leave this quiz?");
                 if (result) {
-                    window.location.href = "quiz-setup.php";
+                    window.location.href = '<?= $app->yurl('/quiz/setup') ?>';
                 }
             }
             else {
-                window.location.href = "quiz-setup.php";
+                window.location.href = '<?= $app->yurl('/quiz/setup') ?>';
             }
         });
-
-        function loadQuiz() {
-            $("#take-quiz").hide();
-            $("#loading-quiz").show();
-            $.ajax({
-                type: "POST",
-                url: "ajax/generate-quiz.php",
-                data: {
-                    maxQuestions: maxQuestions,
-                    maxPoints: maxPoints,
-                    questionTypes: questionTypes,
-                    questionOrder: questionOrder,
-                    fillInPercent: fillInPercent,
-                    shouldAvoidPastCorrect: shouldAvoidPastCorrect,
-                    quizItems: quizItems,
-                    userID: userID,
-                    enableQuestionDistribution: enableQuestionDistribution,
-                    bibleWeights: bibleWeights,
-                    commentaryWeights: commentaryWeights,
-                    languageID: languageID
-                },
-                success: function(response) {
-                    if (typeof response.questions !== "undefined" && response.questions.length > 0) {
-                        questions = response.questions;
-                        currentQuestionIndex = 0;
-                        showQuestionAtCurrentIndex();
-                        $("#take-quiz").show();
-                        // make sure the first tab is visibly selected. because it's hidden at first,
-                        // materialize doesn't draw the little indicator line.
-                        $('ul.tabs').tabs('select_tab', 'current-question');
-                    }
-                    else {
-                        // no questions! user is done with all questions and should probably reset their saved question answers
-                        $(flagQuestion).hide();
-                        $(nextQuestion).hide();
-                        showQuizError("No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!");
-                        $(endQuiz).show();
-                    }
-                    $("#loading-quiz").hide();
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    showQuizError("Unable to generate quiz. Please make sure you are connected to the internet or try again later.");
-                    $("#loading-quiz").hide();
-                }
-            });
-        }
 
         function showAnswerToUser() {
             showAnswer.disabled = true;
@@ -746,6 +644,21 @@
         }
 
         // load that quiz!
-        loadQuiz();
+        var questions = (<?= json_encode($quizQuestions) ?>).questions;
+        if (questions.length > 0) {
+            currentQuestionIndex = 0;
+            showQuestionAtCurrentIndex();
+            $("#take-quiz").show();
+            // make sure the first tab is visibly selected. because it's hidden at first,
+            // materialize doesn't draw the little indicator line.
+            $('ul.tabs').tabs('select_tab', 'current-question');
+        } else {
+            // no questions! user is done with all questions and should probably reset their saved question answers
+            $(flagQuestion).hide();
+            $(nextQuestion).hide();
+            showQuizError("No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!");
+            $(endQuiz).show();
+        }
+        $("#loading-quiz").hide();
     });
 </script>

@@ -5,7 +5,7 @@ namespace Yamf\Responses;
 /**
  * Simple wrapper around View to send back a 400 status code and the error.php view.
  * Of course, if you want to send back a different status code, it's as easy as
- * setting $notFound->statusCode = XYZ.
+ * setting $error->statusCode = XYZ.
  * Be forewarned that the first parameter is the error message, NOT the name of the view!
  * This is just for ease of use since most people will not be changing the view name.
  */

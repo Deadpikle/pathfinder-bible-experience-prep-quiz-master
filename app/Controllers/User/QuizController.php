@@ -3,6 +3,8 @@
 namespace App\Controllers\User;
 
 use Yamf\Request;
+use Yamf\Responses\ErrorMessage;
+use Yamf\Responses\JsonResponse;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
 
@@ -14,7 +16,10 @@ use App\Models\PBEAppConfig;
 use App\Models\Question;
 use App\Models\User;
 use App\Models\UserAnswer;
+use App\Models\Util;
 use App\Models\Year;
+
+use App\Services\QuizGenerator;
 
 class QuizController
 {
@@ -60,6 +65,45 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Redirect('/');
         }
+        if (!isset($request->post["max-questions"])) {
+            return new ErrorMessage("max-questions is required");
+        }
+        if (!isset($request->post["max-points"])) {
+            return new ErrorMessage("max-points is required");
+        }
+        if (!isset($request->post["question-types"])) {
+            return new ErrorMessage("question-types is required");
+        }
+        if (!isset($request->post["order"])) {
+            return new ErrorMessage("order is required");
+        }
+
+        $enableQuestionDistribution = Util::validateBoolean($request->post, 'enable-question-distribution');
+        $year = Year::loadCurrentYear($app->db);
+        $userID = User::currentUserID();
+        if ($enableQuestionDistribution && 
+            isset($request->post["quizItems"]) && 
+            count($request->post["quizItems"]) > 0) {
+            // ok, safe to do weighted question distribution
+            $quizQuestions = generate_weighted_quiz_questions($app->db, $request->post);
+        } else {
+            $quizQuestions = QuizGenerator::generateQuiz(
+                $year,
+                $request->post['no-questions-answered-correct'] ?? false,
+                $request->post['max-questions'],
+                $request->post['max-points'],
+                $request->post['fill-in-percent'] ?? 30, // defaults to 30
+                $request->post['question-types'], // qa-only, fill-in-only, or both
+                $request->post['order'],
+                false, // $request->post['flash-show-recently-added'] option only used for flash cards
+                0, // $request->post['flash-recently-added-days'] option only used for flash cards
+                $request->post['language-select'],
+                $userID,
+                $request->post['quiz-items'] ?? [],
+                $app->db
+            );
+        }
+        return new View('user/quiz/take-quiz', compact('quizQuestions', 'userID'), 'Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
