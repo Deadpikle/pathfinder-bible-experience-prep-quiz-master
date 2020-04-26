@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\BlankableWord;
+use App\Models\Question;
+use App\Models\Util;
 use PDO;
 
 use App\Models\Year;
@@ -321,7 +324,7 @@ class QuizGenerator
         
         // TODO: sort/merge with fill in the blank questions?
         // load non-blankable words
-        $words = load_non_blankable_words($db);
+        $words = BlankableWord::loadAllBlankableWords($db);
         // Generate output
         $outputQuestions = [];
         $number = 1;
@@ -335,7 +338,7 @@ class QuizGenerator
                 "question" => trim($question["Question"]),
                 "answer" => trim($question["Answer"])
             );
-            if (is_bible_qna($question["Type"])) {
+            if (Question::isTypeBibleQnA($question["Type"])) {
                 // Bible Q&A
                 $data["startBook"] = $question["StartBook"] ?? "";
                 $data["startChapter"] = $question["StartChapter"] ?? "";
@@ -343,15 +346,15 @@ class QuizGenerator
                 $data["endBook"] = $question["EndBook"] ?? "";
                 $data["endChapter"] = $question["EndChapter"] ?? "";
                 $data["endVerse"] = $question["EndVerse"] ?? "";
-            } else if (is_commentary_qna($question["Type"])) {
+            } else if (Question::isTypeCommentaryQnA($question["Type"])) {
                 // commentary Q&A
                 $data["volume"] = $question["CommentaryNumber"];
                 $data["topic"] = $question["CommentaryTopic"];
                 $data["startPage"] = $question["CommentaryStartPage"];
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
-            if (is_fill_in($question["Type"])) {
-                $fillInData = generate_fill_in_question(trim($question["Question"]), $percentFillIn, $words);
+            if (Question::isTypeFillIn($question["Type"])) {
+                $fillInData = BlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
                 $data["fillInData"] = $fillInData["data"];
                 $data["points"] = $fillInData["blank-count"];
             }
@@ -442,7 +445,7 @@ class QuizGenerator
                         break;
                     }
                 }
-                $generatedQuestions = generate_quiz_questions($pdo, $postCopy);
+                $generatedQuestions = generate_quiz_questions($db, $postCopy);
                 $allGenerated[] = $generatedQuestions;
                 $totalGenerated += (int)$generatedQuestions["totalQuestions"];
                 // we don't want to generate questions for this chapter again
@@ -478,7 +481,7 @@ class QuizGenerator
             foreach ($quizItems as $quizItem) { // take whatever is left
                 $postCopy["quizItems"] = [ $quizItem ];
                 $postCopy["maxQuestions"] = $questionsLeft;
-                $generatedQuestions = generate_quiz_questions($pdo, $postCopy);
+                $generatedQuestions = generate_quiz_questions($db, $postCopy);
                 $otherGenerated[] = $generatedQuestions;
                 //echo "Got " . $generatedQuestions["totalQuestions"] . " out\n";
             }

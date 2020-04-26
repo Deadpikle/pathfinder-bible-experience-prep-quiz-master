@@ -1,6 +1,10 @@
 <?php
 
-    require_once("blanks.php");
+use App\Models\BlankableWord;
+use App\Models\Question;
+use App\Models\Util;
+
+require_once("blanks.php");
 
     function str_contains($needle, $haystack) {
         return strpos($haystack, $needle) !== false;
@@ -89,52 +93,6 @@
         $output = $language["Name"];
         if ($language["AltName"] != "") {
             $output .= " (" . $language["AltName"] . ")";
-        }
-        return $output;
-    }
-
-    function is_bible_qna($type) {
-        return $type === "bible-qna" || $type == "bible-qna-fill";
-    }
-
-    function is_commentary_qna($type) {
-        return $type === "commentary-qna" || $type == "commentary-qna-fill";
-    }
-
-    function is_fill_in($type) {
-        return $type === "bible-qna-fill" || $type === "commentary-qna-fill";
-    }
-
-    // https://stackoverflow.com/a/834355/3938401
-    function ends_with($haystack, $needle) {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-    }
-
-    function generate_uuid() {
-        $bytes = random_bytes(16);
-        $UUID = bin2hex($bytes);
-        // yay for laziness on the hyphen inserts! code from https://stackoverflow.com/a/33484855/3938401
-        $UUID = substr($UUID, 0, 8) . '-' . 
-                substr($UUID, 8, 4) . '-' . 
-                substr($UUID, 12, 4) . '-' . 
-                substr($UUID, 16, 4)  . '-' . 
-                substr($UUID, 20);
-        return $UUID;
-    }
-
-    function load_non_blankable_words($pdo) {
-        $query = 'SELECT Word FROM BlankableWords ORDER BY Word';
-        $stmt = $pdo->prepare($query);
-        $stmt->execute([]);
-        $words = $stmt->fetchAll();
-        $output = array();
-        foreach ($words as $word) {
-            $output[] = $word["Word"];
         }
         return $output;
     }
@@ -771,7 +729,7 @@
         
         // TODO: sort/merge with fill in the blank questions?
         // load non-blankable words
-        $words = load_non_blankable_words($pdo);
+        $words = BlankableWord::loadAllBlankableWords($pdo);
         // Generate output
         $outputQuestions = [];
         $number = 1;
@@ -785,7 +743,7 @@
                 "question" => trim($question["Question"]),
                 "answer" => trim($question["Answer"])
             );
-            if (is_bible_qna($question["Type"])) {
+            if (Question::isTypeBibleQnA($question["Type"])) {
                 // Bible Q&A
                 $data["startBook"] = $question["StartBook"] != null ? $question["StartBook"] : "";
                 $data["startChapter"] = $question["StartChapter"] != null ? $question["StartChapter"] : "";
@@ -794,15 +752,15 @@
                 $data["endChapter"] = $question["EndChapter"] != null ? $question["EndChapter"] : "";
                 $data["endVerse"] = $question["EndVerse"] != null ? $question["EndVerse"] : "";
             }
-            else if (is_commentary_qna($question["Type"])) {
+            else if (Question::isTypeCommentaryQnA($question["Type"])) {
                 // commentary Q&A
                 $data["volume"] = $question["CommentaryNumber"];
                 $data["topic"] = $question["CommentaryTopic"];
                 $data["startPage"] = $question["CommentaryStartPage"];
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
-            if (is_fill_in($question["Type"])) {
-                $fillInData = generate_fill_in_question(trim($question["Question"]), $percentFillIn, $words);
+            if (Question::isTypeFillIn($question["Type"])) {
+                $fillInData = BlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
                 $data["fillInData"] = $fillInData["data"];
                 $data["points"] = $fillInData["blank-count"];
             }

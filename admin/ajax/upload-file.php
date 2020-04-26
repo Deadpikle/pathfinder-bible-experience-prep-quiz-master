@@ -1,5 +1,8 @@
 <?php
-    require_once(dirname(__FILE__)."/../init-admin.php");
+
+use App\Models\Util;
+
+require_once(dirname(__FILE__)."/../init-admin.php");
 
     // A bunch of code here is from http://php.net/manual/en/features.file-upload.php
     $errorMessage = "";
@@ -48,7 +51,7 @@
 
     // DO NOT USE $_FILES['file-upload']['name'] WITHOUT ANY VALIDATION!!
     // On this example, obtain safe unique name from its binary data.
-    $fileName = generate_uuid() . '.pdf';
+    $fileName = Util::generateUUID() . '.pdf';
     $filePath = '../../uploads/' . $fileName;
     if (!move_uploaded_file($_FILES['file-upload']['tmp_name'], $filePath)) {
         $errorMessage = "Failed to move uploaded file";

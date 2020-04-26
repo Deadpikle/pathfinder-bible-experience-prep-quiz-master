@@ -3,13 +3,24 @@ TODO:
     -get quiz me page working (and associated quiz pages)
         -setup page probably works, but need to get quiz page and study guide PDF pages working/refactored
         -in quiz generator...
-            -load_non_blankable_words needs refactor
-            -refactor is_bible_qna
-            -generate_fill_in_question
-            -weighted question function
+            -weighted question function needs refactor/variables instead of giant $_POST array
         -save answers
         -flag question
+        -PDF output (again, needs variables rather than $_POST array)
     -double check to see if we are properly loading whether a question is flagged by a user or not
 -admin facing pages (everything...)
+    -use Twig and datatables for better admin display
     -need to test that study guide uploads work and show up on study guide page when done with admin side of things
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
+    -and other session items
+-Refactor settings to an actual class
+-Refactor more things to PBEAppConfig
+
+-This would be a _great_ opportunity to make this website UTF-8 compatible
+    -https://dba.stackexchange.com/a/104866 for a script -- could probably work this into a migration...?
+
+Eventual:
+-Switch to Bootstrap 3 or 4
+-Revamp UI everywhere
+-Use select2 for searchable dropdowns
+-Use breadcrumbs

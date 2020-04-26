@@ -1,10 +1,13 @@
 <?php
-    $homePath = $app->basePath == "" ? "/" : $app->basePath;
+
+use Yamf\Util;
+
+$homePath = $app->basePath == "" ? "/" : $app->basePath;
 
     $htmlTitle = isset($title) ? $title . ' - ' . $app->websiteTabTitle : $app->websiteTabTitle;
 
     $currentRequest = str_replace($app->basePath, '', $_SERVER['REQUEST_URI']);
-    if (ends_with($currentRequest, '/')) {
+    if (Util::strEndsWith($currentRequest, '/')) {
         $currentRequest = substr($currentRequest, 0, -1);
     }
     $currentRequest = str_replace("/", "", $currentRequest);

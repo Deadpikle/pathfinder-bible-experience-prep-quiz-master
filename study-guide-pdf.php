@@ -2,7 +2,11 @@
     // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
     // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
-    require_once('init.php');
+use App\Models\Question;
+use App\Models\Util;
+use Yamf\Util as YamfUtil;
+
+require_once('init.php');
     require_once('lib/fpdf181/fpdf.php');
 
     class PBEPDF extends FPDF {
@@ -428,11 +432,11 @@
     function get_question_text($question) {
         $type = $question["type"];
         $output = trim($question["question"]);
-        $isFillIn = is_fill_in($type);
-        if (!$isFillIn && !ends_with($output, "?")) {
+        $isFillIn = Question::isTypeFillIn($type);
+        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?")) {
             $output .= "?";
         }
-        if (is_bible_qna($type)) {
+        if (Question::isTypeBibleQnA($type)) {
             $startBook = $question["startBook"];
             $startChapter = $question["startChapter"];
             $startVerse = $question["startVerse"];
@@ -456,7 +460,7 @@
                 $output = "According to " . $verseText . ", " . lcfirst($output);
             }
         }
-        else if (is_commentary_qna($type)) {
+        else if (Question::isTypeCommentaryQnA($type)) {
             $volume = $question["volume"];
             $startPage = $question["startPage"];
             $endPage = isset($question["endPage"]) ? $question["endPage"] : null;
@@ -593,7 +597,7 @@
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
                 $questionText = trim(get_question_text($question));
-                if (!is_fill_in($question["type"])) {
+                if (!Question::isTypeFillIn($question["type"])) {
                     $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
                 }
                 else {
@@ -619,7 +623,7 @@
                 $pointsStr = $points == 1 ? "point" : "points";
                 $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
                 $questionText = trim(get_question_text($question));
-                if (is_fill_in($question["type"])) {
+                if (Question::isTypeFillIn($question["type"])) {
                     $fillIn = generate_fill_in($question);
                     $questionText .= "\n" . trim($fillIn["question"]);
                     $question["is-fill-in"] = true;

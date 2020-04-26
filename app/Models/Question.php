@@ -5,6 +5,8 @@ namespace App\Models;
 use PDO;
 
 use App\Models\Year;
+use Exception;
+use PDOException;
 
 class Question
 {
@@ -84,7 +86,7 @@ class Question
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public function isTypeBibleQnA(string $type) : bool
+    public static function isTypeBibleQnA(string $type) : bool
     {
         return $type === Question::getBibleQnAType() || $type == Question::getBibleQnAFillType();
     }
@@ -114,7 +116,7 @@ class Question
         return Question::isTypeBibleQnA($this->type);
     }
 
-    public function isTypeCommentaryQnA(string $type) : bool
+    public static function isTypeCommentaryQnA(string $type) : bool
     {
         return $type === Question::getCommentaryQnAType() || $type == Question::getCommentaryQnAFillType();
     }
@@ -124,7 +126,7 @@ class Question
         return Question::isTypeCommentaryQnA($this->type);
     }
 
-    public function isTypeFillIn(string $type) : bool
+    public static function isTypeFillIn(string $type) : bool
     {
         return $type === Question::getBibleQnAFillType() || $type === Question::getCommentaryQnAFillType();
     }
