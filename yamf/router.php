@@ -2,11 +2,12 @@
 
 namespace Yamf;
 
+use Exception;
 use PDO;
 
 use Yamf\Util;
 use Yamf\AppConfig;
-
+use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\ErrorMessage;
 use Yamf\Responses\NotFound;
 use Yamf\Responses\Response;
@@ -25,28 +26,33 @@ class Router
             die();
         }
 
-        $requestURL = str_replace($app->basePath, '', $request);
+        // replace first occurance of $app->basePath in $request
+        $pos = strpos($request, $app->basePath);
+        if ($pos !== false) {
+            $requestURL = substr_replace($request, '', $pos, strlen($app->basePath));
+        } else {
+            $requestURL = $request;
+        }
 
         $request = $this->findRoute($routes, $requestURL);
         if ($request !== null) {
             $controller = new $request->controller;
             try {
-                $data = $controller->{$request->function}($app, $request);
-                if ($data != null) {
-                    /** @var Response $data */
-                    $data->output($app);
+                $validationResponse = null;
+                if ($controller instanceof IRequestValidator) {
+                    $validationResponse = $controller->validateRequest($app, $request);
+                }
+                if ($validationResponse === null) {
+                    $data = $controller->{$request->function}($app, $request);
+                    if ($data != null) {
+                        /** @var Response $data */
+                        $data->output($app);
+                    }
+                } else {
+                    $validationResponse->output($app);
                 }
             } catch (\Exception $e) {
-                if (isset($app->shouldShowErrorOnExceptionThrown)) {
-                    if ($app->shouldShowErrorOnExceptionThrown) {
-                        $response = new ErrorMessage($e->getMessage());
-                        $response->statusCode = 500;
-                    }
-                    else {
-                        $response = new Response(500);
-                    }
-                    $response->output($app);
-                }
+                $this->showErrorOnException($app, $e);
             }
         } else {
             // see if there is a static URL or shortened URL
@@ -86,8 +92,38 @@ class Router
                 }
             }
             // couldn't determine route
-            $notFound = new NotFound();
-            $notFound->output($app);
+            $this->showNotFound($app);
+        }
+    }
+
+    /**
+     * Shows the 404 not found page
+     * 
+     * @param AppConfig $app
+     */
+    public function showNotFound(AppConfig $app) : void
+    {
+        $notFound = new NotFound();
+        $notFound->output($app);
+    }
+
+    /**
+     * Shows an error on routing exception
+     * 
+     * @param AppConfig $app
+     * @param Exception $e
+     */
+    public function showErrorOnException(AppConfig $app, Exception $e) : void
+    {
+        if (isset($app->shouldShowErrorOnExceptionThrown)) {
+            if ($app->shouldShowErrorOnExceptionThrown) {
+                $response = new ErrorMessage($e->getMessage());
+                $response->statusCode = 500;
+            }
+            else {
+                $response = new Response(500);
+            }
+            $response->output($app);
         }
     }
 
@@ -102,8 +138,6 @@ class Router
      */
     function findRoute(array $routes, string $request)
     {
-        $isPost = Util::isPostRequest();
-
         // Need to make sure # and ? in URL are handled properly and one doesn't interfere with the other!
         $anchorOnPage = parse_url($request, PHP_URL_FRAGMENT); // http://.../blog#comments (#comments)
         if ($anchorOnPage !== null) {
@@ -128,6 +162,7 @@ class Router
         $requestParts = explode('/', $request);
         Util::removeEmptyStringsFromArray($requestParts);
         $numberOfRequestParts = count($requestParts);
+        $requestMethod = Util::getRequestMethod();
         // find the route
         foreach ($routes as $route => $path) {
             $routeParts = explode('/', $route);
@@ -143,21 +178,16 @@ class Router
                 // potentially multiple GET/POST routes defined for this route
                 foreach ($path as $potentialPath) {
                     if (count($potentialPath) === 3) { // safety
-                        if (strtolower($potentialPath[0]) == 'get' && !$isPost) {
-                            $path = $potentialPath;
-                            break;
-                        } elseif (strtolower($potentialPath[0]) == 'post' && $isPost) {
+                        if (strtolower($potentialPath[0]) === strtolower($requestMethod)) {
                             $path = $potentialPath;
                             break;
                         }
                     }
                 }
-            } elseif (count($path) == 2 && $isPost) {
+            } elseif (count($path) == 2 && !Util::isGetRequest()) {
                 continue; // didn't match up as the route is a GET route
             } elseif (count($path) === 3) {
-                if (strtolower($path[0]) === 'get' && $isPost) {
-                    continue;
-                } elseif (strtolower($path[0]) === 'post' && !$isPost) {
+                if (strtolower($path[0]) !== strtolower($requestMethod)) {
                     continue;
                 }
             }
@@ -211,7 +241,7 @@ class Router
     }
 
     /**
-     * Returns null if no shorter URL found; destination as string if found
+     * Returns NULL if no shorter URL found; destination as string if found
      * @param string $url
      * @param PDO $db
      * @return string

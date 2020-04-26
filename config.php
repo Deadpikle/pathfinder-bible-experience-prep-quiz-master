@@ -136,3 +136,5 @@ $app->staticViewsFolderName = 'views/static/'; // this is the folder path (inclu
 
 $app->viewExtension = '.php'; // change this value if you want to use a different file extension for your views
 $app->staticViewExtension = '.php'; // change this value if you want to use a different file extension for your static views
+
+$app->router = 'App\Helpers\TwigRouter';
