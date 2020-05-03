@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use PDOException;
 
 class UserFlagged
 {
@@ -26,5 +27,31 @@ class UserFlagged
         ];
         $stmt = $db->prepare($query);
         $stmt->execute($params);
+    }
+
+    public static function addFlagIfNecessary(int $questionID, int $userID, PDO $db) : bool
+    {
+        try {
+            // Make sure it's not in the table already before inserting!
+            $params = [
+                $questionID,
+                $userID
+            ];
+    
+            $query = 'SELECT 1 FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';
+            $stmt = $db->prepare($query);
+            $stmt->execute($params);
+            $didFind = count($stmt->fetchAll()) >= 1 ? true : false;
+            if (!$didFind) {
+                $query = ' INSERT INTO UserFlagged (QuestionID, UserID) VALUES (?, ?) ';
+                $stmt = $db->prepare($query);
+                $stmt->execute($params);
+            }
+    
+            return true;
+        }
+        catch (PDOException $e) {
+            return false;
+        }
     }
 }

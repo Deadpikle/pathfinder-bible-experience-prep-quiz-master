@@ -16,10 +16,12 @@ use App\Models\PBEAppConfig;
 use App\Models\Question;
 use App\Models\User;
 use App\Models\UserAnswer;
+use App\Models\UserFlagged;
 use App\Models\Util;
 use App\Models\Year;
 use App\Services\PDFGenerator;
 use App\Services\QuizGenerator;
+use Yamf\Responses\Response;
 
 class QuizController
 {
@@ -155,5 +157,23 @@ class QuizController
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
         $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold);
         $pdf->Output();
+    }
+
+    public function saveQuizAnswers(PBEAppConfig $app, Request $request)
+    {
+        if (!User::isLoggedIn()) {
+            return new Response(401);
+        }
+    }
+
+    public function flagQuestion(PBEAppConfig $app, Request $request)
+    {
+        if (!User::isLoggedIn()) {
+            return new Response(401);
+        }
+
+        $userID = User::currentUserID();
+        $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $app->db);
+        return new JsonResponse(['status' => $hasFlagged ? 200 : 400]);
     }
 }

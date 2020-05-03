@@ -78,5 +78,7 @@
         '/quiz/flash-cards/left-right' => ['POST', 'User/QuizController', 'generateLeftRightFlashCards'],
         '/quiz/flash-cards/front-back' => ['POST', 'User/QuizController', 'generateFrontBackFlashCards'],
         '/quiz/answers/remove' => [['GET', 'User/QuizController', 'checkBeforeRemovingAnswers'],
-                                   ['POST', 'User/QuizController', 'removeAnswers']]
+                                   ['POST', 'User/QuizController', 'removeAnswers']],
+        '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],
+        '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
     ];
