@@ -18,7 +18,7 @@ use App\Models\User;
 use App\Models\UserAnswer;
 use App\Models\Util;
 use App\Models\Year;
-
+use App\Services\PDFGenerator;
 use App\Services\QuizGenerator;
 
 class QuizController
@@ -60,24 +60,8 @@ class QuizController
         return new Redirect('/quiz/setup');
     }
 
-    public function takeQuiz(PBEAppConfig $app, Request $request)
+    private function getQuizQuestions(PBEAppConfig $app, Request $request, bool $isFlashCardQuiz, bool $isFrontBackFlashCards)
     {
-        if (!User::isLoggedIn()) {
-            return new Redirect('/');
-        }
-        if (!isset($request->post["max-questions"])) {
-            return new ErrorMessage("max-questions is required");
-        }
-        if (!isset($request->post["max-points"])) {
-            return new ErrorMessage("max-points is required");
-        }
-        if (!isset($request->post["question-types"])) {
-            return new ErrorMessage("question-types is required");
-        }
-        if (!isset($request->post["order"])) {
-            return new ErrorMessage("order is required");
-        }
-
         $enableQuestionDistribution = Util::validateBoolean($request->post, 'enable-question-distribution');
         $year = Year::loadCurrentYear($app->db);
         $userID = User::currentUserID();
@@ -102,8 +86,8 @@ class QuizController
                 $request->post['fill-in-percent'] ?? 30, // defaults to 30
                 $request->post['question-types'], // qa-only, fill-in-only, or both
                 $request->post['order'],
-                false, // $request->post['flash-show-recently-added'] option only used for flash cards
-                0, // $request->post['flash-recently-added-days'] option only used for flash cards
+                !$isFlashCardQuiz ? false : Util::validateBoolean($request->post, 'flash-show-recently-added'), 
+                !$isFlashCardQuiz ? 0 : ($request->post['flash-recently-added-days'] ?? 30), 
                 $request->post['language-select'],
                 $userID,
                 $bibleWeights,
@@ -121,24 +105,54 @@ class QuizController
                 $request->post['fill-in-percent'] ?? 30, // defaults to 30
                 $request->post['question-types'], // qa-only, fill-in-only, or both
                 $request->post['order'],
-                false, // $request->post['flash-show-recently-added'] option only used for flash cards
-                0, // $request->post['flash-recently-added-days'] option only used for flash cards
+                !$isFlashCardQuiz ? false : Util::validateBoolean($request->post, 'flash-show-recently-added'), 
+                !$isFlashCardQuiz ? 0 : ($request->post['flash-recently-added-days'] ?? 30), 
                 $request->post['language-select'],
                 $userID,
                 $request->post['quiz-items'] ?? [],
                 $app->db
             );
         }
+        return $quizQuestions;
+    }
+
+    public function takeQuiz(PBEAppConfig $app, Request $request)
+    {
+        if (!User::isLoggedIn()) {
+            return new Redirect('/');
+        }
+        if (!isset($request->post["max-questions"])) {
+            return new ErrorMessage("max-questions is required");
+        }
+        if (!isset($request->post["max-points"])) {
+            return new ErrorMessage("max-points is required");
+        }
+        if (!isset($request->post["question-types"])) {
+            return new ErrorMessage("question-types is required");
+        }
+        if (!isset($request->post["order"])) {
+            return new ErrorMessage("order is required");
+        }
+
+        $quizQuestions = $this->getQuizQuestions($app, $request, false, false);
         return new View('user/quiz/take-quiz', compact('quizQuestions', 'userID'), 'Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
     {
-        
+        // TODO: errors if not enough data sent
+        $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
+        $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
+        $pdf = PDFGenerator::generatePDF($quizQuestions, false, $viewFillInTheBlankAnswersInBold);
+        $pdf->Output();
     }
 
     public function generateFrontBackFlashCards(PBEAppConfig $app, Request $request)
     {
-        
+        // TODO: errors if not enough data sent
+        $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
+        $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
+        $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold);
+        $pdf->Output();
     }
 }

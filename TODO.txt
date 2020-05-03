@@ -2,11 +2,9 @@ TODO:
 -user facing pages
     -get quiz me page working (and associated quiz pages)
         -setup page probably works, but need to get quiz page and study guide PDF pages working/refactored
-        -in quiz generator...
-            -weighted question function needs refactor/variables instead of giant $_POST array
+        -PDF output (again, needs variables rather than $_POST array)
         -save answers
         -flag question
-        -PDF output (again, needs variables rather than $_POST array)
     -double check to see if we are properly loading whether a question is flagged by a user or not
 -admin facing pages (everything...)
     -use Twig and datatables for better admin display

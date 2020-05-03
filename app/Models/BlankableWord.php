@@ -83,7 +83,7 @@ class BlankableWord
         $words = $words[0];
         $adjustedWords = array();
         foreach ($words as $word) {
-            if (strpos($word->word, '...') !== false) {
+            if (strpos($word, '...') !== false) {
                 $parts = explode("...", $word->word);
                 $i = 0;
                 foreach ($parts as $part) {
@@ -95,14 +95,14 @@ class BlankableWord
                 }
             }
             else {
-                $adjustedWords[] = $word->word;
+                $adjustedWords[] = $word;
             }
         }
         $words = $adjustedWords;
         $word_arrays = [];
         $blankableIndices = [];
         for ($i = 0; $i < count($words); $i++) {
-            $word = $words[$i]->word;
+            $word = $words[$i];
             // could add ^' to keep words like 'taint (as in "'taint so") in the word section and not in the before section
             preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
             $actualWord = trim($matches[2]);
