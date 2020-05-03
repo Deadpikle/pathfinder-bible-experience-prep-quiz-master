@@ -135,6 +135,7 @@ class QuizController
         }
 
         $quizQuestions = $this->getQuizQuestions($app, $request, false, false);
+        $userID = User::currentUserID();
         return new View('user/quiz/take-quiz', compact('quizQuestions', 'userID'), 'Quiz');
     }
 
