@@ -4,8 +4,6 @@ use App\Models\BlankableWord;
 use App\Models\Question;
 use App\Models\Util;
 
-require_once("blanks.php");
-
     function str_contains($needle, $haystack) {
         return strpos($haystack, $needle) !== false;
     }

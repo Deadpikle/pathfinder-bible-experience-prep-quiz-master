@@ -82,10 +82,36 @@ class QuizController
         $year = Year::loadCurrentYear($app->db);
         $userID = User::currentUserID();
         if ($enableQuestionDistribution && 
-            isset($request->post["quizItems"]) && 
-            count($request->post["quizItems"]) > 0) {
+            isset($request->post["quiz-items"]) && 
+            count($request->post["quiz-items"]) > 0) {
             // ok, safe to do weighted question distribution
-            $quizQuestions = generate_weighted_quiz_questions($app->db, $request->post);
+            $bibleWeights = [];
+            $commentaryWeights = [];
+            foreach ($request->post as $key => $value) {
+                if (str_contains("table-input-chapter-", $key)) {
+                    $bibleWeights[$key] = $value;
+                } else if (str_contains("table-input-commentary-", $key)) {
+                    $commentaryWeights[$key] = $value;
+                }
+            }
+            $quizQuestions = QuizGenerator::generateWeightedQuiz(
+                $year,
+                $request->post['no-questions-answered-correct'] ?? false,
+                $request->post['max-questions'],
+                $request->post['max-points'],
+                $request->post['fill-in-percent'] ?? 30, // defaults to 30
+                $request->post['question-types'], // qa-only, fill-in-only, or both
+                $request->post['order'],
+                false, // $request->post['flash-show-recently-added'] option only used for flash cards
+                0, // $request->post['flash-recently-added-days'] option only used for flash cards
+                $request->post['language-select'],
+                $userID,
+                $bibleWeights,
+                $commentaryWeights,
+                $request->post['quiz-items'] ?? [],
+                $app->db
+            );
+
         } else {
             $quizQuestions = QuizGenerator::generateQuiz(
                 $year,

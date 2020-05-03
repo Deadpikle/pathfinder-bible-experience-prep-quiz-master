@@ -11,6 +11,10 @@ use App\Models\Year;
 
 class QuizGenerator
 {
+    // TODO: generate objects instead of key/value arrays...
+    // TODO: " vs ' fixing
+
+
     public static function generateQuiz(
         Year $year,
         bool $shouldAvoidPastCorrectAnswers,
@@ -158,7 +162,7 @@ class QuizGenerator
         // load Bible fill in the blank questions
         // // // // //
         $bibleFillIn = [];
-        $whereClause = str_replace("bible-qna", "bible-qna-fill", $whereClause);
+        $whereClause = str_replace('bible-qna', 'bible-qna-fill', $whereClause);
         if ($userWantsFillIn && !$disableBibleFillInLoading) {
             $stmt = $db->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
             $bibleFillIn = $stmt->fetchAll();
@@ -209,7 +213,7 @@ class QuizGenerator
         // load commentary fill in the blank questions
         // // // // //
         $commentaryFillIn = [];
-        $whereClause = str_replace("commentary-qna", "commentary-qna-fill", $whereClause);
+        $whereClause = str_replace('commentary-qna', 'commentary-qna-fill', $whereClause);
         if ($userWantsFillIn && !$disableCommentaryFillInLoading) {
             $stmt = $db->query($selectPortion . $fromPortion . $whereClause . $orderByPortion . $limitPortion);
             $commentaryFillIn = $stmt->fetchAll();
@@ -286,34 +290,34 @@ class QuizGenerator
             // figure out which arrays have stuff left
             $availableArraysOfQuestions = [];
             if ($hasBibleQuestionLeft) {
-                $availableArraysOfQuestions[] = "bible-qna";
+                $availableArraysOfQuestions[] = 'bible-qna';
             }
             if ($hasBibleFillInLeft) {
-                $availableArraysOfQuestions[] = "bible-qna-fill";
+                $availableArraysOfQuestions[] = 'bible-qna-fill';
             }
             if ($hasCommentaryQuestionLeft) {
-                $availableArraysOfQuestions[] = "commentary-qna";
+                $availableArraysOfQuestions[] = 'commentary-qna';
             }
             if ($hasCommentaryFillInQuestionLeft) {
-                $availableArraysOfQuestions[] = "commentary-qna-fill";
+                $availableArraysOfQuestions[] = 'commentary-qna-fill';
             }
             // now choose one
             $index = random_int(0, count($availableArraysOfQuestions) - 1);
             $typeToAdd = $availableArraysOfQuestions[$index];
             // add the question to the output
-            if ($typeToAdd == "bible-qna") {
+            if ($typeToAdd == 'bible-qna') {
                 $output[] = $bibleQnA[$bibleIndex];
                 $bibleIndex++;
                 $bibleAdded++;
-            } else if ($typeToAdd == "bible-qna-fill") {
+            } else if ($typeToAdd == 'bible-qna-fill') {
                 $output[] = $bibleFillIn[$bibleFillInIndex];
                 $bibleFillInIndex++;
                 $bibleFillInAdded++;
-            } else if ($typeToAdd == "commentary-qna") {
+            } else if ($typeToAdd == 'commentary-qna') {
                 $output[] = $commentaryQnA[$commentaryIndex];
                 $commentaryIndex++;
                 $commentaryAdded++;
-            } else if ($typeToAdd == "commentary-qna-fill") {
+            } else if ($typeToAdd == 'commentary-qna-fill') {
                 $output[] = $commentaryFillIn[$commentaryFillInIndex];
                 $commentaryFillInIndex++;
                 $commentaryFillInAdded++;
@@ -330,33 +334,33 @@ class QuizGenerator
         $number = 1;
         foreach ($questions as $question) {
             $data = array (
-                "type" => $question["Type"],
-                "number" => $number,
-                "id" => $question["QuestionID"],
-                "isFlagged" => $question["IsFlagged"],
-                "points" => $question["NumberPoints"],
-                "question" => trim($question["Question"]),
-                "answer" => trim($question["Answer"])
+                'type' => $question['Type'],
+                'number' => $number,
+                'id' => $question["QuestionID"],
+                'isFlagged' => $question["IsFlagged"],
+                'points' => $question["NumberPoints"],
+                'question' => trim($question["Question"]),
+                'answer' => trim($question["Answer"])
             );
-            if (Question::isTypeBibleQnA($question["Type"])) {
+            if (Question::isTypeBibleQnA($question['Type'])) {
                 // Bible Q&A
-                $data["startBook"] = $question["StartBook"] ?? "";
-                $data["startChapter"] = $question["StartChapter"] ?? "";
-                $data["startVerse"] = $question["StartVerse"] ?? "";
-                $data["endBook"] = $question["EndBook"] ?? "";
-                $data["endChapter"] = $question["EndChapter"] ?? "";
-                $data["endVerse"] = $question["EndVerse"] ?? "";
-            } else if (Question::isTypeCommentaryQnA($question["Type"])) {
+                $data['startBook'] = $question["StartBook"] ?? "";
+                $data['startChapter'] = $question["StartChapter"] ?? "";
+                $data['startVerse'] = $question["StartVerse"] ?? "";
+                $data['endBook'] = $question["EndBook"] ?? "";
+                $data['endChapter'] = $question["EndChapter"] ?? "";
+                $data['endVerse'] = $question["EndVerse"] ?? "";
+            } else if (Question::isTypeCommentaryQnA($question['Type'])) {
                 // commentary Q&A
-                $data["volume"] = $question["CommentaryNumber"];
-                $data["topic"] = $question["CommentaryTopic"];
-                $data["startPage"] = $question["CommentaryStartPage"];
-                $data["endPage"] = $question["CommentaryEndPage"];
+                $data['volume'] = $question["CommentaryNumber"];
+                $data['topic'] = $question["CommentaryTopic"];
+                $data['startPage'] = $question["CommentaryStartPage"];
+                $data['endPage'] = $question["CommentaryEndPage"];
             }
-            if (Question::isTypeFillIn($question["Type"])) {
+            if (Question::isTypeFillIn($question['Type'])) {
                 $fillInData = BlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
-                $data["fillInData"] = $fillInData["data"];
-                $data["points"] = $fillInData["blank-count"];
+                $data['fillInData'] = $fillInData['data'];
+                $data['points'] = $fillInData['blank-count'];
             }
             // for fill in the blank, will have text/blank key/value pairs
             $outputQuestions[] = $data;
@@ -364,25 +368,40 @@ class QuizGenerator
         }
 
         $output = [ 
-            "bibleQuestions" => $bibleAdded,
-            "bibleFillIns" => $bibleFillInAdded,
-            "commentaryQuestions" => $commentaryAdded,
-            "commentaryFillIns" => $commentaryFillInAdded,
-            "totalQuestions" => ($bibleAdded + $bibleFillInAdded + $commentaryAdded + $commentaryFillInAdded),
-            "questions" => $outputQuestions 
+            'bibleQuestions' => $bibleAdded,
+            'bibleFillIns' => $bibleFillInAdded,
+            'commentaryQuestions' => $commentaryAdded,
+            'commentaryFillIns' => $commentaryFillInAdded,
+            'totalQuestions' => ($bibleAdded + $bibleFillInAdded + $commentaryAdded + $commentaryFillInAdded),
+            'questions' => $outputQuestions 
         ];
 
         return $output;
     }
 
-    public static function generateWeightedQuiz(array $params, PDO $db)
+    public static function generateWeightedQuiz(
+        Year $year,
+        bool $shouldAvoidPastCorrectAnswers,
+        int $maxQuestions,
+        int $maxPoints,
+        int $fillInPercent, // defaults to 30
+        string $questionTypes, // qa-only, fill-in-only, or both
+        string $questionOrder, // sequential-sequential, random-sequential, or random-random
+        bool $showOnlyRecentOnFlashCards,
+        int $showOnlyRecentOnFlashCardsAmount,
+        int $languageID,
+        int $userID,
+        array $bibleWeights, // key/value pairs: chapter ID -> weight; post['table-input-chapter-{}']
+        array $commentaryWeights, // key/value pairs: commentary ID -> weight; post['table-input-commentary-{}']
+        array $quizItems, // array of ; post['quiz-items']
+        PDO $db)
     {
         $DEBUG = false;
         // performing custom question distribution!
-        $bibleWeights = [];
-        $commentaryWeights = [];
+        //$bibleWeights = [];
+        //$commentaryWeights = [];
         $allWeights = [];
-        foreach ($params as $key => $value) {
+        /*foreach ($params as $key => $value) {
             if (str_contains("table-input-chapter-", $key)) {
                 $bibleWeights[$key] = $value;
                 $allWeights[$key] = $value;
@@ -390,7 +409,7 @@ class QuizGenerator
                 $commentaryWeights[$key] = $value;
                 $allWeights[$key] = $value;
             }
-        }
+        }*/
         // Make sure submitted percentage not below 0 or above 100
         $totalPercent = 0;
         $hasNegativePercent = false;
@@ -399,55 +418,70 @@ class QuizGenerator
             if ((int)$value < 0) {
                 $hasNegativePercent = true;
             }
+            $allWeights[$key] = $value;
         }
         foreach ($commentaryWeights as $key => $value) {
             $totalPercent += (int)$value;
             if ((int)$value < 0) {
                 $hasNegativePercent = true;
             }
+            $allWeights[$key] = $value;
         }
-        if ($hasNegativePercent) {
-            die("Invalid weighted question percent given. All percents must be above positive or 0.");
+        if ($hasNegativePercent) { // TODO: return error of some kind instead of dying
+            die('Invalid weighted question percent given. All percents must be above positive or 0.');
         }
         if ($totalPercent < 0 || $totalPercent > 100) {
-            die("Invalid weighted question percent given. Value must be between 0 and 100 inclusive.");
+            die('Invalid weighted question percent given. Value must be between 0 and 100 inclusive.');
         }
         //print_r($params["questionTypes"]);
         // // // //
         // For each quizItems item that has a specific weight set in bibleWeights/commentaryWeights,
         // generate questions.
         $allGenerated = [];
-        $quizItems = $params["quizItems"];
-        $postCopy = $params;
         $totalGenerated = 0;
         // get rid of values we will override in the loop
-        unset($postCopy["quizItems"]);
-        $maxQuestions = (int)$postCopy["maxQuestions"];
-        unset($postCopy["maxQuestions"]);
+        //unset($postCopy["quizItems"]);
+        //unset($postCopy["maxQuestions"]);
         // first generate questions for those sections that have weights
         for ($i = 0; $i < count($quizItems); $i++) {
+            $quizItemsForQuizGeneration = [];
+            $maxQuestionsForQuizGeneration = 0;
             $quizItem = $quizItems[$i];
-            $allWeightsKey = "table-input-" . $quizItem;
+            $allWeightsKey = 'table-input-' . $quizItem;
             if (isset($allWeights[$allWeightsKey]) && (int)$allWeights[$allWeightsKey] > 0) {
-                $postCopy["quizItems"] = [ $quizItem ];
+                $quizItemsForQuizGeneration = [ $quizItem ];
                 $quizItemCount = count($quizItems); // count every loop iteration due to the unset a few lines down
                 if ($i == $quizItemCount - 1 && $quizItemCount == 1) {
                     // if we only have 1 thing left with our weighting system and
                     // this thing is weighted, try to get as many questions out of it as possible
-                    $postCopy["maxQuestions"] = $maxQuestions - $totalGenerated;
+                    $maxQuestionsForQuizGeneration = $maxQuestions - $totalGenerated;
                 }
                 else {
-                    $postCopy["maxQuestions"] = floor($maxQuestions * ((int)$allWeights[$allWeightsKey] / 100));
-                    if ($postCopy["maxQuestions"] == 0) {
-                        $postCopy["maxQuestions"] = 1;
+                    $maxQuestionsForQuizGeneration = floor($maxQuestions * ((int)$allWeights[$allWeightsKey] / 100));
+                    if ($maxQuestionsForQuizGeneration == 0) {
+                        $maxQuestionsForQuizGeneration = 1;
                     }
-                    if ($postCopy["maxQuestions"] == 1 && $postCopy["maxQuestions"] + $totalGenerated > $maxQuestions) {
+                    if ($maxQuestionsForQuizGeneration == 1 && $maxQuestionsForQuizGeneration + $totalGenerated > $maxQuestions) {
                         break;
                     }
                 }
-                $generatedQuestions = generate_quiz_questions($db, $postCopy);
+                $generatedQuestions = QuizGenerator::generateQuiz(
+                    $year,
+                    $shouldAvoidPastCorrectAnswers,
+                    $maxQuestionsForQuizGeneration,
+                    $maxPoints,
+                    $fillInPercent,
+                    $questionTypes,
+                    $questionOrder,
+                    $showOnlyRecentOnFlashCards,
+                    $showOnlyRecentOnFlashCardsAmount,
+                    $languageID,
+                    $userID,
+                    $quizItemsForQuizGeneration,
+                    $db
+                );
                 $allGenerated[] = $generatedQuestions;
-                $totalGenerated += (int)$generatedQuestions["totalQuestions"];
+                $totalGenerated += (int)$generatedQuestions['totalQuestions'];
                 // we don't want to generate questions for this chapter again
                 unset($quizItems[$i]);
             }
@@ -461,9 +495,8 @@ class QuizGenerator
         //echo "There are " . $questionsLeft .  " questions left to generate \n";
         
         // need to know how to pull out questions and sort questions at the end.
-        $questionOrder = $params["questionOrder"];
-        $areRandomQuestionsPulled = $questionOrder == "random-sequential" || $questionOrder == "random-random";
-        $isOutputSequential = $questionOrder == "random-sequential" || $questionOrder == "sequential-sequential";
+        $areRandomQuestionsPulled = $questionOrder == 'random-sequential' || $questionOrder == 'random-random';
+        $isOutputSequential = $questionOrder == 'random-sequential' || $questionOrder == 'sequential-sequential';
 
         if ($questionsLeft > 0) {
             $numberOfQuestionsForEachPortion = round($questionsLeft / count($quizItems));
@@ -479,9 +512,21 @@ class QuizGenerator
 
             $otherGenerated = [];
             foreach ($quizItems as $quizItem) { // take whatever is left
-                $postCopy["quizItems"] = [ $quizItem ];
-                $postCopy["maxQuestions"] = $questionsLeft;
-                $generatedQuestions = generate_quiz_questions($db, $postCopy);
+                $generatedQuestions = QuizGenerator::generateQuiz(
+                    $year,
+                    $shouldAvoidPastCorrectAnswers,
+                    $questionsLeft,
+                    $maxPoints,
+                    $fillInPercent,
+                    $questionTypes,
+                    $questionOrder,
+                    $showOnlyRecentOnFlashCards,
+                    $showOnlyRecentOnFlashCardsAmount,
+                    $languageID,
+                    $userID,
+                    [ $quizItem ],
+                    $db
+                );
                 $otherGenerated[] = $generatedQuestions;
                 //echo "Got " . $generatedQuestions["totalQuestions"] . " out\n";
             }
@@ -494,10 +539,10 @@ class QuizGenerator
                 if ($i == count($otherGenerated) - 1) {
                     $numberOfQuestionsForEachPortion = $questionsLeft; // try to get as many from last one as possible
                 }
-                if ($item["totalQuestions"] < $numberOfQuestionsForEachPortion) {
+                if ($item['totalQuestions'] < $numberOfQuestionsForEachPortion) {
                     // we can't get enough questions out of this item. we'll have to adjust
                     // $numberOfQuestionsForEachPortion to account for this
-                    $questionsLeft -= $item["totalQuestions"];
+                    $questionsLeft -= $item['totalQuestions'];
                     if ($i != count($otherGenerated) - 1) {
                         $numberOfQuestionsForEachPortion = round($questionsLeft / (count($quizItems) - ($i + 1)));
                         if ($numberOfQuestionsForEachPortion == 0) {
@@ -507,7 +552,7 @@ class QuizGenerator
                     // else we just flat out don't have enough questions. Sorry.
                     // don't have to worry about random selection or in order selection as we are choosing all of them,
                     // so just add these questions to the overall output.
-                    $totalGenerated += $item["totalQuestions"];
+                    $totalGenerated += $item['totalQuestions'];
                     $allGenerated[] = $item;
                     //echo "Added " . $item["totalQuestions"] . " when I did not have enough\n";
                 }
@@ -516,13 +561,13 @@ class QuizGenerator
                     // pick out $numberOfQuestionsForEachPortion questions
                     $pickedQuestions = [];
                     if ($areRandomQuestionsPulled) {
-                        shuffle($item["questions"]);
-                        $pickedQuestions = array_slice($item["questions"], 0, $numberOfQuestionsForEachPortion);
+                        shuffle($item['questions']);
+                        $pickedQuestions = array_slice($item['questions'], 0, $numberOfQuestionsForEachPortion);
                     }
                     else {
                         // pick the first $numberOfQuestionsForEachPortion out of the questions array
                         // as they are already in sequential order
-                        $pickedQuestions = array_slice($item["questions"], 0, $numberOfQuestionsForEachPortion);
+                        $pickedQuestions = array_slice($item['questions'], 0, $numberOfQuestionsForEachPortion);
                     }
                     $questionsLeft -= $numberOfQuestionsForEachPortion;
                     $totalGenerated += $numberOfQuestionsForEachPortion;
@@ -531,26 +576,26 @@ class QuizGenerator
                     $commentaryQuestions = 0;
                     $commentaryFillIns = 0;
                     foreach ($pickedQuestions as $question) {
-                        if ($question["type"] == "bible-qna") {
+                        if ($question['type'] == 'bible-qna') {
                             $bibleQuestions++;
                         }
-                        else if ($question["type"] == "bible-qna-fill") {
+                        else if ($question['type'] == 'bible-qna-fill') {
                             $bibleFillIns++;
                         }
-                        else if ($question["type"] == "commentary-qna") {
+                        else if ($question['type'] == 'commentary-qna') {
                             $commentaryQuestions++;
                         }
-                        else if ($question["type"] == "commentary-qna-fill") {
+                        else if ($question['type'] == 'commentary-qna-fill') {
                             $commentaryFillIns++;
                         }
                     }
                     $allGenerated[] = [
-                        "bibleQuestions" => $bibleQuestions,
-                        "bibleFillIns" => $bibleFillIns,
-                        "commentaryQuestions" => $commentaryQuestions,
-                        "commentaryFillIns" => $commentaryFillIns,
-                        "totalQuestions" => $numberOfQuestionsForEachPortion,
-                        "questions" => $pickedQuestions
+                        'bibleQuestions' => $bibleQuestions,
+                        'bibleFillIns' => $bibleFillIns,
+                        'commentaryQuestions' => $commentaryQuestions,
+                        'commentaryFillIns' => $commentaryFillIns,
+                        'totalQuestions' => $numberOfQuestionsForEachPortion,
+                        'questions' => $pickedQuestions
                     ];
                 }
                 //echo "There are " . $questionsLeft .  " questions left to generate \n";
@@ -563,24 +608,24 @@ class QuizGenerator
         // the final output, make sure things are sorted properly, and then return the
         // final data!
         $output = [
-            "bibleQuestions" => 0,
-            "bibleFillIns" => 0,
-            "commentaryQuestions" => 0,
-            "commentaryFillIns" => 0,
-            "totalQuestions" => 0,
-            "questions" => []
+            'bibleQuestions' => 0,
+            'bibleFillIns' => 0,
+            'commentaryQuestions' => 0,
+            'commentaryFillIns' => 0,
+            'totalQuestions' => 0,
+            'questions' => []
         ];
         foreach ($allGenerated as $item) {
-            $output["bibleQuestions"] += (int)$item["bibleQuestions"];
-            $output["bibleFillIns"] += (int)$item["bibleFillIns"];
-            $output["commentaryQuestions"] += (int)$item["commentaryQuestions"];
-            $output["commentaryFillIns"] += (int)$item["commentaryFillIns"];
-            $output["totalQuestions"] += (int)$item["totalQuestions"];
-            $output["questions"] = array_merge($output["questions"], $item["questions"]);
+            $output['bibleQuestions'] += (int)$item['bibleQuestions'];
+            $output['bibleFillIns'] += (int)$item['bibleFillIns'];
+            $output['commentaryQuestions'] += (int)$item['commentaryQuestions'];
+            $output['commentaryFillIns'] += (int)$item['commentaryFillIns'];
+            $output['totalQuestions'] += (int)$item['totalQuestions'];
+            $output['questions'] = array_merge($output['questions'], $item['questions']);
         }
         //echo "-------" . "\n";
         //echo "After all done, " . $totalGenerated . " questions generated \n";
-        //echo "After all done, " . count($output["questions"]) . " questions generated \n";
+        //echo "After all done, " . count($output['questions']) . " questions generated \n";
         //echo "There are " . $questionsLeft .  " questions left to generate \n";
         //echo "-------" . "\n";
         
@@ -589,19 +634,19 @@ class QuizGenerator
 
         if ($isOutputSequential) {
             // have to break questions out into each kind and then sort and then reorder them
-            $totalQuestions = count($output["questions"]);
+            $totalQuestions = count($output['questions']);
             $bibleQnA = [];
             $bibleFillIn = [];
             $commentaryQnA = [];
             $commentaryFillIn = [];
-            foreach ($output["questions"] as $question) {
-                if ($question["type"] == "bible-qna") {
+            foreach ($output['questions'] as $question) {
+                if ($question['type'] == 'bible-qna') {
                     $bibleQnA[] = $question;
-                } else if ($question["type"] == "bible-qna-fill") {
+                } else if ($question['type'] == 'bible-qna-fill') {
                     $bibleFillIn[] = $question;
-                } else if ($question["type"] == "commentary-qna") {
+                } else if ($question['type'] == 'commentary-qna') {
                     $commentaryQnA[] = $question;
-                } else if ($question["type"] == "commentary-qna-fill") {
+                } else if ($question['type'] == 'commentary-qna-fill') {
                     $commentaryFillIn[] = $question;
                 }
             }
@@ -656,49 +701,49 @@ class QuizGenerator
 
                 $availableArraysOfQuestions = [];
                 if ($hasBibleQuestionLeft) {
-                    $availableArraysOfQuestions[] = "bible-qna";
+                    $availableArraysOfQuestions[] = 'bible-qna';
                 }
                 if ($hasBibleFillInLeft) {
-                    $availableArraysOfQuestions[] = "bible-qna-fill";
+                    $availableArraysOfQuestions[] = 'bible-qna-fill';
                 }
                 if ($hasCommentaryQuestionLeft) {
-                    $availableArraysOfQuestions[] = "commentary-qna";
+                    $availableArraysOfQuestions[] = 'commentary-qna';
                 }
                 if ($hasCommentaryFillInQuestionLeft) {
-                    $availableArraysOfQuestions[] = "commentary-qna-fill";
+                    $availableArraysOfQuestions[] = 'commentary-qna-fill';
                 }
                 //echo "i = " . $i . "\n";
                 //echo "bible = " . $bibleIndex . ", bible fill = " . $bibleFillInIndex . ", commentary = " . $commentaryIndex . ", comm fill = ". $commentaryFillInIndex . "\n";
                 $index = random_int(0, count($availableArraysOfQuestions) - 1);
                 $typeToAdd = $availableArraysOfQuestions[$index];
-                if ($typeToAdd == "bible-qna") {
+                if ($typeToAdd == 'bible-qna') {
                     $reorderedQuestions[] = $bibleQnA[$bibleIndex++];
-                } else if ($typeToAdd == "bible-qna-fill") {
+                } else if ($typeToAdd == 'bible-qna-fill') {
                     $reorderedQuestions[] = $bibleFillIn[$bibleFillInIndex++];
-                } else if ($typeToAdd == "commentary-qna") {
+                } else if ($typeToAdd == 'commentary-qna') {
                     $reorderedQuestions[] = $commentaryQnA[$commentaryIndex++];
-                } else if ($typeToAdd == "commentary-qna-fill") {
+                } else if ($typeToAdd == 'commentary-qna-fill') {
                     $reorderedQuestions[] = $commentaryFillIn[$commentaryFillInIndex++];
                 }
             }
-            $output["questions"] = $reorderedQuestions;
+            $output['questions'] = $reorderedQuestions;
         } else {
             // random output! shuffle 2x (2x because 1x is boring)
-            shuffle($output["questions"]);
-            shuffle($output["questions"]);
+            shuffle($output['questions']);
+            shuffle($output['questions']);
         }
         //print_r($output);
         if ($DEBUG) {
             $thingsUsed = [];
-            foreach ($output["questions"] as $question) {
-                if (str_contains("bible", $question["type"])) {
-                    $key = $question["startBook"] . " " . $question["startChapter"];
+            foreach ($output['questions'] as $question) {
+                if (str_contains('bible', $question['type'])) {
+                    $key = $question['startBook'] . ' ' . $question['startChapter'];
                     if (!isset($thingsUsed[$key])) {
                         $thingsUsed[$key] = 0;
                     }
                     $thingsUsed[$key] += 1;
                 } else {
-                    $key = "Commentary " . $question["volume"] . " - " . $question["topic"];
+                    $key = 'Commentary ' . $question['volume'] . ' - ' . $question['topic'];
                     if (!isset($thingsUsed[$key])) {
                         $thingsUsed[$key] = 0;
                     }
@@ -706,7 +751,7 @@ class QuizGenerator
                 }
             }
             foreach ($thingsUsed as $key => $value) {
-                echo $key . " --- " . $value . "\n";
+                echo $key . ' --- ' . $value . '\n';
             }
             die();
         }
