@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use PDOException;
 
 class UserAnswer
 {
@@ -46,24 +47,24 @@ class UserAnswer
         // I'm sure there's a better way.
         $query = 'SELECT 1 FROM UserAnswers WHERE QuestionID = ? AND UserID = ?';
         $searchStmt = $db->prepare($query);
-        $insertQuery = "INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)";
+        $insertQuery = 'INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)';
         $insertStmnt = $db->prepare($insertQuery);
-        $updateQuery = ' UPDATE UserAnswers SET Answer = ?, DateAnswered = ?, WasCorrect = ? WHERE QuestionID = ? AND UserID = ?';
+        $updateQuery = 'UPDATE UserAnswers SET Answer = ?, DateAnswered = ?, WasCorrect = ? WHERE QuestionID = ? AND UserID = ?';
         $updateStmnt = $db->prepare($updateQuery);
         try {
             foreach ($answers as $answer) {
                 $searchParams = [
-                    $answer["questionID"],
-                    $answer["userID"]
+                    $answer['questionID'],
+                    $answer['userID']
                 ];
                 $searchStmt->execute($searchParams);
                 $didFind = count($searchStmt->fetchAll()) >= 1 ? true : false;
                 $insertUpdateParams = [
-                    $answer["userAnswer"],
-                    $answer["dateAnswered"],
-                    $answer["correct"],
-                    $answer["questionID"],
-                    $answer["userID"]
+                    $answer['userAnswer'],
+                    $answer['dateAnswered'],
+                    $answer['correct'],
+                    $answer['questionID'],
+                    $answer['userID']
                 ];
                 if (!$didFind) {
                     $insertStmnt->execute($insertUpdateParams);
