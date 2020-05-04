@@ -164,6 +164,10 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Response(401);
         }
+
+        $answers = $request->post['answers'] ?? [];
+        $didSave = UserAnswer::saveUserAnswers($answers, $app->db);
+        return new JsonResponse(['status' => $didSave ? 200 : 400]);
     }
 
     public function flagQuestion(PBEAppConfig $app, Request $request)
