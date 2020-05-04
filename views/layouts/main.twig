@@ -1,0 +1,116 @@
+
+{% set homePath = app.basePath == '' ? '/' : app.basePath %}
+{% set htmlTitle = '' %}
+{% if title is defined %} 
+    {% set htmlTitle = title ~ ' - ' ~ app.websiteTabTitle %}
+{% else %}
+    {% set htmlTitle = app.websiteTabTitle %}
+{% endif %}
+
+{% set currentRequest = str_replace(app.basePath, '', requestURI()) %}
+{% if strEndsWith(currentRequest, '/') %}
+    {% set currentRequest = substr(currentRequest, 0, -1) %}
+{% endif %}
+{% set currentRequest = str_replace('/', '', currentRequest) %}
+
+{% set homeHeaderActiveStatus = str_contains('home', currentRequest)   ? 'active' : '' %}
+{% set aboutHeaderActiveStatus = str_contains('about', currentRequest) ? 'active' : '' %}
+{% set adminHeaderActiveStatus = str_contains('admin', currentRequest) ? 'active' : '' %}
+{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' %}
+    {% set homeHeaderActiveStatus = 'active' %}
+{% endif %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ htmlTitle }}</title>
+        <link rel="stylesheet" href="{{ app.yurl('/css/normalize.css') }}" />
+
+        <!-- Favicon Items -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ app.yurl('/files/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ app.yurl('/files/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ app.yurl('/files/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ app.yurl('/files/site.webmanifest') }}">
+        <link rel="mask-icon" href="{{ app.yurl('/files/safari-pinned-tab.svg') }}" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#00aba9">
+        <meta name="theme-color" content="#ffffff">
+
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="{{ app.yurl('/lib/materialize/css/materialize.min.css?v=20171204a') }}" media="screen,projection"/>
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link rel="stylesheet" href="{{ app.yurl('/css/common.css') }}?{{ filemtime("css/common.css") }}" />
+        <script src="{{ app.yurl('/lib/jquery-3.2.1.min.js') }}"></script>
+        <script type="text/javascript" src="{{ app.yurl('/lib/materialize/js/materialize.min.js') }}"></script>
+        <script type="text/javascript" src="{{ app.yurl('/lib/autosize.min.js') }}"></script>
+
+        <!-- For admin pages -->
+        <script type="text/javascript" src="{{ app.yurl('/lib/html.sortable.min.js') }}"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
+        <!-- tablesorter.js -->
+        {% if adminHeaderActiveStatus == "active" %}
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/theme.materialize.min.css" integrity="sha256-jUiCvjE6E8l+KScSvjq5Sq28mU+/yFJNhxqcFPyvKJc=" crossorigin="anonymous" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/css/filter.formatter.min.css" integrity="sha256-mMTF3msZrX36jof9tDumliTFETqw3pw6Cygt+ZiLN1o=" crossorigin="anonymous" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.min.js" integrity="sha256-5nivqdfmHxGs901RSMulMFGroDjG/qvWK5n8x+S/Wr4=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.widgets.js" integrity="sha256-ntYf/f8FwONqwWYyCSyuPnkKBvh58KcFZkem8x15dOI=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/widgets/widget-filter-formatter-html5.min.js" integrity="sha256-tP9/Kjrq6K2IGcLqni6LTTPGTthgtxb7omdC3RNyQW8=" crossorigin="anonymous"></script>
+        {% endif %}
+
+        <script src="{{ app.yurl('/js/common.js') }}?{{ filemtime("js/common.js") }}"></script>
+        {% if not app.isLocalHost and not app.isGuest and analyticsURL != '' %}
+            <!-- Piwik (code removed) -->
+            <!-- End Piwik Code -->
+        {% endif %}
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div class="nav-wrapper teal lighten-2">
+                    <div class="container">
+                        <a href="{{ homePath }}" class="brand-logo">{{ app.websiteName }}</a>
+                        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                        <ul class="right hide-on-med-and-down">
+                            {% if app.loggedIn %}
+                                <li class="{{ homeHeaderActiveStatus }}"><a href="{{ homePath }}">Home</a></li>
+                            {% endif %}
+                            <li class="{{ aboutHeaderActiveStatus }}"><a href="{{ app.yurl('/about') }}">About</a></li>
+                            {% if app.loggedIn %}
+                                {% if app.isAdmin %}
+                                    <li class="{{ adminHeaderActiveStatus }}"><a href="{{ app.yurl('/admin') }}">Admin Panel</a></li>
+                                {% endif %}
+                                <li><a href="{{ app.yurl('/logout') }}">Logout</a></li>
+                            {% endif %}
+                        </ul>
+                        <ul class="side-nav teal darken-1" id="mobile-demo">
+                            <li><a class="center-align white-text" id="side-nav-title" href="{{ homePath}}">{{ app.websiteName }}</a></li>
+                            {% if app.loggedIn %}
+                                <li class="{{ homeHeaderActiveStatus }}"><a class="white-text" href="{{ homePath }}">Home</a></li>
+                            {% endif %}
+                            <li class="{{ aboutHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/about') }}">About</a></li>
+                            {% if app.loggedIn %}
+                                {% if app.isAdmin %}
+                                    <li class="{{ adminHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/admin') }}">Admin Panel</a></li>
+                                {% endif %}
+                                <li><a class="white-text" href="{{ app.yurl('/logout') }}">Logout</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+            <main>
+                <div id="main" class="container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
+        <footer class="container">
+            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2019. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}</p>
+        </footer>
+    </body>
+    <script type="text/javascript">
+        $(".button-collapse").sideNav();
+    </script>
+</html>

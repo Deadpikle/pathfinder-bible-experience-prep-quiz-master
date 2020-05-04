@@ -29,7 +29,7 @@ class TwigView extends Response
         parent::output($app);
 
         $loader = new \Twig\Loader\FilesystemLoader($app->viewsFolderName);
-        if (file_exists('views/_cache')) {
+        if (!file_exists('views/_cache')) {
             mkdir('views/_cache');
         }
         $twig = new \Twig\Environment($loader, [

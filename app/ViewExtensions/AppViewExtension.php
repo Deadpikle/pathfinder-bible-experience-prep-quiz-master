@@ -13,6 +13,7 @@ use DateTime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Yamf\AppConfig;
+use Yamf\Util as YamfUtil;
 
 class AppViewExtension extends AbstractExtension
 {
@@ -81,6 +82,19 @@ class AppViewExtension extends AbstractExtension
             ->format('F j, Y');
     }
 
+    function strEndsWith(?string $haystack, ?string $needle) : string
+    {
+        if ($haystack === null || $needle === null) {
+            return false;
+        }
+        return YamfUtil::strEndsWith($haystack, $needle);
+    }
+
+    function requestURI() : string
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
+
     // // // settings
     // // //
 
@@ -93,6 +107,9 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('formatDate', [$this, 'formatDate']),
             new TwigFunction('currentUserID', [$this, 'currentUserID']),
             new TwigFunction('addYearsToDate', [$this, 'addYearsToDate']),
+            new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
+            new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
+            new TwigFunction('requestURI', [$this, 'requestURI']),
         ];
         return $twigFunctions;
     }

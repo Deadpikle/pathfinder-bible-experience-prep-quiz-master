@@ -81,4 +81,6 @@
                                    ['POST', 'User/QuizController', 'removeAnswers']],
         '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],
         '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
+
+        '/admin' => ['Admin/AdminController', 'index']
     ];

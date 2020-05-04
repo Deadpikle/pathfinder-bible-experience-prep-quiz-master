@@ -35,8 +35,10 @@ class PHPFuncExtension extends AbstractExtension
         'in_array',
         'json_encode',
         'count',
-        'isset',
-        'var_dump'
+        'var_dump',
+        'str_contains',
+        'str_replace',
+        'substr'
     );
 
     public function __construct(array $functions = array())
