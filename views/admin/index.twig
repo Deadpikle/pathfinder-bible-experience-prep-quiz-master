@@ -7,10 +7,10 @@
 <div id="admin-links">
     <h4>Club Administrator Functions</h4>
     <ul>
-        <li class="home-buttons"><a class="btn waves-effect waves-light" href="upload-csv.php">Import Questions from Excel</a></li>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('admin/upload-csv') }}">Import Questions from Excel</a></li>
         <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-users.php">Users</a></li>
     </ul>
-    {% if isConferenceAdmin or isWebAdmin %}
+    {% if app.isConferenceAdmin or app.isWebAdmin %}
         <h4>Conference Administrator Functions</h4>
         <ul>
             <li class="home-buttons">
@@ -20,7 +20,7 @@
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-study-guides.php">Study Guides</a></li>
         </ul>
     {% endif %}
-    {% if isWebAdmin %}
+    {% if app.isWebAdmin %}
         <h4>Web Administrator Functions</h4>
         <a class="btn blue white-text waves-effect waves-light" href="web-admin-help.php">Web Admin Help</a>
         <ul>

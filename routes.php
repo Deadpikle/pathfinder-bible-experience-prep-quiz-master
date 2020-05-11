@@ -82,5 +82,7 @@
         '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],
         '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
 
-        '/admin' => ['Admin/AdminController', 'index']
+        '/admin' => ['Admin/AdminController', 'index'],
+        '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
+                                ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
     ];

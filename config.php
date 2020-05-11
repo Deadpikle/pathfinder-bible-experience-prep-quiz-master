@@ -83,8 +83,8 @@ $app->isPathfinder = !($app->isAdmin);
 // init settings
 // TODO: refactor to an actual object!
 $app->settings = get_settings($app->db);
-$app->contactName = isset($app->settings['AboutContactName']) ? $app->settings['AboutContactName'] : '[name redacted]';
-$app->contactEmail = isset($app->settings['AboutContactEmail']) ? $app->settings['AboutContactEmail'] : '[email redacted]';
+$app->contactName = $app->settings['AboutContactName'] ?? '[name redacted]';
+$app->contactEmail = $app->settings['AboutContactEmail'] ?? '[email redacted]';
 $app->websiteName = isset($app->settings['WebsiteName']) ? $app->settings['WebsiteName'] : 'UCC Quiz Engine';
 $app->websiteTabTitle = isset($app->settings['WebsiteTabTitle']) ? $app->settings['WebsiteTabTitle'] : 'UCC PBE';
 $app->analyticsURL = isset($app->settings['AnalyticsURL']) ? $app->settings['AnalyticsURL'] : '';
