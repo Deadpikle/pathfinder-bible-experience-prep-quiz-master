@@ -29,7 +29,7 @@ class User
         return isset($_SESSION['UserID']);
     }
 
-    public static function currentUserID()
+    public static function currentUserID() : int
     {
         return isset($_SESSION['UserID']) ? $_SESSION['UserID'] : -1;
     }
@@ -42,5 +42,10 @@ class User
             $languageID, 
             $userID
         ]);
+    }
+
+    public static function currentConferenceID() : int
+    {
+        return $_SESSION['ConferenceID'] ?? -1;
     }
 }

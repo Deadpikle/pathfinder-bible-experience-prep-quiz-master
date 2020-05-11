@@ -3,8 +3,9 @@ TODO:
     -get quiz me page working (and associated quiz pages)
         -setup page probably works, but need to get quiz page and study guide PDF pages working/refactored
     -double check to see if we are properly loading whether a question is flagged by a user or not
+    -I think this is done, but needs testing
 -admin facing pages (everything...)
-    -use Twig and datatables for better admin display
+    -use Twig (working as of 3 May) and datatables for better admin display
     -need to test that study guide uploads work and show up on study guide page when done with admin side of things
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items

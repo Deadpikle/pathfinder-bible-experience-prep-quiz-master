@@ -2,6 +2,37 @@
 
 {% block content %}
 
-<h2>HI!</h2>
+<h2>Administrator Panel</h2>
+
+<div id="admin-links">
+    <h4>Club Administrator Functions</h4>
+    <ul>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="upload-csv.php">Import Questions from Excel</a></li>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-users.php">Users</a></li>
+    </ul>
+    {% if isConferenceAdmin or isWebAdmin %}
+        <h4>Conference Administrator Functions</h4>
+        <ul>
+            <li class="home-buttons">
+                <a class="btn waves-effect waves-light" href="view-home-sections.php?conferenceID={{ conferenceID }}">Home Page Info</a>
+            </li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-clubs.php">Pathfinder Clubs</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-study-guides.php">Study Guides</a></li>
+        </ul>
+    {% endif %}
+    {% if isWebAdmin %}
+        <h4>Web Administrator Functions</h4>
+        <a class="btn blue white-text waves-effect waves-light" href="web-admin-help.php">Web Admin Help</a>
+        <ul>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-books.php">Bible Books</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-commentaries.php">Commentaries</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-conferences.php">Conferences</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-bible-fill-in.php">Manage Bible Fill in the Blank Questions</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-non-blankable-words.php">Non-Blankable Words</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="edit-settings.php">Website Settings</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="view-years.php">Years</a></li>
+        </ul>
+    {% endif %}
+</div>
 
 {% endblock %}

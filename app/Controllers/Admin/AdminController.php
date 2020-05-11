@@ -19,12 +19,14 @@ class AdminController
 {
     public function index(PBEAppConfig $app, Request $request)
     {
-        $canViewAdminPanel = isset($_SESSION["UserType"]) && $_SESSION["UserType"] !== "Pathfinder" && $_SESSION["UserType"] !== "Guest";
+        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== "Pathfinder" && $_SESSION['UserType'] !== "Guest";
         if (!$canViewAdminPanel) {
             return new Redirect('/');
         }
-        $title = 'Admin Home';
 
-        return new TwigView('admin/index');
+        $isConferenceAdmin = $app->isConferenceAdmin;
+        $isWebAdmin = $app->isWebAdmin;
+        $conferenceID = User::currentConferenceID();
+        return new TwigView('admin/index', compact('isConferenceAdmin', 'isWebAdmin', 'conferenceID'), 'Admin Home');
     }
 }
