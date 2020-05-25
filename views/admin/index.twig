@@ -22,7 +22,7 @@
     {% endif %}
     {% if app.isWebAdmin %}
         <h4>Web Administrator Functions</h4>
-        <a class="btn blue white-text waves-effect waves-light" href="web-admin-help.php">Web Admin Help</a>
+        <a class="btn blue white-text waves-effect waves-light" href="{{ app.yurl('/admin/help') }}">Web Admin Help</a>
         <ul>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('admin/books') }}">Bible Books</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('admin/commentaries') }}">Commentaries</a></li>

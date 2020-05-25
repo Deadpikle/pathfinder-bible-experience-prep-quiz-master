@@ -83,6 +83,7 @@
         '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
 
         '/admin' => ['Admin/AdminController', 'index'],
+        '/admin/help' => ['Admin/AdminController', 'help'],
         '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
                                 ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
         '/admin/users' => ['Admin/UserController', 'viewUsers'],

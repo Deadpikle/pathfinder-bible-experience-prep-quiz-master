@@ -24,4 +24,9 @@ class AdminController extends BaseAdminController
         $conferenceID = User::currentConferenceID();
         return new TwigView('admin/index', compact('conferenceID'), 'Admin Home');
     }
+
+    public function help(PBEAppConfig $app, Request $request) : Response
+    {
+        return new TwigView('admin/help', [], 'Admin Help');
+    }
 }
