@@ -43,9 +43,10 @@ class Club
         return Club::loadClubs('', [], $db);
     }
 
-    public static function loadClub(int $clubID, PDO $db) : array
+    public static function loadClubByID(int $clubID, PDO $db) : ?Club
     {
-        return Club::loadClubs(' WHERE ClubID = ? ', [$clubID], $db);
+        $data = Club::loadClubs(' WHERE ClubID = ? ', [$clubID], $db);
+        return count($data) > 0 ? $data[0] : null;
     }
 
     public static function loadClubsInConference(int $conferenceID, PDO $db) : array
@@ -83,5 +84,40 @@ class Club
             $output[] = $club;
         }
         return $output;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO Clubs (Name, URL, ConferenceID) 
+            VALUES (?, ?, ?)';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            $this->url,
+            $this->conferenceID
+        ]);
+        $this->clubID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE Clubs SET Name = ?, URL = ?, ConferenceID = ?
+            WHERE ClubID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            $this->url,
+            $this->conferenceID,
+            $this->clubID
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM Clubs WHERE ClubID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([ $this->clubID ]);
     }
 }

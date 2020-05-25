@@ -69,7 +69,7 @@ class UserController extends BaseAdminController
         } else {
             $clubID = $request->post['club'] ?? -1;
         }
-        $club = Club::loadClub($clubID, $app->db);
+        $club = Club::loadClubByID($clubID, $app->db);
 
         $user = new User($user->userID ?? -1, $username);
         $user->type = $userType;
@@ -134,7 +134,7 @@ class UserController extends BaseAdminController
         if ($user === null) {
             return new NotFound();
         }
-        return new TwigView('admin/users/verify-delete-user', compact('user'), 'Delete Users');
+        return new TwigView('admin/users/verify-delete-user', compact('user'), 'Delete User');
     }
 
     public function deleteUser(PBEAppConfig $app, Request $request) : Response

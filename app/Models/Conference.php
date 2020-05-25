@@ -44,6 +44,11 @@ class Conference
         return Conference::loadConferences('', [], $db);
     }
 
+    public function loadAllNonAdminConferences(PDO $db) : array
+    {
+        return Conference::loadConferences(' WHERE Name <> "Website Administrators"', [], $db);
+    }
+
     public function loadNonWebsiteConferences(PDO $db) : array
     {
         return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);

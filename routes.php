@@ -81,11 +81,12 @@
                                    ['POST', 'User/QuizController', 'removeAnswers']],
         '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],
         '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
-
+        // // // // // admin // // // //
         '/admin' => ['Admin/AdminController', 'index'],
         '/admin/help' => ['Admin/AdminController', 'help'],
         '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
                                 ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
+        // users
         '/admin/users' => ['Admin/UserController', 'viewUsers'],
         '/admin/users/create' => [['GET', 'Admin/UserController', 'createUser'],
                             ['POST', 'Admin/UserController', 'saveCreatedUser']],
@@ -93,4 +94,12 @@
                                          ['POST', 'Admin/UserController', 'saveEditedUser']],
         '/admin/users/{userID}/delete' => [['GET', 'Admin/UserController', 'verifyDeleteUser'],
                                            ['POST', 'Admin/UserController', 'deleteUser']],
+        // clubs
+        '/admin/clubs' => ['Admin/ClubController', 'viewClubs'],
+        '/admin/clubs/create' => [['GET', 'Admin/ClubController', 'createClub'],
+                            ['POST', 'Admin/ClubController', 'saveCreatedClub']],
+        '/admin/clubs/{clubID}/edit' => [['GET', 'Admin/ClubController', 'editClub'],
+                                         ['POST', 'Admin/ClubController', 'saveEditedClub']],
+        '/admin/clubs/{clubID}/delete' => [['GET', 'Admin/ClubController', 'verifyDeleteClub'],
+                                           ['POST', 'Admin/ClubController', 'deleteClub']],
     ];
