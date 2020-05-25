@@ -110,4 +110,9 @@
                                                         ['POST', 'Admin/StudyGuideController', 'saveEditedStudyGuide']],
         '/admin/study-guides/{studyGuideID}/delete' => [['GET', 'Admin/StudyGuideController', 'verifyDeleteStudyGuide'],
                                                         ['POST', 'Admin/StudyGuideController', 'deleteStudyGuide']],
+        // books
+        '/admin/books' => ['Admin/BookController', 'viewBooks'],
+        '/admin/books/create' => ['POST', 'Admin/BookController', 'createBook'],
+        '/admin/books/{bookID}/delete' => [['GET', 'Admin/BookController', 'verifyDeleteBook'],
+                                           ['POST', 'Admin/BookController', 'deleteBook']],
     ];

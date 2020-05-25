@@ -15,6 +15,7 @@ class Book
     public $chapters; // array of Chapter objects
 
     public $yearID;
+    public $year;
 
     public function __construct(int $bookID, string $name)
     {
@@ -25,8 +26,8 @@ class Book
     private static function loadBooks(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
-            SELECT BookID, Name, NumberChapters, YearID
-            FROM Books
+            SELECT BookID, Name, NumberChapters, Books.YearID, Years.Year
+            FROM Books JOIN Years ON Books.YearID = Years.YearID
             ' . $whereClause . '
             ORDER BY Name, NumberChapters';
         $stmt = $db->prepare($query);
@@ -37,6 +38,7 @@ class Book
             $book = new Book($row['BookID'], $row['Name']);
             $book->numberChapters = $row['NumberChapters'];
             $book->yearID = $row['YearID'];
+            $book->year = $row['Year'];
             $output[] = $book;
         }
         return $output;
@@ -49,7 +51,13 @@ class Book
 
     public static function loadBooksForYear(Year $year, PDO $db) : array
     {
-        return Book::loadBooks(' WHERE YearID = ? ', [ $year->yearID ], $db);
+        return Book::loadBooks(' WHERE Books.YearID = ? ', [ $year->yearID ], $db);
+    }
+
+    public static function loadBookByID(int $bookID, PDO $db) : ?Book
+    {
+        $data = Book::loadBooks(' WHERE Books.BookID = ? ', [ $bookID ], $db);
+        return count($data) > 0 ? $data[0] : null;
     }
 
     public static function loadAllBookChapterVerseDataForYear(Year $year, PDO $db) : array
@@ -84,6 +92,8 @@ class Book
                 $book = new Book($row['BookID'], $row['Name']);
                 $book->numberChapters = $row['NumberChapters'];
                 $book->chapters = [];
+                $book->yearID = $year->yearID;
+                $book->year = $year->year;
                 $chapter = null;
             }
             if ($row['ChapterID'] != $lastChapterID) {
@@ -108,5 +118,37 @@ class Book
             $books[] = $book;
         }
         return $books;
+    }
+
+    public static function createBook(string $name, int $numberOfChapters, int $yearID, PDO $db)
+    {
+        $query = 'SELECT 1 FROM Books WHERE Name = ? AND YearID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $name, 
+            $yearID
+        ]);
+        $bookData = $stmt->fetchAll();
+        // make sure book doesn't exist
+        if ($bookData !== true && count($bookData) == 0) {
+            $query = '
+                INSERT INTO Books (Name, NumberChapters, YearID) VALUES (?, ?, ?)
+            ';
+            $stmt = $db->prepare($query);
+            $stmt->execute([
+                trim($name),
+                $numberOfChapters, 
+                $yearID
+            ]);
+        }
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM Books WHERE BookID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $this->bookID
+        ]);
     }
 }
