@@ -1,0 +1,37 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/study-guides') }}">Back</a></p>
+
+<h4>Upload Study Guide (Year: {{ currentYear.year }})</h4>
+
+{% include 'includes/error-message.twig' %}
+
+{% if didSucceed %}
+    <h4>File uploaded successfully!</h4>
+{% endif %}
+
+<div id="upload-study-guide">
+    <p>This form only accepts PDF files. The maximum file size for a PDF study guide is 10 MB.</p>
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="file-field input-field col s12 m6">
+                <div class="btn blue">
+                    <span>Choose Study Guide File</span>
+                    <input type="file" id="file-upload" name="file-upload" accept=".pdf,application/pdf" required>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                </div>
+            </div>
+            <div class="input-field col s12 m4">
+                <input type="text" id="display-name" name="display-name" data-length="300" required value="{{ displayName }}"/>
+                <label for="display-name">Display Name</label>
+            </div>
+        </div>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Upload</button>
+    </form>
+</div>
+
+{% endblock %}

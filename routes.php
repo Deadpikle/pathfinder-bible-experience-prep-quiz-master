@@ -102,4 +102,12 @@
                                          ['POST', 'Admin/ClubController', 'saveEditedClub']],
         '/admin/clubs/{clubID}/delete' => [['GET', 'Admin/ClubController', 'verifyDeleteClub'],
                                            ['POST', 'Admin/ClubController', 'deleteClub']],
+        // study guides
+        '/admin/study-guides' => ['Admin/StudyGuideController', 'viewStudyGuides'],
+        '/admin/study-guides/upload' => [['GET', 'Admin/StudyGuideController', 'viewStudyGuideUpload'],
+                                         ['POST', 'Admin/StudyGuideController', 'uploadStudyGuide']],
+        '/admin/study-guides/{studyGuideID}/edit' => [['GET', 'Admin/StudyGuideController', 'editStudyGuide'],
+                                                        ['POST', 'Admin/StudyGuideController', 'saveEditedStudyGuide']],
+        '/admin/study-guides/{studyGuideID}/delete' => [['GET', 'Admin/StudyGuideController', 'verifyDeleteStudyGuide'],
+                                                        ['POST', 'Admin/StudyGuideController', 'deleteStudyGuide']],
     ];

@@ -17,7 +17,7 @@ class Year
         $this->isCurrent = false;
     }
 
-    private function loadYears(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadYears(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT YearID, Year, IsCurrent
@@ -36,7 +36,7 @@ class Year
         return $output;
     }
 
-    public function loadCurrentYear(PDO $db) : ?Year
+    public static function loadCurrentYear(PDO $db) : ?Year
     {
         $years = Year::loadYears('WHERE IsCurrent = 1', [], $db);
         return count($years) > 0 ? $years[0] : null;

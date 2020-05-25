@@ -30,7 +30,7 @@ class Commentary
         return $this->getName() . ' - ' . $this->topicName;
     }
 
-    private function loadCommentaries(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadCommentaries(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT DISTINCT CommentaryID, Number, TopicName, YearID
@@ -52,12 +52,12 @@ class Commentary
         return $output;
     }
 
-    public function loadCommentariesForYear(int $yearID, PDO $db) : array
+    public static function loadCommentariesForYear(int $yearID, PDO $db) : array
     {
         return Commentary::loadCommentaries('WHERE YearID = ?', [$yearID], $db);
     }
 
-    public function loadCommentariesWithActiveQuestions(int $yearID, PDO $db) : array
+    public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db) : array
     {
         $query = '
             SELECT DISTINCT c.CommentaryID, Number, TopicName
@@ -67,7 +67,7 @@ class Commentary
             ORDER BY Number';
         $stmt = $db->prepare($query);
         $stmt->execute([ $yearID ]);
-        $data = $commentaryStmt->fetchAll();
+        $data = $stmt->fetchAll();
 
         $output = [];
         foreach ($data as $row) {

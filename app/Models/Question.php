@@ -35,7 +35,7 @@ class Question
     }
 
     // TODO: rename function :sweat_smile: have to quit and don't have time to rename things
-    private function loadQuestions(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadQuestions(string $whereClause, array $whereParams, PDO $db) : array
     {
         // IFnull(uf.UserFlaggedID, 0) AS IsFlagged
         $query = '
@@ -75,12 +75,12 @@ class Question
         return $output;
     }
 
-    public function loadAllNonDeletedQuestions(PDO $db) : array
+    public static function loadAllNonDeletedQuestions(PDO $db) : array
     {
         return Question::loadQuestions('WHERE IsDeleted = 0', [], $db);
     }
 
-    public function loadQuestionWithID(int $questionID, PDO $db) : ?Question
+    public static function loadQuestionWithID(int $questionID, PDO $db) : ?Question
     {
         $data = Question::loadQuestions('WHERE QuestionID = ?', [$questionID], $db);
         return count($data) > 0 ? $data[0] : null;
@@ -192,13 +192,13 @@ class Question
         $stmt->execute($params);
     }
 
-    public function getNumberOfFillInBibleQuestionsForCurrentYear(PDO $db) : int
+    public static function getNumberOfFillInBibleQuestionsForCurrentYear(PDO $db) : int
     {
         $currentYear = Year::loadCurrentYear($db);
         return Question::getNumberOfFillInBibleQuestions($currentYear, $db);
     }
 
-    public function getNumberOfFillInBibleQuestions(Year $year, PDO $db) : int
+    public static function getNumberOfFillInBibleQuestions(Year $year, PDO $db) : int
     {
         $query = '
             SELECT COUNT(q.QuestionID) AS QuestionCount
@@ -216,7 +216,7 @@ class Question
         return 0;
     }
 
-    public function getNumberOfFillInBibleQuestionsPerLanguage(Year $year, PDO $db) : array
+    public static function getNumberOfFillInBibleQuestionsPerLanguage(Year $year, PDO $db) : array
     {
         $languages = Language::loadAllLanguages($db);
         $fillIns = [];
@@ -245,7 +245,7 @@ class Question
         return $fillIns;
     }
     
-    public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
+    public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
     {
         try {
             $whereClause = '';

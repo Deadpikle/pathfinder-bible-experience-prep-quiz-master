@@ -21,7 +21,7 @@ class ClubController extends BaseAdminController
     {
         $clubs = Club::loadAllClubs($app->db);
         $conferences = Conference::loadAllNonAdminConferences($app->db);
-        $conferencesByID = Conference::loadConferencesKeyedByID($app->db);
+        $conferencesByID = Conference::loadAllConferencesByID($app->db);
         return new TwigView('admin/clubs/view-clubs', compact('clubs', 'conferences', 'conferencesByID'), 'Clubs');
     }
 

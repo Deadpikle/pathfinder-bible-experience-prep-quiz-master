@@ -94,22 +94,22 @@ class User
         return $output;
     }
 
-    public function loadAllUsers(PDO $db) : array
+    public static function loadAllUsers(PDO $db) : array
     {
         return User::loadUsers('', [], $db);
     }
 
-    public function loadUsersInClub(int $clubID, PDO $db) : array
+    public static function loadUsersInClub(int $clubID, PDO $db) : array
     {
         return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" ', [ $clubID ], $db);
     }
 
-    public function loadUsersInConference(int $conferenceID, PDO $db) : array
+    public static function loadUsersInConference(int $conferenceID, PDO $db) : array
     {
         return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" ', [ $conferenceID ], $db);
     }
 
-    public function loadUserByID(int $userID, PDO $db) : ?User
+    public static function loadUserByID(int $userID, PDO $db) : ?User
     {
         $data = User::loadUsers(' WHERE UserID = ? ', [ $userID ], $db);
         return count($data) > 0 ? $data[0] : null;

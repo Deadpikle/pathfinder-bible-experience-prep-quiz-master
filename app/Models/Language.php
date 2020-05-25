@@ -27,7 +27,7 @@ class Language
         return $name;
     }
 
-    private function loadLanguages(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadLanguages(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT LanguageID, Name, IsDefault, AltName
@@ -47,24 +47,24 @@ class Language
         return $output;
     }
 
-    public function loadAllLanguages(PDO $db) : array
+    public static function loadAllLanguages(PDO $db) : array
     {
         return Language::loadLanguages('', [], $db);
     }
 
-    public function loadLanguageWithID(int $languageID, PDO $db) : ?Language
+    public static function loadLanguageWithID(int $languageID, PDO $db) : ?Language
     {
         $data = Language::loadLanguages(' WHERE LanguageID = ? ', [$languageID], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public function loadDefaultLanguage(PDO $db) : ?Language
+    public static function loadDefaultLanguage(PDO $db) : ?Language
     {
         $data = Language::loadLanguages(' WHERE IsDefault = 1 ', [], $db);
         return count($data) > 0 ? $data[0] : new Language(1, 'English');
     }
 
-    public function findLanguageWithID(int $languageID, array $languages) : ?Language
+    public static function findLanguageWithID(int $languageID, array $languages) : ?Language
     {
         foreach ($languages as $language) {
             if ($language->languageID === $languageID) {

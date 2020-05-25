@@ -33,6 +33,16 @@ class Util
         return $data;
     }
 
+    public static function validateString(array $array, string $key) : string
+    {
+        return isset($array[$key]) && $array[$key] !== null ? filter_var($array[$key], FILTER_SANITIZE_STRING) : '';
+    }
+
+    public static function validateEmail(array $array, string $key) : string
+    {
+        return isset($array[$key]) && $array[$key] !== null ? filter_var($array[$key], FILTER_SANITIZE_EMAIL) : '';
+    }
+
     public static function generateUUID() : string
     {
         $bytes = random_bytes(16);

@@ -18,7 +18,7 @@ class Conference
         $this->name = $name;
     }
 
-    private function loadConferences(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadConferences(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT ConferenceID, Name, URL, ContactName, ContactEmail
@@ -39,35 +39,25 @@ class Conference
         return $output;
     }
 
-    public function loadAllConferences(PDO $db) : array
+    public static function loadAllConferences(PDO $db) : array
     {
         return Conference::loadConferences('', [], $db);
     }
 
-    public function loadAllNonAdminConferences(PDO $db) : array
+    public static function loadAllNonAdminConferences(PDO $db) : array
     {
         return Conference::loadConferences(' WHERE Name <> "Website Administrators"', [], $db);
     }
 
-    public function loadNonWebsiteConferences(PDO $db) : array
+    public static function loadNonWebsiteConferences(PDO $db) : array
     {
         return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);
-    }
-
-    public function loadConferencesKeyedByID(PDO $db) : array
-    {
-        $conferences = Conference::loadAllConferences($db);
-        $conferencesByID = [];
-        foreach ($conferences as $conference) {
-            $conferencesByID[$conference->conferenceID] = $conference;
-        }
-        return $conferencesByID;
     }
 
     /**
      * Returns array of conferences with keys being the ConferenceID and values being the Conference
      */
-    public function loadAllConferencesByID(PDO $db) : array
+    public static function loadAllConferencesByID(PDO $db) : array
     {
         $conferences = Conference::loadConferences('', [], $db);
         $output = [];

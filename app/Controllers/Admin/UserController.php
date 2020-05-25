@@ -30,7 +30,7 @@ class UserController extends BaseAdminController
             $users = User::loadAllUsers($app->db);
         }
         $clubsByID = Club::loadAllClubsKeyedByID($app->db);
-        $conferencesByID = Conference::loadConferencesKeyedByID($app->db);
+        $conferencesByID = Conference::loadAllConferencesByID($app->db);
         $clubName = User::currentClubName();
         $conferenceName = User::currentConferenceName();
         $currentUserID = User::currentUserID();
@@ -41,7 +41,7 @@ class UserController extends BaseAdminController
 
     private function createOrEditUser(PBEAppConfig $app, Request $request, bool $isCreating, ?User $user, string $error = '') : Response
     {
-        $conferencesByID = Conference::loadConferencesKeyedByID($app->db);
+        $conferencesByID = Conference::loadAllConferencesByID($app->db);
         if ($app->isWebAdmin) {
             $userTypes = UserType::loadAllUserTypes($app->db);
             $clubs = Club::loadAllClubs($app->db);

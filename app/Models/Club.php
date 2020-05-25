@@ -54,7 +54,7 @@ class Club
         return Club::loadClubs(' WHERE ConferenceID = ? ', [ $conferenceID ], $db);
     }
 
-    public function loadAllClubsKeyedByID(PDO $db) : array
+    public static function loadAllClubsKeyedByID(PDO $db) : array
     {
         $clubs = Club::loadAllClubs($db);
         $clubsByID = [];
@@ -64,7 +64,7 @@ class Club
         return $clubsByID;
     }
 
-    public function loadRecentlyActiveClubs(PDO $db) : array
+    public static function loadRecentlyActiveClubs(PDO $db) : array
     {
         // https://stackoverflow.com/a/26044915/3938401 -- 30 days ago
         $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
