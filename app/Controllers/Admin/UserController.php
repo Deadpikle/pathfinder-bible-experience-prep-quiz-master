@@ -65,6 +65,7 @@ class UserController extends BaseAdminController
 
         if ($app->isClubAdmin) {
             $clubID = User::currentClubID();
+            $userType = UserType::loadUserTypeByName('Pathfinder', $app->db);
         } else {
             $clubID = $request->post['club'] ?? -1;
         }

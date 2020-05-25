@@ -50,4 +50,10 @@ class UserType
         $data = UserType::loadUserTypes(' WHERE UserTypeID = ? ', [ $userTypeID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
+
+    public static function loadUserTypeByName(string $name, PDO $db) : ?UserType
+    {
+        $data = UserType::loadUserTypes(' WHERE Type = ? ', [ $name ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
 }
