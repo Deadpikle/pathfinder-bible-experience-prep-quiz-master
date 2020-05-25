@@ -215,8 +215,37 @@ class Question
         }
         return 0;
     }
+
+    public function getNumberOfFillInBibleQuestionsPerLanguage(Year $year, PDO $db) : array
+    {
+        $languages = Language::loadAllLanguages($db);
+        $fillIns = [];
+        $query = '
+            SELECT COUNT(q.QuestionID) AS QuestionCount
+            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+                JOIN Chapters c ON c.ChapterID = v.ChapterID
+                JOIN Books b ON b.BookID = c.BookID
+            WHERE b.YearID = ? 
+                AND q.LanguageID = ?
+                AND q.Type = "bible-qna-fill"';
+        $stmt = $db->prepare($query);
+        foreach ($languages as $language) {
+            $stmt->execute([
+                $year->yearID,
+                $language->languageID
+            ]);
+            $bookQuestionData = $stmt->fetch();
+            if ($bookQuestionData != null) {
+                $fillIns[$language->languageID] = $bookQuestionData['QuestionCount'];
+            }
+            else {
+                $fillIns[$language->languageID] = 0;
+            }
+        }
+        return $fillIns;
+    }
     
-    public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
+    public function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
     {
         try {
             $whereClause = '';

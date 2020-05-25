@@ -58,6 +58,12 @@ class Language
         return count($data) > 0 ? $data[0] : null;
     }
 
+    public function loadDefaultLanguage(PDO $db) : ?Language
+    {
+        $data = Language::loadLanguages(' WHERE IsDefault = 1 ', [], $db);
+        return count($data) > 0 ? $data[0] : new Language(1, 'English');
+    }
+
     public function findLanguageWithID(int $languageID, array $languages) : ?Language
     {
         foreach ($languages as $language) {

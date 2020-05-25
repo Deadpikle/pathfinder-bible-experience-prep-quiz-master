@@ -9,9 +9,9 @@
         <b>Upload results:</b>{{ questionsSuccessfullyAdded }} questions successfully added. 
         {% if questionsFailedToAdd > 0 %}
             {{ questionsFailedToAdd }} questions couldn't be added to the system.</p> <!-- close of initial paragraph -->
-            <?php if ($errors !== "") { ?>
-                    <p><?= $errors ?></p>
-            <?php } ?>
+            {% if errors != '' %}
+                <p>{{ errors }}</p>
+            {% endif %}
         {% else %}
             </p> <!-- close of initial paragraph -->
         {% endif %}
@@ -39,16 +39,16 @@
 <h4>Upload Form Directions</h4>
 
 <p>Using the upload form requires using Microsoft Excel software. Technically, other methods are possible, but they are not officially supported.</p>
-<p>The sample upload file for filling out can be downloaded by clicking the following link: <a class="btn-flat waves-effect waves-light blue white-text" href="<?= $basePath ?>/files/offline-question-sheet.xlsx" target="_blank">Download Sample File</a></p>
+<p>The sample upload file for filling out can be downloaded by clicking the following link: <a class="btn-flat waves-effect waves-light blue white-text" href="{{ app.yurl('/files/offline-question-sheet.xlsx') }}" target="_blank">Download Sample File</a></p>
 <p>Make sure to use the sample upload file whenever you want to upload questions. You may erase everything in the file <em>except</em> the first row of <b>bold</b> headers. If your file does not have the right column headers, things will not work!</p>
 <p>Directions:</p>
 <ol>
-    <li>Before uploading any questions or using the sample upload file, make sure that all of the <a href="<?= $basePath ?>/admin/view-books.php" target="_blank">Bible books</a>, <a href="<?= $basePath ?>/admin/view-books.php" target="_blank">Bible chapters</a> (with proper verse count), and <a href="<?= $basePath ?>/admin/view-commentaries.php" target="_blank">commentary volumes</a> are set up with the values that you will be using in the upload file.</li>
+    <li>Before uploading any questions or using the sample upload file, make sure that all of the <a href="{{ app.yurl('/admin/books') }}" target="_blank">Bible books</a>, Bible chapters (with proper verse count), and <a href="{{ app.yurl('/admin/commentaries') }}" target="_blank">commentary volumes</a> are set up with the values that you will be using in the upload file.</li>
     <li>Download the above linked sample file to your computer. Note the format of the values under each column. Your data will be required to be in the same format. No typos are acceptable. In the samples below, quote marks are used to delineate acceptable values; do not use the quote marks when typing in the file unless they are part of the question's question or answer. For reference, the accepted values for each column are:
         <ul class="browser-default">
             <li><b>Type</b>: "Bible" or "Commentary"</li>
             <li><b>Fill in?</b>: "True" if adding a fill in the blank question or "False" otherwise.</li>
-            <li><b>Language</b>: "English", "French", or "Spanish" -- defaults to "<?= $defaultLanguage["Name"] ?>"</li>
+            <li><b>Language</b>: "English", "French", or "Spanish" -- defaults to "{{ defaultLanguage.getDisplayName() }}"</li>
             <li><b>Question</b>: Question text. The maximum length for a question is 10,000 characters. (A character is one letter, such as 'A'.)</li>
             <li><b>Answer</b>: Answer text for the question. Do not use if adding a fill in the blank question. The maximum length for an answer is 10,000 characters. (A character is one letter, such as 'A'.)</li>
             <li><b>Points</b>: Number of points for the question. Should be a number like 32 and not "thirty-two". If left blank, this value defaults to 1.</li>

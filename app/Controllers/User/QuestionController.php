@@ -47,6 +47,7 @@ class QuestionController
             $request->post['questionFilter'],
             $request->post['questionType'],
             $request->post['bookFilter'],
+            $request->post['chapterFilter'],
             $request->post['volumeFilter'],
             $request->post['searchText'],
             $request->post['pageSize'],
