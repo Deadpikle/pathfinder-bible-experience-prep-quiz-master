@@ -123,95 +123,51 @@ class StudyGuideController extends BaseAdminController
         return new Redirect('/admin/study-guides');
     }
 
-    private function showCreateOrEditClub(PBEAppConfig $app, Request $request, bool $isCreating, ?Club $club, string $error = '') : Response
+    public function editStudyGuide(PBEAppConfig $app, Request $request) : Response
     {
-        $conferences = Conference::loadAllNonAdminConferences($app->db);
-        return new TwigView('admin/clubs/create-edit-club', compact('isCreating', 'club', 'conferences', 'error'), $isCreating ? 'Create Club' : 'Edit Club');
-    }
-
-    private function validateClub(PBEAppConfig $app, Request $request, ?Club $club) : ValidationStatus
-    {
-        $name = $request->post['club-name'] ?? '';
-        $url = $request->post['club-url'] ?? '';
-        $conferenceID = (int)$request->post['conference'] ?? -1;
-
-        $club = new Club($club->clubID ?? -1, $name);
-        $club->url = $url;
-        if ($app->isWebAdmin) {
-            $club->conferenceID = $conferenceID;
-        } else {
-            $userConference = User::currentConferenceID();
-            $club->conferenceID = User::currentConferenceID() != -1 ? $userConference : null;
-        }
-        
-        if ($name === null || $name === '') {
-            return new ValidationStatus(false, $club, 400, 'Club name is required');
-        }
-
-        return new ValidationStatus(true, $club);
-    }
-
-    public function createClub(PBEAppConfig $app, Request $request) : Response
-    {
-        return $this->showCreateOrEditClub($app, $request, true, null);
-    }
-
-    public function saveCreatedClub(PBEAppConfig $app, Request $request) : Response
-    {
-        $status = $this->validateClub($app, $request, null);
-        $club = $status->output;
-        if (!$status->didValidate) {
-            return $this->showCreateOrEditClub($app, $request, true, $club, $status->error);
-        }
-        $club->create($app->db);
-        return new Redirect('/admin/clubs');
-    }
-
-    public function editClub(PBEAppConfig $app, Request $request) : Response
-    {
-        $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
-        if ($club === null) {
+        $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
+        if ($studyGuide === null) {
             return new NotFound();
         }
-        return $this->showCreateOrEditClub($app, $request, false, $club);
+        return new TwigView('admin/study-guides/rename-study-guide', compact('studyGuide'), 'Rename Study Guide');
     }
 
-    public function saveEditedClub(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedStudyGuide(PBEAppConfig $app, Request $request) : Response
     {
-        $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
-        if ($club === null) {
+        $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
+        if ($studyGuide === null) {
             return new NotFound();
         }
-        $status = $this->validateClub($app, $request, $club);
-        $club = $status->output;
-        if (!$status->didValidate) {
-            return $this->showCreateOrEditClub($app, $request, false, $club, $status->error);
+        $displayName = Util::validateString($request->post, 'display-name');
+        if ($displayName === '') {
+            $error = 'Display name is required';
+            return new TwigView('admin/study-guides/rename-study-guide', compact('studyGuide', 'error'), 'Rename Study Guide');
         }
-        $club->update($app->db);
-        return new Redirect('/admin/clubs');
+        StudyGuide::renameStudyGuide($studyGuide->studyGuideID, $displayName, $app->db);
+        return new Redirect('/admin/study-guides');
     }
 
-    public function verifyDeleteClub(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteStudyGuide(PBEAppConfig $app, Request $request) : Response
     {
-        $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
-        if ($club === null) {
+        $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
+        if ($studyGuide === null) {
             return new NotFound();
         }
-        return new TwigView('admin/clubs/verify-delete-club', compact('club'), 'Delete Club');
+        return new TwigView('admin/study-guides/verify-delete-study-guide', compact('studyGuide'), 'Delete Study Guide');
     }
 
-    public function deleteClub(PBEAppConfig $app, Request $request) : Response
+    public function deleteStudyGuide(PBEAppConfig $app, Request $request) : Response
     {
-        $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
-        if ($club === null) {
+        $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
+        if ($studyGuide === null) {
             return new NotFound();
         }
-        if (CSRF::verifyToken('delete-club')) {
-            $club->delete($app->db);
-            return new Redirect('/admin/clubs');
+        if (CSRF::verifyToken('delete-study-guide')) {
+            $studyGuide->delete($app->db);
+            return new Redirect('/admin/study-guides');
         } else {
             $error = 'Unable to validate request. Please try again.';
-            return new TwigView('admin/clubs/verify-delete-club', compact('club', 'error'), 'Delete Club');
+            return new TwigView('admin/study-guides/verify-delete-study-guide', compact('studyGuide', 'error'), 'Delete Study Guide');
         }
     }
 }

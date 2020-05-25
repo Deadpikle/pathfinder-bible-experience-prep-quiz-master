@@ -53,6 +53,12 @@ class StudyGuide
         return StudyGuide::loadStudyGuides('', [ ], $db);
     }
 
+    public static function loadStudyGuideByID(int $studyGuideID, PDO $db) : ?StudyGuide
+    {
+        $data = StudyGuide::loadStudyGuides(' WHERE StudyGuideID = ? ', [ $studyGuideID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
     public static function createStudyGuide(string $fileName, string $displayName, int $yearID, PDO $db)
     {
         $query = 'INSERT INTO StudyGuides (FileName, DisplayName, YearID) VALUES (?, ?, ?)';
@@ -62,5 +68,27 @@ class StudyGuide
             trim($displayName),
             $yearID
         ]);
+    }
+
+    public static function renameStudyGuide(int $studyGuideID, string $displayName, PDO $db)
+    {
+        $query = 'UPDATE StudyGuides SET DisplayName = ? WHERE StudyGuideID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            trim($displayName),
+            $studyGuideID
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM StudyGuides WHERE StudyGuideID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $this->studyGuideID
+        ]);
+        if (file_exists($this->fileName)) {
+            unlink($this->fileName);
+        }
     }
 }

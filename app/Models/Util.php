@@ -35,7 +35,7 @@ class Util
 
     public static function validateString(array $array, string $key) : string
     {
-        return isset($array[$key]) && $array[$key] !== null ? filter_var($array[$key], FILTER_SANITIZE_STRING) : '';
+        return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_STRING)) : '';
     }
 
     public static function validateEmail(array $array, string $key) : string

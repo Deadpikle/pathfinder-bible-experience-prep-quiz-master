@@ -6,3 +6,4 @@ composer.phar
 database.php
 config-private.php
 views/_cache
+!*uploads/.gitkeep

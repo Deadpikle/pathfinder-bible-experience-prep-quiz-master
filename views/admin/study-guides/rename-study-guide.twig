@@ -1,0 +1,21 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<h4>Rename Study Guide</h4>
+
+{% include 'includes/error-message.twig' %}
+
+<div id="rename-study-guide">
+    <form method="post">
+        <div class="row">
+            <div class="input-field col s12 m4">
+                <input type="text" id="display-name" name="display-name" data-length="300" required value="{{ studyGuide.displayName }}"/>
+                <label for="display-name">Display Name</label>
+            </div>
+        </div>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+    </form>
+</div>
+
+{% endblock %}
