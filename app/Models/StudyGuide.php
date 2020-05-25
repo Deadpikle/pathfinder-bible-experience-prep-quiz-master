@@ -45,7 +45,7 @@ class StudyGuide
 
     public static function loadCurrentStudyGuides(Year $year, PDO $db) : array
     {
-        return StudyGuide::loadStudyGuides(' WHERE YearID = ? ', [ $year->yearID ], $db);
+        return StudyGuide::loadStudyGuides(' WHERE StudyGuides.YearID = ? ', [ $year->yearID ], $db);
     }
 
     public static function loadAllStudyGuides(PDO $db) : array
