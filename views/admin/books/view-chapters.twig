@@ -1,0 +1,59 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/books') }}">Back</a></p>
+
+<h4>Chapters for {{ book.name }}</h4>
+
+<div class="" id="books-div">
+    <div class="" id="create">
+        <h5>Add Chapter for {{ book.name }} ({{ book.year }})</h5>
+        {% include 'includes/error-message.twig' %}
+        <form action="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/create') }}" method="post">
+            <div class="row">
+                <div class="input-field col s6 m4">
+                    <input type="number" id="chapter-number" name="chapter-number" placeholder="1" value="" required min="1" max="150"/>
+                    <label for="chapter-number">Chapter Number</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <input type="number" id="number-verses" name="number-verses" placeholder="1" value="" required min="1" max="176"/>
+                    <label for="number-verses">Number of Verses</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Chapter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="divider"></div>
+    <div class="">
+        <table class="striped responsive-table">
+            <thead>
+                <tr>
+                    <th>Chapter Number</th>
+                    <th>Number of Verses</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chapter in chapters %}
+                    <tr>
+                        <td>{{ chapter.number }}</td>
+                        <td>{{ chapter.numberVerses }}</td>
+                        <td>
+                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/delete')}}">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <?php 
+                    foreach ($chapters as $chapter) { ?>
+                        
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

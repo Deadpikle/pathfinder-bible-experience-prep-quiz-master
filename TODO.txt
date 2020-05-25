@@ -6,7 +6,15 @@ TODO:
     -I think this is done, but needs testing
 -admin facing pages (everything...)
     -use Twig (working as of 3 May) and datatables for better admin display
-    -need to test that study guide uploads work and show up on study guide page when done with admin side of things
+    -need to test uploading csv but the code is there
+    -items remaining:
+        -home page info
+        -commentaries
+        -conferences
+        -manage fill in the blank
+        -non-blankable words
+        -settings
+        -years
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items
 -Refactor settings to an actual class

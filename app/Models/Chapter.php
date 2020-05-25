@@ -23,6 +23,42 @@ class Chapter
         $this->verses = [];
     }
 
+    private static function loadChapters(string $whereClause, array $whereParams, PDO $db) : array
+    {
+        $query = '
+            SELECT ChapterID, Number, NumberVerses, BookID
+            FROM Chapters
+            ' . $whereClause . '
+            ORDER BY Number, NumberVerses';
+        $stmt = $db->prepare($query);
+        $stmt->execute($whereParams);
+        $data = $stmt->fetchAll();
+        $output = [];
+        foreach ($data as $row) {
+            $chapter = new Chapter($row['ChapterID'], $row['Number']);
+            $chapter->numberVerses = $row['NumberVerses'];
+            $chapter->bookID = $row['BookID'];
+            $output[] = $chapter;
+        }
+        return $output;
+    }
+
+    public static function loadAllChapters(PDO $db) : array
+    {
+        return Chapter::loadChapters('', [], $db);
+    }
+
+    public static function loadChapterByID(int $chapterID, PDO $db) : ?Chapter
+    {
+        $data = Chapter::loadChapters(' WHERE ChapterID = ? ', [ $chapterID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public static function loadChaptersByBookID(int $bookID, PDO $db) : array
+    {
+        return Chapter::loadChapters(' WHERE BookID = ? ', [ $bookID ], $db);
+    }
+
     public static function loadChaptersWithActiveQuestions(Year $year, PDO $db) : array
     {
         $query = '
@@ -44,5 +80,38 @@ class Chapter
             $output[] = $chapter;
         }
         return $output;
+    }
+
+    public static function createChapterForBook(int $number, int $numberVerses, int $bookID, PDO $db)
+    {
+        $query = 'SELECT 1 FROM Chapters WHERE Number = ? AND NumberVerses = ? AND BookID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $number,
+            $numberVerses,
+            $bookID
+        ]);
+        $bookData = $stmt->fetchAll();
+        // make sure book doesn't exist
+        if ($bookData !== true && count($bookData) == 0) {
+            $query = '
+                INSERT INTO Chapters (Number, NumberVerses, BookID) VALUES (?, ?, ?)
+            ';
+            $stmt = $db->prepare($query);
+            $stmt->execute([
+                $number,
+                $numberVerses,
+                $bookID
+            ]);
+        }
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM Chapters WHERE ChapterID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $this->chapterID
+        ]);
     }
 }
