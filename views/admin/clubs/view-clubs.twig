@@ -12,11 +12,11 @@
         <form action="{{ app.yurl('/admin/clubs/create') }}" method="post">
             <div class="row">
                 <div class="input-field col s12 m4">
-                    <input type="text" id="club-name" name="club-name" value="" required data-length="150"/>
+                    <input type="text" id="club-name" name="club-name" value="{{ club.name }}" required data-length="150"/>
                     <label for="club-name">Club Name</label>
                 </div>
                 <div class="input-field col s12 m4">
-                    <input type="url" id="club-url" name="club-url" value="" required data-length="300"/>
+                    <input type="url" id="club-url" name="club-url" value="{{ club.url }}" required data-length="300"/>
                     <label for="club-url">Website or Facebook URL</label>
                 </div>
                 {% if not app.isWebAdmin %}
@@ -31,7 +31,8 @@
                         <select id="conference" name="conference" required>
                             <option id="conference-no-selection-option" value="">Select a conference...</option>
                             {% for conference in conferences %}
-                                <option value="{{ conference.conferenceID }}">{{ conference.name }}</option>
+                                {% set selected = conference.conferenceID == club.conferenceID ? 'selected' : '' %}
+                                <option value="{{ conference.conferenceID }}" {{ selected }}>{{ conference.name }}</option>
                             {% endfor %}
                         </select>
                         <label>Conference</label>

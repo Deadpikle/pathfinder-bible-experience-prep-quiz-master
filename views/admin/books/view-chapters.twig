@@ -14,11 +14,11 @@
         <form action="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/create') }}" method="post">
             <div class="row">
                 <div class="input-field col s6 m4">
-                    <input type="number" id="chapter-number" name="chapter-number" placeholder="1" value="" required min="1" max="150"/>
+                    <input type="number" id="chapter-number" name="chapter-number" placeholder="1" value="{{ chapterNumber }}" required min="1" max="150"/>
                     <label for="chapter-number">Chapter Number</label>
                 </div>
                 <div class="input-field col s6 m4">
-                    <input type="number" id="number-verses" name="number-verses" placeholder="1" value="" required min="1" max="176"/>
+                    <input type="number" id="number-verses" name="number-verses" placeholder="1" value="{{ numberOfVerses }}" required min="1" max="176"/>
                     <label for="number-verses">Number of Verses</label>
                 </div>
                 <div class="input-field col s6 m4">

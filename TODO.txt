@@ -9,7 +9,6 @@ TODO:
     -need to test uploading csv but the code is there
     -items remaining:
         -home page info
-        -commentaries
         -conferences
         -manage fill in the blank
         -non-blankable words

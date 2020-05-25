@@ -44,7 +44,7 @@ class BookController extends BaseAdminController
             $error = 'Number of chapters must be greater than 0';
         }
         if ($error !== '') {
-            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error'), 'View Books');
+            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters'), 'View Books');
         }
 
         Book::createBook($bookName, $numberOfChapters, $currentYear->yearID, $app->db);
@@ -101,7 +101,7 @@ class BookController extends BaseAdminController
             $error = 'Number of chapters must be greater than 0';
         }
         if ($error !== '') {
-            return new TwigView('admin/books/view-chapters', compact('book', 'chapters', 'error'), 'Book Chapters');
+            return new TwigView('admin/books/view-chapters', compact('book', 'chapters', 'error', 'chapterNumber', 'numberOfVerses'), 'Book Chapters');
         }
         Chapter::createChapterForBook($chapterNumber, $numberOfVerses, $book->bookID, $app->db);
         return new Redirect('/admin/books/' . $book->bookID . '/chapters');
