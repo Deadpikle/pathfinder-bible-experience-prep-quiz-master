@@ -23,7 +23,7 @@ TODO:
     -https://dba.stackexchange.com/a/104866 for a script -- could probably work this into a migration...?
 
 Eventual:
--Switch to Bootstrap 3 or 4
 -Revamp UI everywhere
--Use select2 for searchable dropdowns
--Use breadcrumbs
+    -Switch to Bootstrap 3 or 4
+    -Use select2 for searchable dropdowns
+    -Use breadcrumbs
