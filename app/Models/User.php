@@ -108,4 +108,87 @@ class User
     {
         return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" ', [ $conferenceID ], $db);
     }
+
+    public function loadUserByID(int $userID, PDO $db) : ?User
+    {
+        $data = User::loadUsers(' WHERE UserID = ? ', [ $userID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+
+    // http://stackoverflow.com/a/31107425/3938401
+    // Note: may want to upgrade to https://github.com/ircmaxell/RandomLib at some point
+    /**
+    * Generate a random string, using a cryptographically secure 
+    * pseudorandom number generator (random_int)
+    * 
+    * For PHP 7, random_int is a PHP core function
+    * For PHP 5.x, depends on https://github.com/paragonie/random_compat
+    * 
+    * @param int $length      How many characters do we want?
+    * @param string $keyspace A string of all possible characters
+    *                         to select from
+    * @return string
+    */
+    private function random_str($length, $keyspace = '023456789abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ') {
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
+    private function generateEntryCode(PDO $db) {
+        $didFindNewCode = false;
+        // pre-create the sql statement for faster queries in the db
+        $entryCodeQuery = 'SELECT 1 FROM Users WHERE EntryCode = ?';
+        $entryCodeStmt = $db->prepare($entryCodeQuery);
+        $entryCode = "";
+        while (!$didFindNewCode) { // this seems dangerous, but given that there are 42 billion possible entry codes, we should be OK...
+            $entryCode = $this->random_str(6);
+            // Make sure entry code doesn't already exist in the db
+            $entryCodeStmt->execute([$entryCode]);
+            $didFindNewCode = count($entryCodeStmt->fetchAll()) == 1 ? false : true;
+        }
+        return $entryCode;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password) 
+            VALUES (?, ?, ?, ?, ?, ?)';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->username,
+            $this->type->userTypeID,
+            $this->clubID,
+            $this->generateEntryCode($db),
+            User::currentUserID(),
+            ''
+        ]);
+        $this->userID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE Users SET Username = ?, UserTypeID = ?, ClubID = ? 
+            WHERE UserID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->username,
+            $this->type->userTypeID,
+            $this->clubID,
+            $this->userID
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM Users WHERE UserID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([ $this->userID ]);
+    }
 }

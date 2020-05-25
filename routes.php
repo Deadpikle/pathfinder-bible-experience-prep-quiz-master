@@ -89,5 +89,7 @@
         '/admin/users/create' => [['GET', 'Admin/UserController', 'createUser'],
                             ['POST', 'Admin/UserController', 'saveCreatedUser']],
         '/admin/users/{userID}/edit' => [['GET', 'Admin/UserController', 'editUser'],
-                                   ['POST', 'Admin/UserController', 'saveEditedUser']],
+                                         ['POST', 'Admin/UserController', 'saveEditedUser']],
+        '/admin/users/{userID}/delete' => [['GET', 'Admin/UserController', 'verifyDeleteUser'],
+                                           ['POST', 'Admin/UserController', 'deleteUser']],
     ];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use PDO;
 
 class Util
@@ -9,6 +10,27 @@ class Util
     public static function validateBoolean(array $array, string $key) : bool
     {
         return isset($array[$key]) && $array[$key] !== null && filter_var($array[$key], FILTER_VALIDATE_BOOLEAN);
+    }
+
+    // https://stackoverflow.com/a/19271434/3938401
+    public static function validateDate($date, $format = 'Y-m-d')
+    {
+        if ($date === null || $date === '') {
+            return false;
+        }
+        $d = DateTime::createFromFormat($format, $date);
+        // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+        return $d && $d->format($format) === $date;
+    }
+
+    // https://stackoverflow.com/a/19271434/3938401
+    public static function validateDateFromArray($array, $key, $format = 'Y-m-d') : ?string
+    {
+        $data = isset($array) && isset($array[$key]) ? $array[$key] : null;
+        if (!Util::validateDate($data, $format)) {
+            $data = null;
+        }
+        return $data;
     }
 
     public static function generateUUID() : string

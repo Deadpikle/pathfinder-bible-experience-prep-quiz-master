@@ -38,14 +38,29 @@ class Club
         return $output;
     }
 
-    public function loadAllClubs(PDO $db) : array
+    public static function loadAllClubs(PDO $db) : array
     {
         return Club::loadClubs('', [], $db);
     }
 
-    public function loadClub(int $clubID, PDO $db) : array
+    public static function loadClub(int $clubID, PDO $db) : array
     {
         return Club::loadClubs(' WHERE ClubID = ? ', [$clubID], $db);
+    }
+
+    public static function loadClubsInConference(int $conferenceID, PDO $db) : array
+    {
+        return Club::loadClubs(' WHERE ConferenceID = ? ', [ $conferenceID ], $db);
+    }
+
+    public function loadAllClubsKeyedByID(PDO $db) : array
+    {
+        $clubs = Club::loadAllClubs($db);
+        $clubsByID = [];
+        foreach ($clubs as $club) {
+            $clubsByID[$club->clubID] = $club;
+        }
+        return $clubsByID;
     }
 
     public function loadRecentlyActiveClubs(PDO $db) : array

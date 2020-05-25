@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use PDO;
-
 class ValidationStatus
 {
     public $didValidate;
