@@ -1,0 +1,56 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+<h4>SDA Bible Commentaries</h4>
+
+<div class="" id="commentaries-div">
+    <div class="" id="create">
+        <h5>Add Commentary for Current Year ({{ currentYear.year }})</h5>
+        {% include 'includes/error-message.twig' %}
+        <form action="{{ app.yurl('/admin/commentaries/create') }}" method="post">
+            <div class="row">
+                <div class="input-field col s6 m4">
+                    <input type="number" id="commentary" name="commentary" value="{{ commentaryNumber }}" placeholder="4" required min="1" max="12"/>
+                    <label for="commentary">Commentary Number</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <input type="text" id="topic" name="topic" value="{{ topic }}" placeholder="Daniel" required data-length="150"/>
+                    <label for="topic">Commentary Topic</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Commentary</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="divider"></div>
+    <div class="">
+        <table class="striped responsive-table">
+            <thead>
+                <tr>
+                    <th>Commentary Volume</th>
+                    <th>Topic</th>
+                    <th>Year</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commentary in commentaries %}
+                    <tr>
+                        <td>{{ commentary.number }}</td>
+                        <td>{{ commentary.topicName }}</td>
+                        <td>{{ commentary.year }}</td>
+                        <td>
+                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/commentaries/' ~ commentary.commentaryID ~ '/delete') }}">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

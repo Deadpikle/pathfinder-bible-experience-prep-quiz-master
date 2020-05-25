@@ -119,4 +119,9 @@
         '/admin/books/{bookID}/chapters/create' => ['POST', 'Admin/BookController', 'createChapter'],
         '/admin/books/{bookID}/chapters/{chapterID}/delete' => [['GET', 'Admin/BookController', 'verifyDeleteChapter'],
                                                                 ['POST', 'Admin/BookController', 'deleteChapter']],
+        // commentaries
+        '/admin/commentaries' => ['Admin/CommentaryController', 'viewCommentaries'],
+        '/admin/commentaries/create' => ['POST', 'Admin/CommentaryController', 'createCommentary'],
+        '/admin/commentaries/{commentaryID}/delete' => [['GET', 'Admin/CommentaryController', 'verifyDeleteCommentary'],
+                                                        ['POST', 'Admin/CommentaryController', 'deleteCommentary']],
     ];
