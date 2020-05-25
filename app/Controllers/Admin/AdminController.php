@@ -21,11 +21,6 @@ class AdminController extends BaseAdminController
 {
     public function index(PBEAppConfig $app, Request $request)
     {
-        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== "Pathfinder" && $_SESSION['UserType'] !== "Guest";
-        if (!$canViewAdminPanel) {
-            return new Redirect('/');
-        }
-
         $conferenceID = User::currentConferenceID();
         return new TwigView('admin/index', compact('conferenceID'), 'Admin Home');
     }

@@ -20,7 +20,6 @@ class Conference
 
     private function loadConferences(string $whereClause, array $whereParams, PDO $db) : array
     {
-        $conferences = [];
         $query = '
             SELECT ConferenceID, Name, URL, ContactName, ContactEmail
             FROM Conferences

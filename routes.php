@@ -85,4 +85,9 @@
         '/admin' => ['Admin/AdminController', 'index'],
         '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
                                 ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
+        '/admin/users' => ['Admin/UserController', 'viewUsers'],
+        '/admin/users/create' => [['GET', 'Admin/UserController', 'createUser'],
+                            ['POST', 'Admin/UserController', 'saveCreatedUser']],
+        '/admin/users/{userID}/edit' => [['GET', 'Admin/UserController', 'editUser'],
+                                   ['POST', 'Admin/UserController', 'saveEditedUser']],
     ];
