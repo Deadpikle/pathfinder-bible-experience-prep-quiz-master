@@ -8,7 +8,7 @@
 
 {% include 'includes/error-message.twig' %}
 
-<div id="delete-user">
+<div id="delete-club">
     <h4> Are you sure you want to delete the club {{ club.name }}? </h4>
     <form method="post">
         {{ csrf('delete-club') | raw }}

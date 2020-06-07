@@ -124,4 +124,13 @@
         '/admin/commentaries/create' => ['POST', 'Admin/CommentaryController', 'createCommentary'],
         '/admin/commentaries/{commentaryID}/delete' => [['GET', 'Admin/CommentaryController', 'verifyDeleteCommentary'],
                                                         ['POST', 'Admin/CommentaryController', 'deleteCommentary']],
+        // conferences
+        '/admin/conferences' => ['Admin/ConferenceController', 'viewConferences'],
+        '/admin/conferences/create' => [['GET', 'Admin/ConferenceController', 'createConference'],
+                                        ['POST', 'Admin/ConferenceController', 'saveCreatedConference']],
+        '/admin/conferences/{conferenceID}/edit' => [['GET', 'Admin/ConferenceController', 'editConference'],
+                                                     ['POST', 'Admin/ConferenceController', 'saveEditedConference']],
+        '/admin/conferences/{conferenceID}/delete' => [['GET', 'Admin/ConferenceController', 'verifyDeleteConference'],
+                                                       ['POST', 'Admin/ConferenceController', 'deleteConference']],
+
     ];

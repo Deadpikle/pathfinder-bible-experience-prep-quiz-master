@@ -54,6 +54,12 @@ class Conference
         return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);
     }
 
+    public static function loadConferenceWithID(int $conferenceID, PDO $db) : ?Conference
+    {
+        $data = Conference::loadConferences('WHERE ConferenceID = ?', [ $conferenceID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
     /**
      * Returns array of conferences with keys being the ConferenceID and values being the Conference
      */
@@ -65,5 +71,42 @@ class Conference
             $output[$conference->conferenceID] = $conference;
         }
         return $output;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO Conferences (Name, URL, ContactName, ContactEmail) 
+            VALUES (?, ?, ?, ?)';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            $this->url,
+            $this->contactName,
+            $this->contactEmail
+        ]);
+        $this->conferenceID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE Conferences SET Name = ?, URL = ?, ContactName = ?, ContactEmail = ?
+            WHERE ConferenceID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            $this->url,
+            $this->contactName,
+            $this->contactEmail,
+            $this->conferenceID,
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM Conferences WHERE ConferenceID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([ $this->conferenceID ]);
     }
 }
