@@ -7,7 +7,6 @@ TODO:
     -use Twig (working as of 3 May) and datatables for better admin display
     -need to test uploading csv but the code is there
     -items remaining:
-        -manage fill in the blank
         -non-blankable words
         -settings
         -years
