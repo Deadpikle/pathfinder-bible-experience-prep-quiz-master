@@ -7,11 +7,11 @@ TODO:
     -use Twig (working as of 3 May) and datatables for better admin display
     -need to test uploading csv but the code is there
     -items remaining:
-        -home page info
         -manage fill in the blank
         -non-blankable words
         -settings
         -years
+        -home page info
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items
 -Refactor settings to an actual class

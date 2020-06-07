@@ -132,5 +132,13 @@
                                                      ['POST', 'Admin/ConferenceController', 'saveEditedConference']],
         '/admin/conferences/{conferenceID}/delete' => [['GET', 'Admin/ConferenceController', 'verifyDeleteConference'],
                                                        ['POST', 'Admin/ConferenceController', 'deleteConference']],
+        // bible fill in management
+        '/admin/bible-fill-ins' => ['Admin/BibleFillInController', 'viewBibleFillIns'],
+        '/admin/bible-fill-ins/{languageID}/delete' => 
+            [['GET', 'Admin/BibleFillInController', 'verifyDeleteFillInsForLanguage'],
+            ['POST', 'Admin/BibleFillInController', 'deleteFillInsForLanguage']],
+        '/admin/bible-fill-ins/{chapterID}/{languageID}/delete' => 
+            [['GET', 'Admin/BibleFillInController', 'verifyDeleteFillInsForChapter'],
+            ['POST', 'Admin/BibleFillInController', 'deleteFillInsForChapter']],
 
     ];
