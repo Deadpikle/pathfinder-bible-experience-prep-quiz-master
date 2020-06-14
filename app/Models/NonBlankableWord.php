@@ -4,7 +4,7 @@ namespace App\Models;
 
 use PDO;
 
-class BlankableWord
+class NonBlankableWord
 {
     public $wordID;
     public $word;
@@ -27,16 +27,49 @@ class BlankableWord
         $words = $stmt->fetchAll();
         $output = [];
         foreach ($words as $row) {
-            $output[] = new BlankableWord($row['WordID'], $row['Word']);
+            $output[] = new NonBlankableWord($row['WordID'], $row['Word']);
         }
         return $output;
     }
 
     public static function loadAllBlankableWords(PDO $db) : array
     {
-        return self::loadWords('', [], $db);
+        return NonBlankableWord::loadWords('', [], $db);
     }
 
+    public static function loadNonBlankableWordByID(int $nonBlankableWordID, PDO $db) : ?NonBlankableWord
+    {
+        $data = NonBlankableWord::loadWords(' WHERE WordID = ? ', [ $nonBlankableWordID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public static function loadNonBlankableWordByWord(string $word, PDO $db) : ?NonBlankableWord
+    {
+        $data = NonBlankableWord::loadWords(' WHERE Word = ? ', [ $word ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = 'INSERT INTO BlankableWords (Word) VALUES (?)';
+        $stmt = $db->prepare($query);
+        $stmt->execute([ $this->word ]);
+        $this->wordID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = 'UPDATE BlankableWords SET Word = ? WHERE WordID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([ $this->word, $this->wordID ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM BlankableWords WHERE WordID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([ $this->wordID ]);
+    }
 
 	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the', '...'];
     const PUNCTUATION = ['.', '?', '!', ',', ' '];
@@ -44,7 +77,7 @@ class BlankableWord
 
     // $percentToBlank should be a decimal
 	public static function generateFillInQuestion($phrase, $percentToBlank, $nonBlankableWords) {
-        if (BlankableWord::DEBUG) {
+        if (NonBlankableWord::DEBUG) {
             echo '<br>-----<br>';
             echo $phrase;
             echo '<br>';
@@ -66,7 +99,7 @@ class BlankableWord
             $data[$blankableIndices[$i]]["shouldBeBlanked"] = true;
         }
         
-        if (BlankableWord::DEBUG) {
+        if (NonBlankableWord::DEBUG) {
             echo $numberToBlank . ' to blank';
             echo '<br>';
             print_r($data);
@@ -108,7 +141,7 @@ class BlankableWord
             $actualWord = trim($matches[2]);
             $isBlankable = array_search(strtolower($actualWord), $nonBlankableWords) === false ? true : false;
             if ($isBlankable && !is_numeric($actualWord)) {
-                if (BlankableWord::DEBUG) {
+                if (NonBlankableWord::DEBUG) {
                     echo '"' . $actualWord . '" is blankable';
                     echo '<br>';
                 }

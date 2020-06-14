@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\BlankableWord;
+use App\Models\NonBlankableWord;
 use App\Models\Question;
 use App\Models\Util;
 use PDO;
@@ -328,7 +328,7 @@ class QuizGenerator
         
         // TODO: sort/merge with fill in the blank questions?
         // load non-blankable words
-        $words = BlankableWord::loadAllBlankableWords($db);
+        $words = NonBlankableWord::loadAllBlankableWords($db);
         // Generate output
         $outputQuestions = [];
         $number = 1;
@@ -358,7 +358,7 @@ class QuizGenerator
                 $data['endPage'] = $question["CommentaryEndPage"];
             }
             if (Question::isTypeFillIn($question['Type'])) {
-                $fillInData = BlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
+                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
                 $data['fillInData'] = $fillInData['data'];
                 $data['points'] = $fillInData['blank-count'];
             }

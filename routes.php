@@ -140,5 +140,17 @@
         '/admin/bible-fill-ins/{chapterID}/{languageID}/delete' => 
             [['GET', 'Admin/BibleFillInController', 'verifyDeleteFillInsForChapter'],
             ['POST', 'Admin/BibleFillInController', 'deleteFillInsForChapter']],
+        // non-blankable words
+        '/admin/non-blankable-words' => [['GET', 'Admin/NonBlankableWordController', 'viewNonBlankableWords'],
+                                        ['POST', 'Admin/NonBlankableWordController', 'saveNewNonBlankableWord']],
+        '/admin/non-blankable-words/create' => 
+            [['GET', 'Admin/NonBlankableWordController', 'createNonBlankableWord'],
+            ['POST', 'Admin/NonBlankableWordController', 'saveNewNonBlankableWord']],
+        '/admin/non-blankable-words/{nonBlankableWordID}/edit' => 
+            [['GET', 'Admin/NonBlankableWordController', 'editNonBlankableWord'],
+            ['POST', 'Admin/NonBlankableWordController', 'saveEditedNonBlankableWord']],
+        '/admin/non-blankable-words/{nonBlankableWordID}/delete' => 
+            [['GET', 'Admin/NonBlankableWordController', 'verifyDeleteNonBlankableWord'],
+            ['POST', 'Admin/NonBlankableWordController', 'deleteNonBlankableWord']],
 
     ];

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\BlankableWord;
+use App\Models\NonBlankableWord;
 use App\Models\Question;
 use App\Models\Util;
 
@@ -727,7 +727,7 @@ use App\Models\Util;
         
         // TODO: sort/merge with fill in the blank questions?
         // load non-blankable words
-        $words = BlankableWord::loadAllBlankableWords($pdo);
+        $words = NonBlankableWord::loadAllBlankableWords($pdo);
         // Generate output
         $outputQuestions = [];
         $number = 1;
@@ -758,7 +758,7 @@ use App\Models\Util;
                 $data["endPage"] = $question["CommentaryEndPage"];
             }
             if (Question::isTypeFillIn($question["Type"])) {
-                $fillInData = BlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
+                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
                 $data["fillInData"] = $fillInData["data"];
                 $data["points"] = $fillInData["blank-count"];
             }

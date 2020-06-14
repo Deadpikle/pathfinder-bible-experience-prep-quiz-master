@@ -1,15 +1,16 @@
 <?php
 
-use App\Models\BlankableWord;
+
+use App\Models\NonBlankableWord;
 
 require_once(dirname(__FILE__)."/../init.php");
     $sections = load_home_sections($pdo, $_SESSION["ConferenceID"]);
 
-    $words = BlankableWord::loadAllBlankableWords($pdo);
+    $words = NonBlankableWord::loadAllBlankableWords($pdo);
 
-    $question = BlankableWord::generateFillInQuestion("There was a boy called Eustace Clarence Scrubb, and he almost deserved it.", 1, $words);
-    //$question = BlankableWord::generateFillInQuestion("There...almost deserved it.", 0.75, words);
-    //$question = BlankableWord::generateFillInQuestion("\"My dear boy, what ever shall you do?\"", 0.5, words);
+    $question = NonBlankableWord::generateFillInQuestion("There was a boy called Eustace Clarence Scrubb, and he almost deserved it.", 1, $words);
+    //$question = NonBlankableWord::generateFillInQuestion("There...almost deserved it.", 0.75, words);
+    //$question = NonBlankableWord::generateFillInQuestion("\"My dear boy, what ever shall you do?\"", 0.5, words);
 ?>
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>

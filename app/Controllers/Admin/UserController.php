@@ -76,13 +76,13 @@ class UserController extends BaseAdminController
         $user->clubID = $clubID;
 
         if ($username === null || $username === '') {
-            return new ValidationStatus(false, $user, 400, 'Name is required');
+            return new ValidationStatus(false, $user, 'Name is required');
         }
         if ($userType === null) {
-            return new ValidationStatus(false, $user, 400, 'User type is required');
+            return new ValidationStatus(false, $user, 'User type is required');
         }
         if ($club === null) {
-            return new ValidationStatus(false, $user, 400, 'Club is required');
+            return new ValidationStatus(false, $user, 'Club is required');
         }
 
         return new ValidationStatus(true, $user);

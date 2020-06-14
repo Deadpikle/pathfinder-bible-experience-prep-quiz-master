@@ -40,16 +40,16 @@ class ConferenceController extends BaseAdminController
         $conference->contactEmail = $contactEmail;
         
         if ($name === null || $name === '') {
-            return new ValidationStatus(false, $conference, 400, 'Conference name is required');
+            return new ValidationStatus(false, $conference, 'Conference name is required');
         }
         if ($url === null || $url === '') {
-            return new ValidationStatus(false, $conference, 400, 'Conference URL is required');
+            return new ValidationStatus(false, $conference, 'Conference URL is required');
         }
         if ($contactName === null || $contactName === '') {
-            return new ValidationStatus(false, $conference, 400, 'Conference contact name is required (use N/A if unavailable)');
+            return new ValidationStatus(false, $conference, 'Conference contact name is required (use N/A if unavailable)');
         }
         if ($contactEmail === null || $contactEmail === '') {
-            return new ValidationStatus(false, $conference, 400, 'Conference contact email is required (use somebody@nowhere.com if unavailable)');
+            return new ValidationStatus(false, $conference, 'Conference contact email is required (use somebody@nowhere.com if unavailable)');
         }
 
         return new ValidationStatus(true, $conference);

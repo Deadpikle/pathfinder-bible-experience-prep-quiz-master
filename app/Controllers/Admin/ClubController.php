@@ -47,7 +47,7 @@ class ClubController extends BaseAdminController
         }
         
         if ($name === null || $name === '') {
-            return new ValidationStatus(false, $club, 400, 'Club name is required');
+            return new ValidationStatus(false, $club, 'Club name is required');
         }
 
         return new ValidationStatus(true, $club);
