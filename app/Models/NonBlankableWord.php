@@ -117,7 +117,7 @@ class NonBlankableWord
         $adjustedWords = array();
         foreach ($words as $word) {
             if (strpos($word, '...') !== false) {
-                $parts = explode("...", $word->word);
+                $parts = explode("...", $word);
                 $i = 0;
                 foreach ($parts as $part) {
                     if ($i != count($parts) - 1) { // so if we split more than once we get all the ... in the output :)
@@ -139,7 +139,15 @@ class NonBlankableWord
             // could add ^' to keep words like 'taint (as in "'taint so") in the word section and not in the before section
             preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
             $actualWord = trim($matches[2]);
-            $isBlankable = array_search(strtolower($actualWord), $nonBlankableWords) === false ? true : false;
+            $wordToLookFor = strtolower($actualWord);
+            $isBlankable = true;
+            foreach ($nonBlankableWords as $nonBlankableWord) {
+                if ($wordToLookFor === strtolower($nonBlankableWord->word)) {
+                    $isBlankable = false;
+                    break;
+                }
+            }
+            //$isBlankable = array_search($wordToLookFor, $nonBlankableWords) === false ? true : false;
             if ($isBlankable && !is_numeric($actualWord)) {
                 if (NonBlankableWord::DEBUG) {
                     echo '"' . $actualWord . '" is blankable';
