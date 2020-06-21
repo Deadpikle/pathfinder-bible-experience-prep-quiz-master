@@ -18,6 +18,8 @@
 
 // First, load private config so that we have a db connection if we need one for any initialization.
 
+use App\Models\Setting;
+
 $appConfigClass = 'App\Models\PBEAppConfig';
 
 $whitelist = [
@@ -64,8 +66,9 @@ $app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
 $app->isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
 $app->isUserIDSessionSet = isset($_SESSION["UserID"]);
-if (!isset($_SESSION["UserID"]) && !$app->isOnLoginPage && !$app->isOnOtherNonLoginPage) {
+if (!isset($_SESSION['UserID']) && !$app->isOnLoginPage && !$app->isOnOtherNonLoginPage) {
     header("Location: login.php");
+    die();
 }
 if ($app->isUserIDSessionSet) {
     $app->loggedIn = true;
@@ -81,15 +84,7 @@ $app->isAdmin = $app->isClubAdmin || $app->isWebAdmin || $app->isConferenceAdmin
 $app->isPathfinder = !($app->isAdmin);
 
 // init settings
-// TODO: refactor to an actual object!
-$app->settings = get_settings($app->db);
-$app->contactName = $app->settings['AboutContactName'] ?? '[name redacted]';
-$app->contactEmail = $app->settings['AboutContactEmail'] ?? '[email redacted]';
-$app->websiteName = isset($app->settings['WebsiteName']) ? $app->settings['WebsiteName'] : 'UCC Quiz Engine';
-$app->websiteTabTitle = isset($app->settings['WebsiteTabTitle']) ? $app->settings['WebsiteTabTitle'] : 'UCC PBE';
-$app->analyticsURL = isset($app->settings['AnalyticsURL']) ? $app->settings['AnalyticsURL'] : '';
-$app->analyticsSiteID = isset($app->settings['AnalyticsSiteID']) ? $app->settings['AnalyticsSiteID'] : '1';
-$app->footerText = isset($app->settings['FooterText']) ? $app->settings['FooterText'] : '';
+Setting::initAppWithSettings($app);
 
 // get active year
 $app->yearData = \App\Models\Year::loadCurrentYear($app->db);

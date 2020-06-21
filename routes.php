@@ -152,5 +152,12 @@
         '/admin/non-blankable-words/{nonBlankableWordID}/delete' => 
             [['GET', 'Admin/NonBlankableWordController', 'verifyDeleteNonBlankableWord'],
             ['POST', 'Admin/NonBlankableWordController', 'deleteNonBlankableWord']],
-
+        // admin settings
+        '/admin/settings' => [['GET', 'Admin/SettingController', 'viewSettings'],
+                             ['POST', 'Admin/SettingController', 'saveSettings']],
+        // years
+        '/admin/years' => ['GET', 'Admin/YearController', 'viewYears'],
+        '/admin/years/add' => ['POST', 'Admin/YearController', 'addYear'],
+        '/admin/years/{yearID}/make-current' => [['GET', 'Admin/YearController', 'verifyMakeYearCurrent'],
+                                                 ['POST', 'Admin/YearController', 'makeYearCurrent']],
     ];

@@ -1,15 +1,15 @@
 TODO:
 -user facing pages
-    -get quiz me page working (and associated quiz pages)
     -double check to see if we are properly loading whether a question is flagged by a user or not
     -I think this is done, but needs testing (esp. flagging and saving answers)
 -admin facing pages (everything...)
     -use Twig (working as of 3 May) and datatables for better admin display
     -need to test uploading csv but the code is there
     -items remaining:
-        -settings
-        -years
         -home page info
+    -validation for admin only vs conference only vs club only admin sections (currently conference admins who know URL can get to other admin items!!!)
+        -see SettingsController
+-convert user pages to twig?
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items
 -Refactor settings to an actual class
@@ -20,6 +20,6 @@ TODO:
 
 Eventual:
 -Revamp UI everywhere
-    -Switch to Bootstrap 3 or 4
+    -Switch to Bootstrap 4
     -Use select2 for searchable dropdowns
     -Use breadcrumbs

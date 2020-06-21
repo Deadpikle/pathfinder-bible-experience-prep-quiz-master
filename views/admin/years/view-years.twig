@@ -1,0 +1,61 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<!-- https://github.com/Dogfalo/materialize/issues/1376 -->
+<style type="text/css">
+    [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+        position: static;
+        left: 0px; 
+        opacity: 1; 
+    }
+</style>
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+<h4>Years</h4>
+
+<div class="" id="years-div">
+    <div class="" id="create">
+        <h5>Add Year</h5>
+        <form action="{{ app.yurl('/admin/years/add') }}" method="post">
+            <div class="row">
+                <div class="input-field col s6 m4">
+                    <input type="number" id="year" name="year" value="2026" required/>
+                    <label for="year">Year</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Year</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="divider"></div>
+    <div class="">
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Current Year?</th>
+                    <th>Change Current Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for year in years %}
+                    {% set checkedText = year.isCurrent ? 'checked' : '' %}
+                    <tr>
+                        <td>{{ year.year }}</td>
+                        <td>{{ year.isCurrent ? 'Yes' : '' }}</td>
+                        <td>
+                            {% if not year.isCurrent %}
+                                <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/years/' ~ year.yearID ~ '/make-current') }}">Make current</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -59,23 +59,6 @@ $homePath = $app->basePath == "" ? "/" : $app->basePath;
         <?php } ?>
 
         <script src="<?= $app->yurl('/js/common.js') ?>?<?= filemtime("js/common.js") ?>"></script>
-        <?php if (!$app->isLocalHost && !$app->isGuest && $analyticsURL !== '') { ?>
-            <!-- Piwik -->
-            <script type="text/javascript">
-                var _paq = _paq || [];
-                /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-                _paq.push(['trackPageView']);
-                _paq.push(['enableLinkTracking']);
-                (function() {
-                    var u = "<?= $analyticsURL ?>";
-                    _paq.push(['setTrackerUrl', u+'piwik.php']);
-                    _paq.push(['setSiteId', "<?= $analyticsSiteID ?>"]);
-                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-                })();
-            </script>
-            <!-- End Piwik Code -->
-        <?php } ?>
     </head>
     <body>
         <header>
