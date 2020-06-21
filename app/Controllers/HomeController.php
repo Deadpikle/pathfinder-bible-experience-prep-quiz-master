@@ -8,10 +8,12 @@ use Yamf\Responses\View;
 
 use App\Models\Club;
 use App\Models\Conference;
+use App\Models\HomeInfoSection;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\StudyGuide;
 use App\Models\User;
+use App\Models\Views\TwigView;
 use App\Models\Year;
 
 class HomeController
@@ -24,6 +26,7 @@ class HomeController
         $title = 'Home';
         
         $sections = load_home_sections($app->db, $_SESSION["ConferenceID"]); // TODO: refactor to models and use model instead
+        //$sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $_SESSION['ConferenceID'], $app->db);
         return new View('home/index', compact('sections'), 'Home');
     }
 

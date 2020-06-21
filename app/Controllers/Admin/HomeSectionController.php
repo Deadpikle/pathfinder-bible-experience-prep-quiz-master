@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\Conference;
 use App\Models\CSRF;
+use App\Models\HomeInfoLine;
 use App\Models\HomeInfoSection;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
@@ -78,4 +79,19 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
     public function deleteHomeSection(AppConfig $app, Request $request) : ?Response
     {
     }
+
+    public function viewLines(AppConfig $app, Request $request) : ?Response
+    {
+        $currentConferenceID = $request->routeParams['conferenceID'];
+        $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
+        $sectionID = $request->routeParams['sectionID'];
+        if ($conference === null) {
+            return new TwigNotFound();
+        }
+        // TODO: load individual section (with lines info...?) and send into view
+        // TODO: finish editing links in view
+        $lines = HomeInfoLine::loadLinesForSection($sectionID, $app->db);
+        return new TwigView('admin/home-sections/view-lines-for-section', compact('sectionID', 'conference', 'lines'), 'Home Section - Lines');
+    }
+    
 }

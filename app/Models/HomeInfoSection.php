@@ -42,7 +42,7 @@ class HomeInfoSection
                 LEFT JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
                 LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
             ' . $whereClause . '
-            ORDER BY SectionSortOrder, hil.SortOrder, ItemSortOrder';
+            ORDER BY SectionSortOrder, LineSortOrder, ItemSortOrder';
         $sectionStmt = $db->prepare($query);
         $sectionStmt->execute($params);
         $data = $sectionStmt->fetchAll();
@@ -54,9 +54,6 @@ class HomeInfoSection
         foreach ($data as $row) {
             $sectionID = $row['SectionID'];
             if ($currentSection === null || $sectionID !== $currentSection->homeInfoSectionID) {
-                if ($currentSection !== null) {
-                    $output[] = $currentSection;
-                }
                 // on a new section
                 $currentSection = new HomeInfoSection($sectionID, $row['SectionName']);
                 $currentSection->sortOrder = $row['SectionSortOrder'];
@@ -64,9 +61,11 @@ class HomeInfoSection
                 $currentSection->yearID = $year->yearID;
                 $currentSection->conferenceID = $conferenceID;
                 $currentLine = null;
+                $output[] = $currentSection;
             }
             $lineID = $row['LineID'];
-            if ($currentLine === null || $lineID !== $currentLine->homeInfoLineID) {
+            if (($currentLine === null || $lineID !== $currentLine->homeInfoLineID) 
+                && is_numeric($lineID) && $lineID > 0) {
                 $currentLine = new HomeInfoLine($lineID, $row['LineName']);
                 $currentLine->sortOrder = $row['LineSortOrder'];
                 $currentSection->lines[] = $currentLine;
@@ -80,8 +79,6 @@ class HomeInfoSection
                 $item->sortOrder = $row['ItemSortOrder'];
                 $currentLine->items[] = $item;
             }
-        }if ($currentSection !== null) {
-            $output[] = $currentSection;
         }
         return $output;
     }

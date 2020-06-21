@@ -13,7 +13,7 @@
 {% endif %}
 {% set currentRequest = str_replace('/', '', currentRequest) %}
 
-{% set homeHeaderActiveStatus = str_contains('home', currentRequest)   ? 'active' : '' %}
+{% set homeHeaderActiveStatus = str_contains('home', currentRequest) and not str_contains('home-section', currentRequest) ? 'active' : '' %}
 {% set aboutHeaderActiveStatus = str_contains('about', currentRequest) ? 'active' : '' %}
 {% set adminHeaderActiveStatus = str_contains('admin', currentRequest) ? 'active' : '' %}
 {% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' %}

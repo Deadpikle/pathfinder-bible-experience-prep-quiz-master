@@ -46,6 +46,16 @@ class AppViewExtension extends AbstractExtension
         return User::isLoggedIn($app->db);
     }
 
+    function currentUsername()
+    {
+        return $_SESSION['Username'];
+    }
+
+    function currentConferenceID()
+    {
+        return $_SESSION['ConferenceID'];
+    }
+
     function csrf(string $qualifier) : string
     {
         return CSRF::getTokenInputField($qualifier);
@@ -111,6 +121,8 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
             new TwigFunction('requestURI', [$this, 'requestURI']),
             new TwigFunction('outputHomeSections', [$this, 'outputHomeSections']),
+            new TwigFunction('currentUsername', [$this, 'currentUsername']),
+            new TwigFunction('currentConferenceID', [$this, 'currentConferenceID']),
         ];
         return $twigFunctions;
     }
