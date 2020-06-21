@@ -7,11 +7,15 @@
 {% if didJustSave %}
     <h6 class="teal-text text-darken-2">Settings saved!</h6>
 {% endif %}
+{% if didError %}
+    <h6 class="red-text text-darken-2">Error saving settings. Please try again.</h6>
+{% endif %}
 
 <h4>Edit Website Settings</h4>
 
 <div id="edit-settings">
     <form method="post">
+        {{ csrf('change-settings') | raw }}
         {% for setting in settings %}
             {% if setting.displayName != 'Analytics URL' and setting.displayName != 'Analytics Site ID' %}
                 <div class="row">

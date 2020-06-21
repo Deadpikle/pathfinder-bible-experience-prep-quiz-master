@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\CSRF;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
@@ -43,22 +44,27 @@ class SettingController extends BaseAdminController implements IRequestValidator
 
     public function saveSettings(AppConfig $app, Request $request) : Response
     {
-        // save settings
-        Setting::saveSetting(Setting::AboutContactNameKey(), 
-                             Util::validateString($request->post, Setting::AboutContactNameKey()), $app->db);
-        Setting::saveSetting(Setting::AboutContactEmailKey(), 
-                             Util::validateString($request->post, Setting::AboutContactEmailKey()), $app->db);
-        Setting::saveSetting(Setting::WebsiteNameKey(), 
-                             Util::validateString($request->post, Setting::WebsiteNameKey()), $app->db);
-        Setting::saveSetting(Setting::WebsiteTabTitleKey(), 
-                             Util::validateString($request->post, Setting::WebsiteTabTitleKey()), $app->db);
-        Setting::saveSetting(Setting::FooterTextKey(), 
-                             Util::validateString($request->post, Setting::FooterTextKey()), $app->db);
-        // re-init settings
-        Setting::initAppWithSettings($app);
+        $didError = false;
+        if (CSRF::verifyToken('change-settings')) {
+            // save settings
+            Setting::saveSetting(Setting::AboutContactNameKey(), 
+                                 Util::validateString($request->post, Setting::AboutContactNameKey()), $app->db);
+            Setting::saveSetting(Setting::AboutContactEmailKey(), 
+                                 Util::validateString($request->post, Setting::AboutContactEmailKey()), $app->db);
+            Setting::saveSetting(Setting::WebsiteNameKey(), 
+                                 Util::validateString($request->post, Setting::WebsiteNameKey()), $app->db);
+            Setting::saveSetting(Setting::WebsiteTabTitleKey(), 
+                                 Util::validateString($request->post, Setting::WebsiteTabTitleKey()), $app->db);
+            Setting::saveSetting(Setting::FooterTextKey(), 
+                                 Util::validateString($request->post, Setting::FooterTextKey()), $app->db);
+            // re-init settings
+            Setting::initAppWithSettings($app);
+        } else {
+            $didError = true;
+        }
         // return view
         $settings = Setting::loadAllSettings($app->db);
         $didJustSave = true;
-        return new TwigView('/admin/settings', compact('settings', 'didJustSave'), 'Settings');
+        return new TwigView('admin/settings', compact('settings', 'didJustSave', 'didError'), 'Settings');
     }
 }

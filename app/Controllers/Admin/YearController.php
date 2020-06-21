@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Models\CSRF;
 use App\Models\Util;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
@@ -61,7 +62,12 @@ class YearController extends BaseAdminController implements IRequestValidator
         if ($year === null) {
             return new TwigNotFound();
         }
-        Year::makeYearCurrentYear($year->yearID, $app->db);
-        return new Redirect('/admin/years');
+        if (CSRF::verifyToken('make-year-current')) {
+            Year::makeYearCurrentYear($year->yearID, $app->db);
+            return new Redirect('/admin/years');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            return new TwigView('/admin/years/verify-make-year-current', compact('year', 'error'), 'Change Current Year');
+        }
     }
 }
