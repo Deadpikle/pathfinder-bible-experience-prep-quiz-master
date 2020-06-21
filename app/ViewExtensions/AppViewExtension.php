@@ -110,6 +110,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
             new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
             new TwigFunction('requestURI', [$this, 'requestURI']),
+            new TwigFunction('outputHomeSections', [$this, 'outputHomeSections']),
         ];
         return $twigFunctions;
     }

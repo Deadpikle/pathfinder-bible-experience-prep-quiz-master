@@ -14,7 +14,7 @@
         <h4>Conference Administrator Functions</h4>
         <ul>
             <li class="home-buttons">
-                <a class="btn waves-effect waves-light" href="view-home-sections.php?conferenceID={{ conferenceID }}">Home Page Info</a>
+                <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
             </li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/clubs') }}">Pathfinder Clubs</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/study-guides') }}">Study Guides</a></li>

@@ -12,6 +12,8 @@ class HomeInfoLine
 
     public $homeInfoSectionID;
 
+    public $items;
+
     public function __construct(int $homeInfoLineID, string $name)
     {
         $this->homeInfoLineID = $homeInfoLineID;
