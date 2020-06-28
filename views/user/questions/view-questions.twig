@@ -193,11 +193,14 @@
                             else {
                                 nextPage.disabled = false;
                             }
-                            /*datatablesProps.columnDefs = [
+                            /*
+                            // to make datatables work we would need to get the custom sorting
+                            // working nicely somehow so that the sorting still worked out nicely.
+                            datatablesProps.columnDefs = [
                                 { orderable: false, targets: [-1, -2] }
                             ];
                             datatablesProps.language = {
-                                searchPlaceholder: "Search users..."
+                                searchPlaceholder: "Search questions..."
                             };
                             datatablesProps.order = [[ 0, 'asc' ]];
                             datatablesProps.destroy = true;
