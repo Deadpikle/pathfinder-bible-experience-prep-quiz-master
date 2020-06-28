@@ -40,6 +40,9 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
             if ($conference === null) {
                 return new Redirect('/admin');
             }
+            if (!$app->isWebAdmin && !$app->isConferenceAdmin) {
+                return new Redirect('/admin');
+            }
         }
         return null;
     }

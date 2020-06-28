@@ -16,12 +16,32 @@ use App\Models\Views\TwigView;
 use App\Models\Year;
 use finfo;
 use PDOException;
+use Yamf\AppConfig;
+use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\NotFound;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\Response;
 
-class StudyGuideController extends BaseAdminController
+class StudyGuideController extends BaseAdminController implements IRequestValidator
 {
+    /**
+     * Validate a request before the normal controller method is called.
+     * 
+     * Return null if the request is valid. Otherwise, return a response
+     * that will be output to the user rather than the normal controller method.
+     */
+    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    {
+        $response = parent::validateRequest($app, $request);
+        if ($response === null) {
+            if ($app->isWebAdmin || $app->isConferenceAdmin) {
+                return null;
+            }
+            return new Redirect('/admin');
+        }
+        return $response;
+    }
+
     public function viewStudyGuides(PBEAppConfig $app, Request $request)
     {
         if ($app->isWebAdmin) {
