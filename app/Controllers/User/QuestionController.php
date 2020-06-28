@@ -34,7 +34,7 @@ class QuestionController
         $volumes = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
         $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
 
-        return new View('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage'), 'Questions');
+        return new TwigView('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage'), 'Questions');
     }
 
     // TODO: better response instead of echo
@@ -80,7 +80,7 @@ class QuestionController
         $editData = $this->loadQuestionEditingData($app);
         $editData['isCreating'] = true;
 
-        return new View('user/questions/create-edit-question', $editData, 'Add Question');
+        return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
     }
 
     private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating) : ValidationStatus
@@ -162,7 +162,7 @@ class QuestionController
             $editData = $this->loadQuestionEditingData($app);
             $editData['isCreating'] = true;
             $editData['error'] = $validation->error;
-            return new View('user/questions/create-edit-question', $editData, 'Add Question');
+            return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
     }
     
@@ -171,7 +171,7 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
@@ -179,7 +179,7 @@ class QuestionController
         $editData['isCreating'] = false;
         $editData['question'] = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
 
-        return new View('user/questions/create-edit-question', $editData, 'Add Question');
+        return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
     }
     
     public function saveQuestionEdits(PBEAppConfig $app, Request $request)
@@ -187,7 +187,7 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
@@ -198,7 +198,7 @@ class QuestionController
             // check if validated before removing flag!
             $shouldRemoveFlag = Util::validateBoolean($request->post, 'remove-question-flag');
             if ($shouldRemoveFlag) {
-                UserFlagged::deleteFlag($request->post['question-id'], User::currentUserID(), $app->db);
+                UserFlagged::deleteFlag($question->questionID, User::currentUserID(), $app->db);
             }
             return new Redirect('/questions');
         } else {
@@ -206,7 +206,7 @@ class QuestionController
             $editData['isCreating'] = true;
             $editData['error'] = $validation->error;
             $editData['question'] = $question;
-            return new View('user/questions/create-edit-question', $editData, 'Add Question');
+            return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
     }
 
@@ -215,7 +215,7 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
@@ -227,7 +227,7 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
+        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null || $question->questionID != $request->post['question-id']) {
             return new TwigNotFound();
         }

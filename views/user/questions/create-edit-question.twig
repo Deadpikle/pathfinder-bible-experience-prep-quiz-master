@@ -1,36 +1,33 @@
+{% extends "layouts/main.twig" %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/questions') ?>">Back</a></p>
+{% block content %}
 
-<h4><?= $isCreating ? 'Add' : 'Edit' ?> Question</h4>
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/questions') }}">Back</a></p>
 
-<?php if (isset($error) && $error !== '') { ?>
-    <div class="row">
-        <div class="col s8 m5 red">
-            <p class="white-text"><?= $error ?></p>
-        </div>
-    </div>
-<?php } ?>
+<h4>{{ isCreating ? 'Add Question' : 'Edit Question' }}</h4>
+
+{% include 'includes/error-message.twig' %}
 
 <div id="edit-question">
     <form method="post">
-        <input type="hidden" name="question-id" value="<?= isset($question) ? $question->questionID : -1 ?>"/>
+        <input type="hidden" name="question-id" value="{{ question.questionID | default(-1) }}"/>
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                <?php $checked = (isset($question) && $question->isBibleQnA()) || !isset($question) ? 'checked' : ''; ?>
-                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" <?= $checked ?>/>
+                {% set checked = question.isBibleQnA() or question is not defined ? 'checked' : '' %}
+                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" {{ checked }}/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>
             <div class="input-field col s12">
-                <?php $checked = isset($question) && $question->isCommentaryQnA() ? 'checked' : ''; ?>
-                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" <?= $checked ?>/>
+                {% set checked = question.isCommentaryQnA() ? 'checked' : '' %}
+                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" {{ checked }}/>
                 <label class="black-text" for="commentary-qna">SDA Bible Commentary</label>
             </div>
         </div>
         <div id="question-fill-in" class="row">
             <div class="input-field col s12 m4">
-                <?php $checked = isset($question) && $question->isFillIn() ? 'checked' : ''; ?>
-                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" <?= $checked ?> />
+                {% set checked = question.isFillIn() ? 'checked' : '' %}
+                <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" {{ checked }} />
                 <label class="black-text" for="question-is-fill-in-blank">Fill in the blank</label>
             </div>
         </div>
@@ -40,33 +37,28 @@
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" 
                         required placeholder="What is the name of Esther's uncle?" 
-                        data-length="10000"><?= isset($question) ? $question->question : '' ?></textarea>
+                        data-length="10000">{{ question.question }}</textarea>
                 <label for="question-text">Question</label>
             </div>
             <div id="question-answer-div" class="input-field col s12 m6">
                 <textarea id="question-answer" name="question-answer" class="materialize-textarea" 
-                        required placeholder="Mordecai" data-length="3000"><?= isset($question) ? $question->answer : '' ?></textarea>
+                        required placeholder="Mordecai" data-length="3000">{{ question.answer }}</textarea>
                 <label for="question-answer">Answer</label>
             </div>
         </div>
         <div id="number-of-points-div" class="row negative-top-margin">
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="number-of-points" name="number-of-points" value="<?= isset($question) ? $question->numberPoints : '' ?>" required/>
+                <input type="number" min="0" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required/>
                 <label for="number-of-points">Number of Points</label>
             </div>
         </div>
         <div class="row" id="language-select-add-edit-question-container">
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
-                    <?php foreach ($languages as $language) { 
-                            $selected = $language->languageID == (isset($question) ? $question->languageID : -1) ? 'selected' : '';
-                            $name = $language->name;
-                            if ($language->altName !== "") {
-                                $name .= " (" . $language->altName . ")";
-                            }
-                    ?>
-                        <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $name ?></option>
-                    <?php } ?>
+                    {% for language in languages %}
+                        {% set selected = language.languageID == question.languageID ? 'selected' : '' %}
+                        <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
+                    {% endfor %}
                 </select>
                 <label for="language-select">Language</label>
             </div>
@@ -105,29 +97,29 @@
             <p class="section-info">Commentary Info</p>
             <select class="col s12 m4" id="commentary-volume" name="commentary-volume" required>
                 <option id="commentary-no-selection-option" value="">Select commentary...</option>
-                <?php foreach ($commentaries as $commentary) { ?>
-                        <option id="" value="<?= $commentary->commentaryID ?>"><?= $commentary->getDisplayValue() ?></option>
-                <?php } ?>
+                {% for commentary in commentaries %}
+                    <option id="" value="{{ commentary.commentaryID }}">{{ commentary.getDisplayValue() }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="row commentary-inputs negative-top-margin">
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-start" name="commentary-start" value="<?= isset($question) ? $question->commentaryStartPage : '' ?>" required placeholder="12"/>
+                <input type="number" min="0" id="commentary-start" name="commentary-start" value="{{ question.commentaryStartPage != 0 ? question.commentaryStartPage : '' }}" required placeholder="12"/>
                 <label for="commentary-start">Start Page</label>
             </div>
             <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-end" name="commentary-end" value="<?= isset($question) ? $question->commentaryEndPage : '' ?>" placeholder="15"/>
+                <input type="number" min="0" id="commentary-end" name="commentary-end" value="{{ question.commentaryEndPage != 0 ? question.commentaryEndPage : '' }}" placeholder="15"/>
                 <label for="commentary-end">End Page</label>
             </div>
         </div>
-        <?php if (isset($question) ? $question->isFlagged : '') { ?>
+        {% if question.isFlagged %}
             <div class="row" id="unflag-question">
                 <div class="input-field col s12">
                     <input type="checkbox" id="remove-question-flag" name="remove-question-flag"/>
                     <label class="black-text" for="remove-question-flag">Delete flag for this question</label>
                 </div>
             </div>
-        <?php } ?>
+        {% endif %}
         <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
     </form>
 </div>
@@ -135,13 +127,13 @@
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
     var selectedVerse = null;
-    var books = <?= json_encode($bookData) ?>;
-    var commentaries = <?= json_encode($commentaries) ?>;
-    var questionType = '<?= isset($question) ? $question->type : 'bible-qna' ?>';
-    var isFillInInitially = <?= isset($question) ? ($question->isFillIn() ? 'true' : 'false') : 'false' ?>;
-    var startVerseID = <?= isset($question) ? $question->startVerseID : -1 ?>;
-    var endVerseID = <?= isset($question) ? $question->endVerseID : -1 ?>;
-    var commentaryID = <?= isset($question) ? $question->commentaryID : -1 ?>;
+    var books = {{ json_encode(bookData) | raw }};
+    var commentaries = {{ json_encode(commentaries) | raw }};
+    var questionType = '{{ question.type | default('bible-qna') }}';
+    var isFillInInitially = {{ question.isFillIn() ? 'true' : 'false' }};
+    var startVerseID = {{ question.startVerseID | default(-1) }};
+    var endVerseID = {{ question.endVerseID | default(-1) }};
+    var commentaryID = {{ question.commentaryID | default(-1) }};
     $(document).ready(function() {
 
         var bibleQuestionType = document.getElementById('bible-qna');
@@ -365,3 +357,5 @@
 
     }); 
 </script>
+
+{% endblock %}

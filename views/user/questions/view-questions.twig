@@ -1,3 +1,6 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
 
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
 <style type="text/css">
@@ -8,15 +11,21 @@
     }
 </style>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
+{% include 'includes/scripts/datatables.twig' %}
 
-<?php if (!$app->isGuest) { ?>
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+
+{% if not app.isGuest %}
     <div id="create" class="row">
         <div class="col s12"> 
-            <a class="waves-effect waves-light btn" href="<?= $app->yurl('/questions/add') ?>">Add Question</a>
+            <a class="waves-effect waves-light btn" href="{{ app.yurl('/questions/add') }}">Add Question</a>
         </div>
     </div>
-<?php } ?>
+{% endif %}
 
 <div id="question-type-choice">
     <a id="bible-qna" class="btn-flat blue white-text">Bible Q&amp;A</a>
@@ -32,11 +41,10 @@
 <div class="row" id="language-select-container">
     <div class="input-field col s12 m4">
         <select id="language-select">
-            <?php foreach ($languages as $language) {
-                    $selected = $language->languageID == $userLanguage->languageID ? 'selected' : '';
-            ?>
-                <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $language->getDisplayName() ?></option>
-            <?php } ?>
+            {% for language in languages %}
+                {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
+                <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
+            {% endfor %}
             <option value="-1">No language filter</option>
         </select>
         <label for="language-select">Filter by language</label>
@@ -117,16 +125,16 @@
 </div>
 
 <script type="text/javascript">
-    var books = <?= json_encode($bookData) ?>;
-    var volumes = <?= json_encode($volumes) ?>;
-    var isAdmin = <?= $app->isAdmin ? 'true' : 'false' ?>;
-    var isGuestMode = <?= $app->isGuest ? 'true' : 'false' ?>;
-    var questionURLBase = '<?= $app->yurl('/questions/') ?>';
+    var books = {{ json_encode(bookData) | raw }};
+    var volumes = {{ json_encode(volumes) | raw }};
+    var isAdmin = {{ app.isAdmin ? 'true' : 'false' }};
+    var isGuestMode = {{ app.isGuest ? 'true' : 'false' }};
+    var questionURLBase = '{{ app.yurl('/questions/') }}';
     $(document).ready(function() {
 
         var questionType = "bible-qna";
         var questionFilter = "all";
-        var pageSize = 25;
+        var pageSize = 15; // we no longer worry about page size anymore with datatables
         var currentPageNumber = 0;
         var maxPageNumber = 0;
         var bookIndex = 0;
@@ -151,7 +159,7 @@
             $("#loading-bar").show();
             $.ajax({
                 type: "POST",
-                url: '<?= $app->yurl('/questions/load') ?>',
+                url: '{{ app.yurl('/questions/load') }}',
                 data: {
                     questionType: questionType,
                     questionFilter: questionFilter,
@@ -185,6 +193,15 @@
                             else {
                                 nextPage.disabled = false;
                             }
+                            /*datatablesProps.columnDefs = [
+                                { orderable: false, targets: [-1, -2] }
+                            ];
+                            datatablesProps.language = {
+                                searchPlaceholder: "Search users..."
+                            };
+                            datatablesProps.order = [[ 0, 'asc' ]];
+                            datatablesProps.destroy = true;
+                            $('#questions').DataTable(datatablesProps);*/
                         } catch (e) {
                             showLoadError(e);
                         }
@@ -244,8 +261,8 @@
             var $questionsBody = $("#questions-body");
             emptyQuestionBody();
 
-            var unchecked = "<span><input type='checkbox' disabled></input></span>";
-            var checked = "<span><input type='checkbox' disabled checked></input></span>";
+            var unchecked = "";
+            var checked = "(Fill-In)";
 
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
@@ -522,3 +539,5 @@
         loadQuestions();
     });
 </script>
+
+{% endblock %}
