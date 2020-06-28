@@ -54,4 +54,16 @@ class UserFlagged
             return false;
         }
     }
+
+    public static function isFlagged(int $questionID, int $userID, PDO $db) : bool
+    {
+        $query = ' SELECT UserFlaggedID FROM UserFlagged WHERE QuestionID = ? AND UserID = ? ';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $questionID,
+            $userID
+        ]);
+        $data = $stmt->fetchAll();
+        return count($data) > 0;
+    }
 }

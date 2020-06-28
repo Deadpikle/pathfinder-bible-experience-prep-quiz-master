@@ -178,6 +178,7 @@ class QuestionController
         $editData = $this->loadQuestionEditingData($app);
         $editData['isCreating'] = false;
         $editData['question'] = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
+        $editData['isFlagged'] = UserFlagged::isFlagged($request->routeParams['questionID'], User::currentUserID(), $app->db);
 
         return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
     }
@@ -206,6 +207,7 @@ class QuestionController
             $editData['isCreating'] = true;
             $editData['error'] = $validation->error;
             $editData['question'] = $question;
+            $editData['isFlagged'] = UserFlagged::isFlagged($request->routeParams['questionID'], User::currentUserID(), $app->db);
             return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
     }
