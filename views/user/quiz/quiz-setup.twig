@@ -1,13 +1,14 @@
-<?php
-    $lastBookSeen = "";
+{% extends "layouts/main.twig" %}
 
-    $areAnyQuestionsAvailable = count($chapters) > 0 || count($commentaries) > 0;
-?>
+{% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="<?= $app->yurl('/') ?>">Back</a></p>
+{% set areAnyQuestionsAvailable = (chapters | length > 0) or (commentaries | length > 0) %}
+{% set lastBookSeen = '' %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
 
 <h4>Quiz Setup</h4>
-<?php if ($areAnyQuestionsAvailable) { ?>
+{% if areAnyQuestionsAvailable %}
 <div id="start-quiz">
     <form id="quiz-setup-form" method="post">
         <p><b>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</b></p>
@@ -15,26 +16,23 @@
             <div class="input-field col s12 m6 l6">
                 <select multiple id="quiz-items" name="quiz-items[]">
                     <option value="" disabled selected>All</option>
-                    <?php 
-                        foreach ($chapters as $chapter) { 
-                            if ($lastBookSeen != $chapter->bookID) {
-                                if ($lastBookSeen != "" && $lastBookSeen != $chapter->bookID) {
-                                    echo '</optgroup>';
-                                }
-                                echo '<optgroup label="' . $booksByBookID[$chapter->bookID]->name. '">';
-                                $lastBookSeen = $chapter->bookID;
-                            }
-                    ?>
-                            <option value="chapter-<?= $chapter->chapterID ?>"><?= $booksByBookID[$chapter->bookID]->name ?>&nbsp;<?= $chapter->number ?></option>
-                    <?php } 
-                        if (count($chapters) > 0) {
-                            echo '</optgroup>';
-                        }
-                    ?>
+                    {% for chapter in chapters %}
+                        {% if lastBookSeen != chapter.bookID %}
+                            {% if lastBookSeen != '' and lastBookSeen != chapter.bookID %}
+                                </optgroup>
+                            {% endif %}
+                            <optgroup label="{{ booksByBookID[chapter.bookID].name }}">
+                            {% set lastBookSeen = chapter.bookID %}
+                        {% endif %}
+                        <option value="chapter-{{ chapter.chapterID }}">{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</option>
+                    {% endfor %}
+                    {% if chapters |length > 0 %}
+                        </optgroup>
+                    {% endif %}
                     <optgroup label="SDA Bible Commentary">
-                        <?php foreach ($commentaries as $commentary) { ?>
-                            <option value="commentary-<?= $commentary->commentaryID ?>"><?= $commentary->getDisplayValue() ?></option>
-                        <?php } ?>
+                        {% for commentary in commentaries %}
+                            <option value="commentary-{{ commentary.commentaryID }}">{{ commentary.getDisplayValue() }}</option>
+                        {% endfor %}
                     </optgroup>
                 </select>
                 <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
@@ -43,11 +41,10 @@
         <div class="row negat-" id="quiz-setup-language-select-container">
             <div class="input-field col s12 m3">
                 <select id="language-select" name="language-select">
-                    <?php foreach ($languages as $language) { 
-                            $selected = $language->languageID == $userLanguage->languageID ? 'selected' : '';
-                    ?>
-                        <option value="<?= $language->languageID ?>" <?= $selected ?>><?= $language->getDisplayName() ?></option>
-                    <?php } ?>
+                    {% for language in languages %}
+                        {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
+                        <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
+                    {% endfor %}
                     <option value="-1">No language filter</option>
                 </select>
                 <label for="language-select">Filter by language</label>
@@ -72,20 +69,20 @@
                         </tr>
                     </thead>
                     <tbody id="weighted-question-table-body">
-                        <?php foreach ($chapters as $chapter) { ?>
-                            <tr id="table-chapter-<?= $chapter->chapterID ?>">
-                                <td><?= $booksByBookID[$chapter->bookID]->name ?>&nbsp;<?= $chapter->number ?></td>
-                                <td><input name="table-input-chapter-<?= $chapter->chapterID ?>" class="table-input" 
+                        {% for chapter in chapters %}
+                            <tr id="table-chapter-{{ chapter.chapterID }}">
+                                <td>{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</td>
+                                <td><input name="table-input-chapter-{{ chapter.chapterID }}" class="table-input" 
                                            type="number" value="" min="0" max="100"></input></td>
                             </tr>
-                        <?php } ?>
-                        <?php foreach ($commentaries as $commentary) { ?>
-                            <tr id="table-commentary-<?= $commentary->commentaryID ?>">
-                                <td><?= $commentary->getDisplayValue() ?></td>
-                                <td><input name="table-input-commentary-<?= $commentary->commentaryID ?>" class="table-input" 
+                        {% endfor %}
+                        {% for commentary in commentaries %}
+                            <tr id="table-commentary-{{ commentary.commentaryID }}">
+                                <td>{{ commentary.getDisplayValue() }}</td>
+                                <td><input name="table-input-commentary-{{ commentary.commentaryID }}" class="table-input" 
                                            type="number" value="" min="0" max="100"></input></td>
                             </tr>
-                        <?php } ?>
+                        {% endfor %}
                     </tbody>
                 </table>    
             </div>
@@ -169,15 +166,15 @@
         </div>
         <div class="divider"></div>
         <div class="input-field col s6">
-            <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="<?= $app->yurl('/quiz/answers/remove') ?>">Erase previously saved answers</a>
+            <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="{{ app.yurl('/quiz/answers/remove') }}">Erase previously saved answers</a>
         </div>
     </form>
 </div>
-<?php } else { ?>
+{% else %}
 <div id="start-quiz">
-    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="<?= $app->yurl('/questions/add') ?>">create one</a>?</p>
+    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="{{ app.yurl('/questions/add') }}">create one</a>?</p>
 </div>
-<?php } ?>
+{% endif %}
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -249,21 +246,21 @@
         $('#start-quiz-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', '<?= $app->yurl('/quiz/take') ?>');
+                $(quizForm).attr('action', '{{ app.yurl('/quiz/take') }}');
                 $(quizForm).submit();
             }
         });
         $('#lr-flash-cards-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', '<?= $app->yurl('/quiz/flash-cards/left-right') ?>');
+                $(quizForm).attr('action', '{{ app.yurl('/quiz/flash-cards/left-right') }}');
                 $(quizForm).submit();
             }
         });
         $('#fb-flash-cards-btn').on("click", function() {
             if (checkQuestionDistributionTotal()) {
                 $(quizForm).attr('target', '_blank');
-                $(quizForm).attr('action', '<?= $app->yurl('/quiz/flash-cards/front-back') ?>');
+                $(quizForm).attr('action', '{{ app.yurl('/quiz/flash-cards/front-back') }}');
                 $(quizForm).submit();
             }
         });
@@ -308,3 +305,5 @@
         $("#language-select").material_select();
     });
 </script>
+
+{% endblock %}

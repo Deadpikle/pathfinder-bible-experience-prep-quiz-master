@@ -43,7 +43,7 @@ class QuizController
         }
         $chapters = Chapter::loadChaptersWithActiveQuestions($currentYear, $app->db);
 
-        return new View('user/quiz/quiz-setup', compact('currentYear', 'languages', 'userLanguage', 'chapters', 'commentaries', 'booksByBookID'), 'Quiz Setup');
+        return new TwigView('user/quiz/quiz-setup', compact('currentYear', 'languages', 'userLanguage', 'chapters', 'commentaries', 'booksByBookID'), 'Quiz Setup');
     }
 
     public function checkBeforeRemovingAnswers(PBEAppConfig $app, Request $request)

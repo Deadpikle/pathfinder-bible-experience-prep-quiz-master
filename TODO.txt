@@ -1,10 +1,8 @@
 TODO:
--user facing pages
-    -double check to see if we are properly loading whether a question is flagged by a user or not
-    -I think this is done, but needs testing (esp. flagging and saving answers)
--admin facing pages (everything...)
-    -need to test uploading csv but the code is there
--convert user pages to twig?
+-double check to see if we are properly loading whether a question is flagged by a user or not
+    -i don't think we are doing this right
+-need to test uploading csv but the code is there
+-convert user pages to twig
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items
 -Refactor settings to an actual class
