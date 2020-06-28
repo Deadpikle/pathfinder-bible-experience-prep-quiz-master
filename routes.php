@@ -176,8 +176,7 @@
         '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/sort' => 
             ['POST', 'Admin/HomeSectionController', 'saveLineSorting'],
         '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/create' => 
-            [['GET', 'Admin/HomeSectionController', 'createLine'],
-            ['POST', 'Admin/HomeSectionController', 'saveNewLine']],
+            ['POST', 'Admin/HomeSectionController', 'createNewLine'],
         '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/{lineID}/delete' => 
             [['GET', 'Admin/HomeSectionController', 'verifyDeleteLine'],
             ['POST', 'Admin/HomeSectionController', 'deleteLine']],

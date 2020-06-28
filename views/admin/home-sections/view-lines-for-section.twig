@@ -8,9 +8,7 @@
 <h5>{{ section.name }}</h5>
 
 <div class="lines">
-    <form action="ajax/add-line.php" method="post">
-        <input type="hidden" name="conference-id" value="<?= $conferenceID ?>">
-        <input type="hidden" name="section-id" value="<?= $sectionID ?>"/>
+    <form action="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/create') }}" method="post">
         <div class="input-field col s6 m4">
             <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
         </div>
@@ -21,7 +19,7 @@
         {% for line in lines %}
             <li class="line" id="line-id-{{ line.homeInfoLineID }}">Line {{ loop.index1 }}<br>
                 <a class='btn btn-flat teal-text' href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/create') }}">add item</a>
-                <a class='btn btn-flat red white-text' href='{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/delete') }}'>delete line</a>
+                <a class='btn btn-flat red white-text' href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/delete') }}">delete line</a>
                 <ul class="browser-default sortable">
                 {% for item in line.items %}
                     <li class="line-item" id="item-id-{{ item.homeInfoItemID }}">
@@ -63,7 +61,7 @@
         $('#save-sort').on("click",function() {
             var lines = [];
             $('.line').each(function(index, element) {
-                console.log(element.id);
+                //console.log(element.id);
                 var items = [];
                 $(element).find('.line-item').each(function(lineIndex, lineElement) {
                     items.push({
@@ -88,7 +86,7 @@
                     $('#saved-modal').modal('open');
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(thrownError);
+                    alert('Error: ' + thrownError);
                 }
             });
         });

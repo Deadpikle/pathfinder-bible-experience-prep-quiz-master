@@ -94,7 +94,7 @@ class HomeInfoItem
         $row = $stmt->fetch();
         $sortOrder = 1;
         if ($row != null) {
-            $sortOrder = intval($row["MaxSort"]) + 1;
+            $sortOrder = intval($row['MaxSort']) + 1;
         }
         return $sortOrder;
     }

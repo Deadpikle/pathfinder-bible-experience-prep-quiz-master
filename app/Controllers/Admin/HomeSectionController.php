@@ -91,21 +91,31 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         if ($conference === null || $section === null) {
             return new TwigNotFound();
         }
-        // TODO: finish editing links in view
         $lines = HomeInfoLine::loadLinesForSection($sectionID, $app->db);
         return new TwigView('admin/home-sections/view-lines-for-section', compact('sectionID', 'conference', 'lines', 'section'), 'Home Section - Lines');
     }
 
     public function saveLineSorting(AppConfig $app, Request $request) : ?Response
     {
+        $data = json_decode($request->post['json'], true);
+        $didSucceed = HomeInfoLine::saveSorting($data, $app->db);
+        return new Response($didSucceed ? 200 : 400);
     }
 
-    public function createLine(AppConfig $app, Request $request) : ?Response
+    public function createNewLine(AppConfig $app, Request $request) : ?Response
     {
-    }
-
-    public function saveNewLine(AppConfig $app, Request $request) : ?Response
-    {
+        $currentConferenceID = $request->routeParams['conferenceID'];
+        $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
+        $section = HomeInfoSection::loadSectionByID($request->routeParams['sectionID'], $app->db);
+        if ($conference === null || $section === null || $section->conferenceID !== $conference->conferenceID) {
+            return new TwigNotFound();
+        }
+        $sortOrder = HomeInfoLine::getSortOrderForSection($section->homeInfoSectionID, $app->db);
+        $line = new HomeInfoLine(-1, '');
+        $line->sortOrder = $sortOrder;
+        $line->homeInfoSectionID = $section->homeInfoSectionID;
+        $line->create($app->db);
+        return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections/' . $section->homeInfoSectionID . '/lines');
     }
 
     public function verifyDeleteLine(AppConfig $app, Request $request) : ?Response
@@ -114,7 +124,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
         $section = HomeInfoSection::loadSectionByID($request->routeParams['sectionID'], $app->db);
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
-        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         return new TwigView('admin/home-sections/verify-delete-line', compact('conference', 'section', 'line'), 'Delete Line');
@@ -126,7 +137,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
         $section = HomeInfoSection::loadSectionByID($request->routeParams['sectionID'], $app->db);
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
-        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID  
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-line')) {
@@ -168,7 +180,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
         $section = HomeInfoSection::loadSectionByID($request->routeParams['sectionID'], $app->db);
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
-        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         return $this->showCreateOrEditLineItem($app, $request, true, $conference, $section, $line, null);
@@ -180,7 +193,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
         $section = HomeInfoSection::loadSectionByID($request->routeParams['sectionID'], $app->db);
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
-        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+        if ($conference === null || $section === null || $line === null || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         $status = $this->validateLineItem($app, $request, $line, null);
@@ -200,7 +214,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
         $item = HomeInfoItem::loadItemByID($request->routeParams['itemID'], $app->db);
         if ($conference === null || $section === null || $line === null || $item === null ||
-            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         return $this->showCreateOrEditLineItem($app, $request, false, $conference, $section, $line, $item);
@@ -214,7 +229,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
         $item = HomeInfoItem::loadItemByID($request->routeParams['itemID'], $app->db);
         if ($conference === null || $section === null || $line === null || $item === null ||
-            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         $status = $this->validateLineItem($app, $request, $line, $item);
@@ -234,7 +250,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
         $item = HomeInfoItem::loadItemByID($request->routeParams['itemID'], $app->db);
         if ($conference === null || $section === null || $line === null || $item === null ||
-            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         return new TwigView('admin/home-sections/verify-delete-line-item', compact('conference', 'section', 'line', 'item'), 'Delete Line Item');
@@ -248,7 +265,8 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         $line = HomeInfoLine::loadLineByID($request->routeParams['lineID'], $app->db);
         $item = HomeInfoItem::loadItemByID($request->routeParams['itemID'], $app->db);
         if ($conference === null || $section === null || $line === null || $item === null ||
-            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID) {
+            $item->homeInfoLineID !== $line->homeInfoLineID || $line->homeInfoSectionID !== $section->homeInfoSectionID 
+            || $section->conferenceID !== $conference->conferenceID) {
             return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-line-item')) {

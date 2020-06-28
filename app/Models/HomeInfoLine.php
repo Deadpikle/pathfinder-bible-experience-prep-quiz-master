@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use PDOException;
 
 class HomeInfoLine
 {
@@ -104,5 +105,35 @@ class HomeInfoLine
         $query = 'DELETE FROM HomeInfoLines WHERE HomeInfoLineID = ?';
         $stmnt = $db->prepare($query);
         $stmnt->execute([ $this->homeInfoLineID ]);
+    }
+
+    public static function saveSorting(array $data, PDO $db)
+    {
+        $sqlStatements = '';
+        foreach ($data as $line) {
+            $sqlStatements .= ' UPDATE HomeInfoLines SET SortOrder = ' . $line['index'] . ' WHERE HomeInfoLineID = ' . $line['id'] . '; ';
+            foreach ($line['items'] as $item) {
+                $sqlStatements .= ' UPDATE HomeInfoItems SET SortOrder = ' . $item['index'] . ' WHERE HomeInfoItemID = ' . $item['id'] . '; ';
+            }
+        }
+        try {
+            $db->exec($sqlStatements);
+        }
+        catch (PDOException $e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static function getSortOrderForSection(int $homeInfoSectionID, PDO $db) : int
+    {
+        $stmt = $db->prepare('SELECT MAX(SortOrder) AS MaxSort FROM HomeInfoLines WHERE HomeInfoSectionID = ?');
+        $stmt->execute([ $homeInfoSectionID ]);
+        $row = $stmt->fetch();
+        $sortOrder = 1;
+        if ($row != null) {
+            $sortOrder = intval($row['MaxSort']) + 1;
+        }
+        return $sortOrder;
     }
 }
