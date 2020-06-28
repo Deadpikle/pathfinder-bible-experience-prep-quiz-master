@@ -32,6 +32,17 @@
     $(document).ready(function() {
         $('select').material_select();
         fixRequiredSelectorCSS();
+
+        // http://stackoverflow.com/a/11967638/3938401
+        // http://stackoverflow.com/a/19166712/3938401 -- how to actually change required property
+        $('#line-is-link').change(function () {
+            if ($(this).is(':checked')) {
+                $('#line-url').prop('required', true);
+            } 
+            else {
+                $('#line-url').prop('required', false);
+            }
+        });
     });
 </script>
 

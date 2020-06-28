@@ -3,7 +3,7 @@ TODO:
     -double check to see if we are properly loading whether a question is flagged by a user or not
     -I think this is done, but needs testing (esp. flagging and saving answers)
 -admin facing pages (everything...)
-    -use Twig (working as of 3 May) and datatables for better admin display
+    -datatables in a few spots for better admin display
     -need to test uploading csv but the code is there
 -convert user pages to twig?
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
