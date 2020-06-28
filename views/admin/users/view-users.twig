@@ -64,7 +64,7 @@
                     {% if app.isWebAdmin %}
                         <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
                     {% endif %}
-                    <td>{{ user.lastLoginDate | date('D, M d, Y') }}</td>
+                    <td data-sort={{ user.lastLoginDate }}>{{ user.lastLoginDate | date('D, M d, Y') }}</td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
                             <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}">Edit</a>
@@ -84,7 +84,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
-            { orderable: false, targets: [4, 5, 6, 7] }
+            { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
             searchPlaceholder: "Search users..."

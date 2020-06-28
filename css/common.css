@@ -284,17 +284,17 @@ h5#question-text {
     margin-bottom: -1em;
 }
 
-#users-table_wrapper div.row {
+.dataTables_wrapper div.row {
     margin-top: 1em;
     margin-bottom: 0em;
 }
 
-#users-table_wrapper div.row:nth-child(1) label {
+.dataTables_wrapper div.row:nth-child(1) label {
     font-size: 16px;
     color: black;
 }
 
-#users-table_wrapper div.row:nth-child(2) {
+.dataTables_wrapper div.row:nth-child(2) {
     margin-top: 0em;
     margin-bottom: 0em;
 }

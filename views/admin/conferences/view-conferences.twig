@@ -1,5 +1,11 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
@@ -11,7 +17,7 @@
 </div>
 
 <div id="conferences-div">
-    <table class="striped responsive-table">
+    <table class="striped responsive-table" id="conferences-table">
         <thead>
             <tr>
                 <th>Conference Name</th>
@@ -26,7 +32,7 @@
             {% for conference in conferences %}
                 <tr>
                     <td>{{ conference.name }}</td>
-                    <td>{{ conference.url }}</td>
+                    <td><a href="{{ conference.url }}" target="_blank">{{ conference.url }}</a></td>
                     <td>{{ conference.contactName }}</td>
                     <td>{{ conference.contactEmail }}</td>
                     <td><a class="waves-effect waves-light btn" 
@@ -37,5 +43,18 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search conferences..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#conferences-table').DataTable(datatablesProps);
+    });
+</script>
 
 {% endblock %}

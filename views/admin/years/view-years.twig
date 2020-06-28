@@ -1,5 +1,11 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 <!-- https://github.com/Dogfalo/materialize/issues/1376 -->
@@ -32,7 +38,7 @@
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped">
+        <table class="striped" id="years-table">
             <thead>
                 <tr>
                     <th>Year</th>
@@ -57,5 +63,18 @@
         </table>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search years..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#years-table').DataTable(datatablesProps);
+    });
+</script>
 
 {% endblock %}

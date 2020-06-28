@@ -1,6 +1,12 @@
 
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
@@ -25,7 +31,7 @@
     </div>
     <div class="divider"></div>
     {% if nonBlankableWords | length > 0 %}
-        <table class="striped">
+        <table class="striped" id="words-table">
             <thead>
                 <tr>
                     <th>Word</th>
@@ -45,5 +51,18 @@
         </table>
     {% endif %}
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search words..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#words-table').DataTable(datatablesProps);
+    });
+</script>
 
 {% endblock %}

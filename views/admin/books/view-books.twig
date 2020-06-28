@@ -1,5 +1,11 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
@@ -28,7 +34,7 @@
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped responsive-table">
+        <table class="striped responsive-table" id="books-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -56,5 +62,18 @@
         </table>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search books..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#books-table').DataTable(datatablesProps);
+    });
+</script>
 
 {% endblock %}
