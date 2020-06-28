@@ -1,3 +1,6 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
 
 <div id="quiz-taking">
     <div id="loading-quiz">
@@ -138,7 +141,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var userID = <?= $userID ?>;
+        var userID = {{ userID }};
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
         
@@ -197,7 +200,7 @@
         flagQuestion.addEventListener('click', function() {
             $.ajax({
                 type: "POST",
-                url: '<?= $app->yurl('/quiz/questions/flag') ?>',
+                url: '{{ app.yurl('/quiz/questions/flag') }}',
                 data: {
                     questionID: currentQuestion.id
                 },
@@ -222,7 +225,7 @@
             showQuizMessage("Saving answers...");
             $.ajax({
                 type: "POST",
-                url: '<?= $app->yurl('/quiz/answers/save') ?>',
+                url: '{{ app.yurl('/quiz/answers/save') }}',
                 data: {
                     answers: userAnswers
                 },
@@ -246,11 +249,11 @@
             if (!saveData.disabled && questions.length > 0) {
                 var result = confirm("You haven't saved your answers yet! Are you sure you want to leave this quiz?");
                 if (result) {
-                    window.location.href = '<?= $app->yurl('/quiz/setup') ?>';
+                    window.location.href = '{{ app.yurl('/quiz/setup') }}';
                 }
             }
             else {
-                window.location.href = '<?= $app->yurl('/quiz/setup') ?>';
+                window.location.href = '{{ app.yurl('/quiz/setup') }}';
             }
         });
 
@@ -657,7 +660,7 @@
         }
 
         // load that quiz!
-        var questions = (<?= json_encode($quizQuestions) ?>).questions;
+        var questions = ({{ json_encode(quizQuestions) | raw }}).questions;
         if (questions.length > 0) {
             currentQuestionIndex = 0;
             showQuestionAtCurrentIndex();
@@ -669,7 +672,7 @@
             // no questions! user is done with all questions and should probably reset their saved question answers
             $(flagQuestion).hide();
             $(nextQuestion).hide();
-            var urlForSetup = '<?= $app->yurl('/quiz/setup') ?>';
+            var urlForSetup = '{{ app.yurl('/quiz/setup') }}';
             var error = "<p>No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class='btn btn-small btn-flat blue white-text waves-effect blue-waves' href='" + urlForSetup + "'>Back to quiz setup</a></p>"
             showQuizError(error);
             $(endQuiz).show();
@@ -682,3 +685,5 @@
         }
     });
 </script>
+
+{% endblock %}
