@@ -160,11 +160,13 @@
         '/admin/years/add' => ['POST', 'Admin/YearController', 'addYear'],
         '/admin/years/{yearID}/make-current' => [['GET', 'Admin/YearController', 'verifyMakeYearCurrent'],
                                                  ['POST', 'Admin/YearController', 'makeYearCurrent']],
-        // home sections 😱
+        // home sections
         '/admin/home-sections/{conferenceID}/sections' => ['GET', 'Admin/HomeSectionController', 'viewHomeSections'],
         '/admin/home-sections/{conferenceID}/sections/create' => ['POST', 'Admin/HomeSectionController', 'createHomeSection'],
         '/admin/home-sections/{conferenceID}/sections/change' => ['POST', 'Admin/HomeSectionController', 'changeHomeSectionConference'],
         '/admin/home-sections/{conferenceID}/sections/sort' => ['POST', 'Admin/HomeSectionController', 'saveSectionSorting'],
+        '/admin/home-sections/{conferenceID}/sections/import-from-conference' => ['POST', 'Admin/HomeSectionController', 'copyFromYear'],
+        '/admin/home-sections/{conferenceID}/sections/import-from-admin' => ['POST', 'Admin/HomeSectionController', 'copyFromAdmin'],
         '/admin/home-sections/{conferenceID}/sections/{sectionID}/edit' => 
             [['GET', 'Admin/HomeSectionController', 'editHomeSection'],
             ['POST', 'Admin/HomeSectionController', 'saveHomeSectionUpdates']],

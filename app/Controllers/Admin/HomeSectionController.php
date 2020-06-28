@@ -54,8 +54,35 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
             return new TwigNotFound();
         }
         $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $currentConferenceID, $app->db);
+        $currentYear = Year::loadCurrentYear($app->db);
+        return new TwigView('admin/home-sections/view-home-sections', compact('years', 'conferences', 'conference', 'currentConferenceID', 'sections', 'currentYear'), 'Home Section Info');
+    }
 
-        return new TwigView('admin/home-sections/view-home-sections', compact('years', 'conferences', 'currentConferenceID', 'sections'), 'Home Info');
+    public function copyFromYear(PBEAppConfig $app, Request $request) : Response
+    {
+        $currentConferenceID = $request->routeParams['conferenceID'];
+        $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
+        if ($conference === null) {
+            return new TwigNotFound();
+        }
+        // copying from current conference to same conference in the given year
+        $year = Year::loadYearByID($request->post['year'], $app->db);
+        HomeInfoSection::copyHomeSections($currentConferenceID, $currentConferenceID, $year->yearID, $app->db);
+        return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
+    }
+
+    public function copyFromAdmin(PBEAppConfig $app, Request $request) : Response
+    {
+        $currentConferenceID = $request->routeParams['conferenceID'];
+        $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
+        if ($conference === null) {
+            return new TwigNotFound();
+        }
+        // copying from admin to current conference in the given year
+        $year = Year::loadYearByID($request->post['year'], $app->db);
+        $adminConference = Conference::loadAdminConference($app->db);
+        HomeInfoSection::copyHomeSections($adminConference->conferenceID, $currentConferenceID, $year->yearID, $app->db);
+        return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
     }
 
     private function validateSection(PBEAppConfig $app, Request $request, Conference $conference, ?HomeInfoSection $existingSection) : ValidationStatus
@@ -101,6 +128,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
     public function changeHomeSectionConference(PBEAppConfig $app, Request $request) : Response
     {
         // validate current URL data
+        echo '?';
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
         if ($conference === null) {

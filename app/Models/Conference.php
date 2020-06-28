@@ -60,6 +60,12 @@ class Conference
         return count($data) > 0 ? $data[0] : null;
     }
 
+    public static function loadAdminConference(PDO $db) : ?Conference
+    {
+        $data = Conference::loadConferences(' WHERE Name = "Website Administrators"', [], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
     /**
      * Returns array of conferences with keys being the ConferenceID and values being the Conference
      */

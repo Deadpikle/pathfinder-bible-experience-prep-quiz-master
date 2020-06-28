@@ -25,9 +25,8 @@ class HomeController
         }
         $title = 'Home';
         
-        $sections = load_home_sections($app->db, $_SESSION["ConferenceID"]); // TODO: refactor to models and use model instead
-        //$sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $_SESSION['ConferenceID'], $app->db);
-        return new View('home/index', compact('sections'), 'Home');
+        $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $_SESSION['ConferenceID'], $app->db);
+        return new TwigView('home/index', compact('sections'), 'Home');
     }
 
     public function showLoginScreen(PBEAppConfig $app, Request $request)
