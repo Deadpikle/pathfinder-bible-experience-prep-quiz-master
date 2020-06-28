@@ -74,9 +74,9 @@ class QuizController
             $bibleWeights = [];
             $commentaryWeights = [];
             foreach ($request->post as $key => $value) {
-                if (str_contains("table-input-chapter-", $key)) {
+                if (Util::str_contains("table-input-chapter-", $key)) {
                     $bibleWeights[$key] = $value;
-                } else if (str_contains("table-input-commentary-", $key)) {
+                } else if (Util::str_contains("table-input-commentary-", $key)) {
                     $commentaryWeights[$key] = $value;
                 }
             }

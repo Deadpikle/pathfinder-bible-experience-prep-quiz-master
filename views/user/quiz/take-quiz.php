@@ -491,7 +491,12 @@
             $("#question-points").html(numberOfPoints);
             // show quiz progress
             var progress = "Question " + data.number + " of " + questions.length + "";
-            $("#quiz-progress").html(progress)
+            $("#quiz-progress").html(progress);
+            if (isFillInQuestion(data.type)) {
+                focusFirstFillInField();
+            } else {
+                focusQnAField();
+            }
         }
 
         function showQuestionAtCurrentIndex() {
@@ -566,6 +571,14 @@
                 return 0;
             }
             return parseInt(a.volume, 10) - parseInt(b.volume, 10);
+        }
+
+        function focusQnAField() {
+            document.getElementById("quiz-answer").focus();
+        }
+
+        function focusFirstFillInField() {
+            var field = $('.fill-in-blank-input').first().focus();
         }
 
         function updateStatsTab(justUpdatedItem) {
@@ -662,5 +675,10 @@
             $(endQuiz).show();
         }
         $("#loading-quiz").hide();
+        if (isFillInQuestion(currentQuestion.type)) {
+            focusFirstFillInField();
+        } else {
+            focusQnAField();
+        }
     });
 </script>

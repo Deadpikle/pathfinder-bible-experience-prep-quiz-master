@@ -11,6 +11,11 @@ class Util
     {
         return isset($array[$key]) && $array[$key] !== null && filter_var($array[$key], FILTER_VALIDATE_BOOLEAN);
     }
+    
+    public static function str_contains($needle, $haystack)
+    {
+        return strpos($haystack, $needle) !== false;
+    }
 
     // https://stackoverflow.com/a/19271434/3938401
     public static function validateDate($date, $format = 'Y-m-d')

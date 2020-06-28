@@ -736,7 +736,7 @@ class QuizGenerator
         if ($DEBUG) {
             $thingsUsed = [];
             foreach ($output['questions'] as $question) {
-                if (str_contains('bible', $question['type'])) {
+                if (Util::str_contains('bible', $question['type'])) {
                     $key = $question['startBook'] . ' ' . $question['startChapter'];
                     if (!isset($thingsUsed[$key])) {
                         $thingsUsed[$key] = 0;
