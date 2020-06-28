@@ -1,0 +1,96 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections') }}">Back</a></p>
+
+<h5>{{ section.name }}</h5>
+
+<div class="lines">
+    <form action="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/create') }}" method="post">
+        <div class="input-field col s6 m4">
+            <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Line</button>
+        </div>
+    </form>
+    <p>You can drag and drop lines and line items to resort them.</p>
+    <a id="save-sort" class="btn btn-flat teal-text">Save Sorted Items</a>
+    <ul class="browser-default sortable">
+        {% for line in lines %}
+            <li class="line" id="line-id-{{ line.homeInfoLineID }}">Line {{ loop.index1 }}<br>
+                <a class='btn btn-flat teal-text' href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/create') }}">add item</a>
+                <a class='btn btn-flat red white-text' href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/delete') }}">delete line</a>
+                <ul class="browser-default sortable">
+                {% for item in line.items %}
+                    <li class="line-item" id="item-id-{{ item.homeInfoItemID }}">
+                        {% if item.isLink %}
+                            {% set url = item.url %}
+                            {% if strpos(url, 'http://') is same as (false) and strpos(url, 'https://') is same as (false) %}
+                                {% set url = 'http://' ~ url %}
+                            {% endif %}
+                            <a href="{{ url | raw }}" target="_blank">{{ item.text }}</a><br>
+                        {% else %}
+                            {{ item.text }}<br>
+                        {% endif %}
+                        <a href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/' ~ item.homeInfoItemID ~ '/edit') }}">edit</a>&nbsp;&nbsp;
+                        <a href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/' ~ item.homeInfoItemID ~ '/delete') }}">delete</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div id="saved-modal" class="modal">
+    <div class="modal-content">
+        <h4>Line order saved!</h4>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-teal teal-text btn-flat">OK</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#saved-modal').modal();
+        sortable('.sortable', {
+            forcePlaceholderSize: true,
+            placeholderClass: 'teal lighten-5',
+        });
+        $('#save-sort').on("click",function() {
+            var lines = [];
+            $('.line').each(function(index, element) {
+                //console.log(element.id);
+                var items = [];
+                $(element).find('.line-item').each(function(lineIndex, lineElement) {
+                    items.push({
+                        id: lineElement.id.replace('item-id-', ''),
+                        index: lineIndex
+                    });
+                });
+                var lineObj = {
+                    id: element.id.replace('line-id-', ''),
+                    index: index,
+                    items: items 
+                };
+                lines.push(lineObj)
+            });
+            $.ajax({
+                type: "POST",
+                url: "{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/sort') }}",
+                data: {
+                    json: JSON.stringify(lines)
+                },
+                success: function(msg) {
+                    $('#saved-modal').modal('open');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Error: ' + thrownError);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

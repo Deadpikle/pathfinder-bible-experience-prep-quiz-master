@@ -1,0 +1,49 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines') }}">Back</a></p>
+
+<h4>{{ isCreating ? 'Create' : 'Edit' }} Line Item</h4>
+
+{% include 'includes/error-message.twig' %}
+
+<div id="edit-line-item">
+    <form method="post">
+        <div class="row">
+            <div class="input-field col s12 m4">
+                <input type="text" id="line-text" name="line-text" value="{{ item.text }}" required/>
+                <label for="line-text">Item Text</label>
+            </div>
+            <div class="input-field col s12 m2">
+                <input type="checkbox" id="line-is-link" name="line-is-link" {{ item.isLink ? 'checked' : '' }}/>
+                <label class="black-text" for="line-is-link">Links to URL</label>
+            </div>
+            <div class="input-field col s12 m6">
+                <input type="url" id="line-url" name="line-url" value="{{ item.url }}"/>
+                <label for="line-url">URL</label>
+            </div>
+        </div>
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+        fixRequiredSelectorCSS();
+
+        // http://stackoverflow.com/a/11967638/3938401
+        // http://stackoverflow.com/a/19166712/3938401 -- how to actually change required property
+        $('#line-is-link').change(function () {
+            if ($(this).is(':checked')) {
+                $('#line-url').prop('required', true);
+            } 
+            else {
+                $('#line-url').prop('required', false);
+            }
+        });
+    });
+</script>
+
+{% endblock %}

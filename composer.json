@@ -1,5 +1,15 @@
 {
     "require": {
-        "robmorgan/phinx": "^0.10.6"
+        "php": "^7.1",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "robmorgan/phinx": "^0.10.6",
+        "twig/twig": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yamf\\": "yamf/",
+            "App\\": "app/"
+        }
     }
 }

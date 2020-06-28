@@ -28,7 +28,7 @@ class CreateBooks extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Books',  ['id' => 'BookID']);
+        $table = $this->table('Books',  ['id' => 'BookID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Name', 'string', ['limit' => 100]);
         $table->addColumn('NumberChapters', 'integer', ['default' => 0]);
         $table->addColumn('YearID', 'integer');

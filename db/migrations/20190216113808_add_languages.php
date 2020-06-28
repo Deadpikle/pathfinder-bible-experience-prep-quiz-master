@@ -29,7 +29,7 @@ class AddLanguages extends AbstractMigration
     public function change()
     {
         // add table
-        $table = $this->table('Languages', ['id' => 'LanguageID']);
+        $table = $this->table('Languages', ['id' => 'LanguageID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Name', 'string', ['limit' => 250]);
         $table->addColumn('IsDefault', 'boolean', ['limit' => 250, 'default' => false]);
         $table->create();

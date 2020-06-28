@@ -1,0 +1,38 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<h2>Administrator Panel</h2>
+
+<div id="admin-links">
+    <h4>Club Administrator Functions</h4>
+    <ul>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/upload-csv') }}">Import Questions from Excel</a></li>
+        <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/users') }}">Users</a></li>
+    </ul>
+    {% if app.isConferenceAdmin or app.isWebAdmin %}
+        <h4>Conference Administrator Functions</h4>
+        <ul>
+            <li class="home-buttons">
+                <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
+            </li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/clubs') }}">Pathfinder Clubs</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/study-guides') }}">Study Guides</a></li>
+        </ul>
+    {% endif %}
+    {% if app.isWebAdmin %}
+        <h4>Web Administrator Functions</h4>
+        <a class="btn blue white-text waves-effect waves-light" href="{{ app.yurl('/admin/help') }}">Web Admin Help</a>
+        <ul>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/commentaries') }}">Commentaries</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/conferences') }}">Conferences</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-fill-ins') }}">Manage Bible Fill in the Blank Questions</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/non-blankable-words') }}">Non-Blankable Words</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/settings') }}">Website Settings</a></li>
+            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/years') }}">Years</a></li>
+        </ul>
+    {% endif %}
+</div>
+
+{% endblock %}

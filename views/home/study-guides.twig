@@ -1,0 +1,28 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+
+<h2>Study Guides</h2>
+
+<div id="view-study-guides">
+    {% if guides | length == 0 %}
+        <p>There are no study guides available at this time.</p>
+    {% else %}
+        <ul class="browser-default">
+            {% for guide in guides %}
+                <li>
+                    <td>
+                        <a target="_blank" class="btn-flat blue-text waves-effect waves-blue no-uppercase" 
+                            href="{{ app.yurl('/' ~  guide.fileName) }}">
+                            {{ guide.displayName }}
+                        </a>
+                    </td> 
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% endblock %}

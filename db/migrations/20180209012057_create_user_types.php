@@ -28,7 +28,7 @@ class CreateUserTypes extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('UserTypes', ['id' => 'UserTypeID']);
+        $table = $this->table('UserTypes', ['id' => 'UserTypeID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Type', 'string', ['limit' => 150]);
         $table->addColumn('DisplayName', 'string', ['limit' => 150]);
         $table->create();

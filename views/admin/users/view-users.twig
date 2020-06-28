@@ -1,0 +1,97 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+<h4>Website Users</h4>
+
+<p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
+
+<div id="users-div">
+    {% if app.isClubAdmin %}
+        <h5>Club: {{ clubName }}</h5>
+    {% elseif app.isConferenceAdmin %}
+        <h5>Conference: {{ conferenceName }}</h5>
+    {% endif %}
+        
+    <div id="create">
+        <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/create') }}">Add User</a>
+    </div>
+    <table class="striped tablesorter-materialize" id="users-table">
+        <thead>
+            <tr>
+                <th data-placeholder="Username">Username</th>
+                <th data-placeholder="Entry Code">Entry Code</th>
+                {% if app.isWebAdmin or app.isConferenceAdmin %}
+                    <th data-placeholder="User Type">User Type</th>
+                    <th data-placeholder="Club">Club</th>
+                {% endif %}
+                {% if app.isWebAdmin %}
+                    <th data-placeholder="Conference">Conference</th>
+                {% endif %}
+                <th data-placeholder="Last Login">Last Login</th>
+                <th data-sorter="false" data-filter="false"></th>
+                <th data-sorter="false" data-filter="false"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                {% set canEdit = true %}
+                {% if app.isClubAdmin and (user.type.type == 'ClubAdmin' or user.type.type == 'ConferenceAdmin' or user.type.type == 'WebAdmin') %}
+                    {% set canEdit = false %}
+                {% endif %}
+                {% if app.isConferenceAdmin and (user.type.type == 'ConferenceAdmin' or user.type.type == 'WebAdmin') %}
+                    {% set canEdit = false %}
+                {% endif %}
+                {% if not app.isWebAdmin and user.type.type == 'Guest' %}
+                    {% set canEdit = false %}
+                {% endif %}
+                {% set entryCode = canEdit ? user.entryCode : '' %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ entryCode }}</td>
+                    {% if app.isWebAdmin or app.isConferenceAdmin %}
+                        <td>{{ user.type.displayName }}</td>
+                        <td>{{ clubsByID[user.clubID].name }}</td>
+                    {% endif %}
+                    {% if app.isWebAdmin %}
+                        <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
+                    {% endif %}
+                    <td data-sort={{ user.lastLoginDate }}>{{ user.lastLoginDate | date('D, M d, Y') }}</td>
+                    <td>
+                        {% if currentUserID != user.userID and canEdit %}
+                            <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}">Edit</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if currentUserID != user.userID and canEdit %}
+                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/delete') }}">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search users..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#users-table').DataTable(datatablesProps);
+    });
+</script>
+
+{% endblock %}

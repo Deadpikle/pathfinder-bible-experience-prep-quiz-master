@@ -1,0 +1,19 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/bible-fill-ins') }}">Back</a></p>
+
+<h2>Delete Bible Fill In Questions</h2>
+
+{% include 'includes/error-message.twig' %}
+
+<div id="delete-bible-fill-ins">
+    <h4> Are you sure you want to delete all of the {{ language.getDisplayName() }} Bible fill in questions? </h4>
+    <form method="post">
+        {{ csrf('delete-language-bible-fill-ins') | raw }}
+        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Questions</button>
+    </form>
+</div>
+
+{% endblock %}

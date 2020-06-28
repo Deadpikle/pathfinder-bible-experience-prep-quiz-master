@@ -1,0 +1,93 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+<h4>Pathfinder Clubs</h4>
+
+<div id="users-div">
+    <div class="section" id="create">
+        <h5>Create Club</h5>
+        <form action="{{ app.yurl('/admin/clubs/create') }}" method="post">
+            <div class="row">
+                <div class="input-field col s12 m4">
+                    <input type="text" id="club-name" name="club-name" value="{{ club.name }}" required data-length="150"/>
+                    <label for="club-name">Club Name</label>
+                </div>
+                <div class="input-field col s12 m4">
+                    <input type="url" id="club-url" name="club-url" value="{{ club.url }}" required data-length="300"/>
+                    <label for="club-url">Website or Facebook URL</label>
+                </div>
+                {% if not app.isWebAdmin %}
+                    <div class="input-field col s12 m4">
+                        <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Create Club</button>
+                    </div>
+                {% endif %}
+            </div>
+            {% if app.isWebAdmin %}
+                <div class="row">
+                    <div class="input-field col s12 m4">
+                        <select id="conference" name="conference" required>
+                            <option id="conference-no-selection-option" value="">Select a conference...</option>
+                            {% for conference in conferences %}
+                                {% set selected = conference.conferenceID == club.conferenceID ? 'selected' : '' %}
+                                <option value="{{ conference.conferenceID }}" {{ selected }}>{{ conference.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label>Conference</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Create Club</button>
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+    <div class="divider"></div>
+    <table class="striped responsive-table" id="clubs-table">
+        <thead>
+            <tr>
+                <th>Club Name</th>
+                <th>URL</th>
+                <th>Conference</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+                <tr>
+                    <td>{{ club.name }}</td>
+                    <td><a href="{{ club.url }}" target="_blank">{{ club.url }}</a></td>
+                    <td>{{ conferencesByID[club.conferenceID].name }}</td>
+                    <td><a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/clubs/' ~ club.clubID ~ '/edit') }}">Edit Club</a></td>
+                    <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/clubs/' ~ club.clubID ~ '/delete') }}">Delete Club</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+        fixRequiredSelectorCSS();
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1, -2] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search clubs..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#clubs-table').DataTable(datatablesProps);
+    });
+</script>
+
+{% endblock %}

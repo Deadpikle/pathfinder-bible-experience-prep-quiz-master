@@ -1,0 +1,34 @@
+{% for section in sections %}
+    <div class="sortable-item" id="section-{{ section.homeInfoSectionID }}">
+        <h5>{{ section.name }}</h5>
+        {% if section.subtitle %}
+            <h6>{{ section.subtitle }}</h6>
+        {% endif %}
+        {% if isOnAdmin %}
+            <div class="section-buttons">
+                <div class="row">
+                    <a class="add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align" href="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/edit') }}">Edit Section</a>
+                    <a class="add waves-effect waves-teal btn-flat teal-text col s12 m2 center-align" href="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines') }}">Edit Line Items</a>
+                    <a class="add waves-effect waves-teal btn-flat red white-text col s12 m2 center-align" href="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/delete') }}">Delete Section</a>
+                </div>
+            </div>
+        {% endif %}
+        <ul class="section-items {{ isOnAdmin ? 'browser-default' : '' }}">
+            {% for line in section.lines %}
+                <li>
+                    {% for item in line.items %}
+                        {% if item.isLink %}
+                            {% set url = item.url %}
+                            {% if strpos(url, 'http://') is same as (false) and strpos(url, 'https://') is same as (false) %}
+                                {% set url = 'http://' ~ url %}
+                            {% endif %}
+                            <a href="{{ url | raw }}" target="_blank">{{ item.text }}</a>{{ not loop.last ? ' - ' : '' }}
+                        {% else %}
+                            {{ item.text ~ (not loop.last ? ' - ' : '') }}
+                        {% endif %}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}

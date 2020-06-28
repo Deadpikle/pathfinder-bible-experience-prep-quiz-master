@@ -28,7 +28,7 @@ class CreateConferences extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Conferences', ['id' => 'ConferenceID']);
+        $table = $this->table('Conferences', ['id' => 'ConferenceID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Name', 'string', ['limit' => 150]);
         $table->addColumn('URL', 'string', ['limit' => 350]);
         $table->addColumn('ContactName', 'string', ['limit' => 150]);

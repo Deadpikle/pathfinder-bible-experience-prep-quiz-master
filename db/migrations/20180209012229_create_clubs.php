@@ -28,11 +28,11 @@ class CreateClubs extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Clubs', ['id' => 'ClubID']);
+        $table = $this->table('Clubs', ['id' => 'ClubID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Name', 'string', ['limit' => 150]);
         $table->addColumn('URL', 'string', ['limit' => 350]);
         $table->addColumn('ConferenceID', 'integer', ['null' => true]);
-        $table->addForeignKey('ConferenceID', 'Conferences', 'ConferenceID', ['delete'=> 'SET_NULL', 'update'=> 'NO_ACTION']);
+        $table->addForeignKey('ConferenceID', 'Conferences', 'ConferenceID', ['delete'=> 'SET_null', 'update'=> 'NO_ACTION']);
         $table->create();
     }
 }

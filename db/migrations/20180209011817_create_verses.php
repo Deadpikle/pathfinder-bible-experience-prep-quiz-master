@@ -28,7 +28,7 @@ class CreateVerses extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Verses',  ['id' => 'VerseID']);
+        $table = $this->table('Verses',  ['id' => 'VerseID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Number', 'integer');
         $table->addColumn('VerseText', 'string', ['limit' => 750]);
         $table->addColumn('ChapterID', 'integer');

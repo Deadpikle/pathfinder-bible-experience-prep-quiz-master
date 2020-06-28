@@ -1,7 +1,9 @@
-database.php
 *.DS_Store
 uploads/*
-config.php
 vendor/*
 phinx.yml
 composer.phar
+database.php
+config-private.php
+views/_cache
+!*uploads/.gitkeep

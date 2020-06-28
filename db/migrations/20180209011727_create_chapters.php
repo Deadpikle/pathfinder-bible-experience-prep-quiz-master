@@ -28,7 +28,7 @@ class CreateChapters extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Chapters',  ['id' => 'ChapterID']);
+        $table = $this->table('Chapters',  ['id' => 'ChapterID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Number', 'integer');
         $table->addColumn('NumberVerses', 'integer');
         $table->addColumn('BookID', 'integer');

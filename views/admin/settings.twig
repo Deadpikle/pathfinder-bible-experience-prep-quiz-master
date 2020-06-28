@@ -1,0 +1,34 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+{% if didJustSave %}
+    <h6 class="teal-text text-darken-2">Settings saved!</h6>
+{% endif %}
+{% if didError %}
+    <h6 class="red-text text-darken-2">Error saving settings. Please try again.</h6>
+{% endif %}
+
+<h4>Edit Website Settings</h4>
+
+<div id="edit-settings">
+    <form method="post">
+        {{ csrf('change-settings') | raw }}
+        {% for setting in settings %}
+            {% if setting.displayName != 'Analytics URL' and setting.displayName != 'Analytics Site ID' %}
+                <div class="row">
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="{{ setting.key }}" name="{{ setting.key }}" 
+                        value="{{ setting.value }}" required data-length="150"/>
+                        <label for="{{ setting.key }}">{{ setting.displayName }}</label>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+    </form>
+</div>
+
+{% endblock %}
