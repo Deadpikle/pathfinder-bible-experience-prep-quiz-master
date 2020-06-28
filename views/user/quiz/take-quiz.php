@@ -490,7 +490,7 @@
             var numberOfPoints = data.points + pointsLabel + " Possible";
             $("#question-points").html(numberOfPoints);
             // show quiz progress
-            var progress = "Question " + data.number + " of " + questions.length + "";
+            var progress = "Question " + (currentQuestionIndex + 1) + " of " + questions.length + "";
             $("#quiz-progress").html(progress);
             if (isFillInQuestion(data.type)) {
                 focusFirstFillInField();
