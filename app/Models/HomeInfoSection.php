@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use PDOException;
 
 class HomeInfoSection
 {
@@ -80,9 +81,9 @@ class HomeInfoSection
         $params = [
             $year->yearID
         ];
-        $whereClause = " WHERE his.YearID = ? ";
+        $whereClause = ' WHERE his.YearID = ? ';
         if ($conferenceID > 0) {
-            $whereClause .= " AND his.ConferenceID = ? ";
+            $whereClause .= ' AND his.ConferenceID = ? ';
             $params[] = $conferenceID;
         }
         return HomeInfoSection::loadSectionData($whereClause, $params, $db);
@@ -105,8 +106,7 @@ class HomeInfoSection
             (int)$this->sortOrder,
             (int)$this->yearID,
             (int)$this->conferenceID,
-            $this->subtitle ?? '',
-            (int)$this->homeInfoSectionID
+            $this->subtitle ?? ''
         ]);
         $this->homeInfoSectionID = $db->lastInsertId();
     }
@@ -115,7 +115,7 @@ class HomeInfoSection
     {
         $query = '
             UPDATE HomeInfoSections SET Name = ?, SortOrder = ?, YearID = ?, ConferenceID = ?, Subtitle = ? 
-            WHERE HomeInfoSections = ?';
+            WHERE HomeInfoSectionID = ?';
         $stmnt = $db->prepare($query);
         $stmnt->execute([
             $this->name,
@@ -132,5 +132,33 @@ class HomeInfoSection
         $query = 'DELETE FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
         $stmnt = $db->prepare($query);
         $stmnt->execute([ $this->homeInfoSectionID ]);
+    }
+
+    public static function getSortOrderForConferenceInYear(int $conferenceID, int $yeariD, PDO $db) : int
+    {
+        $stmt = $db->prepare('SELECT MAX(SortOrder) AS MaxSort FROM HomeInfoSections WHERE ConferenceID = ? AND YearID = ?');
+        $stmt->execute([ $conferenceID, $yeariD ]);
+        $row = $stmt->fetch();
+        $sortOrder = 1;
+        if ($row != null) {
+            $sortOrder = intval($row['MaxSort']) + 1;
+        }
+        return $sortOrder;
+    }
+
+    public static function saveSortOrder(array $data, PDO $db) : bool
+    {
+        $sqlStatements = '';
+        foreach ($data as $section) {
+            $sqlStatements .= ' UPDATE HomeInfoSections SET SortOrder = ' . $section['index'] . ' WHERE HomeInfoSectionID = ' . $section['id'] . '; ';
+        }
+        try {
+            echo $sqlStatements;
+            $db->exec($sqlStatements);
+        }
+        catch (PDOException $e) {
+            return false;
+        }
+        return true;
     }
 }

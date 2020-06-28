@@ -25,6 +25,11 @@ class ImportQuestionsController extends BaseAdminController
         return new TwigView('admin/upload-csv', compact('defaultLanguage'), 'Upload Questions');
     }
 
+    // getHexChar from http://forums.devshed.com/php-development-5/comparing-hex-values-comprising-string-249095.html
+    private function getHexChar($hexCode) {
+        return chr(hexdec($hexCode));
+    }
+
     public function saveImportedQuestions(PBEAppConfig $app, Request $request)
     {
         // TODO: refactor to a model or other class to handle this
@@ -44,7 +49,7 @@ class ImportQuestionsController extends BaseAdminController
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
         // check if UTF-8 encoded file
-        if ($contents[0] == getHexChar('EF') && $contents[1] == getHexChar('BB') && $contents[2] == getHexChar('BF')) {
+        if ($contents[0] == $this->getHexChar('EF') && $contents[1] == $this->getHexChar('BB') && $contents[2] == $this->getHexChar('BF')) {
             $contents = substr($contents, 3);
         }
         // split file by items

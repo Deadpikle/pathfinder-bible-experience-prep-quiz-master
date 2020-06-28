@@ -8,7 +8,7 @@
 <div id="sections-div">
     <div class="section" id="create">
         <h5>Create Section</h5>
-        <form action="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/create') }}" method="post">
+        <form action="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/sections/create') }}" method="post">
             <input type="hidden" name="to-conference-id" value="<?= $selectedConferenceID ?>">
             <div class="row">
                 <div class="input-field col s6 m4">
@@ -112,7 +112,7 @@
             });
             $.ajax({
                 type: "POST",
-                url: "ajax/save-section-sorting.php",
+                url: "{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/sort') }}",
                 data: {
                     json: JSON.stringify(sections)
                 },
