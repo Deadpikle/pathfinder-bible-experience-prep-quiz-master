@@ -9,6 +9,7 @@ use App\Models\CSRF;
 use App\Models\PBEAppConfig;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
@@ -95,7 +96,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return $this->showCreateOrEditConference($app, $request, false, $conference);
     }
@@ -104,7 +105,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $status = $this->validateConference($app, $request, $conference);
         $conference = $status->output;
@@ -119,7 +120,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/conferences/verify-delete-conference', compact('conference'), 'Delete Conference');
     }
@@ -128,7 +129,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-conference')) {
             $conference->delete($app->db);

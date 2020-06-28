@@ -9,6 +9,7 @@ use App\Models\CSRF;
 use App\Models\PBEAppConfig;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
@@ -80,7 +81,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return $this->showCreateOrEditNonBlankableWord($app, $request, false, $nonBlankableWord);
     }
@@ -89,7 +90,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $status = $this->validateNonBlankableWord($app, $request, $nonBlankableWord);
         $nonBlankableWord = $status->output;
@@ -104,7 +105,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/non-blankable-words/verify-delete-non-blankable-word', compact('nonBlankableWord'), 'Delete Non-blankable Word');
     }
@@ -113,7 +114,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-non-blankable-word')) {
             $nonBlankableWord->delete($app->db);

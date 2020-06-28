@@ -10,6 +10,7 @@ use App\Models\CSRF;
 use App\Models\PBEAppConfig;
 use App\Models\User;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
@@ -93,7 +94,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return $this->showCreateOrEditClub($app, $request, false, $club);
     }
@@ -102,7 +103,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $status = $this->validateClub($app, $request, $club);
         $club = $status->output;
@@ -117,7 +118,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/clubs/verify-delete-club', compact('club'), 'Delete Club');
     }
@@ -126,7 +127,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-club')) {
             $club->delete($app->db);

@@ -5,7 +5,7 @@
 
 <?php if (isset($error) && $error !== '') { ?>
     <div class="row">
-        <div class="col s8 m4 red">
+        <div class="col s8 m5 red">
             <p class="white-text"><?= $error ?></p>
         </div>
     </div>

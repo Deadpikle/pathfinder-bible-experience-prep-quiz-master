@@ -16,6 +16,8 @@ use App\Models\User;
 use App\Models\UserFlagged;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
+use App\Models\Views\TwigView;
 use App\Models\Year;
 
 class QuestionController
@@ -171,7 +173,7 @@ class QuestionController
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
         if ($question === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $editData = $this->loadQuestionEditingData($app);
         $editData['isCreating'] = false;
@@ -187,7 +189,7 @@ class QuestionController
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
         if ($question === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $validation = $this->validateQuestionForm($app, $request, false);
         if ($validation->didValidate) {
@@ -215,9 +217,9 @@ class QuestionController
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
         if ($question === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
-        return new View('user/questions/verify-delete-question', compact('question'), 'Delete Question');
+        return new TwigView('user/questions/verify-delete-question', compact('question'), 'Delete Question');
     }
 
     public function deleteQuestion(PBEAppConfig $app, Request $request)
@@ -227,7 +229,7 @@ class QuestionController
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);;
         if ($question === null || $question->questionID != $request->post['question-id']) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $question->updateDeletedFlag(true, $app->db);
         return new Redirect('/questions');

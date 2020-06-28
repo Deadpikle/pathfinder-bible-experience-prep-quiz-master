@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\UserAnswer;
 use App\Models\UserFlagged;
 use App\Models\Util;
+use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\PDFGenerator;
 use App\Services\QuizGenerator;
@@ -50,7 +51,7 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Redirect('/');
         }
-        return new View('user/quiz/verify-delete-user-answers', null, 'Delete Answers');
+        return new TwigView('user/quiz/verify-delete-user-answers', null, 'Delete Answers');
     }
 
     public function removeAnswers(PBEAppConfig $app, Request $request)

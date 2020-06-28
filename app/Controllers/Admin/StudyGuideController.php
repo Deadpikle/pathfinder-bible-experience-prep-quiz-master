@@ -12,6 +12,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use finfo;
@@ -147,7 +148,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/study-guides/rename-study-guide', compact('studyGuide'), 'Rename Study Guide');
     }
@@ -156,7 +157,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $displayName = Util::validateString($request->post, 'display-name');
         if ($displayName === '') {
@@ -171,7 +172,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/study-guides/verify-delete-study-guide', compact('studyGuide'), 'Delete Study Guide');
     }
@@ -180,7 +181,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-study-guide')) {
             $studyGuide->delete($app->db);

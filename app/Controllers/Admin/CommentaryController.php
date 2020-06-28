@@ -15,6 +15,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use finfo;
@@ -76,7 +77,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
     {
         $commentary = Commentary::loadCommentaryByID($request->routeParams['commentaryID'], $app->db);
         if ($commentary === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/commentaries/verify-delete-commentary', compact('commentary'), 'Delete Commentary');
     }
@@ -85,7 +86,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
     {
         $commentary = Commentary::loadCommentaryByID($request->routeParams['commentaryID'], $app->db);
         if ($commentary === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-commentary')) {
             $commentary->delete($app->db);

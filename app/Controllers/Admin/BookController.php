@@ -14,6 +14,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use finfo;
@@ -75,7 +76,7 @@ class BookController extends BaseAdminController implements IRequestValidator
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/books/verify-delete-book', compact('book'), 'Delete Book');
     }
@@ -84,7 +85,7 @@ class BookController extends BaseAdminController implements IRequestValidator
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-book')) {
             $book->delete($app->db);
@@ -99,7 +100,7 @@ class BookController extends BaseAdminController implements IRequestValidator
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $chapters = Chapter::loadChaptersByBookID($book->bookID, $app->db);
         return new TwigView('admin/books/view-chapters', compact('book', 'chapters'), 'Book Chapters');
@@ -109,7 +110,7 @@ class BookController extends BaseAdminController implements IRequestValidator
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $chapterNumber = intval($request->post['chapter-number'] ?? -1);
         $numberOfVerses = intval($request->post['number-verses'] ?? -1);
@@ -132,7 +133,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         if ($book === null || $chapter === null || $chapter->bookID != $book->bookID) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/books/verify-delete-chapter', compact('book', 'chapter'), 'Delete Chapter');
     }
@@ -142,7 +143,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         if ($book === null || $chapter === null || $chapter->bookID != $book->bookID) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-chapter')) {
             $chapter->delete($app->db);

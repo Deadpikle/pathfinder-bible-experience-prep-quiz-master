@@ -12,6 +12,7 @@ use App\Models\PBEAppConfig;
 use App\Models\User;
 use App\Models\UserType;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use Yamf\Responses\NotFound;
 use Yamf\Responses\Response;
@@ -108,7 +109,7 @@ class UserController extends BaseAdminController
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return $this->createOrEditUser($app, $request, false, $user);
     }
@@ -117,7 +118,7 @@ class UserController extends BaseAdminController
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         $status = $this->validateUser($app, $request, $user);
         $user = $status->output;
@@ -132,7 +133,7 @@ class UserController extends BaseAdminController
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/users/verify-delete-user', compact('user'), 'Delete User');
     }
@@ -141,7 +142,7 @@ class UserController extends BaseAdminController
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-user')) {
             $user->delete($app->db);

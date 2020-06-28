@@ -13,6 +13,7 @@ use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use Yamf\Responses\NotFound;
@@ -49,7 +50,7 @@ class BibleFillInController extends BaseAdminController
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         $book = Book::loadBookByID($chapter->bookID, $app->db);
         if ($chapter === null || $language === null || $book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/bible-fill-ins/verify-delete-chapter-fill-ins', compact('chapter', 'language', 'book'), 'Delete Bible Fill In Questions');
     }
@@ -60,7 +61,7 @@ class BibleFillInController extends BaseAdminController
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         $book = Book::loadBookByID($chapter->bookID, $app->db);
         if ($chapter === null || $language === null || $book === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-chapter-bible-fill-ins')) {
             BibleFillInData::deleteFillInsForChapter(Year::loadCurrentYear($app->db), $chapter->chapterID, $language->languageID, $app->db);
@@ -75,7 +76,7 @@ class BibleFillInController extends BaseAdminController
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         return new TwigView('admin/bible-fill-ins/verify-delete-language-fill-ins', compact('language'), 'Delete Bible Fill In Questions');
     }
@@ -84,7 +85,7 @@ class BibleFillInController extends BaseAdminController
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
-            return new NotFound();
+            return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-language-bible-fill-ins')) {
             BibleFillInData::deleteFillInsForLanguage(Year::loadCurrentYear($app->db), $language->languageID, $app->db);
