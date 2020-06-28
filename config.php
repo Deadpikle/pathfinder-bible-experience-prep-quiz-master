@@ -60,8 +60,6 @@ $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 // Examples of settings or other config parameters you might want:
 // $app->isAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'WebAdmin';
 
-require_once("functions.php");
-
 $app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
 $app->isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;

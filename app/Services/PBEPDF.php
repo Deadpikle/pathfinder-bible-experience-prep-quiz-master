@@ -115,6 +115,10 @@ class PBEPDF extends \FPDF {
         // Line break
         $this->Ln(15);
     }
+
+    function utf8($str) {
+        return iconv("UTF-8", "ISO-8859-1", $str);
+    }
     
     // Page footer
     function Footer() {
@@ -125,7 +129,7 @@ class PBEPDF extends \FPDF {
         $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
         $this->Ln(10);
         $this->SetFont('Arial', '', 7);
-        $this->MultiCell(165.1, 5, 'Scripture taken from the New King James Version ' . utf8("®") . '. Copyright ' . utf8("©") . ' 1982 by Thomas Nelson. Used by permission. All rights reserved.', 0, 'C');
+        $this->MultiCell(165.1, 5, 'Scripture taken from the New King James Version ' . $this->utf8("®") . '. Copyright ' . $this->utf8("©") . ' 1982 by Thomas Nelson. Used by permission. All rights reserved.', 0, 'C');
     }
 
     function SetWidths($w) {
