@@ -1,0 +1,20 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines') }}">Back</a></p>
+
+
+<h2>Delete Line Item</h2>
+
+{% include 'includes/error-message.twig' %}
+
+<div id="delete-line-item">
+    <h4>Are you sure you want to delete the line item {{ item.text }}?</h4>
+    <form method="post">
+        {{ csrf('delete-line-item') | raw }}
+        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Line Item</button>
+    </form>
+</div>
+
+{% endblock %}

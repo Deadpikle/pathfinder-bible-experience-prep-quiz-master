@@ -23,7 +23,7 @@ class HomeInfoLine
     private static function loadLines(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
-            SELECT his.Name AS SectionName,
+            SELECT his.Name AS SectionName, hil.HomeInfoSectionID,
                 hil.Name AS LineName, hil.SortOrder AS LineSortOrder, hil.HomeInfoLineID AS LineID,
                 hii.HomeInfoItemID AS ItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
             FROM HomeInfoSections his 
@@ -44,7 +44,7 @@ class HomeInfoLine
                 && is_numeric($lineID) && $lineID > 0) {
                 $currentLine = new HomeInfoLine($lineID, $row['LineName']);
                 $currentLine->sortOrder = $row['LineSortOrder'];
-                $currentLine->homeInfoSectionID = $homeInfoSectionID;
+                $currentLine->homeInfoSectionID = $row['HomeInfoSectionID'];
                 $output[] = $currentLine;
             }
             $itemID = $row['ItemID'];

@@ -27,7 +27,7 @@ class HomeInfoSection
     {
         $query = '
             SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, 
-                his.Subtitle AS SectionSubtitle, his.SortOrder AS SectionSortOrder,
+                his.Subtitle AS SectionSubtitle, his.SortOrder AS SectionSortOrder, his.YearID, his.ConferenceID,
                 hil.HomeInfoLineID AS LineID, hil.Name AS LineName, hil.SortOrder AS LineSortOrder,
                 hii.HomeInfoItemID, hii.Text, hii.IsLink, hii.URL, hii.SortOrder AS ItemSortOrder
             FROM HomeInfoSections his 
@@ -50,8 +50,8 @@ class HomeInfoSection
                 $currentSection = new HomeInfoSection($sectionID, $row['SectionName']);
                 $currentSection->sortOrder = $row['SectionSortOrder'];
                 $currentSection->subtitle = $row['SectionSubtitle'];
-                $currentSection->yearID = $year->yearID;
-                $currentSection->conferenceID = $conferenceID;
+                $currentSection->yearID = $row['YearID'];
+                $currentSection->conferenceID = $row['ConferenceID'];
                 $currentLine = null;
                 $output[] = $currentSection;
             }

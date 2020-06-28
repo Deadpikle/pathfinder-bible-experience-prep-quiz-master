@@ -35,7 +35,7 @@
                             {{ item.text }}<br>
                         {% endif %}
                         <a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update&conferenceID=$conferenceID'>edit</a>&nbsp;&nbsp;
-                        <a href='delete-line-item.php?itemID=$itemID&sectionID=$sectionID&conferenceID=$conferenceID'>delete</a>
+                        <a href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/' ~ item.homeInfoItemID ~ '/delete') }}">delete</a>
                     </li>
                 {% endfor %}
                 </ul>
