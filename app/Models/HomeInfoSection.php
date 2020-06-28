@@ -23,16 +23,8 @@ class HomeInfoSection
         $this->lines = [];
     }
 
-    public static function loadSections(Year $year, int $conferenceID, PDO $db) : array
+    private static function loadSectionData(string $whereClause, array $whereParams, PDO $db) : array
     {
-        $params = [
-            $year->yearID
-        ];
-        $whereClause = " WHERE his.YearID = ? ";
-        if ($conferenceID > 0) {
-            $whereClause .= " AND his.ConferenceID = ? ";
-            $params[] = $conferenceID;
-        }
         $query = '
             SELECT his.HomeInfoSectionID AS SectionID, his.Name AS SectionName, 
                 his.Subtitle AS SectionSubtitle, his.SortOrder AS SectionSortOrder,
@@ -44,7 +36,7 @@ class HomeInfoSection
             ' . $whereClause . '
             ORDER BY SectionSortOrder, LineSortOrder, ItemSortOrder';
         $sectionStmt = $db->prepare($query);
-        $sectionStmt->execute($params);
+        $sectionStmt->execute($whereParams);
         $data = $sectionStmt->fetchAll();
         $output = [];
 
@@ -81,5 +73,64 @@ class HomeInfoSection
             }
         }
         return $output;
+    }
+
+    public static function loadSections(Year $year, int $conferenceID, PDO $db) : array
+    {
+        $params = [
+            $year->yearID
+        ];
+        $whereClause = " WHERE his.YearID = ? ";
+        if ($conferenceID > 0) {
+            $whereClause .= " AND his.ConferenceID = ? ";
+            $params[] = $conferenceID;
+        }
+        return HomeInfoSection::loadSectionData($whereClause, $params, $db);
+    }
+
+    public static function loadSectionByID(int $sectionID, PDO $db) : ?HomeInfoSection
+    {
+        $data = HomeInfoSection::loadSectionData(' WHERE his.HomeInfoSectionID = ? ', [ $sectionID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO HomeInfoSections (Name, SortOrder, YearID, ConferenceID, Subtitle) 
+            VALUES (?, ?, ?, ?, ?)';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            (int)$this->sortOrder,
+            (int)$this->yearID,
+            (int)$this->conferenceID,
+            $this->subtitle ?? '',
+            (int)$this->homeInfoSectionID
+        ]);
+        $this->homeInfoSectionID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE HomeInfoSections SET Name = ?, SortOrder = ?, YearID = ?, ConferenceID = ?, Subtitle = ? 
+            WHERE HomeInfoSections = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            (int)$this->sortOrder,
+            (int)$this->yearID,
+            (int)$this->conferenceID,
+            $this->subtitle ?? '',
+            $this->homeInfoSectionID
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM HomeInfoSections WHERE HomeInfoSectionID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([ $this->homeInfoSectionID ]);
     }
 }

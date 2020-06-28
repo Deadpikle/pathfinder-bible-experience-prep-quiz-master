@@ -20,7 +20,7 @@ class HomeInfoLine
         $this->name = $name;
     }
 
-    public static function loadLinesForSection(int $homeInfoSectionID, PDO $db) : array
+    private static function loadLines(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT his.Name AS SectionName,
@@ -29,12 +29,10 @@ class HomeInfoLine
             FROM HomeInfoSections his 
                 JOIN HomeInfoLines hil ON his.HomeInfoSectionID = hil.HomeInfoSectionID
                 LEFT JOIN HomeInfoItems hii ON hil.HomeInfoLineID = hii.HomeInfoLineID
-            WHERE hil.HomeInfoSectionID = ?
+            ' . $whereClause . '
             ORDER BY LineSortOrder, ItemSortOrder';
         $sectionStmt = $db->prepare($query);
-        $sectionStmt->execute([
-            $homeInfoSectionID
-        ]);
+        $sectionStmt->execute($whereParams);
         $data = $sectionStmt->fetchAll();
         $output = [];
 
@@ -60,5 +58,51 @@ class HomeInfoLine
             }
         }
         return $output;
+    }
+
+    public static function loadLinesForSection(int $homeInfoSectionID, PDO $db) : array
+    {
+        return HomeInfoLine::loadLines(' WHERE hil.HomeInfoSectionID = ? ', [ $homeInfoSectionID ], $db);
+    }
+
+    public static function loadLineByID(int $homeInfoLineID, PDO $db) : ?HomeInfoLine
+    {
+        $data = HomeInfoLine::loadLines(' WHERE hil.HomeInfoLineID = ? ', [ $homeInfoLineID ], $db);
+        return count($data) > 0 ? $data[0] : null;
+    }
+
+    public function create(PDO $db)
+    {
+        $query = '
+            INSERT INTO HomeInfoLines (Name, SortOrder, HomeInfoSectionID) 
+            VALUES (?, ?, ?)';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            (int)$this->sortOrder,
+            (int)$this->homeInfoSectionID
+        ]);
+        $this->homeInfoLineID = $db->lastInsertId();
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE HomeInfoLines SET Name = ?, SortOrder = ?, HomeInfoSectionID = ?
+            WHERE HomeInfoLineID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->name,
+            (int)$this->sortOrder,
+            (int)$this->homeInfoSectionID,
+            $this->homeInfoLineID
+        ]);
+    }
+
+    public function delete(PDO $db)
+    {
+        $query = 'DELETE FROM HomeInfoLines WHERE HomeInfoLineID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([ $this->homeInfoLineID ]);
     }
 }
