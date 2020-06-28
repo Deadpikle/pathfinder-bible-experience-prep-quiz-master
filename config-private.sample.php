@@ -20,7 +20,7 @@ try {
     $db   = 'db-name';
     $user = 'username';
     $pass = 'password';
-    $charset = 'utf8';
+    $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
     $opt = [

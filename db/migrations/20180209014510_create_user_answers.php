@@ -28,7 +28,7 @@ class CreateUserAnswers extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('UserAnswers', ['id' => 'UserAnswerID']);
+        $table = $this->table('UserAnswers', ['id' => 'UserAnswerID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Answer', 'string', ['limit' => 5000]);
         $table->addColumn('DateAnswered', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
         $table->addColumn('WasCorrect', 'string', ['default' => false]);

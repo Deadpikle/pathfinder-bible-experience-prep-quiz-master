@@ -28,7 +28,7 @@ class CreateUsers extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Users', ['id' => 'UserID']);
+        $table = $this->table('Users', ['id' => 'UserID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Username', 'string', ['limit' => 150]);
         $table->addColumn('EntryCode', 'string', ['limit' => 25]);
         $table->addColumn('Password', 'string', ['limit' => 250]);

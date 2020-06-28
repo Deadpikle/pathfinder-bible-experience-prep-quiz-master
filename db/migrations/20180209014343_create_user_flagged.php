@@ -28,7 +28,7 @@ class CreateUserFlagged extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('UserFlagged', ['id' => 'UserFlaggedID']);
+        $table = $this->table('UserFlagged', ['id' => 'UserFlaggedID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('UserID', 'integer');
         $table->addColumn('QuestionID', 'integer');
         $table->addForeignKey('UserID', 'Users', 'UserID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);

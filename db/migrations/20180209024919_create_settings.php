@@ -28,7 +28,7 @@ class CreateSettings extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Settings', ['id' => 'SettingID']);
+        $table = $this->table('Settings', ['id' => 'SettingID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('SettingKey', 'string', ['limit' => 150]);
         $table->addColumn('SettingValue', 'string', ['limit' => 150]);
         $table->addColumn('DisplayName', 'string', ['limit' => 150]);

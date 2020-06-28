@@ -28,7 +28,7 @@ class CreateHomeInfoItems extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('HomeInfoItems', ['id' => 'HomeInfoItemID']);
+        $table = $this->table('HomeInfoItems', ['id' => 'HomeInfoItemID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('IsLink', 'boolean', ['default' => false]);
         $table->addColumn('Text', 'string', ['limit' => 500]);
         $table->addColumn('URL', 'string', ['limit' => 500]);

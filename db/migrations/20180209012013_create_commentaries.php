@@ -28,7 +28,7 @@ class CreateCommentaries extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Commentaries',  ['id' => 'CommentaryID']);
+        $table = $this->table('Commentaries',  ['id' => 'CommentaryID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Number', 'integer');
         $table->addColumn('YearID', 'integer');
         $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update'=> 'NO_ACTION']);

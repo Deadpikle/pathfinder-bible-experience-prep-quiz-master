@@ -28,7 +28,7 @@ class CreateBlankableWords extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('BlankableWords', ['id' => 'WordID']);
+        $table = $this->table('BlankableWords', ['id' => 'WordID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Word', 'string', ['limit' => 300]);
 
         $table->create();

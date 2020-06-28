@@ -27,7 +27,7 @@ class CreateYears extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('Years',  ['id' => 'YearID']);
+        $table = $this->table('Years',  ['id' => 'YearID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Year', 'integer');
         $table->addColumn('IsCurrent', 'boolean', ['default' => false]);
         $table->create();

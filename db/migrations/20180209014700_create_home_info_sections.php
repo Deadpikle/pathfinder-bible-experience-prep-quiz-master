@@ -28,7 +28,7 @@ class CreateHomeInfoSections extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('HomeInfoSections', ['id' => 'HomeInfoSectionID']);
+        $table = $this->table('HomeInfoSections', ['id' => 'HomeInfoSectionID', 'collation'=>'utf8mb4_unicode_ci']);
         $table->addColumn('Name', 'string', ['limit' => 300]);
         $table->addColumn('SortOrder', 'integer');
 
