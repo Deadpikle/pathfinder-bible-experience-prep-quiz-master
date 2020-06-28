@@ -38,6 +38,11 @@ class Util
         return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_STRING)) : '';
     }
 
+    public static function validateURL(array $array, string $key) : string
+    {
+        return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_URL)) : '';
+    }
+
     public static function validateInteger(array $array, string $key) : int
     {
         return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_NUMBER_INT)) : 0;

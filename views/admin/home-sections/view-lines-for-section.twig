@@ -20,8 +20,8 @@
     <ul class="browser-default sortable">
         {% for line in lines %}
             <li class="line" id="line-id-{{ line.homeInfoLineID }}">Line {{ loop.index1 }}<br>
-                <a class='btn btn-flat teal-text' href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&type=create&conferenceID=$conferenceID'>add item</a>
-                <a class='btn btn-flat red white-text' href='delete-line.php?lineID=$lineID&sectionID=$sectionID&conferenceID=$conferenceID'>delete line</a>
+                <a class='btn btn-flat teal-text' href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/create') }}">add item</a>
+                <a class='btn btn-flat red white-text' href='{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/delete') }}'>delete line</a>
                 <ul class="browser-default sortable">
                 {% for item in line.items %}
                     <li class="line-item" id="item-id-{{ item.homeInfoItemID }}">
@@ -34,7 +34,7 @@
                         {% else %}
                             {{ item.text }}<br>
                         {% endif %}
-                        <a href='create-edit-line-item.php?lineID=$lineID&sectionID=$sectionID&itemID=$itemID&type=update&conferenceID=$conferenceID'>edit</a>&nbsp;&nbsp;
+                        <a href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/' ~ item.homeInfoItemID ~ '/edit') }}">edit</a>&nbsp;&nbsp;
                         <a href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/' ~ line.homeInfoLineID ~ '/items/' ~ item.homeInfoItemID ~ '/delete') }}">delete</a>
                     </li>
                 {% endfor %}
@@ -80,7 +80,7 @@
             });
             $.ajax({
                 type: "POST",
-                url: "ajax/save-line-sorting.php",
+                url: "{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections/' ~ section.homeInfoSectionID ~ '/lines/sort') }}",
                 data: {
                     json: JSON.stringify(lines)
                 },

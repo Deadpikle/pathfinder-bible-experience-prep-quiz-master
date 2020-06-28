@@ -86,4 +86,16 @@ class HomeInfoItem
         $stmnt = $db->prepare($query);
         $stmnt->execute([ $this->homeInfoItemID ]);
     }
+
+    public static function getSortOrder(int $lineID, PDO $db) : int
+    {
+        $stmt = $db->prepare("SELECT MAX(SortOrder) AS MaxSort FROM HomeInfoItems WHERE HomeInfoLineID = ?");
+        $stmt->execute([$lineID]);
+        $row = $stmt->fetch();
+        $sortOrder = 1;
+        if ($row != null) {
+            $sortOrder = intval($row["MaxSort"]) + 1;
+        }
+        return $sortOrder;
+    }
 }
