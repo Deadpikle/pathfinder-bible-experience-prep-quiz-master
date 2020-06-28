@@ -1,6 +1,5 @@
 TODO:
 -need to test uploading csv but the code is there
--convert user pages to twig
 -refactor use of $_SESSION['PreferredLanguageID'] to User class
     -and other session items
 -Refactor settings to an actual class
@@ -8,9 +7,10 @@ TODO:
 
 -This would be a _great_ opportunity to make this website UTF-8 compatible
     -https://dba.stackexchange.com/a/104866 for a script -- could probably work this into a migration...?
+    -ok i edited old migrations, but might need mb_* functions and other fixes. pdfs need UTF8 compat anyway.
 
 Eventual:
 -Revamp UI everywhere
-    -Switch to Bootstrap 4
+    -Switch to Bootstrap 4!!!
     -Use select2 for searchable dropdowns
     -Use breadcrumbs
