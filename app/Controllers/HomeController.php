@@ -31,7 +31,7 @@ class HomeController
 
     public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
-        return new View('home/login', null, 'Login');
+        return new TwigView('home/login', null, 'Login');
     }
 
     public function attemptLogin(PBEAppConfig $app, Request $request)
@@ -70,7 +70,7 @@ class HomeController
             return new Redirect('/');
         } else {
             $error = 'Invalid access code';
-            return new View('home/login', compact('error'), 'Login');
+            return new TwigView('home/login', compact('error'), 'Login');
         }
     }
 
@@ -84,7 +84,7 @@ class HomeController
     public function about(PBEAppConfig $app, Request $request)
     {
         $conferences = Conference::loadNonWebsiteConferences($app->db);
-        return new View('home/about', compact('conferences'), 'About');
+        return new TwigView('home/about', compact('conferences'), 'About');
     }
 
     public function activeClubs(PBEAppConfig $app, Request $request)
@@ -105,7 +105,7 @@ class HomeController
         }
         $clubCount = count($clubs);
 
-        return new View('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
+        return new TwigView('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
     }
 
     public function studyGuides(PBEAppConfig $app, Request $request)
@@ -115,7 +115,7 @@ class HomeController
         }
         $currentYear = Year::loadCurrentYear($app->db);
         $guides = StudyGuide::loadCurrentStudyGuides($currentYear, $app->db);
-        return new View('home/study-guides', compact('guides'), 'Study Guides');
+        return new TwigView('home/study-guides', compact('guides'), 'Study Guides');
     }
 
     public function viewSettings(PBEAppConfig $app, Request $request)
@@ -127,7 +127,7 @@ class HomeController
         $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
 
         $didUpdate = false;
-        return new View('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+        return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 
     public function updateSettings(PBEAppConfig $app, Request $request)
@@ -144,6 +144,6 @@ class HomeController
         $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
 
         $didUpdate = true;
-        return new View('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+        return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 }
