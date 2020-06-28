@@ -66,10 +66,7 @@ $app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
 $app->isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
 $app->isUserIDSessionSet = isset($_SESSION["UserID"]);
-if (!isset($_SESSION['UserID']) && !$app->isOnLoginPage && !$app->isOnOtherNonLoginPage) {
-    header("Location: login.php");
-    die();
-}
+
 if ($app->isUserIDSessionSet) {
     $app->loggedIn = true;
 }
