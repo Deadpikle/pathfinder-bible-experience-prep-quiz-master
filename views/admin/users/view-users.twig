@@ -1,5 +1,11 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
@@ -18,7 +24,7 @@
     <div id="create">
         <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/create') }}">Add User</a>
     </div>
-    <table class="striped tablesorter-materialize">
+    <table class="striped tablesorter-materialize" id="users-table">
         <thead>
             <tr>
                 <th data-placeholder="Username">Username</th>
@@ -77,14 +83,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $(".tablesorter-materialize").tablesorter({ 
-            sortList: [[4,0], [3,0], [0,0]] ,
-            widgets: ["filter", "stickyHeaders"],
-
-            widgetOptions : {
-                filter_placeholder : { search : '', select : '' }
-            }
-        });
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [4, 5, 6, 7] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search users..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#users-table').DataTable(datatablesProps);
     });
 </script>
 

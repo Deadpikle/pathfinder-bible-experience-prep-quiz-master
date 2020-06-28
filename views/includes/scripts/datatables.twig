@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="{{ app.yurl('/lib/datatables/datatables.min.css') }}" />
+<script src="{{ app.yurl('/lib/datatables/datatables.min.js') }}" crossorigin="anonymous"></script>
+<script type='text/javascript'>
+    var datatablesProps = {
+        iDisplayLength: 15,
+        bLengthChange: false,
+        dom: "<'row'<'col 12'f>>" +
+            "<'row'<'col 12'tr>>" +
+            "<'row'<'col 4'i><'col-sm-8'p>>"
+    };
+    /*
+        dom: "<'row'<'col-sm-12'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-4'i><'col-sm-8'p>>"
+    */
+</script>

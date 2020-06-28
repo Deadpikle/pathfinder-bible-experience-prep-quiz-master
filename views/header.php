@@ -2,6 +2,8 @@
 
 use Yamf\Util;
 
+require_once('app/functions_old.php');
+
 $homePath = $app->basePath == "" ? "/" : $app->basePath;
 
     $htmlTitle = isset($title) ? $title . ' - ' . $app->websiteTabTitle : $app->websiteTabTitle;

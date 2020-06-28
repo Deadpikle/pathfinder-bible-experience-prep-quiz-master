@@ -13,9 +13,9 @@
 {% endif %}
 {% set currentRequest = str_replace('/', '', currentRequest) %}
 
-{% set homeHeaderActiveStatus = str_contains('home', currentRequest) and not str_contains('home-section', currentRequest) ? 'active' : '' %}
-{% set aboutHeaderActiveStatus = str_contains('about', currentRequest) ? 'active' : '' %}
-{% set adminHeaderActiveStatus = str_contains('admin', currentRequest) ? 'active' : '' %}
+{% set homeHeaderActiveStatus = 'home' in currentRequest and not 'home-section' in currentRequest ? 'active' : '' %}
+{% set aboutHeaderActiveStatus = 'about' in currentRequest ? 'active' : '' %}
+{% set adminHeaderActiveStatus = 'admin' in currentRequest ? 'active' : '' %}
 {% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' %}
     {% set homeHeaderActiveStatus = 'active' %}
 {% endif %}
@@ -57,6 +57,9 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/jquery.tablesorter.widgets.js" integrity="sha256-ntYf/f8FwONqwWYyCSyuPnkKBvh58KcFZkem8x15dOI=" crossorigin="anonymous"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.29.5/js/widgets/widget-filter-formatter-html5.min.js" integrity="sha256-tP9/Kjrq6K2IGcLqni6LTTPGTthgtxb7omdC3RNyQW8=" crossorigin="anonymous"></script>
         {% endif %}
+
+        {% block headers %}
+        {% endblock %}
 
         <script src="{{ app.yurl('/js/common.js') }}?{{ filemtime("js/common.js") }}"></script>
         {% if not app.isLocalHost and not app.isGuest and analyticsURL != '' %}
