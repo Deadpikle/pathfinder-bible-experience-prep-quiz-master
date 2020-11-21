@@ -1,5 +1,7 @@
 # Pathfinder Bible Experience Quiz Engine
 
+NOTICE: If you are looking for the website at http://pbe.uccsda.org, it's down right now. Please visit https://babien.co/pbe to find contact information for updates regarding the status of that website. Thank you.
+
 The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bible-experience) (PBE) Quiz Engine is a Bible quiz engine specifically tailored for the [Pathfinders](http://www.pathfindersonline.org/) in the North American Division of Seventh-day Adventists. It can be used for a general purpose Bible quiz engine, though! It supports the following nifty features:
 
 * Robust and full-featured quiz setup
