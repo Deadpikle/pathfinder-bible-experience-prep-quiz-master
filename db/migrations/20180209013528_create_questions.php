@@ -29,8 +29,8 @@ class CreateQuestions extends AbstractMigration
     public function change()
     {
         $table = $this->table('Questions', ['id' => 'QuestionID', 'collation'=>'utf8mb4_unicode_ci']);
-        $table->addColumn('Question', 'string', ['limit' => 10000]);
-        $table->addColumn('Answer', 'string', ['limit' => 10000]);
+        $table->addColumn('Question', 'string', ['limit' => 7500]);
+        $table->addColumn('Answer', 'string', ['limit' => 7500]);
         $table->addColumn('NumberPoints', 'integer');
         $table->addColumn('DateCreated', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
         $table->addColumn('DateModified', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
