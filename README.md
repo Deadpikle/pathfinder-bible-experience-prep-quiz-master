@@ -1,5 +1,7 @@
 # Pathfinder Bible Experience Quiz Engine
 
+NOTICE: If you are looking for the website at http://pbe.uccsda.org, it's down right now. Please visit https://babien.co/pbe to find contact information for updates regarding the status of that website. Thank you.
+
 The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bible-experience) (PBE) Quiz Engine is a Bible quiz engine specifically tailored for the [Pathfinders](http://www.pathfindersonline.org/) in the North American Division of Seventh-day Adventists. It can be used for a general purpose Bible quiz engine, though! It supports the following nifty features:
 
 * Robust and full-featured quiz setup
@@ -39,7 +41,7 @@ Minimum requirements: PHP 7.1+ and a MariaDB database.
 5. Edit phinx.yml with your db details (note that default_database is really the default environment -_- -- see https://github.com/cakephp/phinx/issues/984)
 6. `vendor/bin/phinx migrate -e development` (or other environment name)
 7. Seed database using `vendor/bin/phinx seed:run`
-8. Copy the `config-private.php` to `config-private.php`. You don't necessarily have to adjust anything here unless you want to change the session name (for instance, if you're hosting multiple versions of the site. If so, these should be unique between sites on the same host).
+8. Copy the `config-private.sample.php` to `config-private.php`. You don't necessarily have to adjust anything here other than the DB details unless you want to change the session name (for instance, if you're hosting multiple versions of the site on one server instance. If so, these should be unique between sites on the same host).
 
 If you have issues with the database migrations, https://stackoverflow.com/a/25782795/3938401 might be helpful, and you might want to use 127.0.0.1 instead of `localhost`
 
