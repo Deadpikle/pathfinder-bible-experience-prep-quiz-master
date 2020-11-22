@@ -1,0 +1,111 @@
+
+{% set homePath = app.basePath == '' ? '/' : app.basePath %}
+{% set htmlTitle = '' %}
+{% if title is defined %} 
+    {% set htmlTitle = title ~ ' - ' ~ app.websiteTabTitle %}
+{% else %}
+    {% set htmlTitle = app.websiteTabTitle %}
+{% endif %}
+
+{% set currentRequest = str_replace(app.basePath, '', requestURI()) %}
+{% if strEndsWith(currentRequest, '/') %}
+    {% set currentRequest = substr(currentRequest, 0, -1) %}
+{% endif %}
+{% set currentRequest = str_replace('/', '', currentRequest) %}
+
+{% set homeHeaderActiveStatus = 'home' in currentRequest and not 'home-section' in currentRequest ? 'active' : '' %}
+{% set aboutHeaderActiveStatus = 'about' in currentRequest ? 'active' : '' %}
+{% set adminHeaderActiveStatus = 'admin' in currentRequest ? 'active' : '' %}
+{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' %}
+    {% set homeHeaderActiveStatus = 'active' %}
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{ htmlTitle }}</title>
+        <link rel="stylesheet" href="{{ app.yurl('/css/normalize.css') }}" />
+
+        <!-- Favicon Items -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ app.yurl('/files/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ app.yurl('/files/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ app.yurl('/files/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ app.yurl('/files/site.webmanifest') }}">
+        <link rel="mask-icon" href="{{ app.yurl('/files/safari-pinned-tab.svg') }}" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#00aba9">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="{{ app.yurl('/css/common.css') }}?{{ filemtime("css/common.css") }}" />
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="{{ app.yurl('/lib/autosize.min.js') }}"></script>
+
+        <!-- For admin pages -->
+        <script type="text/javascript" src="{{ app.yurl('/lib/html.sortable.min.js') }}"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
+
+        {% block headers %}
+        {% endblock %}
+
+        <script src="{{ app.yurl('/js/common.js') }}?{{ filemtime("js/common.js") }}"></script>
+        {% if not app.isLocalHost and not app.isGuest and analyticsURL != '' %}
+            <!-- Piwik (code removed) -->
+            <!-- End Piwik Code -->
+        {% endif %}
+    </head>
+    <body class="d-flex flex-column sticky-footer-wrapper">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container">
+                    <a href="{{ homePath }}" class="navbar-brand">{{ app.websiteName }}</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                            {% if app.loggedIn %}
+                                <li class="nav-item {{ homeHeaderActiveStatus }} active">
+                                    <a class="nav-link" href="{{ homePath }}">Home</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item {{ aboutHeaderActiveStatus }}">
+                                <a class="nav-link" href="{{ app.yurl('/about') }}">About</a>
+                            </li>
+                            {% if app.loggedIn and app.isAdmin %}
+                                <li class="nav-item {{ adminHeaderActiveStatus }}">
+                                    <a class="nav-link" href="{{ app.yurl('/admin') }}">Admin Panel</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <ul class="navbar-nav">
+                            {% if app.loggedIn %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ app.yurl('/logout') }}">Logout</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <body>
+            <main class="flex-fill">
+                <div id="main" class="container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
+        </body>
+        <footer class="container">
+            <p>
+                <a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017-{{ 'now' | date('Y') }} Michael Babienco. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}
+            </p>
+        </footer>
+    </body>
+    <script type="text/javascript">
+        $(".button-collapse").sideNav();
+    </script>
+</html>

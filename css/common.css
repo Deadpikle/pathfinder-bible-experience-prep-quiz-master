@@ -1,15 +1,18 @@
-body {
-    display: flex; /* ...why did I put this here? It concerns me...maybe it's causing issues... */
-    min-height: 100vh;
-    flex-direction: column;
-}
-
 #side-nav-title {
     font-size: 24px;
 }
 
-main {
-    flex: 1 0 auto;
+/* sticky footer to bottom: https://stackoverflow.com/a/49562840/3938401 */
+body, .sticky-footer-wrapper {
+    min-height: 100vh;
+}
+ 
+.flex-fill {
+    flex: 1 1 auto;
+}
+
+body main {
+    margin-top: 1em;
 }
       
 .back {

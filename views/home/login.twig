@@ -1,19 +1,21 @@
-{% extends "layouts/main.twig" %}
+{% extends "layouts/bootstrap.twig" %}
 
 {% block content %}
 
 <h2>Welcome!</h2>
 
+<p><strong>Please enter your access code below.</strong></p>
+
 {% include 'includes/error-message.twig' %}
 
 <form method="post">
     <div class="row">
-        <div class="input-field col s12 m4">
-            <input type="password" id="access-code" name="access-code" required/>
+        <div class="form-group col-sm-12 col-md-4">
             <label for="access-code">Access code</label>
+            <input class="form-control" type="password" id="access-code" name="access-code" required/>
         </div>
     </div>
-    <button class="btn waves-effect waves-light submit" type="submit" name="action">Login</button>
+    <button class="btn btn-primary" type="submit" name="action">Login</button>
 </form>
 
 {% endblock %}

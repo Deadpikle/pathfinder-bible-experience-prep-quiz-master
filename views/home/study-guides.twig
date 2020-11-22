@@ -1,21 +1,25 @@
-{% extends "layouts/main.twig" %}
+{% extends "layouts/bootstrap.twig" %}
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Study Guides</li>
+    </ol>
+</nav>
 
-<h2>Study Guides</h2>
+<h2>Study Guides for {{ 'now' | date('Y') }}</h2>
 
 <div id="view-study-guides">
     {% if guides | length == 0 %}
         <p>There are no study guides available at this time.</p>
     {% else %}
-        <ul class="browser-default">
+        <ul>
             {% for guide in guides %}
                 <li>
                     <td>
-                        <a target="_blank" class="btn-flat blue-text waves-effect waves-blue no-uppercase" 
-                            href="{{ app.yurl('/' ~  guide.fileName) }}">
+                        <a target="_blank" class="btn btn-outline-primary" href="{{ app.yurl('/' ~  guide.fileName) }}">
                             {{ guide.displayName }}
                         </a>
                     </td> 
