@@ -1,4 +1,4 @@
-{% extends "layouts/main.twig" %}
+{% extends "layouts/bootstrap.twig" %}
 
 {% block headers %}
 
@@ -8,37 +8,34 @@
 
 {% block content %}
 
-<!-- https://github.com/Dogfalo/materialize/issues/1376 -->
-<style type="text/css">
-    [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
-        position: static;
-        left: 0px; 
-        opacity: 1; 
-    }
-</style>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Years</li>
+    </ol>
+</nav>
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
-
-<h4>Years</h4>
+<h2>Years</h2>
 
 <div class="" id="years-div">
     <div class="" id="create">
         <h5>Add Year</h5>
-        <form action="{{ app.yurl('/admin/years/add') }}" method="post">
+        <form class="form" action="{{ app.yurl('/admin/years/add') }}" method="post">
             <div class="row">
-                <div class="input-field col s6 m4">
-                    <input type="number" id="year" name="year" value="2026" required/>
+                <div class="form-group col-sm-6 col-md-4">
                     <label for="year">Year</label>
+                    <input class="form-control" type="number" id="year" name="year" value="2026" required/>
                 </div>
-                <div class="input-field col s6 m4">
-                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Year</button>
+                <div class="form-group col-sm-6 col-md-4 mt-auto">
+                    <button class="btn btn-primary btn-inline" type="submit" name="action">Add Year</button>
                 </div>
             </div>
         </form>
     </div>
     <div class="divider"></div>
     <div class="">
-        <table class="striped" id="years-table">
+        <table class="table table-striped" id="years-table">
             <thead>
                 <tr>
                     <th>Year</th>
@@ -54,7 +51,7 @@
                         <td>{{ year.isCurrent ? 'Yes' : '' }}</td>
                         <td>
                             {% if not year.isCurrent %}
-                                <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/years/' ~ year.yearID ~ '/make-current') }}">Make current</a>
+                                <a class="btn btn-primary" href="{{ app.yurl('/admin/years/' ~ year.yearID ~ '/make-current') }}">Make current</a>
                             {% endif %}
                         </td>
                     </tr>

@@ -24,7 +24,6 @@
 <html lang="en">
     <head>
         <title>{{ htmlTitle }}</title>
-        <link rel="stylesheet" href="{{ app.yurl('/css/normalize.css') }}" />
 
         <!-- Favicon Items -->
         <link rel="apple-touch-icon" sizes="180x180" href="{{ app.yurl('/files/apple-touch-icon.png') }}">
@@ -58,7 +57,7 @@
     </head>
     <body class="d-flex flex-column sticky-footer-wrapper">
         <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-info">
                 <div class="container">
                     <a href="{{ homePath }}" class="navbar-brand">{{ app.websiteName }}</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +66,7 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav mr-auto">
                             {% if app.loggedIn %}
-                                <li class="nav-item {{ homeHeaderActiveStatus }} active">
+                                <li class="nav-item {{ homeHeaderActiveStatus }}">
                                     <a class="nav-link" href="{{ homePath }}">Home</a>
                                 </li>
                             {% endif %}
@@ -99,10 +98,12 @@
                 </div>
             </main>
         </body>
-        <footer class="container">
-            <p>
-                <a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017-{{ 'now' | date('Y') }} Michael Babienco. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}
-            </p>
+        <footer>
+            <div class="container">
+                <p>
+                    <a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017-{{ 'now' | date('Y') }} Michael Babienco. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}
+                </p>
+            <div>
         </footer>
     </body>
     <script type="text/javascript">

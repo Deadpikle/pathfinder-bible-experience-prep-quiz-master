@@ -14,6 +14,19 @@ body, .sticky-footer-wrapper {
 body main {
     margin-top: 1em;
 }
+
+footer.light-text {
+    color: #EEEEEE;
+}
+
+footer.light-text a {
+    color: #7bdeff;
+}
+
+footer p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
       
 .back {
     margin-top: 1em;
@@ -287,17 +300,10 @@ h5#question-text {
     margin-bottom: -1em;
 }
 
-.dataTables_wrapper div.row {
-    margin-top: 1em;
-    margin-bottom: 0em;
+.dataTables_filter {
+    float: left !important;
 }
 
-.dataTables_wrapper div.row:nth-child(1) label {
-    font-size: 16px;
-    color: black;
-}
-
-.dataTables_wrapper div.row:nth-child(2) {
-    margin-top: 0em;
-    margin-bottom: 0em;
+.dataTable tbody tr td {
+    vertical-align: middle;
 }
