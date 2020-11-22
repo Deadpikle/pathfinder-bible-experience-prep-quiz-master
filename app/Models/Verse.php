@@ -12,7 +12,7 @@ class Verse
     
     public $chapterID;
 
-    public function __construct(int $verseID, int $number)
+    public function __construct(?int $verseID, ?int $number)
     {
         $this->verseID = $verseID;
         $this->number = $number;
