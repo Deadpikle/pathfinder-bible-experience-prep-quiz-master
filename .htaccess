@@ -12,4 +12,5 @@
     RewriteRule ^config-private-sample\.php$ - [F]
     RewriteRule ^config-private\.php$ - [F]
     RewriteRule ^config\.php$ - [F]
+    RewriteRule ^TODO\.txt$ - [F]
 </IfModule>
