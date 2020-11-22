@@ -1,18 +1,24 @@
-{% extends "layouts/main.twig" %}
+{% extends "layouts/bootstrap.twig" %}
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/years') }}">Back</a></p>
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/years') }}">Years</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Change Current Year</li>
+    </ol>
+</nav>
 
 <div id="make-year-current">
-    <h4> Are you sure you want to make {{ year.year }} the website's current year? This will change which questions are displayed, which books are used, which commentaries are used, and which study guides are available. Only do this if you're SURE you know what you're doing!</h4>
+    <h2> Are you sure you want to make {{ year.year }} the website's current year? This will change which questions are displayed, which books are used, which commentaries are used, and which study guides are available. Only do this if you're SURE you know what you're doing!</h2>
 
     {% include 'includes/error-message.twig' %}
     
     <form method="post">
         {{ csrf('make-year-current') | raw }}
-        <button class="btn waves-effect waves-light submit blue white-text" type="submit" name="action">Make {{ year.year }} the current year</button>
+        <button class="btn btn-primary" type="submit" name="action">Make {{ year.year }} the current year</button>
     </form>
 </div>
 
