@@ -69,7 +69,7 @@ class User
         return $_SESSION['PreferredLanguageID'] ?? -1;
     }
 
-    private function loadUsers(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadUsers(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT UserID, Username, EntryCode, ut.UserTypeID, ut.Type, ut.DisplayName AS UserTypeDisplayName, 
@@ -130,7 +130,7 @@ class User
     *                         to select from
     * @return string
     */
-    private function random_str($length, $keyspace = '023456789abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ') {
+    private function random_str($length, $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ') {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < $length; ++$i) {
