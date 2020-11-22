@@ -64,7 +64,7 @@ class Chapter
         $query = '
             SELECT DISTINCT c.BookID, c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
             FROM Chapters c
-                JOIN BOOKS b ON b.BookID = c.BookID
+                JOIN Books b ON b.BookID = c.BookID
                 JOIN Verses v ON c.ChapterID = v.ChapterID
                 JOIN Questions q ON v.VerseID = q.StartVerseID
             WHERE b.YearID = ? AND q.IsDeleted = 0
