@@ -10,14 +10,6 @@
     <div class="row">
         <div class="col s12">
             <p class="flow-text">The new {{ app.websiteName }} website was originally developed for <a href="http://www.pathfindersonline.org/">Pathfinder</a> clubs in the <a href="https://www.uccsda.org/">Upper Columbia Conference</a> of <a href="https://www.adventist.org/en/">Seventh-day Adventists</a>. It was created by and is now hosted by <a href="babien.co" target="_blank">Michael Babienco</a>, an alumnus of Southern Adventist University.</p>
-            <p>This website costs the creator approximately $50/year to host, not including time to maintain and update features. If you and your Pathfinder club are willing to donate a few dollars towards the cost of hosting this website, please email Michael Babienco, website creator, at <a href="mailto:michael@babienco">michael@babienco</a>. He'll send you a PayPal link or similar. <strong>This message will be removed when hosting costs have been covered for the current PBE year. Thank you for your help!</strong>
-                <ul class="browser-default">
-                    <li>$12.99 for domain name (pbeprep.com)</li>
-                    <li>$20 email address (admin@pbeprep.com)</li>
-                    <li>$0.18 domain name fees</li>
-                    <li>$16.83 to offset some of the hosting fees (does not cover all hosting fees)</li>
-                </ul>
-            </p>
             {% if conferences | length > 0 %}
                 <p class="flow-text">If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact the adminstrator for your conference:</p>
                 {% for conference in conferences %}
@@ -30,6 +22,14 @@
             <p class="flow-text">{{ app.contactName }}<br>{{ app.contactEmail }}</p>
             <p class="flow-text">If you're submitting information about your Pathfinder club, please send the club name, a link to the club's website or Facebook page (if available), and the name and email address of one or more club leaders who are in charge of the club.</p>
             <p class="flow-text">If you're submitting information about your conference, please send the conference name, a link to the conference's website, and the name and email address of person who will administer website use for your conference.</p>
+            <p class="flow-text">This website costs the creator approximately $50/year to host, not including time to maintain and update features. If you and your Pathfinder club are willing to donate a few dollars towards the cost of hosting this website, please email Michael Babienco, website creator, at <a href="mailto:michael@babienco">michael@babienco</a>. He'll send you a PayPal link or similar. <strong>This message will be removed when hosting costs have been covered for the current PBE year. Thank you for your help!</strong>
+                <ul class="browser-default">
+                    <li>$12.99 for domain name (pbeprep.com)</li>
+                    <li>$20 email address (admin@pbeprep.com)</li>
+                    <li>$0.18 domain name fees</li>
+                    <li>$16.83 to offset some of the hosting fees (does not cover all hosting fees)</li>
+                </ul>
+            </p>
         </div>
     </div>
 </div>
