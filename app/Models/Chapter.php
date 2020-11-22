@@ -92,7 +92,7 @@ class Chapter
             $bookID
         ]);
         $bookData = $stmt->fetchAll();
-        // make sure book doesn't exist
+        // make sure chapter doesn't already exist
         if ($bookData !== true && count($bookData) == 0) {
             $query = '
                 INSERT INTO Chapters (Number, NumberVerses, BookID) VALUES (?, ?, ?)
@@ -103,6 +103,9 @@ class Chapter
                 $numberVerses,
                 $bookID
             ]);
+            // now insert verses into the db for that chapter based on the number of verses
+            $chapterID = $db->lastInsertId();
+            Verse::createAllVersesForChapter($chapterID, $numberVerses, $db);
         }
     }
 
