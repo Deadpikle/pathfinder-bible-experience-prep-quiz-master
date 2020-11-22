@@ -32,8 +32,8 @@
             </div>
         </div>
         <div class="row">
-            <p class="section-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
-            <p class="section-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
+            <p class="section-info" id="according-to-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
+            <p class="section-info" id="fill-in-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
             <div class="input-field col s12 m6">
                 <textarea id="question-text" name="question-text" class="materialize-textarea" 
                         required placeholder="What is the name of Esther's uncle?" 
@@ -46,13 +46,13 @@
                 <label for="question-answer">Answer</label>
             </div>
         </div>
-        <div id="number-of-points-div" class="row negative-top-margin">
-            <div class="input-field col s12 m3">
-                <input type="number" min="0" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required/>
-                <label for="number-of-points">Number of Points</label>
-            </div>
-        </div>
         <div class="row" id="language-select-add-edit-question-container">
+            <div id="number-of-points-div" class="negative-top-margin">
+                <div class="input-field col s12 m3">
+                    <input type="number" min="0" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required/>
+                    <label for="number-of-points">Number of Points</label>
+                </div>
+            </div>
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
                     {% for language in languages %}
@@ -349,12 +349,22 @@
                 $("#number-of-points-div").show();
             }
         }
+
+        function hideShowFillInInfoText(isFillInChecked) {
+            if (isFillInChecked) {
+                document.getElementById('fill-in-info').classList.remove('hide');
+            } else {
+                document.getElementById('fill-in-info').classList.add('hide');
+            }
+        }
+
         $(fillInBlankCheckbox).change(function() {
             modifyAnswerField(this.checked);
+            hideShowFillInInfoText(this.checked);
         });
 
         modifyAnswerField(isFillInInitially);
-
+        hideShowFillInInfoText(isFillInInitially);
     }); 
 </script>
 
