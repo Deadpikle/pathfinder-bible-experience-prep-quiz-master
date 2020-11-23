@@ -72,6 +72,7 @@ class Club
             SELECT c.ClubID, Name, URL, ConferenceID
             FROM Clubs c JOIN Users u ON c.ClubID = u.ClubID
             WHERE u.LastLoginDate > ?
+            GROUP BY c.ClubID
             ORDER BY c.Name';
         $stmt = $db->prepare($query);
         $stmt->execute([$thirtyDaysAgo]);
