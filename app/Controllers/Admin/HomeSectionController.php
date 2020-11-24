@@ -44,7 +44,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
                 return new Redirect('/admin');
             }
         }
-        return null;
+        return $response;
     }
 
     public function viewHomeSections(PBEAppConfig $app, Request $request) : Response
