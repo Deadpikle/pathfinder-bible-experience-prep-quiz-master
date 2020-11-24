@@ -70,4 +70,12 @@ class Util
                 substr($UUID, 20);
         return $UUID;
     }
+
+    public static function shouldLowercaseOutput($output) : bool
+    {
+        return !\Yamf\Util::strStartsWith($output, 'T or') && 
+               !\Yamf\Util::strStartsWith($output, 'God') && 
+               !\Yamf\Util::strStartsWith($output, 'Christ') && 
+               !\Yamf\Util::strStartsWith($output, 'Jesus');
+    }
 }

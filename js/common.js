@@ -141,6 +141,14 @@ function padZeros(num, size) {
 function strStartsWith(haystack, needle) {
     return haystack.lastIndexOf(needle, 0) === 0;
 }
+
+function shouldLowercaseOutput($output)
+{
+    return !strStartsWith($output, 'T or') && 
+           !strStartsWith($output, 'God') && 
+           !strStartsWith($output, 'Christ') && 
+           !strStartsWith($output, 'Jesus');
+}
 /*
 $(document).ready(function() {
     $(".dropdown-button").dropdown({gutter: 0, hover: false, belowOrigin: true});

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Question;
+use App\Models\Util;
 use Yamf\Util as YamfUtil;
 
 class PDFGenerator
@@ -35,7 +36,7 @@ class PDFGenerator
                 $output = "Fill in the blanks for " . $verseText . ".";
             }
             else {
-                if (!\Yamf\Util::strStartsWith($output, $startBook) && !\Yamf\Util::strStartsWith($output, 'T or')) {
+                if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
                 $output = "According to " . $verseText . ", " . $output;
@@ -56,7 +57,7 @@ class PDFGenerator
                 $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ".";
             }
             else {
-                if (!\Yamf\Util::strStartsWith($output, $volume) && !\Yamf\Util::strStartsWith($output, 'T or')) {
+                if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
                 $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . $output;
