@@ -193,10 +193,10 @@
                             else {
                                 nextPage.disabled = false;
                             }
-                            /*
+                            
                             // to make datatables work we would need to get the custom sorting
                             // working nicely somehow so that the sorting still worked out nicely.
-                            datatablesProps.columnDefs = [
+                            /*datatablesProps.columnDefs = [
                                 { orderable: false, targets: [-1, -2] }
                             ];
                             datatablesProps.language = {
@@ -281,14 +281,19 @@
                 if (isBibleQuestion(question.Type)) {
                     var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
                     var endVerse = "";
+                    var endVerseDataSort = "";
                     if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
                         endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
+                        endVerseDataSort = question.EndBook + '-' + padZeros(question.EndChapter, 3) + 
+                            padZeros(question.EndVerse, 3);
                     }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
-                    html += '<td>' + startVerse + '</td>';
-                    html += '<td>' + endVerse + '</td>';
+                    var startVerseDataSort = question.StartBook + '-' + padZeros(question.StartChapter, 3) + 
+                        padZeros(question.StartVerse, 3);
+                    html += '<td data-sort="' + startVerseDataSort + '">' + startVerse + '</td>';
+                    html += '<td data-sort="' + startVerseDataSort + '">' + endVerse + '</td>';
                     html += '<td>' + question.NumberPoints + '</td>';
                     html += '<td>' + languageName + '</td>';
                 }

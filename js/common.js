@@ -130,6 +130,12 @@ function lowercaseFirstLetter(string) {
 function removeSpaces(str) {
     return str.replace(/ /g,'');
 }
+
+// https://stackoverflow.com/a/2998822/3938401
+function padZeros(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
 /*
 $(document).ready(function() {
     $(".dropdown-button").dropdown({gutter: 0, hover: false, belowOrigin: true});
