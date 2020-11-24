@@ -263,11 +263,17 @@ class ImportQuestionsController extends BaseAdminController
                 $questionText = str_replace('”', '"', $questionText);
                 $questionText = str_replace('‘', "'", $questionText);
                 $questionText = str_replace('’', "'", $questionText);
+                $questionText = str_replace("\r\n", " ", $questionText);
+                $questionText = str_replace("\r", " ", $questionText);
+                $questionText = str_replace("\n", " ", $questionText);
                 $answerText = trim($row["Answer"]);
                 $answerText = str_replace('“', '"', $answerText);
                 $answerText = str_replace('”', '"', $answerText);
                 $answerText = str_replace('‘', "'", $answerText);
                 $answerText = str_replace('’', "'", $answerText);
+                $answerText = str_replace("\r\n", " ", $answerText);
+                $answerText = str_replace("\r", " ", $answerText);
+                $answerText = str_replace("\n", " ", $answerText);
 
                 $params = [
                     $questionType, 
