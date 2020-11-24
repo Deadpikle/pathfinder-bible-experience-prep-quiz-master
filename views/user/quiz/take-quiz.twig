@@ -465,7 +465,7 @@
                 else {
                     var questionText = "According to " + verseText + ", ";
                     var dataQuestion = data.question;
-                    if (!strStartsWith(data.question, data.startBook)) {
+                    if (!strStartsWith(data.question, data.startBook) && !strStartsWith(data.question, 'T or')) {
                         dataQuestion = lowercaseFirstLetter(dataQuestion);
                     }
                     questionText += dataQuestion;
@@ -487,9 +487,8 @@
                 else {
                     var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
                         + pageStr + ", ";
-                        
                     var dataQuestion = data.question;
-                    if (!strStartsWith(data.question, data.volume)) {
+                    if (!strStartsWith(data.question, data.volume) && !strStartsWith(data.question, 'T or')) {
                         dataQuestion = lowercaseFirstLetter(dataQuestion);
                     }
                     questionText += dataQuestion;

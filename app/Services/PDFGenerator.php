@@ -35,7 +35,7 @@ class PDFGenerator
                 $output = "Fill in the blanks for " . $verseText . ".";
             }
             else {
-                if (!\Yamf\Util::strStartsWith($output, $startBook)) {
+                if (!\Yamf\Util::strStartsWith($output, $startBook) && !\Yamf\Util::strStartsWith($output, 'T or')) {
                     $output = lcfirst($output);
                 }
                 $output = "According to " . $verseText . ", " . $output;
@@ -56,7 +56,7 @@ class PDFGenerator
                 $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ".";
             }
             else {
-                if (!\Yamf\Util::strStartsWith($output, $volume)) {
+                if (!\Yamf\Util::strStartsWith($output, $volume) && !\Yamf\Util::strStartsWith($output, 'T or')) {
                     $output = lcfirst($output);
                 }
                 $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . $output;
