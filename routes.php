@@ -61,6 +61,7 @@
         '/logout' => ['HomeController', 'logout'],
         '/about' => ['HomeController', 'about'],
         '/active-clubs' => ['HomeController', 'activeClubs'],
+        '/stats' => ['HomeController', 'currentYearStats'],
         '/study-guides' => ['HomeController', 'studyGuides'],
         '/settings' => [['GET', 'HomeController', 'viewSettings'],
                         ['POST', 'HomeController', 'updateSettings']],

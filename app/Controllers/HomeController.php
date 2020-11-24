@@ -15,6 +15,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use App\Services\StatsLoader;
 
 class HomeController
 {
@@ -145,5 +146,17 @@ class HomeController
 
         $didUpdate = true;
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+    }
+
+    public function currentYearStats(PBEAppConfig $app, Request $request)
+    {
+        if (!$app->loggedIn) {
+            return new Redirect('/login');
+        }
+        $year = Year::loadCurrentYear($app->db);
+        $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db);
+        $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db);
+
+        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats'), 'Stats');
     }
 }

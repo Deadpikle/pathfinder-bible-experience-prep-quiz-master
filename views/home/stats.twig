@@ -1,0 +1,78 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+
+<h3>Statistics</h3>
+
+<p>This page shows the number of Q&amp;A questions that have the given chapter or verse as the question's start verse.
+
+<h4>Questions by Chapter</h4>
+
+<div id="qna-by-chapter">
+    <table class="striped responsive-table">
+        <thead>
+            <tr>
+                <th>Chapter</th>
+                <th>Question Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in chapterStats %}
+                <tr>
+                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
+                    <td>{{ item.count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<hr/>
+
+<h4>Questions by Verse</h4>
+
+<div id="qna-by-verse">
+    <table class="striped responsive-table">
+        <thead>
+            <tr>
+                <th>Verse</th>
+                <th>Question Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in verseStats %}
+                <tr>
+                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}-{{ '%03d' | format(item.verse) }}">
+                        {{ item.book }} {{ item.chapter }}:{{ item.verse }}
+                    </td>
+                    <td>{{ item.count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search..."
+        };
+        datatablesProps.iDisplayLength = 50;
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#qna-by-chapter table').DataTable(datatablesProps);
+        $('#qna-by-verse table').DataTable(datatablesProps);
+    });
+</script>
+
+{% endblock %}
