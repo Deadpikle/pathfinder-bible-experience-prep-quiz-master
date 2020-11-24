@@ -12,7 +12,7 @@ class PDFGenerator
         $type = $question["type"];
         $output = trim($question["question"]);
         $isFillIn = Question::isTypeFillIn($type);
-        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?")) {
+        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?") && !YamfUtil::strEndsWith($output, "specific.")) {
             $output .= "?";
         }
         if (Question::isTypeBibleQnA($type)) {
