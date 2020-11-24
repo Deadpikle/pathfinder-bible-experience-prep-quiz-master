@@ -35,7 +35,10 @@ class PDFGenerator
                 $output = "Fill in the blanks for " . $verseText . ".";
             }
             else {
-                $output = "According to " . $verseText . ", " . lcfirst($output);
+                if (!\Yamf\Util::strStartsWith($output, $startBook)) {
+                    $output = lcfirst($output);
+                }
+                $output = "According to " . $verseText . ", " . $output;
             }
         }
         else if (Question::isTypeCommentaryQnA($type)) {
@@ -53,7 +56,10 @@ class PDFGenerator
                 $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ".";
             }
             else {
-                $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . lcfirst($output);
+                if (!\Yamf\Util::strStartsWith($output, $volume)) {
+                    $output = lcfirst($output);
+                }
+                $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . $output;
             }
         }
         return $output;

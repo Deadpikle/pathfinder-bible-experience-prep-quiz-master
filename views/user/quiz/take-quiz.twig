@@ -463,7 +463,12 @@
                     $(fillInDiv).show();
                 }
                 else {
-                    var questionText = "According to " + verseText + ", " + lowercaseFirstLetter(data.question);
+                    var questionText = "According to " + verseText + ", ";
+                    var dataQuestion = data.question;
+                    if (!strStartsWith(data.question, data.startBook)) {
+                        dataQuestion = lowercaseFirstLetter(dataQuestion);
+                    }
+                    questionText += dataQuestion;
                     $("#question-text").html(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();
@@ -481,7 +486,13 @@
                 }
                 else {
                     var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
-                        + pageStr + ", " + lowercaseFirstLetter(data.question);
+                        + pageStr + ", ";
+                        
+                    var dataQuestion = data.question;
+                    if (!strStartsWith(data.question, data.volume)) {
+                        dataQuestion = lowercaseFirstLetter(dataQuestion);
+                    }
+                    questionText += dataQuestion;
                     $("#question-text").html(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();

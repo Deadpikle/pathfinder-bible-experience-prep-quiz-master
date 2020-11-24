@@ -136,6 +136,11 @@ function padZeros(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
 }
+
+// https://stackoverflow.com/a/4579228/3938401
+function strStartsWith(haystack, needle) {
+    return haystack.lastIndexOf(needle, 0) === 0;
+}
 /*
 $(document).ready(function() {
     $(".dropdown-button").dropdown({gutter: 0, hover: false, belowOrigin: true});
