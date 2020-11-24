@@ -307,6 +307,7 @@ class ImportQuestionsController extends BaseAdminController
         }
 
         $defaultLanguage = Language::loadDefaultLanguage($app->db);
-        return new TwigView('admin/upload-csv', compact('errors', 'questionsSuccessfullyAdded', 'questionsFailedToAdd', 'defaultLanguage'), 'Upload Questions');
+        $didProcessUpload = true;
+        return new TwigView('admin/upload-csv', compact('errors', 'questionsSuccessfullyAdded', 'questionsFailedToAdd', 'defaultLanguage', 'didProcessUpload'), 'Upload Questions');
     }
 }

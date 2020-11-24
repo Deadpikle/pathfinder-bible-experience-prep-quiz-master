@@ -4,13 +4,13 @@
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
 
-{% if app.isPostRequest %}
+{% if didProcessUpload %}
     <p>
-        <b>Upload results:</b>{{ questionsSuccessfullyAdded }} questions successfully added. 
+        <strong>Upload results: </strong>{{ questionsSuccessfullyAdded }} questions successfully added. 
         {% if questionsFailedToAdd > 0 %}
             {{ questionsFailedToAdd }} questions couldn't be added to the system.</p> <!-- close of initial paragraph -->
             {% if errors != '' %}
-                <p>{{ errors }}</p>
+                <p>{{ errors | raw }}</p>
             {% endif %}
         {% else %}
             </p> <!-- close of initial paragraph -->
