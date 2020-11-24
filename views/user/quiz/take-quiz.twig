@@ -442,7 +442,10 @@
         }, false);
         
         function displayQuestion(data) {
-            if (!isFillInQuestion(data.type) && !data.question.endsWith("?")) {
+            if (!$isFillInQuestion(data.type) && data.question.endsWith('.') && data.question.length > 0) {
+                data.question = data.question.slice(0, -1) . '?';
+            }
+            if (!isFillInQuestion(data.type) && !data.question.endsWith("?") && !data.question.endsWith("specific.")) {
                 data.question += "?";
             }
             if (isBibleQuestion(data.type)) {

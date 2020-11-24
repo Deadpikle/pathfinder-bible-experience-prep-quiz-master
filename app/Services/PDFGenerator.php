@@ -12,6 +12,9 @@ class PDFGenerator
         $type = $question["type"];
         $output = trim($question["question"]);
         $isFillIn = Question::isTypeFillIn($type);
+        if (!$isFillIn && YamfUtil::strEndsWith($output, '.') && strlen($output) > 0) {
+            $output = substr($output, 0, -1) . '?';
+        }
         if (!$isFillIn && !YamfUtil::strEndsWith($output, "?") && !YamfUtil::strEndsWith($output, "specific.")) {
             $output .= "?";
         }
