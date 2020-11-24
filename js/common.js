@@ -145,7 +145,7 @@ function strStartsWith(haystack, needle) {
 function shouldLowercaseOutput($output)
 {
     return !strStartsWith($output, 'T or') && 
-           !strStartsWith($output, 'God') && 
+           !(strStartsWith($output, 'God') && !strStartsWith($output, 'Gods') && !strStartsWith($output, 'gods')) &&
            !strStartsWith($output, 'Christ') && 
            !strStartsWith($output, 'Jesus');
 }

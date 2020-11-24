@@ -74,7 +74,8 @@ class Util
     public static function shouldLowercaseOutput($output) : bool
     {
         return !\Yamf\Util::strStartsWith($output, 'T or') && 
-               !\Yamf\Util::strStartsWith($output, 'God') && 
+               !(\Yamf\Util::strStartsWith($output, 'God') && !\Yamf\Util::strStartsWith($output, 'Gods') && 
+                !\Yamf\Util::strStartsWith($output, 'gods')) &&
                !\Yamf\Util::strStartsWith($output, 'Christ') && 
                !\Yamf\Util::strStartsWith($output, 'Jesus');
     }
