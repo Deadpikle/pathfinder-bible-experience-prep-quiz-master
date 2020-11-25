@@ -19,6 +19,8 @@ use App\Models\Views\TwigView;
 use App\Models\Year;
 use finfo;
 use PDOException;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\NotFound;
@@ -152,5 +154,69 @@ class BookController extends BaseAdminController implements IRequestValidator
             $error = 'Unable to validate request. Please try again.';
             return new TwigView('admin/books/verify-delete-chapter', compact('book', 'chapter', 'error'), 'Delete Chapter');
         }
+    }
+
+    // core logic should be refactored elsewhere...along with an ExcelResponse class...
+    public function downloadExcelTemplateFoChapter(PBEAppConfig $app, Request $request)
+    {
+        $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
+        if ($book === null || $chapter === null || $chapter->bookID != $book->bookID) {
+            return new TwigNotFound();
+        }
+        // ok, create a spreadsheet
+        $spreadsheet = new Spreadsheet();
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $vals = [];
+        // setup first row
+        $vals[] = [
+            'Type',             // A
+            'Fill in?',         // B
+            'Language',         // C
+            'Question',         // D
+            'Answer',           // E
+            'Points',           // F
+            'Start Book',       // G
+            'Start Chapter',    // H
+            'Start Verse',      // I
+            'End Book',         // J
+            'End Chapter',      // K
+            'End Verse',        // L
+        ];
+        for ($i = 0; $i < $chapter->numberVerses; $i++) {
+            for ($j = 0; $j < 4; $j++) {
+                $vals[] = [
+                    'Bible', 'No', 'English', '', '', 1, 
+                    $book->name, $chapter->number, $i + 1, $book->name, '', ''
+                ];
+            }
+        }
+        $sheet->fromArray($vals, null, 'A1');
+        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
+        // hide first three columns as user doesn't need to change those in this case
+        $sheet->getColumnDimension('A')->setVisible(false);
+        $sheet->getColumnDimension('B')->setVisible(false);
+        $sheet->getColumnDimension('C')->setVisible(false);
+        // adjust width
+        $sheet->getColumnDimension('D')->setWidth(50);
+        $sheet->getColumnDimension('E')->setWidth(50);
+
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+        $sheet->getColumnDimension('K')->setAutoSize(true);
+        $sheet->getColumnDimension('L')->setAutoSize(true);
+
+        // output
+        
+        $writer = new Xlsx($spreadsheet);
+        $fileName = $book->name . '-' . $chapter->number . '-Verses-' . date('Y-m-d-h-i-s') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
+        ob_end_clean();
+        $writer->save('php://output');
     }
 }

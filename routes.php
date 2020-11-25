@@ -118,6 +118,7 @@
                                            ['POST', 'Admin/BookController', 'deleteBook']],
         '/admin/books/{bookID}/chapters' => ['Admin/BookController', 'viewBookChapters'],
         '/admin/books/{bookID}/chapters/create' => ['POST', 'Admin/BookController', 'createChapter'],
+        '/admin/books/{bookID}/chapters/{chapterID}/download-excel' => ['GET', 'Admin/BookController', 'downloadExcelTemplateFoChapter'],
         '/admin/books/{bookID}/chapters/{chapterID}/delete' => [['GET', 'Admin/BookController', 'verifyDeleteChapter'],
                                                                 ['POST', 'Admin/BookController', 'deleteChapter']],
         // commentaries
