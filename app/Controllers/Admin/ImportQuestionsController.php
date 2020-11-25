@@ -140,7 +140,10 @@ class ImportQuestionsController extends BaseAdminController
                     $errors .= "Data does not have the Fill in? column.<br>";
                     continue;
                 }
-                $language = trim($row["Language"]);
+                $language = trim($row["Language"] ?? 'English');
+                if ($language === '') {
+                    $language = 'English';
+                }
                 $languageID = -1;
                 foreach ($allLanguages as $availableLanguage) {
                     //echo $availableLanguage["Name"] . ' vs ' . $language . '<br>';
