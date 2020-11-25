@@ -200,7 +200,10 @@ class ImportQuestionsController extends BaseAdminController
                     $bookName = trim($row["Start Book"]);
                     $chapterNumber = trim($row["Start Chapter"]);
                     $verseNumber = trim($row["Start Verse"]);
-                    if (isset($rawBooks[$bookName]) 
+                    if ($bookName !== ''
+                        && $chapterNumber !== ''
+                        && $verseNumber !== ''
+                        && isset($rawBooks[$bookName]) 
                         && isset($rawBooks[$bookName][$chapterNumber]) 
                         && isset($rawBooks[$bookName][$chapterNumber][$verseNumber])) {
                         $startVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
@@ -213,11 +216,14 @@ class ImportQuestionsController extends BaseAdminController
                         }
                         continue;
                     }
-                    $bookName = trim($row["End Book"]);
-                    $chapterNumber = trim($row["End Chapter"]);
-                    $verseNumber = trim($row["End Verse"]);
+                    $bookName = trim($row["End Book"] ?? '');
+                    $chapterNumber = trim($row["End Chapter"] ?? '');
+                    $verseNumber = trim($row["End Verse"] ?? '');
                     if ($bookName !== "") {
-                        if (isset($rawBooks[$bookName]) 
+                        if ($bookName !== ''
+                            && $chapterNumber !== ''
+                            && $verseNumber !== ''
+                            && isset($rawBooks[$bookName]) 
                             && isset($rawBooks[$bookName][$chapterNumber]) 
                             && isset($rawBooks[$bookName][$chapterNumber][$verseNumber])) {
                             $endVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
