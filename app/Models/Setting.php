@@ -72,8 +72,8 @@ class Setting
         $app->settings = Setting::loadAllSettingsAsKeyValueArray($app->db);
         $app->contactName = $app->settings[Setting::AboutContactNameKey()] ?? '[name redacted]';
         $app->contactEmail = $app->settings[Setting::AboutContactEmailKey()] ?? '[email redacted]';
-        $app->websiteName = isset($app->settings[Setting::WebsiteNameKey()]) ? $app->settings[Setting::WebsiteNameKey()] : 'UCC Quiz Engine';
-        $app->websiteTabTitle = isset($app->settings[Setting::WebsiteTabTitleKey()]) ? $app->settings[Setting::WebsiteTabTitleKey()] : 'UCC PBE';
+        $app->websiteName = isset($app->settings[Setting::WebsiteNameKey()]) ? $app->settings[Setting::WebsiteNameKey()] : 'PBE Prep and Quiz Master';
+        $app->websiteTabTitle = isset($app->settings[Setting::WebsiteTabTitleKey()]) ? $app->settings[Setting::WebsiteTabTitleKey()] : 'PBE Prep and Quiz Master';
         $app->analyticsURL = '';
         $app->analyticsSiteID = '1';
         $app->footerText = isset($app->settings[Setting::FooterTextKey()]) ? $app->settings['FooterText'] : '';

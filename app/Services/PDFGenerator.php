@@ -108,8 +108,8 @@ class PDFGenerator
     {
         $pdf = new PBEPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
         $pdf->SetTitle("PBE Study Guide");
-        $pdf->SetAuthor("Quiz Engine");
-        $pdf->SetCreator("Quiz Engine");
+        $pdf->SetAuthor("Quiz Master"); // TODO: should be website name
+        $pdf->SetCreator("Quiz Master");
         $pdf->SetKeywords("quiz study Bible PBE Pathfinder");
         $pdf->SetSubject("PBE Study Guides");
         $pdf->AliasNbPages();

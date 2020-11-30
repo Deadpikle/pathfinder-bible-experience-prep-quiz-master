@@ -4,7 +4,7 @@ NOTICE: If you are looking for the website at http://pbe.uccsda.org (PBE Quiz Ma
 
 **If you are looking for the PBE Quiz Engine by Tony Phillips, please visit http://pbequizengine.com/.**
 
-The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bible-experience) (PBE) Quiz Engine is a Bible quiz engine specifically tailored for the [Pathfinders](http://www.pathfindersonline.org/) in the North American Division of Seventh-day Adventists. It can be used for a general purpose Bible quiz engine, though! It supports the following nifty features:
+The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bible-experience) (PBE) Prep and Quiz Master is a Bible quiz website specifically tailored for the [Pathfinders](http://www.pathfindersonline.org/) in the North American Division of Seventh-day Adventists. It can be used for a general purpose Bible quiz website, though! It supports the following nifty features:
 
 * Robust and full-featured quiz setup
     * Q&A style or fill in the blank style questions

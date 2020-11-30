@@ -53,7 +53,7 @@ class DefaultSeeder extends AbstractSeed
             ],
             [
                 'SettingKey' => 'WebsiteName',
-                'SettingValue' => 'PBE Quiz Engine',
+                'SettingValue' => 'PBE Prep and Quiz Master',
                 'DisplayName' => 'Website Name'
             ],
             [
