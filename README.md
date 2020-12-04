@@ -39,7 +39,6 @@ Minimum requirements: PHP 7.1+ and a MariaDB database.
 1. `curl -s https://getcomposer.org/installer | php`
 2. `php composer.phar install --no-dev`
 3. `vendor/bin/phinx init .`
-4. `vendor/bin/phinx migrate -e development`
 5. Edit phinx.yml with your db details (note that default_database is really the default environment -_- -- see https://github.com/cakephp/phinx/issues/984)
 6. `vendor/bin/phinx migrate -e development` (or other environment name)
 7. Seed database using `vendor/bin/phinx seed:run`
