@@ -13,9 +13,11 @@
     {% if app.isConferenceAdmin or app.isWebAdmin %}
         <h4>Conference Administrator Functions</h4>
         <ul>
-            <li class="home-buttons">
-                <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
-            </li>
+            {% if app.isWebAdmin %}
+                <li class="home-buttons">
+                    <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
+                </li>
+            {% endif %}
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/clubs') }}">Pathfinder Clubs</a></li>
             <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/study-guides') }}">Study Guides</a></li>
         </ul>
