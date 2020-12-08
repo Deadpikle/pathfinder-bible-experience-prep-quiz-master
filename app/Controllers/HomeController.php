@@ -157,6 +157,11 @@ class HomeController
         $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db);
         $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db);
 
-        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats'), 'Stats');
+        $totalQuestions = 0;
+        foreach ($chapterStats as $stats) {
+            $totalQuestions += $stats['count'];
+        }
+
+        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'totalQuestions'), 'Stats');
     }
 }
