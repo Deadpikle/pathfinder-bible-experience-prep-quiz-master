@@ -152,8 +152,8 @@ class Question
         ';
         $params = [
             $this->type,
-            $this->question,
-            $this->answer,
+            trim($this->question),
+            trim($this->answer),
             $this->numberPoints,
             $this->lastEditedByID,
             $this->startVerseID,
@@ -176,8 +176,8 @@ class Question
             CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ? WHERE QuestionID = ?';
         $params = [
             $this->type,
-            $this->question,
-            $this->answer,
+            trim($this->question),
+            trim($this->answer),
             $this->numberPoints,
             $this->lastEditedByID,
             $this->startVerseID,
