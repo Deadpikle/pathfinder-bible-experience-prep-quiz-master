@@ -55,7 +55,7 @@ class QuestionController
             $request->post['pageSize'],
             $request->post['pageOffset'],
             $request->post['languageID'],
-            $_SESSION['UserID'],
+            User::currentUserID(), 
             $app->db
         );
         echo $questionData;
