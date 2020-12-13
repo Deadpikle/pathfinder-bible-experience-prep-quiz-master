@@ -300,7 +300,7 @@ class ImportQuestionsController extends BaseAdminController
                     $commentaryStartPage,
                     $commentaryEndPage,
                     User::currentUserID(),
-                    false, 
+                    (int)false, // IsDeleted
                     $languageID
                 ];
                 //print_r($params);
