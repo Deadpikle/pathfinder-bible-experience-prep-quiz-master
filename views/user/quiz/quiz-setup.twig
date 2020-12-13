@@ -90,7 +90,7 @@
         <p class=""><b>Maximum number of questions and maximum number of points per question</b></p>
         <div class="row">
             <div class="input-field col s6 m3">
-                <input type="number" id="max-questions" name="max-questions" required value="30" max="500" min="1"/>
+                <input type="number" id="max-questions" name="max-questions" required value="30" max="{{ app.isGuest ? 100 : 500 }}" min="1"/>
                 <label for="max-questions">Maximum Questions</label>
             </div>
             <div class="input-field col s6 m3">
