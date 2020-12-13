@@ -21,10 +21,14 @@
                             {% if lastBookSeen != '' and lastBookSeen != chapter.bookID %}
                                 </optgroup>
                             {% endif %}
-                            <optgroup label="{{ booksByBookID[chapter.bookID].name }}">
+                            {% if booksByBookID[chapter.bookID] %}
+                                <optgroup label="{{ booksByBookID[chapter.bookID].name }}">
+                            {% endif %}
                             {% set lastBookSeen = chapter.bookID %}
                         {% endif %}
-                        <option value="chapter-{{ chapter.chapterID }}">{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</option>
+                        {% if booksByBookID[chapter.bookID] %}
+                            <option value="chapter-{{ chapter.chapterID }}">{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</option>
+                        {% endif %}
                     {% endfor %}
                     {% if chapters |length > 0 %}
                         </optgroup>

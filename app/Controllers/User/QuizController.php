@@ -37,6 +37,14 @@ class QuizController
         $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
 
         $books = Book::loadBooksForYear($currentYear, $app->db);
+        if ($app->isGuest) {
+            if (count($books) > 0) {
+                $books = [$books[0]]; // guests only get first book
+            }
+            if (count($commentaries) > 0) {
+                $commentaries = [$commentaries[0]]; // guests only get first commentary.
+            }
+        }
         $booksByBookID = [];
         foreach ($books as $book) {
             $booksByBookID[$book->bookID] = $book;
