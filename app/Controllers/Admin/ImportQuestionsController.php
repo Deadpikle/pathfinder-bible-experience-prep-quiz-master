@@ -140,6 +140,12 @@ class ImportQuestionsController extends BaseAdminController
                     $errors .= "Data does not have the Fill in? column.<br>";
                     continue;
                 }
+                $questionText = trim($row["Question"] ?? '');
+                $answerText = trim($row["Answer"] ?? '');
+                if ($questionText === '' && $answerText === '') {
+                    continue; // bail -- question was intentionally left blank
+                }
+
                 $language = trim($row["Language"] ?? 'English');
                 if ($language === '') {
                     $language = 'English';
@@ -267,7 +273,6 @@ class ImportQuestionsController extends BaseAdminController
                     $points = '1';
                 }
 
-                $questionText = trim($row["Question"]);
                 $questionText = str_replace('“', '"', $questionText);
                 $questionText = str_replace('”', '"', $questionText);
                 $questionText = str_replace('‘', "'", $questionText);
@@ -275,7 +280,6 @@ class ImportQuestionsController extends BaseAdminController
                 $questionText = str_replace("\r\n", " ", $questionText);
                 $questionText = str_replace("\r", " ", $questionText);
                 $questionText = str_replace("\n", " ", $questionText);
-                $answerText = trim($row["Answer"]);
                 $answerText = str_replace('“', '"', $answerText);
                 $answerText = str_replace('”', '"', $answerText);
                 $answerText = str_replace('‘', "'", $answerText);
