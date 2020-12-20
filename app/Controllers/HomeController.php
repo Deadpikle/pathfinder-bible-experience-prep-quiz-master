@@ -26,7 +26,9 @@ class HomeController
         }
         $title = 'Home';
         
-        $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $_SESSION['ConferenceID'], $app->db);
+        $conference = Conference::loadAdminConference($app->db);
+        $conferenceID = $conference->conferenceID ?? $_SESSION['ConferenceID'];
+        $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $conferenceID, $app->db);
         return new TwigView('home/index', compact('sections'), 'Home');
     }
 
