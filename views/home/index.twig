@@ -21,7 +21,7 @@
             </ul>
         </div>
         <div class="col s12 m8">
-            {% include "includes/home-info-sections.twig" with {'sections': sections, 'isOnAdmin': false, 'selectedConferenceID': webAdminConferenceID() } %}
+            {% include "includes/home-info-sections.twig" with {'sections': sections, 'isOnAdmin': false, 'selectedConferenceID': webAdminConferenceID(app) } %}
         </div>
     </div>
 </div>
