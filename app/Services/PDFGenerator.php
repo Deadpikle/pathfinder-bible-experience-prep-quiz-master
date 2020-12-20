@@ -15,7 +15,8 @@ class PDFGenerator
         if (!$isFillIn && YamfUtil::strEndsWith($output, '.') && strlen($output) > 0) {
             $output = substr($output, 0, -1) . '?';
         }
-        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?") && !YamfUtil::strEndsWith($output, "specific.")) {
+        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?") && !YamfUtil::strEndsWith($output, "specific.")
+            && !YamfUtil::strEndsWith(strtolower($output), "be specific")) {
             $output .= "?";
         }
         if (Question::isTypeBibleQnA($type)) {
