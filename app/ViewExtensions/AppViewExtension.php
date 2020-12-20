@@ -5,6 +5,7 @@
 namespace App\ViewExtensions;
 
 use App\Models\AFMAppConfig;
+use App\Models\Conference;
 use App\Models\CSRF;
 use App\Models\PBEAppConfig;
 use App\Models\Setting;
@@ -54,6 +55,12 @@ class AppViewExtension extends AbstractExtension
     function currentConferenceID()
     {
         return $_SESSION['ConferenceID'];
+    }
+
+    function webAdminConferenceID(PBEAppConfig $app)
+    {
+        $conference = Conference::loadAdminConference($app->db);
+        return $conference->conferenceID ?? $_SESSION['ConferenceID'];
     }
 
     function csrf(string $qualifier) : string
@@ -123,6 +130,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('outputHomeSections', [$this, 'outputHomeSections']),
             new TwigFunction('currentUsername', [$this, 'currentUsername']),
             new TwigFunction('currentConferenceID', [$this, 'currentConferenceID']),
+            new TwigFunction('webAdminConferenceID', [$this, 'webAdminConferenceID']),
         ];
         return $twigFunctions;
     }
