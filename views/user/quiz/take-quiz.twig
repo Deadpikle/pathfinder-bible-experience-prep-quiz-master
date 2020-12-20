@@ -445,7 +445,7 @@
             if (!isFillInQuestion(data.type) && data.question.endsWith('.') && data.question.length > 0) {
                 data.question = data.question.slice(0, -1) + '?';
             }
-            if (!isFillInQuestion(data.type) && !data.question.endsWith("?") && !data.question.endsWith("specific.")
+            if (!isFillInQuestion(data.type) && !data.question.endsWith("?") && !data.question.toLowerCase().endsWith("specific.")
                 && !data.question.toLowerCase().endsWith('be specific')) {
                 data.question += "?";
             }
