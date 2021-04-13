@@ -18,7 +18,7 @@ class Club
         $this->name = $name;
     }
 
-    private function loadClubs(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadClubs(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT ClubID, Name, URL, ConferenceID 

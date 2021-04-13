@@ -40,10 +40,15 @@ class ClubController extends BaseAdminController implements IRequestValidator
 
     public function viewClubs(PBEAppConfig $app, Request $request)
     {
-        $clubs = Club::loadAllClubs($app->db);
+        $currentConferenceID = User::currentConferenceID();
+        if ($app->isConferenceAdmin) {
+            $clubs = Club::loadClubsInConference($currentConferenceID, $app->db);
+        } else { // web admin
+            $clubs = Club::loadAllClubs($app->db);
+        }
         $conferences = Conference::loadAllNonAdminConferences($app->db);
         $conferencesByID = Conference::loadAllConferencesByID($app->db);
-        return new TwigView('admin/clubs/view-clubs', compact('clubs', 'conferences', 'conferencesByID'), 'Clubs');
+        return new TwigView('admin/clubs/view-clubs', compact('clubs', 'conferences', 'conferencesByID', 'currentConferenceID'), 'Clubs');
     }
 
     private function showCreateOrEditClub(PBEAppConfig $app, Request $request, bool $isCreating, ?Club $club, string $error = '') : Response
