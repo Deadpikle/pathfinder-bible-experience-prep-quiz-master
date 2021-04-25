@@ -39,7 +39,9 @@
                 </tr>
             </thead>
             <tbody>
+                {% set numVerses = 0 %}
                 {% for chapter in chapters %}
+                    {% set numVerses = numVerses + chapter.numberVerses %}
                     <tr>
                         <td>{{ chapter.number }}</td>
                         <td>{{ chapter.numberVerses }}</td>
@@ -54,6 +56,7 @@
             </tbody>
         </table>
     </div>
+    <p>There {{ numVerses == 1 ? 'is' : 'are' }} {{ numVerses }} {{ numVerses == 1 ? 'verse' : 'verses' }} in {{ book.name }}.</p>
 </div>
 
 {% endblock %}
