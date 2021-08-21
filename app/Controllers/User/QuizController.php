@@ -54,8 +54,7 @@ class QuizController
             // guests only get up to 2 chapters
             if (count($chapters) > 1) {
                 $chapters = [$chapters[0], $chapters[1]];
-            }
-            if (count($chapters) > 0) {
+            } else if (count($chapters) > 0) {
                 $chapters = [$chapters[0]];
             }
         }
