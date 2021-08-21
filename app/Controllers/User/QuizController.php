@@ -50,6 +50,15 @@ class QuizController
             $booksByBookID[$book->bookID] = $book;
         }
         $chapters = Chapter::loadChaptersWithActiveQuestions($currentYear, $app->db);
+        if ($app->isGuest) {
+            // guests only get up to 2 chapters
+            if (count($chapters) > 1) {
+                $chapters = [$chapters[0], $chapters[1]];
+            }
+            if (count($chapters) > 0) {
+                $chapters = [$chapters[0]];
+            }
+        }
 
         return new TwigView('user/quiz/quiz-setup', compact('currentYear', 'languages', 'userLanguage', 'chapters', 'commentaries', 'booksByBookID'), 'Quiz Setup');
     }
