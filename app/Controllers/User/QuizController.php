@@ -84,6 +84,20 @@ class QuizController
         $enableQuestionDistribution = Util::validateBoolean($request->post, 'enable-question-distribution');
         $year = Year::loadCurrentYear($app->db);
         $userID = User::currentUserID();
+        if ($app->isGuest && $request->post['quiz-items'] === null) {
+            $chapters = Chapter::loadChaptersWithActiveQuestions($year, $app->db);
+            // guests only get up to 2 chapters
+            if (count($chapters) > 1) {
+                $request->post['quiz-items'] = [
+                    'chapter-' . $chapters[0]->chapterID,
+                    'chapter-' . $chapters[1]->chapterID
+                ];
+            } else if (count($chapters) > 0) {
+                $request->post['quiz-items'] = [
+                    'chapter-' . $chapters[0]->chapterID,
+                ];
+            }
+        }
         if ($enableQuestionDistribution && 
             isset($request->post["quiz-items"]) && 
             count($request->post["quiz-items"]) > 0) {
