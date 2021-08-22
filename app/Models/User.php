@@ -159,12 +159,13 @@ class User
         $query = '
             INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password) 
             VALUES (?, ?, ?, ?, ?, ?)';
+        $this->entryCode = $this->generateEntryCode($db);
         $stmnt = $db->prepare($query);
         $stmnt->execute([
             $this->username,
             $this->type->userTypeID,
             $this->clubID,
-            $this->generateEntryCode($db),
+            $this->entryCode,
             User::currentUserID(),
             ''
         ]);

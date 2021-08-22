@@ -101,8 +101,9 @@ class UserController extends BaseAdminController
         if (!$status->didValidate) {
             return $this->createOrEditUser($app, $request, true, $user, $status->error);
         }
+        /** @var User $user */
         $user->create($app->db);
-        return new Redirect('/admin/users');
+        return new Redirect('/admin/users?created=' . $user->entryCode);
     }
 
     public function editUser(PBEAppConfig $app, Request $request) : Response

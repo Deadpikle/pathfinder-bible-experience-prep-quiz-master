@@ -12,6 +12,12 @@
 
 <h4>Website Users</h4>
 
+{% if _get['created'] %}
+    <div class="green white-text p-1 rounded-border">
+        <span class="ml-1">User successfully created! Their access code is: {{ _get['created'] }}</span>
+    </div>
+{% endif %}
+
 <p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
 
 <div id="users-div">

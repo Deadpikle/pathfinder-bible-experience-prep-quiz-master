@@ -298,3 +298,31 @@ h5#question-text {
     margin-top: 0em;
     margin-bottom: 0em;
 }
+
+.ml-0 {
+    margin-left: 0;
+}
+
+.ml-1 {
+    margin-left: 1em;
+}
+
+.ml-2 {
+    margin-left: 2em;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.p-1 {
+    padding: 1em;
+}
+
+.p-2 {
+    padding: 2em;
+}
+
+.rounded-border {
+    border-radius: 4px;
+}

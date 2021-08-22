@@ -42,6 +42,8 @@ class TwigView extends Response
         if ($this->data !== null) {
             $this->data['app'] = $app;
             $this->data['title'] = $this->title;
+            $this->data['_get'] = $_GET;
+            $this->data['_post'] = $_POST;
         }
 
         $filename = $this->name . '.twig';
