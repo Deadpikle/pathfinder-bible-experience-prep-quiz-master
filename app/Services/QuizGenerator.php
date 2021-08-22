@@ -108,8 +108,8 @@ class QuizGenerator
         $bibleQnA = [];
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
-                bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
-                bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
+                bStart.Name AS StartBook, bStart.BibleOrder AS StartBibleOrder, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
+                bEnd.Name AS EndBook, bEnd.BibleOrder AS EndBibleOrder, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
                 IFnull(uf.UserFlaggedID, 0) AS IsFlagged ';
         $fromPortion = '
             FROM Questions q 
@@ -150,7 +150,7 @@ class QuizGenerator
         } else {
             // sequential-sequential
             $orderByPortion = '
-                ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number';
+                ORDER BY bStart.BibleOrder, cStart.Number, vStart.Number, bEnd.BibleOrder, bEnd.Name, cEnd.Number, vEnd.Number';
         }
 
         $limitPortion = ' LIMIT ' . $maxQuestions;
@@ -228,18 +228,22 @@ class QuizGenerator
             // Sort the arrays
             // https://stackoverflow.com/a/3233009/3938401
             array_multisort(
+                array_column($bibleQnA, 'StartBibleOrder'), SORT_ASC, 
                 array_column($bibleQnA, 'StartBook'), SORT_ASC, 
                 array_column($bibleQnA, 'StartChapter'), SORT_ASC, 
                 array_column($bibleQnA, 'StartVerse'), SORT_ASC,
+                array_column($bibleQnA, 'EndBibleOrder'), SORT_ASC,
                 array_column($bibleQnA, 'EndBook'), SORT_ASC,
                 array_column($bibleQnA, 'EndChapter'), SORT_ASC,
                 array_column($bibleQnA, 'EndVerse'), SORT_ASC,
                 array_column($bibleQnA, 'QuestionID'), SORT_ASC,
                 $bibleQnA);
             array_multisort(
+                array_column($bibleFillIn, 'StartBibleOrder'), SORT_ASC,
                 array_column($bibleFillIn, 'StartBook'), SORT_ASC, 
                 array_column($bibleFillIn, 'StartChapter'), SORT_ASC, 
                 array_column($bibleFillIn, 'StartVerse'), SORT_ASC,
+                array_column($bibleFillIn, 'EndBibleOrder'), SORT_ASC,
                 array_column($bibleFillIn, 'EndBook'), SORT_ASC,
                 array_column($bibleFillIn, 'EndChapter'), SORT_ASC,
                 array_column($bibleFillIn, 'EndVerse'), SORT_ASC,
@@ -345,8 +349,10 @@ class QuizGenerator
             if (Question::isTypeBibleQnA($question['Type'])) {
                 // Bible Q&A
                 $data['startBook'] = $question["StartBook"] ?? "";
+                $data['startBibleOrder'] = $question["StartBibleOrder"] ?? "";
                 $data['startChapter'] = $question["StartChapter"] ?? "";
                 $data['startVerse'] = $question["StartVerse"] ?? "";
+                $data['endbibleOrder'] = $question["EndBibleOrder"] ?? "";
                 $data['endBook'] = $question["EndBook"] ?? "";
                 $data['endChapter'] = $question["EndChapter"] ?? "";
                 $data['endVerse'] = $question["EndVerse"] ?? "";

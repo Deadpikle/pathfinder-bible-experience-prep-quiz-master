@@ -114,6 +114,8 @@
         // books
         '/admin/books' => ['Admin/BookController', 'viewBooks'],
         '/admin/books/create' => ['POST', 'Admin/BookController', 'createBook'],
+        '/admin/books/{bookID}/edit' =>  [['GET', 'Admin/BookController', 'editBook'],
+                                           ['POST', 'Admin/BookController', 'saveBookUpdates']],
         '/admin/books/{bookID}/delete' => [['GET', 'Admin/BookController', 'verifyDeleteBook'],
                                            ['POST', 'Admin/BookController', 'deleteBook']],
         '/admin/books/{bookID}/chapters' => ['Admin/BookController', 'viewBookChapters'],

@@ -11,6 +11,7 @@ class Book
     public $bookID;
     public $name;
     public $numberChapters;
+    public $bibleOrder;
 
     public $chapters; // array of Chapter objects
 
@@ -26,7 +27,7 @@ class Book
     private static function loadBooks(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
-            SELECT BookID, Name, NumberChapters, Books.YearID, Years.Year
+            SELECT BookID, Name, NumberChapters, Books.YearID, Years.Year, BibleOrder
             FROM Books JOIN Years ON Books.YearID = Years.YearID
             ' . $whereClause . '
             ORDER BY Name, NumberChapters';
@@ -36,6 +37,7 @@ class Book
         $output = [];
         foreach ($data as $row) {
             $book = new Book($row['BookID'], $row['Name']);
+            $book->bibleOrder = $row['BibleOrder'];
             $book->numberChapters = $row['NumberChapters'];
             $book->yearID = $row['YearID'];
             $book->year = $row['Year'];
@@ -63,7 +65,7 @@ class Book
     public static function loadAllBookChapterVerseDataForYear(Year $year, PDO $db) : array
     {
         $query = '
-            SELECT b.BookID, b.Name, b.NumberChapters,
+            SELECT b.BookID, b.Name, b.NumberChapters, b.BibleOrder,
                 c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses,
                 v.VerseID, v.Number AS VerseNumber, v.VerseText
             FROM Books b 
@@ -84,12 +86,14 @@ class Book
             if ($row['BookID'] != $lastBookID) {
                 $lastBookID = $row['BookID'];
                 if ($chapter != null) {
+                    /** @var Book $book */
                     $book->chapters[] = $chapter;
                 }
                 if ($book != null) {
                     $books[] = $book;
                 }
                 $book = new Book($row['BookID'], $row['Name']);
+                $book->bibleOrder = $row['BibleOrder'];
                 $book->numberChapters = $row['NumberChapters'];
                 $book->chapters = [];
                 $book->yearID = $year->yearID;
@@ -120,7 +124,7 @@ class Book
         return $books;
     }
 
-    public static function createBook(string $name, int $numberOfChapters, int $yearID, PDO $db)
+    public static function createBook(string $name, int $numberOfChapters, int $yearID, int $bibleOrder, PDO $db)
     {
         $query = 'SELECT 1 FROM Books WHERE Name = ? AND YearID = ?';
         $stmt = $db->prepare($query);
@@ -132,15 +136,32 @@ class Book
         // make sure book doesn't exist
         if ($bookData !== true && count($bookData) == 0) {
             $query = '
-                INSERT INTO Books (Name, NumberChapters, YearID) VALUES (?, ?, ?)
+                INSERT INTO Books (Name, NumberChapters, YearID, BibleOrder) VALUES (?, ?, ?, ?)
             ';
             $stmt = $db->prepare($query);
             $stmt->execute([
                 trim($name),
                 $numberOfChapters, 
-                $yearID
+                $yearID,
+                $bibleOrder
             ]);
         }
+    }
+
+    public function update(PDO $db)
+    {
+        $query = '
+            UPDATE Books SET Name = ?, NumberChapters = ?, YearID = ?, BibleOrder = ?
+            WHERE BookID = ?
+        ';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            trim($this->name),
+            $this->numberChapters,
+            $this->yearID,
+            $this->bibleOrder,
+            $this->bookID
+        ]);
     }
 
     public function delete(PDO $db)

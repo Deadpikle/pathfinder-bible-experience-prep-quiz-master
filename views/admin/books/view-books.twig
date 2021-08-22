@@ -17,7 +17,7 @@
         <h5>Add Book for Current Year ({{ currentYear.year }})</h5>
         {% include 'includes/error-message.twig' %}
         <form action="{{ app.yurl('/admin/books/create') }}" method="post">
-            <div class="row">
+            <div class="row mb-0">
                 <div class="input-field col s6 m4">
                     <input type="text" id="name" name="name" value="{{ bookName }}" placeholder="2 Kings" required data-length="150"/>
                     <label for="name">Name</label>
@@ -26,6 +26,12 @@
                     <input type="number" id="number-chapters" name="number-chapters" placeholder="1" value="{{ numberOfChapters }}" required min="1" max="150"/>
                     <label for="number-chapters">Number of Chapters</label>
                 </div>
+                <div class="input-field col s6 m4">
+                    <input type="number" id="bible-order" name="bible-order" placeholder="1" value="{{ bibleOrder }}" required min="1" max="66"/>
+                    <label for="number-chapters">Bible Order (Genesis = 1, Exodus = 2, Matthew = 40...)</label>
+                </div>
+            </div>
+            <div class="row mt-0">
                 <div class="input-field col s6 m4">
                     <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Book</button>
                 </div>
@@ -39,8 +45,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Number of Chapters</th>
+                    <th>Bible Order</th>
                     <th>Year</th>
-                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -49,11 +55,11 @@
                     <tr>
                         <td>{{ book.name }}</td>
                         <td>{{ book.numberChapters }}</td>
+                        <td>{{ book.bibleOrder }}</td>
                         <td>{{ book.year }}</td>
                         <td>
                             <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Manage Chapters</a>
-                        </td>
-                        <td>
+                            <a class="waves-effect waves-light btn blue" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/edit') }}">Edit</a>
                             <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/delete') }}">Remove</a>
                         </td>
                     </tr>
@@ -66,12 +72,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
-            { orderable: false, targets: [-1, -2] }
+            { orderable: false, targets: [-1] }
         ];
         datatablesProps.language = {
             searchPlaceholder: "Search books..."
         };
-        datatablesProps.order = [[ 0, 'asc' ]];
+        datatablesProps.order = [[ 2, 'asc' ]];
         $('#books-table').DataTable(datatablesProps);
     });
 </script>

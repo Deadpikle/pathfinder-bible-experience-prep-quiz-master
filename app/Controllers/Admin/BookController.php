@@ -57,7 +57,8 @@ class BookController extends BaseAdminController implements IRequestValidator
     public function createBook(PBEAppConfig $app, Request $request) : Response
     {
         $bookName = Util::validateString($request->post, 'name');
-        $numberOfChapters = intval($request->post['number-chapters'] ?? -1);
+        $numberOfChapters = Util::validateInteger($request->post, 'number-chapters');
+        $bibleOrder = Util::validateInteger($request->post, 'bible-order');
         $currentYear = Year::loadCurrentYear($app->db);
         $error = '';
         if ($bookName === '') {
@@ -66,12 +67,60 @@ class BookController extends BaseAdminController implements IRequestValidator
         if ($numberOfChapters <= 0) {
             $error = 'Number of chapters must be greater than 0';
         }
+        if ($bibleOrder < 1 || $bibleOrder > 66) {
+            $error = 'Bible order should be between 1 and 66, inclusive';
+        }
         if ($error !== '') {
-            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters'), 'View Books');
+            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters', 'bibleOrder'), 'View Books');
         }
 
-        Book::createBook($bookName, $numberOfChapters, $currentYear->yearID, $app->db);
+        Book::createBook($bookName, $numberOfChapters, $currentYear->yearID, $bibleOrder, $app->db);
         return new Redirect('/admin/books');
+    }
+
+    public function editBook(PBEAppConfig $app, Request $request): Response
+    {
+        $book = Book::loadBookByID(Util::validateInteger($request->routeParams, 'bookID'), $app->db);
+        if ($book === null) {
+            return new TwigNotFound();
+        }
+        $currentYear = Year::loadCurrentYear($app->db);
+        return new TwigView('admin/books/edit-book', compact('book', 'currentYear'), 'Edit Book');
+    }
+
+    public function saveBookUpdates(PBEAppConfig $app, Request $request): Response
+    {
+        $book = Book::loadBookByID(Util::validateInteger($request->routeParams, 'bookID'), $app->db);
+        if ($book === null) {
+            return new TwigNotFound();
+        }
+        // TODO: refactor with creating book, more validation for not duplicating books
+        // TODO: allow year selection
+        $bookName = Util::validateString($request->post, 'name');
+        $numberOfChapters = Util::validateInteger($request->post, 'number-chapters');
+        $bibleOrder = Util::validateInteger($request->post, 'bible-order');
+        $currentYear = Year::loadCurrentYear($app->db);
+
+        $book->name = $bookName;
+        $book->numberChapters = $numberOfChapters;
+        $book->bibleOrder = $bibleOrder;
+
+        $error = '';
+        if ($bookName === '') {
+            $error = 'Book name is required';
+        }
+        if ($numberOfChapters <= 0) {
+            $error = 'Number of chapters must be greater than 0';
+        }
+        if ($bibleOrder < 1 || $bibleOrder > 66) {
+            $error = 'Bible order should be between 1 and 66, inclusive';
+        }
+        if ($error !== '') {
+            return new TwigView('admin/books/edit-book', compact('book', 'currentYear', 'error'), 'View Books');
+        }
+        $book->update($app->db);
+        
+        return new Redirect('admin/books');
     }
 
     public function verifyDeleteBook(PBEAppConfig $app, Request $request) : Response
