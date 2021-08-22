@@ -280,6 +280,12 @@ class ImportQuestionsController extends BaseAdminController
                 $questionText = str_replace("\r\n", " ", $questionText);
                 $questionText = str_replace("\r", " ", $questionText);
                 $questionText = str_replace("\n", " ", $questionText);
+                $questionText = str_replace("\xCA", "", $questionText);
+                $questionText = str_replace("\xD1", " - ", $questionText);
+                $questionText = str_replace("\xD2", '"', $questionText);
+                $questionText = str_replace("\xD3", '"', $questionText);
+                $questionText = str_replace("\xD4", "'", $questionText);
+                $questionText = str_replace("\xD5", "'", $questionText);
                 $answerText = str_replace('“', '"', $answerText);
                 $answerText = str_replace('”', '"', $answerText);
                 $answerText = str_replace('‘', "'", $answerText);
