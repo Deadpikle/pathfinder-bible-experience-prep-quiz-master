@@ -1,0 +1,67 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Back</a></p>
+
+<h4>{{ book.name }} {{ chapter.number }} Verses</h4>
+
+<div class="" id="books-div">
+    <div class="" id="create">
+        <h5>Add Verse to {{ book.name }} {{ chapter.number }}</h5>
+        {% include 'includes/error-message.twig' %}
+        <form method="post">
+            <div class="row mb-0">
+                <div class="input-field col s6 m4">
+                    <input type="number" id="number" name="number" placeholder="1" required min="1" max="176"/>
+                    <label for="number">Verse Number</label>
+                </div>
+                <div class="input-field col s6 m4">
+                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Verse</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="divider"></div>
+    <div class="">
+        <table class="striped responsive-table" id="verses-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for verse in verses %}
+                    <tr>
+                        <td>{{ verse.number }}</td>
+                        <td>
+                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses/' ~ verse.verseID ~ '/delete') }}">Delete Verse</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [-1] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search verses..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#verses-table').DataTable(datatablesProps);
+    });
+</script>
+
+{% endblock %}

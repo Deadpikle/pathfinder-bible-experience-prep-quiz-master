@@ -14,6 +14,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Verse;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
@@ -267,5 +268,67 @@ class BookController extends BaseAdminController implements IRequestValidator
         header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
         ob_end_clean();
         $writer->save('php://output');
+    }
+
+    public function viewVersesForChapter(PBEAppConfig $app, Request $request): Response
+    {
+        $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
+        if ($book === null || $chapter === null || $chapter->bookID != $book->bookID) {
+            return new TwigNotFound();
+        }
+        $verses = Verse::loadVersesForChapter($chapter->chapterID, $app->db);
+        return new TwigView('admin/books/view-verses', compact('book', 'chapter', 'verses'), 'View Verses');
+    }
+
+    public function addVerseToChapter(PBEAppConfig $app, Request $request) : Response
+    {
+        $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
+        if ($book === null || $chapter === null || $chapter->bookID != $book->bookID) {
+            return new TwigNotFound();
+        }
+        $verseNumber = Util::validateInteger($request->post, 'number');
+        $existingVerse = Verse::loadVerseByNumberInChapter($chapter->chapterID, $verseNumber, $app->db);
+        if ($existingVerse === null) {
+            // can create
+            Verse::insertVerseIntoChapter($chapter->chapterID, $verseNumber, $app->db);
+        } else {
+            // already exists, error
+            $error = 'Verse ' . $verseNumber . ' already exists in this chapter!';
+            $verses = Verse::loadVersesForChapter($chapter->chapterID, $app->db);
+            return new TwigView('admin/books/view-verses', compact('book', 'chapter', 'verses', 'error'), 'View Verses');
+        }
+        return new Redirect('/admin/books/' . $book->bookID . '/chapters/' . $chapter->chapterID . '/verses');
+    }
+
+    public function verifyDeleteVerse(PBEAppConfig $app, Request $request) : Response
+    {
+        $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
+        $verse = Verse::loadVerseByID($request->routeParams['verseID'], $app->db);
+        if ($book === null || $chapter === null || $chapter->bookID != $book->bookID
+            || $verse === null || $verse->chapterID != $chapter->chapterID) {
+            return new TwigNotFound();
+        }
+        return new TwigView('admin/books/verify-delete-verse', compact('book', 'chapter', 'verse'), 'Delete Verse');
+    }
+
+    public function deleteVerse(PBEAppConfig $app, Request $request) : Response
+    {
+        $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
+        $verse = Verse::loadVerseByID($request->routeParams['verseID'], $app->db);
+        if ($book === null || $chapter === null || $chapter->bookID != $book->bookID
+            || $verse === null || $verse->chapterID != $chapter->chapterID) {
+            return new TwigNotFound();
+        }
+        if (CSRF::verifyToken('delete-verse')) {
+            $verse->delete($app->db);
+            return new Redirect('/admin/books/' . $book->bookID . '/chapters/' . $chapter->chapterID . '/verses');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            return new TwigView('admin/books/verify-delete-verse', compact('book', 'chapter', 'verse', 'error'), 'Delete Verse');
+        }
     }
 }

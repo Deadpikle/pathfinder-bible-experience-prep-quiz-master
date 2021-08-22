@@ -35,7 +35,6 @@
                     <th>Chapter Number</th>
                     <th>Number of Verses</th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -47,8 +46,7 @@
                         <td>{{ chapter.numberVerses }}</td>
                         <td>
                             <a class="waves-effect waves-light btn white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/download-excel')}}">Excel Template for English Questions</a>
-                        </td>
-                        <td>
+                            <a class="waves-effect waves-light btn blue white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses')}}">Manage Verses</a>
                             <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/delete')}}">Remove</a>
                         </td>
                     </tr>

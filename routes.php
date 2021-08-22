@@ -123,6 +123,12 @@
         '/admin/books/{bookID}/chapters/{chapterID}/download-excel' => ['GET', 'Admin/BookController', 'downloadExcelTemplateFoChapter'],
         '/admin/books/{bookID}/chapters/{chapterID}/delete' => [['GET', 'Admin/BookController', 'verifyDeleteChapter'],
                                                                 ['POST', 'Admin/BookController', 'deleteChapter']],
+        '/admin/books/{bookID}/chapters/{chapterID}/verses' => 
+            [['GET', 'Admin/BookController', 'viewVersesForChapter'],
+            ['POST', 'Admin/BookController', 'addVerseToChapter']],
+        '/admin/books/{bookID}/chapters/{chapterID}/verses/{verseID}/delete' => 
+            [['GET', 'Admin/BookController', 'verifyDeleteVerse'],
+            ['POST', 'Admin/BookController', 'deleteVerse']],
         // commentaries
         '/admin/commentaries' => ['Admin/CommentaryController', 'viewCommentaries'],
         '/admin/commentaries/create' => ['POST', 'Admin/CommentaryController', 'createCommentary'],
