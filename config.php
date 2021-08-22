@@ -57,6 +57,8 @@ $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 
 // // // // // // // User Settings // // // // // // //
 
+date_default_timezone_set('America/New_York');
+
 // Examples of settings or other config parameters you might want:
 // $app->isAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'WebAdmin';
 
