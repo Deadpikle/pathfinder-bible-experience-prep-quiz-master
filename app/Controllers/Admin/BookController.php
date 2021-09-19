@@ -21,6 +21,8 @@ use App\Models\Year;
 use finfo;
 use PDOException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
@@ -234,16 +236,22 @@ class BookController extends BaseAdminController implements IRequestValidator
             'End Chapter',      // K
             'End Verse',        // L
         ];
+        $lastRowNumber = 1;
         for ($i = 0; $i < $chapter->numberVerses; $i++) {
             for ($j = 0; $j < 4; $j++) {
                 $vals[] = [
                     'Bible', 'No', 'English', '', '', 1, 
                     $book->name, $chapter->number, $i + 1, $book->name, '', ''
                 ];
+                $lastRowNumber++;
             }
         }
         $sheet->fromArray($vals, null, 'A1');
         $sheet->getStyle('A1:L1')->getFont()->setBold(true);
+        for ($i = 2; $i <= $lastRowNumber; $i += 4) {
+            $sheet->getStyle("A${i}:L$${i}")->getFont()->setBold(true);
+            $sheet->getStyle("A${i}:L$${i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
+        }
         // hide first three columns as user doesn't need to change those in this case
         $sheet->getColumnDimension('A')->setVisible(false);
         $sheet->getColumnDimension('B')->setVisible(false);
@@ -259,7 +267,9 @@ class BookController extends BaseAdminController implements IRequestValidator
         $sheet->getColumnDimension('J')->setAutoSize(true);
         $sheet->getColumnDimension('K')->setAutoSize(true);
         $sheet->getColumnDimension('L')->setAutoSize(true);
-
+        $sheet->setSelectedCells('A1'); // undo any selection
+        // freeze top row
+        $spreadsheet->getActiveSheet()->freezePane('A2'); 
         // output
         
         $writer = new Xlsx($spreadsheet);
