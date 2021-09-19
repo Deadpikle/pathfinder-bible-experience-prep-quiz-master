@@ -4,33 +4,33 @@
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
 
-<h4>Bible Fill in the Blank Questions</h4>
+<h4>Bible Q&amp;A Questions</h4>
 
 {% for language in languages %}
     {% set isAreString = totalsByLanguage[language.languageID] == 1 ? 'is' : 'are' %}
     {% set questionString = totalsByLanguage[language.languageID] == 1 ? 'question' : 'questions' %}
-    <p>There {{ isAreString }} a total of {{ (totalsByLanguage[language.languageID] ?? 0) | number_format }} {{ language.getDisplayName() }} Bible fill in the blank {{ questionString }} in the system out of a maximum of 500.</p>
+    <p>There {{ isAreString }} a total of {{ (totalsByLanguage[language.languageID] ?? 0) | number_format }} {{ language.getDisplayName() }} Bible Q&amp;A {{ questionString }} in the system out of a maximum of 500.</p>
 {% endfor %}
 
 {% if totalQuestions > 0 %}
-    <div id="bible-fill-in-div">
+    <div id="bible-qna-div">
         <table class="striped">
             <thead>
                 <tr>
                     <th>Chapter</th>
                     <th>Language</th>
-                    <th>Number of Fill In Questions</th>
+                    <th>Number of Q&amp;A Questions</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for data in fillInData %}
+                {% for data in qnaData %}
                     {% set questionString = data.numberOfQuestions == 1 ? 'question' : 'questions' %}
                     <tr>
                         <td><b>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</b></td>
                         <td><b>{{ data.language.getDisplayName() }}</b></td>
                         <td>{{ data.numberOfQuestions | number_format }} {{ questionString }}</td>
-                        <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}">Delete</a></td>
+                        <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-qna-questions/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}">Delete</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -38,7 +38,7 @@
         <div class="divider"></div>
 
         {% for language in languages %}
-            <p><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ language.languageID ~ '/delete') }}">Delete All {{ language.getDisplayName() }} Bible Fill In Questions</a></p>
+            <p><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-qna-questions/' ~ language.languageID ~ '/delete') }}">Delete All {{ language.getDisplayName() }} Bible Q&amp;A Questions</a></p>
         {% endfor %}
     </div>
 {% endif %}

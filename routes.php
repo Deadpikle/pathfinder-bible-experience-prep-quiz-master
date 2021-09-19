@@ -150,6 +150,14 @@
         '/admin/bible-fill-ins/{chapterID}/{languageID}/delete' => 
             [['GET', 'Admin/BibleFillInController', 'verifyDeleteFillInsForChapter'],
             ['POST', 'Admin/BibleFillInController', 'deleteFillInsForChapter']],
+        // bible q&a management
+        '/admin/bible-qna-questions' => ['Admin/BibleQnAController', 'viewBibleQuestions'],
+        '/admin/bible-qna-questions/{languageID}/delete' => 
+            [['GET', 'Admin/BibleQnAController', 'verifyDeleteQnAQuestionsForLanguage'],
+            ['POST', 'Admin/BibleQnAController', 'deleteQnAQuestionsForLanguage']],
+        '/admin/bible-qna-questions/{chapterID}/{languageID}/delete' => 
+            [['GET', 'Admin/BibleQnAController', 'verifyDeleteQnAQuestionsForChapter'],
+            ['POST', 'Admin/BibleQnAController', 'deleteQnAQuestionsForChapter']],
         // non-blankable words
         '/admin/non-blankable-words' => [['GET', 'Admin/NonBlankableWordController', 'viewNonBlankableWords'],
                                         ['POST', 'Admin/NonBlankableWordController', 'saveNewNonBlankableWord']],
