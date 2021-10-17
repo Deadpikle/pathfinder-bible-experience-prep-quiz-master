@@ -252,6 +252,8 @@ class BookController extends BaseAdminController implements IRequestValidator
             $sheet->getStyle("A${i}:L$${i}")->getFont()->setBold(true);
             $sheet->getStyle("A${i}:L$${i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
         }
+        // add border to final row
+        $sheet->getStyle("A${i}:L$${i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
         // hide first three columns as user doesn't need to change those in this case
         $sheet->getColumnDimension('A')->setVisible(false);
         $sheet->getColumnDimension('B')->setVisible(false);
