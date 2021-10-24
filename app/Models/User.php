@@ -157,8 +157,8 @@ class User
     public function create(PDO $db)
     {
         $query = '
-            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password) 
-            VALUES (?, ?, ?, ?, ?, ?)';
+            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)';
         $this->entryCode = $this->generateEntryCode($db);
         $stmnt = $db->prepare($query);
         $stmnt->execute([
@@ -167,7 +167,8 @@ class User
             $this->clubID,
             $this->entryCode,
             User::currentUserID(),
-            ''
+            '',
+            '1989-12-25 00:00:00' // default, not-yet-logged-in date
         ]);
         $this->userID = $db->lastInsertId();
     }
@@ -191,5 +192,16 @@ class User
         $query = 'DELETE FROM Users WHERE UserID = ?';
         $stmnt = $db->prepare($query);
         $stmnt->execute([ $this->userID ]);
+    }
+
+    public static function updateLastLoginDateForUserID(int $userID, PDO $db)
+    {
+        $updateQuery = 'UPDATE Users SET LastLoginDate = ? WHERE UserID = ?';
+        $statement = $db->prepare($updateQuery);
+        $params = [
+            date('Y-m-d H:i:s'),
+            $userID
+        ];
+        $statement->execute($params);
     }
 }
