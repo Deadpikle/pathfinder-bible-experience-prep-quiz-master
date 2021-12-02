@@ -344,7 +344,12 @@ class QuizGenerator
                 'isFlagged' => $question["IsFlagged"],
                 'points' => $question["NumberPoints"],
                 'question' => trim($question["Question"]),
-                'answer' => trim($question["Answer"])
+                'answer' => trim($question["Answer"]),
+                //
+                'volume' => -1, // probably not right; used for sequential sorting at the end
+                'topic' => '',
+                'startPage' => -1,
+                'endPage' => -1
             );
             if (Question::isTypeBibleQnA($question['Type'])) {
                 // Bible Q&A
@@ -352,7 +357,7 @@ class QuizGenerator
                 $data['startBibleOrder'] = $question["StartBibleOrder"] ?? "";
                 $data['startChapter'] = $question["StartChapter"] ?? "";
                 $data['startVerse'] = $question["StartVerse"] ?? "";
-                $data['endbibleOrder'] = $question["EndBibleOrder"] ?? "";
+                $data['endBibleOrder'] = $question["EndBibleOrder"] ?? "";
                 $data['endBook'] = $question["EndBook"] ?? "";
                 $data['endChapter'] = $question["EndChapter"] ?? "";
                 $data['endVerse'] = $question["EndVerse"] ?? "";
@@ -372,6 +377,24 @@ class QuizGenerator
             $outputQuestions[] = $data;
             $number++;
         }
+        // doesn't work quite right -- TODO: fix this so final output is in sequential order; remove previous sorting mechanism
+        /*if ($isOutputSequential) {
+            array_multisort(
+                array_column($outputQuestions, 'startBibleOrder'), SORT_ASC,
+                array_column($outputQuestions, 'startBook'), SORT_ASC, 
+                array_column($outputQuestions, 'startChapter'), SORT_ASC, 
+                array_column($outputQuestions, 'startVerse'), SORT_ASC,
+                array_column($outputQuestions, 'endBibleOrder'), SORT_ASC,
+                array_column($outputQuestions, 'endBook'), SORT_ASC,
+                array_column($outputQuestions, 'endChapter'), SORT_ASC,
+                array_column($outputQuestions, 'endVerse'), SORT_ASC,
+                array_column($outputQuestions, 'volume'), SORT_ASC, 
+                array_column($outputQuestions, 'topic'), SORT_ASC, 
+                array_column($outputQuestions, 'startPage'), SORT_ASC, 
+                array_column($outputQuestions, 'endPage'), SORT_ASC,
+                array_column($outputQuestions, 'id'), SORT_ASC,
+                $outputQuestions);
+        }*/
 
         $output = [ 
             'bibleQuestions' => $bibleAdded,
