@@ -141,6 +141,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+
+        var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var userID = {{ userID }};
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -291,6 +293,9 @@
             }
             $questionAnswerText.html(answerIsPrefix + outputAnswer);
         });
+        if (viewFillInTheBlankAnswersInBoldByDefault) {
+            fullFillInCheckbox.checked = true;
+        }
 
         $(historyFillInCheckbox).change(function() {
             for (var i = 0; i < history.length; i++) {

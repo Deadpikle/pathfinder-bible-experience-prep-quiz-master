@@ -169,7 +169,8 @@ class QuizController
 
         $quizQuestions = $this->getQuizQuestions($app, $request, false, false);
         $userID = User::currentUserID();
-        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID'), 'Quiz');
+        $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
+        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'viewFillInTheBlankAnswersInBold'), 'Take Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
