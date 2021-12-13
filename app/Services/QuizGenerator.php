@@ -294,34 +294,34 @@ class QuizGenerator
             // figure out which arrays have stuff left
             $availableArraysOfQuestions = [];
             if ($hasBibleQuestionLeft) {
-                $availableArraysOfQuestions[] = 'bible-qna';
+                $availableArraysOfQuestions[] = Question::getBibleQnAType();
             }
             if ($hasBibleFillInLeft) {
-                $availableArraysOfQuestions[] = 'bible-qna-fill';
+                $availableArraysOfQuestions[] = Question::getBibleQnAFillType();
             }
             if ($hasCommentaryQuestionLeft) {
-                $availableArraysOfQuestions[] = 'commentary-qna';
+                $availableArraysOfQuestions[] = Question::getCommentaryQnAType();
             }
             if ($hasCommentaryFillInQuestionLeft) {
-                $availableArraysOfQuestions[] = 'commentary-qna-fill';
+                $availableArraysOfQuestions[] = Question::getCommentaryQnAFillType();
             }
             // now choose one
             $index = random_int(0, count($availableArraysOfQuestions) - 1);
             $typeToAdd = $availableArraysOfQuestions[$index];
             // add the question to the output
-            if ($typeToAdd == 'bible-qna') {
+            if ($typeToAdd == Question::getBibleQnAType()) {
                 $output[] = $bibleQnA[$bibleIndex];
                 $bibleIndex++;
                 $bibleAdded++;
-            } else if ($typeToAdd == 'bible-qna-fill') {
+            } else if ($typeToAdd == Question::getBibleQnAFillType()) {
                 $output[] = $bibleFillIn[$bibleFillInIndex];
                 $bibleFillInIndex++;
                 $bibleFillInAdded++;
-            } else if ($typeToAdd == 'commentary-qna') {
+            } else if ($typeToAdd == Question::getCommentaryQnAType()) {
                 $output[] = $commentaryQnA[$commentaryIndex];
                 $commentaryIndex++;
                 $commentaryAdded++;
-            } else if ($typeToAdd == 'commentary-qna-fill') {
+            } else if ($typeToAdd == Question::getCommentaryQnAFillType()) {
                 $output[] = $commentaryFillIn[$commentaryFillInIndex];
                 $commentaryFillInIndex++;
                 $commentaryFillInAdded++;
