@@ -9,16 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup PHP with gd, mbstring extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-          extensions: gd, mbstring
-
-      - uses: php-actions/composer@v5
+      - uses: php-actions/composer@v6
         with:
           php_version: 7.4
           dev: yes
+          php_extensions: gd
 
       - name: Run PHPUnit Tests
         uses: php-actions/phpunit@v3
@@ -26,7 +21,7 @@ jobs:
         #   TEST_NAME: Scarlett
         with:
           php_version: 7.4
-          php_extensions: mbstring
+          php_extensions: gd
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           # args: --coverage-text
