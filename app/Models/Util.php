@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DateTime;
 use PDO;
+use Yamf\Util as YamfUtil;
 
 class Util
 {
@@ -78,5 +79,27 @@ class Util
                 !\Yamf\Util::strStartsWith($output, 'gods')) &&
                !\Yamf\Util::strStartsWith($output, 'Christ') && 
                !\Yamf\Util::strStartsWith($output, 'Jesus');
+    }
+
+    public static function fixQuestionMarkOnQuestion(string $input): string
+    {
+        if (mb_strlen($input) > 0) {
+            if (YamfUtil::strEndsWith(mb_strtolower($input), "specific.") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "specific") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "be specific")) {
+                if (!YamfUtil::strEndsWith($input, '.')) {
+                    $input .= '.';
+                }
+            } else {
+                if (YamfUtil::strEndsWith($input, '.') ||
+                    YamfUtil::strEndsWith($input, '!') ||
+                    YamfUtil::strEndsWith($input, ',')) {
+                    $input = substr($input, 0, -1) . '?';
+                } else if (!YamfUtil::strEndsWith($input, "?")) {
+                    $input .= "?";
+                }
+            }
+        }
+        return $input;
     }
 }

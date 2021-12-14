@@ -12,12 +12,9 @@ class PDFGenerator
         $type = $question["type"];
         $output = trim($question["question"]);
         $isFillIn = Question::isTypeFillIn($type);
-        if (!$isFillIn && YamfUtil::strEndsWith($output, '.') && strlen($output) > 0) {
-            $output = substr($output, 0, -1) . '?';
-        }
-        if (!$isFillIn && !YamfUtil::strEndsWith($output, "?") && !YamfUtil::strEndsWith(strtolower($output), "specific.")
-            && !YamfUtil::strEndsWith(strtolower($output), "be specific")) {
-            $output .= "?";
+        // TODO: rework logic here to be....right.
+        if (!$isFillIn) {
+            $output = Util::fixQuestionMarkOnQuestion($output);
         }
         if (Question::isTypeBibleQnA($type)) {
             $startBook = $question["startBook"];
