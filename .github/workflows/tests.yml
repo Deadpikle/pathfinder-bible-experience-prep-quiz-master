@@ -9,6 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup PHP with gd, mbstring extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: gd, mbstring
+
       - uses: php-actions/composer@v5
         with:
           php_version: 7.4
