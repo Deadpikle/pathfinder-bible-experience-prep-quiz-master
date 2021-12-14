@@ -13,7 +13,7 @@ jobs:
         with:
           php_version: 7.4
           dev: yes
-          php_extensions: gd
+          php_extensions: gd zip
 
       - name: Run PHPUnit Tests
         uses: php-actions/phpunit@v3
@@ -21,7 +21,7 @@ jobs:
         #   TEST_NAME: Scarlett
         with:
           php_version: 7.4
-          php_extensions: gd
+          php_extensions: gd zip
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           # args: --coverage-text
