@@ -6,6 +6,7 @@
     RewriteRule ^(.*)$ init.php/$1?%{QUERY_STRING} [L]
 
     RewriteRule ^phinx\.yml$ - [F]
+    RewriteRule ^phinx\.php$ - [F]
     RewriteRule ^config\.php$ - [F]
     RewriteRule ^config.sample\.php$ - [F]
     RewriteRule ^database\.php$ - [F]
@@ -13,4 +14,5 @@
     RewriteRule ^config-private\.php$ - [F]
     RewriteRule ^config\.php$ - [F]
     RewriteRule ^TODO\.txt$ - [F]
+    RewriteRule ^phpunit\.xml$ - [F]
 </IfModule>

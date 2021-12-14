@@ -8,3 +8,4 @@ config-private.php
 views/_cache/*
 !*views/_cache/.gitkeep
 !*uploads/.gitkeep
+.phpunit.result.cache
