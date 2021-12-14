@@ -9,19 +9,32 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: php-actions/composer@v6
-        with:
-          php_version: 7.4
-          dev: yes
-          php_extensions: gd zip
+    # example of using PHP unit in GitHub actions:
+    # https://github.com/php-actions/example-phpunit
 
-      - name: Run PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        # env:
-        #   TEST_NAME: Scarlett
-        with:
-          php_version: 7.4
-          php_extensions: gd zip
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          # args: --coverage-text
+    - name: Cache Composer dependencies
+      uses: actions/cache@v2
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+    # https://github.com/marketplace/actions/composer-php-actions
+    # extension list:
+    # https://github.com/mlocati/docker-php-extension-installer#supported-php-extensions
+    - name: Install Composer dependencies
+      uses: php-actions/composer@v6
+      with:
+        php_version: 7.4
+        dev: yes
+        php_extensions: gd zip
+
+    - name: Run PHPUnit Tests
+      uses: php-actions/phpunit@v3
+      # env:
+      #   TEST_NAME: Scarlett
+      with:
+        php_version: 7.4
+        php_extensions: gd zip
+        bootstrap: vendor/autoload.php
+        configuration: phpunit.xml
+        # args: --coverage-text
