@@ -16,6 +16,8 @@ jobs:
         # env:
         #   TEST_NAME: Scarlett
         with:
+          php_version: 7.4
+          php_extensions: mbstring
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           # args: --coverage-text
