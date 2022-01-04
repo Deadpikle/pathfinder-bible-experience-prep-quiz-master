@@ -3,7 +3,7 @@
         "php": "^7.1",
         "ext-pdo": "*",
         "ext-json": "*",
-        "robmorgan/phinx": "^0.10.6",
+        "robmorgan/phinx": "^0.12.9",
         "twig/twig": "^3.0",
         "phpoffice/phpspreadsheet": "^1.16"
     },
