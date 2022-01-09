@@ -12,12 +12,14 @@ use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\Commentary;
 use App\Models\Language;
+use App\Models\MatchingQuestionSet;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
 use App\Models\User;
 use App\Models\UserAnswer;
 use App\Models\UserFlagged;
 use App\Models\Util;
+use App\Models\Views\JsonStatusCodeResponse;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\PDFGenerator;
@@ -211,5 +213,32 @@ class QuizController
         $userID = User::currentUserID();
         $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $app->db);
         return new JsonResponse(['status' => $hasFlagged ? 200 : 400]);
+    }
+
+    public function viewMatchingQuizPage(PBEAppConfig $app, Request $request): Response
+    {
+        $currentYear = Year::loadCurrentYear($app->db);
+        $questionSets = MatchingQuestionSet::loadAllMatchingSetsForYear($currentYear->yearID, $app->db);
+        return new TwigView('user/quiz/matching-quiz', compact('currentYear', 'questionSets'), 'Matching Quiz');
+    }
+
+    public function generateMatchingQuiz(PBEAppConfig $app, Request $request): Response
+    {
+        $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->post, 'questionSetID'), $app->db);
+        $numQuestions = Util::validateInteger($request->post, 'numberQuestions');
+        if ($questionSet === null) {
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set not found'], 404);
+        }
+        if ($numQuestions < 1) {
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Number of questions must be greater than 1'], 404);
+        }
+        if (count($questionSet->questions) < 1) {
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set has no questions'], 404);
+        }
+        $numToDisplay = min($numQuestions, $questionSet->questions);
+        $questionsToSend = $questionSet->questions;
+        shuffle($questionsToSend);
+        $questionsToSend = array_slice($questionsToSend, 0, $numToDisplay);
+        return new JsonStatusCodeResponse(['didSucceed' => true, 'data' => $questionsToSend], 200);
     }
 }

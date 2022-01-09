@@ -62,6 +62,11 @@ class MatchingQuestionSet
         return self::loadMatchingSets(' WHERE IsDeleted = 0 ', [], $db);
     }
 
+    public static function loadAllMatchingSetsForYear(int $yearID, PDO $db): array
+    {
+        return self::loadMatchingSets(' WHERE IsDeleted = 0 AND YearID = ? ', [ $yearID ], $db);
+    }
+
     public static function loadMatchingSetByID(int $matchingSetID, PDO $db): ?MatchingQuestionSet
     {
         $data = self::loadMatchingSets(' WHERE MatchingQuestionSetID = ? AND IsDeleted = 0 ', [ $matchingSetID ], $db);
