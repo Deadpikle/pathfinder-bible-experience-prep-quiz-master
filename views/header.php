@@ -48,7 +48,7 @@ $homePath = $app->basePath == "" ? "/" : $app->basePath;
         <script src="<?= $app->yurl('/lib/jquery-3.2.1.min.js') ?>"></script>
         <script type="text/javascript" src="<?= $app->yurl('/lib/materialize/js/materialize.min.js') ?>"></script>
         <script type="text/javascript" src="<?= $app->yurl('/lib/autosize.min.js') ?>"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
         <!-- For admin pages -->
         <script type="text/javascript" src="<?= $app->yurl('/lib/html.sortable.min.js') ?>"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
         <!-- tablesorter.js -->
