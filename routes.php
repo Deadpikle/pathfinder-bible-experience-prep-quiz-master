@@ -173,6 +173,18 @@
         // admin settings
         '/admin/settings' => [['GET', 'Admin/SettingController', 'viewSettings'],
                              ['POST', 'Admin/SettingController', 'saveSettings']],
+        
+        // matching question sets
+        '/admin/matching-question-sets' => ['Admin/MatchingQuestionsController', 'viewMatchingQuestionSets'],
+        '/admin/matching-question-sets/create' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'createMatchingQuestionSet'],
+            ['POST', 'Admin/MatchingQuestionsController', 'saveCreatedMatchingQuestionSet']],
+        '/admin/matching-question-sets/{matchingQuestionSetID}/edit' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'editMatchingQuestionSet'],
+            ['POST', 'Admin/MatchingQuestionsController', 'saveEditedMatchingQuestionSet']],
+        '/admin/matching-question-sets/{matchingQuestionSetID}/delete' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'verifyDeleteMatchingQuestionSet'],
+            ['POST', 'Admin/MatchingQuestionsController', 'deleteMatchingQuestionSet']],
         // years
         '/admin/years' => ['GET', 'Admin/YearController', 'viewYears'],
         '/admin/years/add' => ['POST', 'Admin/YearController', 'addYear'],

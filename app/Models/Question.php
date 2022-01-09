@@ -173,7 +173,7 @@ class Question
     {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
-            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ? WHERE QuestionID = ?';
+            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ?, DateModified = ? WHERE QuestionID = ?';
         $params = [
             $this->type,
             trim($this->question),
@@ -186,6 +186,7 @@ class Question
             $this->commentaryStartPage,
             $this->commentaryEndPage,
             $this->languageID,
+            date('Y-m-d H:i:s'),
             $this->questionID
         ];
         $stmt = $db->prepare($query);

@@ -234,6 +234,7 @@ class Router
                 $output->get = $getParams;
                 $output->anchor = $anchorOnPage;
                 $output->post = $_POST;
+                $output->files = $_FILES;
                 return $output;
             }
         }

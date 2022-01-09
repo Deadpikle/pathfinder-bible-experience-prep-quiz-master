@@ -42,11 +42,13 @@ class AddMatchingQuestionItemTable extends AbstractMigration
         $table->addColumn('LastEditedByID', 'integer', ['null' => true]);
         $table->addColumn('StartVerseID', 'integer', ['null' => true]);
         $table->addColumn('EndVerseID', 'integer', ['null' => true]);
+        $table->addColumn('MatchingQuestionSetID', 'integer', ['null' => false]);
 
         $table->addForeignKey('CreatorID', 'Users', 'UserID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('LastEditedByID', 'Users', 'UserID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('StartVerseID', 'Verses', 'VerseID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('EndVerseID', 'Verses', 'VerseID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
+        $table->addForeignKey('MatchingQuestionSetID', 'MatchingQuestionSets', 'MatchingQuestionSetID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
 
         $table->create();
     }

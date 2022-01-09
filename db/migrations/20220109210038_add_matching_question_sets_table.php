@@ -36,6 +36,7 @@ class AddMatchingQuestionSetsTable extends AbstractMigration
         $table->addColumn('Description', 'string', ['limit' => 500]);
         $table->addColumn('LanguageID', 'integer', ['null' => true, 'default' => 1]);
         $table->addColumn('YearID', 'integer', ['null' => false, 'default' => 1]);
+        $table->addColumn('IsDeleted', 'boolean', ['default' => false]);
         $table->addForeignKey('LanguageID', 'Languages', 'LanguageID', ['delete'=> 'SET_NULL', 'update' => 'NO_ACTION']);
         $table->addForeignKey('YearID', 'Years', 'YearID', ['delete'=> 'CASCADE', 'update' => 'NO_ACTION']);
         $table->create();

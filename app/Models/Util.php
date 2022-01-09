@@ -41,7 +41,7 @@ class Util
 
     public static function validateString(array $array, string $key) : string
     {
-        return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_STRING)) : '';
+        return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key])) : '';
     }
 
     public static function validateURL(array $array, string $key) : string
