@@ -77,21 +77,12 @@
 			itemTextSpans[0].innerText = item['question'];
 		}
 		quizBankUL.appendChild(li);
-		//
-		//var a = quizBankItem.getElementsByClassName('item-text');
-		//a[0].innerText = item['question'];
-		//quizBankUL.innerHTML += quizBankItem;
-
-		/*var li = document.createElement('li');
-		li.appendChild(document.createTextNode(item['answer']));
-		answersUL.appendChild(li);*/
-
+		// setup answer 
 		var answerItem = answerItemTemplate.cloneNode(true);
 		var li = document.createElement('li');
 		li.appendChild(answerItem);
 		var answerTextSpans = li.getElementsByClassName('answer-text');
 		if (answerTextSpans.length > 0) {
-			console.log('helllloooo');
 			answerTextSpans[0].innerText = item['answer'];
 		}
 		answersUL.appendChild(li);
@@ -110,7 +101,7 @@
 			group: {
 				name: 'shared',
 				put: function (to) {
-					return to.el.children.length < 1;
+					return to.el.children.length < 1; // max 1 item in list
 				}
 			},
 		});
