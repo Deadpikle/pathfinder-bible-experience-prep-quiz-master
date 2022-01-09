@@ -49,6 +49,7 @@
             <h2>Answers</h2>
             <ul id="answers">
             </ul>
+            <button class="btn waves-effect waves-light red right " id="reset-answers-button">Reset Answers</button>
         </div>
     </div>
     <button class="btn waves-effect waves-light submit" id="check-answer-button">Check Answers</button>
@@ -98,6 +99,7 @@
 	var quizBankUL = document.getElementById('quiz-bank');
 	var answersUL = document.getElementById('answers');
 	var checkAnswerButton = document.getElementById('check-answer-button');
+    var resetAnswersButton = document.getElementById('reset-answers-button');
     var generateQuizButton = document.getElementById('generate-quiz-button');
     var questionSetSelect = document.getElementById('question-set');
     var numberQuestionsInput = document.getElementById('number');
@@ -124,8 +126,11 @@
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                Materialize.toast(xhr.responseJSON.message, 4000);
-                //alert("Unable to generate matching question quiz. Please make sure you are connected to the internet or try again later.");
+                try {
+                    Materialize.toast(xhr.responseJSON.message, 4000);
+                } catch (error) {
+                    Materialize.toast('Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.', 4000);
+                }
             }
         });
     });
@@ -266,6 +271,26 @@
 	checkAnswerButton.addEventListener('click', function() {
 		checkAnswers();
 	});
+
+    resetAnswersButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset your matches? You can\'t undo this action!')) {
+            var answerListItems = answersUL.getElementsByClassName('answer-list-item');
+            for (var i = 0; i < answerListItems.length; i++) {
+                var answerListItem = answerListItems[i];
+                var answerItemContainers = answerListItem.getElementsByClassName('answer-item');
+                if (answerItemContainers.length > 0) {
+                    // check if user has matched an item at all
+                    var quizBankListItems = answerListItem.getElementsByClassName('quiz-list-item');
+                    if (quizBankListItems.length > 0) {
+                        quizBankListItem = quizBankListItems[0];
+                        quizBankListItem.parentNode.removeChild(quizBankListItem);
+                        quizBankUL.appendChild(quizBankListItem);
+                        sortQuizBank();
+                    }
+                }
+            }
+        }
+    });
 
 </script>
 
