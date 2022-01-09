@@ -4,8 +4,10 @@ use App\Models\NonBlankableWord;
 use App\Models\Question;
 use App\Models\Util;
 
-    function str_contains($needle, $haystack) {
-        return strpos($haystack, $needle) !== false;
+    if (!function_exists('str_contains')) {
+        function str_contains($needle, $haystack) {
+            return strpos($haystack, $needle) !== false;
+        }
     }
 
     function utf8($str) {
