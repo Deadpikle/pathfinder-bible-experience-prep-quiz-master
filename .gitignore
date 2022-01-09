@@ -9,3 +9,4 @@ views/_cache/*
 !*views/_cache/.gitkeep
 !*uploads/.gitkeep
 .phpunit.result.cache
+docs/pathfinder-bible-exp-engine.mwb.bak

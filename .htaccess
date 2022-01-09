@@ -15,4 +15,5 @@
     RewriteRule ^config\.php$ - [F]
     RewriteRule ^TODO\.txt$ - [F]
     RewriteRule ^phpunit\.xml$ - [F]
+    RewriteRule ^docs/pathfinder-bible-exp-engine\.mwb$ - [F]
 </IfModule>
