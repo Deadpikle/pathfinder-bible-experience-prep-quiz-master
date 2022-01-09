@@ -41,6 +41,8 @@ $homePath = $app->basePath == "" ? "/" : $app->basePath;
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
         <link type="text/css" rel="stylesheet" href="<?= $app->yurl('/lib/materialize/css/materialize.min.css?v=20171204a') ?>" media="screen,projection"/>
+        <!-- Import Font Awesome 5-->
+        <link href="<?= $app->yurl('/lib/fontawesome5/css/all.min.css') ?>" rel="stylesheet">
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
