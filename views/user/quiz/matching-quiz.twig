@@ -127,6 +127,9 @@
                 if (response.didSucceed) {
                     clearOldQuiz();
                     showQuiz(response.sets[0], 0);
+                    //showQuiz(response.sets[1], 1); // to make this work we will have to rework how we setup the quiz
+                    // need to redo how the element names are set up and all that, make the quiz thing a template (basically),
+                    // draw a dividing line between each set of questions & answers, that sort of thing
                     document.getElementById('matching-quiz').classList.remove('hidden');
                     
                 } else {
