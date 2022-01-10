@@ -25,12 +25,18 @@
     <div class="col s6">
         <div class="input-field col s12 m6">
             <input type="number" id="number" name="number" value="10" autocomplete="off" required/>
-            <label for="name">* Number of Matches/Questions</label>
+            <label for="number">* Number of Matches/Questions</label>
+        </div>
+    </div>
+    <div class="col s4 hidden">
+        <div class="input-field col s12 m6">
+            <input type="sets" id="sets" name="sets" value="5" autocomplete="off" required/>
+            <label for="sets">* Number of Sets</label>
         </div>
     </div>
 </div>
 <div class="row mt-0">
-    <div class="col s12">
+    <div class="col s6">
         <button id="generate-quiz-button" class="btn waves-effect blue">Generate Matching Quiz</button>
     </div>
 </div>
@@ -103,6 +109,7 @@
     var generateQuizButton = document.getElementById('generate-quiz-button');
     var questionSetSelect = document.getElementById('question-set');
     var numberQuestionsInput = document.getElementById('number');
+    var numberSetsInput = document.getElementById('sets');
 	var quizBankItemTemplate = document.getElementById('quiz-bank-item-template').firstElementChild;
 	var answerItemTemplate = document.getElementById('answer-item-template').firstElementChild;
     var sortables = [];
@@ -114,12 +121,12 @@
             data: {
                 questionSetID: questionSetSelect.value,
                 numberQuestions: numberQuestionsInput.value,
-                numberSets: 10
+                numberSets: numberSetsInput.value
             },
             success: function(response) {
                 if (response.didSucceed) {
                     clearOldQuiz();
-                    showQuiz(response.sets[0]);
+                    showQuiz(response.sets[0], 0);
                     document.getElementById('matching-quiz').classList.remove('hidden');
                     
                 } else {
@@ -145,7 +152,7 @@
         answersUL.innerHTML = '';
     }
 
-    function showQuiz(matches) {
+    function showQuiz(matches, setIdentifier) {
         matches.forEach(function(item) {
             // setup quiz option
             var quizBankItem = quizBankItemTemplate.cloneNode(true);
@@ -177,7 +184,7 @@
         // set up sortables
         sortables.push(Sortable.create(quizBankUL, {
             group: {
-                name: 'shared'
+                name: 'shared-' + setIdentifier
             },
             handle: '.drag-handle',
             ghostClass: 'sortable-drop-placeholder',
@@ -194,7 +201,7 @@
             var item = answerDrops[i];
             sortables.push(Sortable.create(item, {
                 group: {
-                    name: 'shared',
+                    name: 'shared-' + setIdentifier,
                     put: function (to) {
                         return to.el.children.length < 1; // max 1 item in list
                     }
