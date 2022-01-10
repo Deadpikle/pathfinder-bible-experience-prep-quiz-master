@@ -23,6 +23,7 @@ The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bi
 * Website administrators can edit pretty much everything from an Admin panel
 * Responsive website -- use on your tablet or phone!
 * Add questions in English, Spanish, or French
+* Matching quizzes! Drag and drop matching quizzes that let you memorize information in a matching format!
 
 ## Demo
 
