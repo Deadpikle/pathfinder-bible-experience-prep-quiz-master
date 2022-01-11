@@ -217,6 +217,9 @@ class QuizController
 
     public function viewMatchingQuizPage(PBEAppConfig $app, Request $request): Response
     {
+        if (!User::isLoggedIn()) {
+            return new Response(401);
+        }
         $currentYear = Year::loadCurrentYear($app->db);
         $questionSets = MatchingQuestionSet::loadAllMatchingSetsForYear($currentYear->yearID, $app->db);
         return new TwigView('user/quiz/matching-quiz', compact('currentYear', 'questionSets'), 'Matching Quiz');
@@ -224,6 +227,9 @@ class QuizController
 
     public function generateMatchingQuiz(PBEAppConfig $app, Request $request): Response
     {
+        if (!User::isLoggedIn()) {
+            return new Response(401);
+        }
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->post, 'questionSetID'), $app->db);
         $numQuestions = Util::validateInteger($request->post, 'numberQuestions');
         $numSets = Util::validateInteger($request->post, 'numberSets');
