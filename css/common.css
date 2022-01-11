@@ -351,11 +351,11 @@ p.quiz-bank-item span {
     margin-left: 0.5em;
 }
 
-div#quiz-bank-container {
+div.quiz-bank-container {
     padding-right: 1.5em;
 }
 
-ul#quiz-bank {
+ul.quiz-bank {
     border: 1px solid gray;
     border-radius: 4px;
     min-height: 50px;
@@ -366,7 +366,7 @@ ul#quiz-bank {
     background-color: rgb(230, 238, 255);
 }
 
-ul#quiz-bank li {
+ul.quiz-bank li {
     list-style: none;
     margin-left: 0;
     border: 1px solid #333;
@@ -374,20 +374,20 @@ ul#quiz-bank li {
     min-height: 32px;
 }
 
-ul#quiz-bank li:not(:last-child) {
+ul.quiz-bank li:not(:last-child) {
     margin-bottom: 0.5em;
 }
 
-div#answers-container {
+div.answers-container {
     border-left: 2px solid black;
     padding-left: 1.5em;
 }
 
-ul#answers {
+ul.answers {
     padding-left: 0.75em;
 }
 
-ul#answers li:not(:last-child) {
+ul.answers li:not(:last-child) {
     margin-bottom: 0.75em;
 }
 
