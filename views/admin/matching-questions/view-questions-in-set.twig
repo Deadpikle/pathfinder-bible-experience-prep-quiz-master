@@ -12,7 +12,7 @@
 
 <h4>Matching Question for {{ questionSet.name }}</h4>
 
-<p><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/matching-question-sets/create') }}">Add Question</a></p>
+{# <p><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/matching-question-sets/create') }}">Add Question</a></p> #}
 
 <div class="" id="matching-questions-div">
     <div class="">
@@ -30,7 +30,7 @@
                         <td>{{ question.question }}</td>
                         <td>{{ question.answer }}</td>
                         <td>
-                            <a class="waves-effect waves-light btn blue" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/questions/' ~ question.matchingQuestionItemID ~ '/edit') }}">Edit</a>
+                            {# <a class="waves-effect waves-light btn blue" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/questions/' ~ question.matchingQuestionItemID ~ '/edit') }}">Edit</a> #}
                             <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/questions/' ~ question.matchingQuestionItemID  ~ '/delete') }}">Delete</a>
                         </td>
                     </tr>
