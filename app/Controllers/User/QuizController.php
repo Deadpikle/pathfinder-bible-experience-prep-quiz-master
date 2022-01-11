@@ -226,6 +226,7 @@ class QuizController
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->post, 'questionSetID'), $app->db);
         $numQuestions = Util::validateInteger($request->post, 'numberQuestions');
+        $numSets = Util::validateInteger($request->post, 'numberSets');
         if ($questionSet === null) {
             return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set not found'], 404);
         }
@@ -235,10 +236,20 @@ class QuizController
         if (count($questionSet->questions) < 1) {
             return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set has no questions'], 404);
         }
-        $numToDisplay = min($numQuestions, $questionSet->questions);
+        if ($numSets < 1) {
+            $numSets = 1;
+        }
+        $sets = [];
         $questionsToSend = $questionSet->questions;
-        shuffle($questionsToSend);
-        $questionsToSend = array_slice($questionsToSend, 0, $numToDisplay);
-        return new JsonStatusCodeResponse(['didSucceed' => true, 'data' => $questionsToSend], 200);
+        for ($i = 0; $i < $numSets; $i++) {
+            if (count($questionsToSend) === 0) {
+                break;
+            }
+            $numToDisplay = min($numQuestions, count($questionsToSend));
+            shuffle($questionsToSend);
+            $sets[] = array_slice($questionsToSend, 0, $numToDisplay);
+            $questionsToSend = array_slice($questionsToSend, $numToDisplay);
+        }
+        return new JsonStatusCodeResponse(['didSucceed' => true, 'sets' => $sets], 200);
     }
 }

@@ -36,7 +36,7 @@
     </div>
 </div>
 <div class="row mt-0">
-    <div class="col s12">
+    <div class="col s6">
         <button id="generate-quiz-button" class="btn waves-effect blue">Generate Matching Quiz</button>
     </div>
 </div>
@@ -122,7 +122,8 @@
             url: '{{ app.yurl('/matching-quiz/generate') }}',
             data: {
                 questionSetID: questionSetSelect.value,
-                numberQuestions: numberQuestionsInput.value
+                numberQuestions: numberQuestionsInput.value,
+                numberSets: numberSetsInput.value
             },
             success: function(response) {
                 if (response.didSucceed) {
@@ -209,7 +210,7 @@
         // set up sortables
         sortables.push(Sortable.create(quizBankUL, {
             group: {
-                name: 'shared'
+                name: 'shared-' + setIdentifier
             },
             handle: '.drag-handle',
             ghostClass: 'sortable-drop-placeholder',
@@ -225,7 +226,7 @@
         answerDrops.forEach(function(item) {
             sortables.push(Sortable.create(item, {
                 group: {
-                    name: 'shared',
+                    name: 'shared-' + setIdentifier,
                     put: function (to) {
                         return to.el.children.length < 1; // max 1 item in list
                     }
