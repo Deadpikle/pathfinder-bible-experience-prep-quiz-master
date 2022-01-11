@@ -433,3 +433,21 @@ li.sortable-drop-placeholder,
 li.sortable-drag {
     background-color: #c0eefd !important;
 }
+
+.matching-quiz-page-title {
+    font-size: 48px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.matching-quiz-set-title {
+    font-size: 36px;
+    margin-bottom: 0;
+    margin-top: 0.5em;
+}
+
+.matching-quiz-col-title {
+    font-size: 24px;
+    margin-bottom: 0;
+    margin-top: 0.5em;
+}

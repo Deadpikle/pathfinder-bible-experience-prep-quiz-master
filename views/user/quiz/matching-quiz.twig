@@ -10,7 +10,7 @@
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
 
-<h4>Matching Quiz</h4>
+<h1 class="matching-quiz-page-title">Matching Quiz</h1>
 <p>Drag items from the question bank on the left to the corresponding matches/answers on the right. Then, to check your answers, click the "Check Answers" button at the bottom. If a match is correct, you will see that item turn green and a <i class="fas fa-check-circle"></i> icon. If the match is not correct, you will see that item turn red and a <i class="fas fa-exclamation-triangle"></i> icon. When you've finished one quiz and you're ready to do a new quiz, just click the "Generate Matching Quiz" button again!</p>
 
 <div class="row mb-0">
@@ -22,16 +22,16 @@
         </select>
         <label>* Question Set</label>
     </div>
-    <div class="col s6">
-        <div class="input-field col s12 m6">
-            <input type="number" id="number" name="number" value="5" min="1" max="999" autocomplete="off" required/>
+    <div class="col s3 m4">
+        <div class="input-field">
+            <input type="number" id="number" name="number" value="5" min="1" max="999" autocomplete="off" required>
             <label for="number">* Number of Matches/Questions</label>
         </div>
     </div>
-    <div class="col s4 hidden">
-        <div class="input-field col s12 m6">
-            <input type="sets" id="sets" name="sets" value="5" min="1" max="50" autocomplete="off" required/>
-            <label for="sets">* Number of Sets</label>
+    <div class="col s3 m4">
+        <div class="input-field">
+            <input type="number" id="sets" name="sets" value="5" min="1" max="50" autocomplete="off" required>
+            <label for="sets">* Number of Matching Sets</label>
         </div>
     </div>
 </div>
@@ -47,19 +47,22 @@
 </div>
 
 <div class="hidden" id="matching-quiz-template">
-    <div class="row">
-        <div class="col s6 m4 l4 quiz-bank-container">
-            <h2>Quiz Bank</h2>
-            <ul class="browser-default quiz-bank">
+    <div> {# wrapper div for easier copying since we use the first element child #}
+        <h2 class="matching-quiz-set-title">Set <span class="set-title"></span></h2>
+        <div class="row">
+            <div class="col s6 m4 l4 quiz-bank-container">
+                <h3 class="matching-quiz-col-title">Quiz Bank</h3>
+                <ul class="browser-default quiz-bank">
 
-            </ul>
-            <button class="btn waves-effect waves-light check-answer-button">Check Answers</button>
-        </div>
-        <div class="col s6 m8 l6 answers-container">
-            <h2>Answers</h2>
-            <ul class="answers">
-            </ul>
-            <button class="btn waves-effect waves-light red right reset-answers-button">Reset Answers</button>
+                </ul>
+                <button class="btn waves-effect waves-light check-answer-button">Check Answers</button>
+            </div>
+            <div class="col s6 m8 l6 answers-container">
+                <h3 class="matching-quiz-col-title">Answers</h3>
+                <ul class="answers">
+                </ul>
+                <button class="btn waves-effect waves-light red right reset-answers-button">Reset Answers</button>
+            </div>
         </div>
     </div>
 </div>
@@ -167,6 +170,8 @@
         var matchingQuiz = matchingQuizTemplate.cloneNode(true);
         matchingQuizContainer.appendChild(matchingQuiz);
         // get all the appropriate vars...
+        var setTitle = matchingQuiz.querySelector('.set-title');
+        setTitle.innerText = setIdentifier + 1;
         var quizBankUL = matchingQuiz.querySelector('.quiz-bank');
         var answersUL = matchingQuiz.querySelector('.answers');
         var checkAnswerButton = matchingQuiz.querySelector('.check-answer-button');
