@@ -33,10 +33,10 @@
                         <td>{{ questionSet.name }}</td>
                         <td>{{ questionSet.description }}</td>
                         <td>{{ questionSet.questions | length }}</td>
-                        <td>{{ questionSet.language }}</td>
-                        <td>{{ questionSet.year }}</td>
+                        <td>{{ languagesByID[questionSet.languageID].getDisplayName() }}</td>
+                        <td>{{ yearsByID[questionSet.yearID].year }}</td>
                         <td>
-                            {# <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/questions') }}">Manage Question Items</a> #}
+                            <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/questions') }}">Manage Questions</a>
                             <a class="waves-effect waves-light btn blue" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/edit') }}">Edit</a>
                             <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/matching-question-sets/' ~ questionSet.matchingQuestionSetID ~ '/delete') }}">Delete</a>
                         </td>
@@ -53,10 +53,10 @@
             { orderable: false, targets: [-1] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search books..."
+            searchPlaceholder: "Search..."
         };
-        datatablesProps.order = [[ 2, 'asc' ]];
-        $('#books-table').DataTable(datatablesProps);
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#matching-questions-table').DataTable(datatablesProps);
     });
 </script>
 

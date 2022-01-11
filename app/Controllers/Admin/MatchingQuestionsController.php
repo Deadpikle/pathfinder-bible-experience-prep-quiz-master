@@ -45,9 +45,17 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
     public function viewMatchingQuestionSets(PBEAppConfig $app, Request $request): Response
     {
         $years = Year::loadAllYears($app->db);
+        $yearsByID = [];
+        foreach ($years as $year) {
+            $yearsByID[$year->yearID] = $year;
+        }
         $languages = Language::loadAllLanguages($app->db);
+        $languagesByID = [];
+        foreach ($languages as $language) {
+            $languagesByID[$language->languageID] = $language;
+        }
         $questionSets = MatchingQuestionSet::loadAllMatchingSets($app->db);
-        return new TwigView('admin/matching-questions/view-question-sets', compact('questionSets', 'years', 'languages'), 'Matching Question Sets');
+        return new TwigView('admin/matching-questions/view-question-sets', compact('questionSets', 'years', 'yearsByID', 'languages', 'languagesByID'), 'Matching Question Sets');
     }
 
     private function showCreateOrEditMatchingQuestionSet(PBEAppConfig $app, Request $request, bool $isCreating, ?MatchingQuestionSet $questionSet, string $error = '') : Response
@@ -192,6 +200,44 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         } else {
             $error = 'Unable to validate request. Please try again.';
             return new TwigView('admin/matching-questions/verify-delete-question-set', compact('questionSet', 'error'), 'Delete Matching Question Set');
+        }
+    }
+
+    // questions in set
+    public function viewMatchingQuestionsForSet(PBEAppConfig $app, Request $request): Response
+    {
+        $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
+        if ($questionSet === null) {
+            return new TwigNotFound();
+        }
+        $years = Year::loadAllYears($app->db);
+        $languages = Language::loadAllLanguages($app->db);
+        return new TwigView('admin/matching-questions/view-questions-in-set', compact('questionSet', 'years', 'languages'), 'View Questions in Set');
+    }
+
+    public function verifyDeleteMatchingQuestion(PBEAppConfig $app, Request $request) : Response
+    {
+        $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
+        $question = MatchingQuestionItem::loadQuestionItemByID(Util::validateInteger($request->routeParams, 'matchingQuestionItemID'), $app->db);
+        if ($questionSet === null || $question === null) {
+            return new TwigNotFound();
+        }
+        return new TwigView('admin/matching-questions/verify-delete-question', compact('questionSet', 'question'), 'Delete Matching Question');
+    }
+
+    public function deleteMatchingQuestion(PBEAppConfig $app, Request $request) : Response
+    {
+        $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
+        $question = MatchingQuestionItem::loadQuestionItemByID(Util::validateInteger($request->routeParams, 'matchingQuestionItemID'), $app->db);
+        if ($questionSet === null || $question === null) {
+            return new TwigNotFound();
+        }
+        if (CSRF::verifyToken('delete-matching-question')) {
+            $question->delete($app->db);
+            return new Redirect('/admin/matching-question-sets/' . $questionSet->matchingQuestionSetID . '/questions');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            return new TwigView('admin/matching-questions/verify-delete-question', compact('questionSet', 'question', 'error'), 'Delete Matching Question');
         }
     }
 }

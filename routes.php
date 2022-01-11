@@ -187,6 +187,18 @@
         '/admin/matching-question-sets/{matchingQuestionSetID}/delete' => 
             [['GET', 'Admin/MatchingQuestionsController', 'verifyDeleteMatchingQuestionSet'],
             ['POST', 'Admin/MatchingQuestionsController', 'deleteMatchingQuestionSet']],
+
+        '/admin/matching-question-sets/{matchingQuestionSetID}/questions' => 
+            ['Admin/MatchingQuestionsController', 'viewMatchingQuestionsForSet'],
+        '/admin/matching-question-sets/{matchingQuestionSetID}/questions/create' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'createMatchingQuestion'],
+            ['POST', 'Admin/MatchingQuestionsController', 'saveCreatedMatchingQuestion']],
+        '/admin/matching-question-sets/{matchingQuestionSetID}/questions/{matchingQuestionItemID}/edit' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'editMatchingQuestion'],
+            ['POST', 'Admin/MatchingQuestionsController', 'saveEditedMatchingQuestion']],
+        '/admin/matching-question-sets/{matchingQuestionSetID}/questions/{matchingQuestionItemID}/delete' => 
+            [['GET', 'Admin/MatchingQuestionsController', 'verifyDeleteMatchingQuestion'],
+            ['POST', 'Admin/MatchingQuestionsController', 'deleteMatchingQuestion']],
         // years
         '/admin/years' => ['GET', 'Admin/YearController', 'viewYears'],
         '/admin/years/add' => ['POST', 'Admin/YearController', 'addYear'],
