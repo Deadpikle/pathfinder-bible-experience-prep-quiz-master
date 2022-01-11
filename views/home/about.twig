@@ -21,7 +21,7 @@
             </p>
             <hr/>
             {% if conferences | length > 0 %}
-                <p>If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact the adminstrator for your conference:</p>
+                <p>If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact the website adminstrator (<a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>) or the administrator for your conference:</p>
                 {% for conference in conferences %}
                     <p><a href="{{ conference.url }}" target="_blank"><b>{{ conference.name }}</b></a><br>{{ conference.contactName }}<br><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></p>
                 {% endfor %}
