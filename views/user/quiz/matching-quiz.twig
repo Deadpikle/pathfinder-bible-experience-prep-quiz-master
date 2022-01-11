@@ -47,21 +47,19 @@
 </div>
 
 <div class="hidden" id="matching-quiz-template">
-    <div>
-        <div class="row">
-            <div class="col s6 m4 l4 quiz-bank-container">
-                <h2>Quiz Bank</h2>
-                <ul class="browser-default quiz-bank">
+    <div class="row">
+        <div class="col s6 m4 l4 quiz-bank-container">
+            <h2>Quiz Bank</h2>
+            <ul class="browser-default quiz-bank">
 
-                </ul>
-                <button class="btn waves-effect waves-light check-answer-button">Check Answers</button>
-            </div>
-            <div class="col s6 m8 l6 answers-container">
-                <h2>Answers</h2>
-                <ul class="answers">
-                </ul>
-                <button class="btn waves-effect waves-light red right reset-answers-button">Reset Answers</button>
-            </div>
+            </ul>
+            <button class="btn waves-effect waves-light check-answer-button">Check Answers</button>
+        </div>
+        <div class="col s6 m8 l6 answers-container">
+            <h2>Answers</h2>
+            <ul class="answers">
+            </ul>
+            <button class="btn waves-effect waves-light red right reset-answers-button">Reset Answers</button>
         </div>
     </div>
 </div>
@@ -162,7 +160,8 @@
     function showQuiz(matches, setIdentifier) {
         if (setIdentifier > 0) {
             // add divider between matching sets
-            matchingQuizContainer.innerHTML += '<hr/>';
+            var hr = document.createElement('hr');
+            matchingQuizContainer.appendChild(hr);
         }
         // add matching quiz from template
         var matchingQuiz = matchingQuizTemplate.cloneNode(true);
@@ -172,6 +171,7 @@
         var answersUL = matchingQuiz.querySelector('.answers');
         var checkAnswerButton = matchingQuiz.querySelector('.check-answer-button');
         var resetAnswersButton = matchingQuiz.querySelector('.reset-answers-button');
+        // setup attributes for later reference...
         quizBankUL.setAttribute('data-set-id', setIdentifier);
         answersUL.setAttribute('data-set-id', setIdentifier);
         checkAnswerButton.setAttribute('data-set-id', setIdentifier);
@@ -182,9 +182,9 @@
             var quizBankItem = quizBankItemTemplate.cloneNode(true);
             var li = document.createElement('li');
             li.appendChild(quizBankItem);
-            var itemTextSpans = li.getElementsByClassName('item-text');
-            if (itemTextSpans.length > 0) {
-                itemTextSpans[0].innerText = item.question;
+            var itemTextSpan = li.querySelector('.item-text');
+            if (itemTextSpan !== null) {
+                itemTextSpan.innerText = item.question;
             }
             li.classList.add('quiz-list-item');
             li.setAttribute('data-id', item.matchingQuestionItemID);
@@ -198,9 +198,9 @@
             var answerItem = answerItemTemplate.cloneNode(true);
             var li = document.createElement('li');
             li.appendChild(answerItem);
-            var answerTextSpans = li.getElementsByClassName('answer-text');
-            if (answerTextSpans.length > 0) {
-                answerTextSpans[0].innerText = item.answer;
+            var answerTextSpan = li.querySelector('.answer-text');
+            if (answerTextSpan !== null) {
+                answerTextSpan.innerText = item.answer;
             }
             li.classList.add('answer-list-item');
             li.setAttribute('data-id', item.matchingQuestionItemID);
@@ -208,27 +208,29 @@
             answersUL.appendChild(li);
         });
         // set up sortables
+        var sortableName = 'shared-' + setIdentifier; 
         sortables.push(Sortable.create(quizBankUL, {
             group: {
-                name: 'shared-' + setIdentifier
+                name: sortableName
             },
             handle: '.drag-handle',
             ghostClass: 'sortable-drop-placeholder',
             sort: false, // no sorting within list
-            // Element is dropped into the list from another list
             onAdd: function (/**Event*/evt) {
-                console.log(evt);
-                //sortQuizBank();
-                //clearAllCorrectIncorrect();
+                // Element is dropped into the list from another list
+                sortQuizBank(evt.from.getAttribute('data-set-id'));
+                clearAllCorrectIncorrect(evt.from.getAttribute('data-set-id'));
             },
         }));
         var answerDrops = answersUL.querySelectorAll('.answer-drop');
         answerDrops.forEach(function(item) {
+            item.setAttribute('data-set-id', setIdentifier);
             sortables.push(Sortable.create(item, {
                 group: {
-                    name: 'shared-' + setIdentifier,
-                    put: function (to) {
-                        return to.el.children.length < 1; // max 1 item in list
+                    name: sortableName,
+                    put: function (to, from) {
+                        var hasZeroItems = to.el.children.length < 1; // max 1 item in list
+                        return hasZeroItems && from.el.getAttribute('data-set-id') == to.el.getAttribute('data-set-id');
                     }
                 },
                 handle: '.drag-handle',
@@ -236,67 +238,65 @@
                 ghostClass: 'sortable-drop-placeholder',
                 onSort: function (/**Event*/evt) {
                     // same properties as onEnd
-                    //clearAllCorrectIncorrect();
+                    clearAllCorrectIncorrect(evt.from.getAttribute('data-set-id'));
                 },
-                // Element is removed from the list into another list
                 onRemove: function (/**Event*/evt) {
+                    // Element is removed from the list into another list
                     // same properties as onEnd
-                    //clearAllCorrectIncorrect();
+                    clearAllCorrectIncorrect(evt.from.getAttribute('data-set-id'));
                 },
             }));
         });
         sortQuizBank(setIdentifier);
 
         checkAnswerButton.addEventListener('click', function(event) {
-            checkAnswers(event.target.getAttribute('data-set-id'));
+            var setID = event.target.getAttribute('data-set-id');
+            checkAnswers(setID);
         });
 
         resetAnswersButton.addEventListener('click', function(event) {
             var setID = event.target.getAttribute('data-set-id');
-            console.log('reset', setID);
-            resetAnswers(seID);
+            resetAnswers(setID);
         });
     }
 
     function resetAnswers(setIdentifier) {
         if (confirm('Are you sure you want to reset your matches? You can\'t undo this action!')) {
             var answerListItems = matchingQuizContainer.querySelectorAll('.answers[data-set-id="' + setIdentifier + '"] .answer-list-item');
+            var quizBankUL = matchingQuizContainer.querySelector('.quiz-bank[data-set-id="' + setIdentifier + '"]');
             answerListItems.forEach(function(answerListItem) {
-                var answerItemContainers = answerListItem.getElementsByClassName('answer-item');
-                if (answerItemContainers.length > 0) {
+                var answerItemContainer = answerListItem.querySelector('.answer-item');
+                if (answerItemContainer !== null) {
                     // check if user has matched an item at all
-                    var quizBankListItems = answerListItem.getElementsByClassName('quiz-list-item');
-                    if (quizBankListItems.length > 0) {
-                        quizBankListItem = quizBankListItems[0];
+                    var quizBankListItem = answerListItem.querySelector('.quiz-list-item');
+                    if (quizBankListItem !== null) {
                         quizBankListItem.parentNode.removeChild(quizBankListItem);
                         quizBankUL.appendChild(quizBankListItem);
-                        sortQuizBank();
                     }
                 }
             });
+            sortQuizBank(setIdentifier);
             clearAllCorrectIncorrect(setIdentifier);
         }
     }
 
     function sortQuizBank(setIdentifier) {
-        var quizBanks = matchingQuizContainer.querySelectorAll('.quiz-bank[data-set-id="' + setIdentifier + '"]');
-        quizBanks.forEach(function(quizBank) {
-            if (quizBank.children.length > 0) {
-                tinysort(quizBank.children, 'span.item-text');
-            }
-        });
+        var quizBank = matchingQuizContainer.querySelector('.quiz-bank[data-set-id="' + setIdentifier + '"]');
+        if (quizBank.children.length > 0) {
+            tinysort(quizBank.children, 'span.item-text');
+        }
     }
 
     function clearAllCorrectIncorrect(setIdentifier) {
         var answerListItems = matchingQuizContainer.querySelectorAll('.answers[data-set-id="' + setIdentifier + '"] .answer-list-item');
 		answerListItems.forEach(function(answerListItem) {
-			var answerItemContainers = answerListItem.getElementsByClassName('answer-item');
-			if (answerItemContainers.length > 0) {
+			var answerItemContainer = answerListItem.querySelector('.answer-item');
+			if (answerItemContainer !== null) {
 				// clear any old CSS answers
-				answerItemContainers[0].classList.remove('correct-quiz-answer');
-				answerItemContainers[0].querySelector('.correct-answer-icon').classList.add('hidden');
-				answerItemContainers[0].classList.remove('wrong-quiz-answer');
-				answerItemContainers[0].querySelector('.wrong-answer-icon').classList.add('hidden');
+				answerItemContainer.classList.remove('correct-quiz-answer');
+				answerItemContainer.querySelector('.correct-answer-icon').classList.add('hidden');
+				answerItemContainer.classList.remove('wrong-quiz-answer');
+				answerItemContainer.querySelector('.wrong-answer-icon').classList.add('hidden');
             }
         });
     }
@@ -305,34 +305,32 @@
 		// check answers by looking at the answer <li> vs the quiz bank <li>.
 		// if the data-id attribute matches, then the answer is correct :)
         clearAllCorrectIncorrect(setIdentifier);
-        var answersUL = matchingQuizContainer.querySelectorAll('.answers[data-set-id="' + setIdentifier + '"]');
-		var answerListItems = answersUL.getElementsByClassName('answer-list-item');
-		for (var i = 0; i < answerListItems.length; i++) {
-			var answerListItem = answerListItems[i];
+        var answersUL = matchingQuizContainer.querySelector('.answers[data-set-id="' + setIdentifier + '"]');
+		var answerListItems = answersUL.querySelectorAll('.answer-list-item');
+		answerListItems.forEach(function(answerListItem) {
 			var answerDataID = answerListItem.getAttribute('data-id');
-			var answerItemContainers = answerListItem.getElementsByClassName('answer-item');
-			if (answerItemContainers.length > 0) {
+			var answerItemContainer = answerListItem.querySelector('.answer-item');
+			if (answerItemContainer !== null) {
 				// check if user has matched an item at all
-				var quizBankListItems = answerListItem.getElementsByClassName('quiz-list-item');
-				if (quizBankListItems.length === 0) {
+				var quizBankListItem = answerListItem.querySelector('.quiz-list-item');
+				if (quizBankListItem === null) {
 					// if not matched at all, it's wrong by default
-					answerItemContainers[0].classList.add('wrong-quiz-answer');
-					answerItemContainers[0].querySelector('.wrong-answer-icon').classList.remove('hidden');
+					answerItemContainer.classList.add('wrong-quiz-answer');
+					answerItemContainer.querySelector('.wrong-answer-icon').classList.remove('hidden');
 				} else {
 					// see if answer right
-					var quizBankListItem = quizBankListItems[0];
 					var quizBankDataID = quizBankListItem.getAttribute('data-id');
 					if (quizBankDataID === answerDataID) {
 						// answer is right!
-						answerItemContainers[0].classList.add('correct-quiz-answer');
-						answerItemContainers[0].querySelector('.correct-answer-icon').classList.remove('hidden');
+						answerItemContainer.classList.add('correct-quiz-answer');
+						answerItemContainer.querySelector('.correct-answer-icon').classList.remove('hidden');
 					} else {
-						answerItemContainers[0].classList.add('wrong-quiz-answer');
-						answerItemContainers[0].querySelector('.wrong-answer-icon').classList.remove('hidden');
+						answerItemContainer.classList.add('wrong-quiz-answer');
+						answerItemContainer.querySelector('.wrong-answer-icon').classList.remove('hidden');
 					}
 				}
 			}
-		}
+		});
 	}
 </script>
 
