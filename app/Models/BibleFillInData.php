@@ -23,7 +23,7 @@ class BibleFillInData
             WHERE b.YearID = ?
                 AND q.Type = ?
             GROUP BY c.ChapterID, c.Number, q.LanguageID
-            ORDER BY b.Name, c.Number, q.LanguageID';
+            ORDER BY b.bibleOrder, b.Name, c.Number, q.LanguageID';
         
         $data = [];
         $languages = Language::loadAllLanguages($db);
