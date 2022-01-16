@@ -92,6 +92,8 @@ if (!isset($app->ENABLE_NKJV_RESTRICTIONS)) {
     $app->ENABLE_NKJV_RESTRICTIONS = true;
 }
 
+date_default_timezone_set('America/New_York'); // TODO: make this user-configurable
+
 // // // // // YAMF Settings v1.0 // // // // //
 
 /* Change isShortURLEnabled to true if you want to enable routing

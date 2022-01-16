@@ -70,7 +70,7 @@
                     {% if app.isWebAdmin %}
                         <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
                     {% endif %}
-                    <td data-sort={{ user.lastLoginDate }}>{{ user.lastLoginDate | date('D, M d, Y') }}</td>
+                    <td data-sort={{ user.lastLoginDate }}>{{ user.lastLoginDate | date('D, M d, Y, g:i a') }}</td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
                             <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}">Edit</a>
