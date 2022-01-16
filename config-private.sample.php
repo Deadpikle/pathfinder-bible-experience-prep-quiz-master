@@ -39,3 +39,5 @@ catch (Exception $e) {
 // and you probably want this set to false on a production server.
 $app->shouldShowErrorOnExceptionThrown = false;
 $app->ENABLE_NKJV_RESTRICTIONS = true; // DO NOT DISABLE THIS UNLESS YOU HAVE THE LEGAL RIGHT TO DO SO. YOU HAVE BEEN WARNED.
+$app->sessionName = 'pbe';
+$app->cookieDomain = 'example.com';
