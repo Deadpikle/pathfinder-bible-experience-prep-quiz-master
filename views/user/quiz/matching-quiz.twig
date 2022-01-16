@@ -193,6 +193,7 @@
             }
             li.classList.add('quiz-list-item');
             li.setAttribute('data-id', item.matchingQuestionItemID);
+            li.setAttribute('data-answer', item.answer);
             li.setAttribute('data-set-id', setIdentifier);
             quizBankUL.appendChild(li);
         });
@@ -209,6 +210,7 @@
             }
             li.classList.add('answer-list-item');
             li.setAttribute('data-id', item.matchingQuestionItemID);
+            li.setAttribute('data-answer', item.answer);
             li.setAttribute('data-set-id', setIdentifier);
             answersUL.appendChild(li);
         });
@@ -324,8 +326,11 @@
 					answerItemContainer.querySelector('.wrong-answer-icon').classList.remove('hidden');
 				} else {
 					// see if answer right
+                    // check both id and answer in case 2 answers are the same
 					var quizBankDataID = quizBankListItem.getAttribute('data-id');
-					if (quizBankDataID === answerDataID) {
+                    var quizBankAnswer = quizBankListItem.getAttribute('data-answer').trim();
+                    var answerItemAnswer = answerListItem.getAttribute('data-answer').trim();
+					if (quizBankDataID === answerDataID || quizBankAnswer === answerItemAnswer) {
 						// answer is right!
 						answerItemContainer.classList.add('correct-quiz-answer');
 						answerItemContainer.querySelector('.correct-answer-icon').classList.remove('hidden');
