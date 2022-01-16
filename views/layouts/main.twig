@@ -56,7 +56,6 @@
 
         <script type="text/javascript" src="{{ app.yurl('/lib/autosize.min.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
 
         <!-- For admin pages -->
         <script type="text/javascript" src="{{ app.yurl('/lib/html.sortable.min.js') }}"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
@@ -65,9 +64,13 @@
         {% endblock %}
 
         <script src="{{ app.yurl('/js/common.js') }}?{{ filemtime("js/common.js") }}"></script>
-        {% if not app.isLocalHost and not app.isGuest and analyticsURL != '' %}
-            <!-- Piwik (code removed) -->
-            <!-- End Piwik Code -->
+        {% if not app.isLocalHost %}
+            {% if app.showCookieConsent %}
+                <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+            {% endif %}
+            {% if app.headerForAnalytics %}
+                {{ app.headerForAnalytics }}
+            {% endif %}
         {% endif %}
     </head>
     <body>
@@ -118,30 +121,32 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $(".button-collapse").sideNav();
-                window.cookieconsent.initialise({
-                    "palette": {
-                        "popup": {
-                            "background": "#0e1013",
-                            "text": "#ffffff"
+                {% if not app.isLocalHost and app.showCookieConsent %}
+                    window.cookieconsent.initialise({
+                        "palette": {
+                            "popup": {
+                                "background": "#0e1013",
+                                "text": "#ffffff"
+                            },
+                            "button": {
+                                "background": "#41aa9c",
+                                "text": "#ffffff"
+                            }
                         },
-                        "button": {
-                            "background": "#41aa9c",
-                            "text": "#ffffff"
-                        }
-                    },
-                    "theme": "classic",
-                    "position": "bottom-right",
-                    "content": {
-                        "message": "This website uses cookies to ensure you get the best experience on our website.",
-                        "link": "Learn more"
-                    },
+                        "theme": "classic",
+                        "position": "bottom-right",
+                        "content": {
+                            "message": "This website uses cookies to ensure you get the best experience on our website.",
+                            "link": "Learn more"
+                        },
 
-                    "cookie": {
-                        "domain": "{{ app.domain }}",
-                        "path": "/",
-                        "secure": true
-                    }
-                });
+                        "cookie": {
+                            "domain": "{{ app.domain }}",
+                            "path": "/",
+                            "secure": true
+                        }
+                    });
+                {% endif %}
             });
         </script>
     </body>
