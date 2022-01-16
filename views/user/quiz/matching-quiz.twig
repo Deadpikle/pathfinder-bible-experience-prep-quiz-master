@@ -25,7 +25,7 @@
             <optgroup label="Verse Matching">
                 {% for fillInDataItem in fillInData %}
                     {% if fillInDataItem.numberOfQuestions > 0 %}
-                        <option value="fill|{{ fillInDataItem.chapterID }}|{{ fillInDataItem.language.languageID }}">{{ fillInDataItem.bookName }} {{ fillInDataItem.chapterNumber }} ({{ fillInDataItem.numberOfQuestions | length }} verses) [{{ fillInDataItem.language.name }}]</option>
+                        <option value="fill|{{ fillInDataItem.chapterID }}|{{ fillInDataItem.language.languageID }}">{{ fillInDataItem.bookName }} {{ fillInDataItem.chapterNumber }} ({{ fillInDataItem.numberOfQuestions }} verses) [{{ fillInDataItem.language.name }}]</option>
                     {% endif %}
                 {% endfor %}
             </optgroup>
