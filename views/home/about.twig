@@ -23,7 +23,18 @@
             {% if conferences | length > 0 %}
                 <p>If you have questions, concerns, or need to have your Pathfinder club added to this system, please contact the website adminstrator (<a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>) or the administrator for your conference:</p>
                 {% for conference in conferences %}
-                    <p><a href="{{ conference.url }}" target="_blank"><b>{{ conference.name }}</b></a><br>{{ conference.contactName }}<br><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></p>
+                    {% if loop.first %}
+                        <div class="row">
+                    {% elseif loop.index0 % 3 == 0 %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                    <div class="col s6 m3">
+                        <p><a href="{{ conference.url }}" target="_blank"><b>{{ conference.name }}</b></a><br>{{ conference.contactName }}<br><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></p>
+                    </div>
+                    {% if loop.last %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 <p>For all other questions, or to have your conference added to this system, please contact:</p>
             {% else %}
