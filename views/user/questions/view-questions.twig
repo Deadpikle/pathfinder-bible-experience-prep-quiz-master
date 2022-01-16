@@ -232,13 +232,14 @@
                     var endVerseDataSort = "";
                     if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
                         endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
-                        endVerseDataSort = question.EndBook + '-' + padZeros(question.EndChapter, 3) + 
+                        endVerseDataSort = padZeros(question.EndBibleOrder, 3) + '-' + question.EndBook + '-' + padZeros(question.EndChapter, 3) + 
                             padZeros(question.EndVerse, 3);
                     }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
-                    var startVerseDataSort = question.StartBook + '-' + padZeros(question.StartChapter, 3) + 
+                    var startVerseDataSort = padZeros(question.StartBibleOrder, 3) + '-' + question.StartBook + '-' + 
+                        padZeros(question.StartChapter, 3) + 
                         padZeros(question.StartVerse, 3);
                         padZeros(question.StartVerse, 3);
                     html += '<td data-sort="' + startVerseDataSort + '">' + startVerse + '</td>';
