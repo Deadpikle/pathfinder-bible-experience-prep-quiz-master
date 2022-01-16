@@ -17,14 +17,18 @@
 <div class="row mb-0">
     <div class="input-field col s6 m4">
         <select id="question-set" name="question-set" autocomplete="off">
-            {% for questionSet in questionSets %}
-                <option value="set|{{ questionSet.matchingQuestionSetID }}">{{ questionSet.name }} ({{ questionSet.questions | length }} possible matches)</option>
-            {% endfor %}
-            {% for fillInDataItem in fillInData %}
-                {% if fillInDataItem.numberOfQuestions > 0 %}
-                    <option value="fill|{{ fillInDataItem.chapterID }}|{{ fillInDataItem.language.languageID }}">Verse Matching - {{ fillInDataItem.bookName }} {{ fillInDataItem.chapterNumber }} ({{ fillInDataItem.numberOfQuestions | length }} verses) [{{ fillInDataItem.language.name }}]</option>
-                {% endif %}
-            {% endfor %}
+            <optgroup label="Matches by Topic">
+                {% for questionSet in questionSets %}
+                    <option value="set|{{ questionSet.matchingQuestionSetID }}">{{ questionSet.name }} ({{ questionSet.questions | length }} possible matches)</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Verse Matching">
+                {% for fillInDataItem in fillInData %}
+                    {% if fillInDataItem.numberOfQuestions > 0 %}
+                        <option value="fill|{{ fillInDataItem.chapterID }}|{{ fillInDataItem.language.languageID }}">{{ fillInDataItem.bookName }} {{ fillInDataItem.chapterNumber }} ({{ fillInDataItem.numberOfQuestions | length }} verses) [{{ fillInDataItem.language.name }}]</option>
+                    {% endif %}
+                {% endfor %}
+            </optgroup>
         </select>
         <label>* Question Set</label>
     </div>
