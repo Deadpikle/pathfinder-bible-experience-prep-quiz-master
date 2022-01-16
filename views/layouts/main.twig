@@ -50,10 +50,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
         <link rel="stylesheet" href="{{ app.yurl('/css/common.css') }}?{{ filemtime("css/common.css") }}" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
         <script src="{{ app.yurl('/lib/jquery-3.2.1.min.js') }}"></script>
         <script type="text/javascript" src="{{ app.yurl('/lib/materialize/js/materialize.min.js') }}"></script>
+
         <script type="text/javascript" src="{{ app.yurl('/lib/autosize.min.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
 
         <!-- For admin pages -->
         <script type="text/javascript" src="{{ app.yurl('/lib/html.sortable.min.js') }}"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
@@ -103,17 +106,43 @@
                 </div>
             </nav>
         </header>
-            <main>
-                <div id="main" class="container">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            </main>
+        <main>
+            <div id="main" class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
         <footer class="container">
             <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}</p>
         </footer>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $(".button-collapse").sideNav();
+                window.cookieconsent.initialise({
+                    "palette": {
+                        "popup": {
+                            "background": "#0e1013",
+                            "text": "#ffffff"
+                        },
+                        "button": {
+                            "background": "#41aa9c",
+                            "text": "#ffffff"
+                        }
+                    },
+                    "theme": "classic",
+                    "position": "bottom-right",
+                    "content": {
+                        "message": "This website uses cookies to ensure you get the best experience on our website.",
+                        "link": "Learn more"
+                    },
+
+                    "cookie": {
+                        "domain": "{{ app.domain }}",
+                        "path": "/",
+                        "secure": true
+                    }
+                });
+            });
+        </script>
     </body>
-    <script type="text/javascript">
-        $(".button-collapse").sideNav();
-    </script>
 </html>
