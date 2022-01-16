@@ -16,7 +16,7 @@ class Question
     public $numberPoints;
     public $dateCreated;
     public $dateModified;
-    public $isFlagged; // TODO: fix flagging questions
+    public $isFlagged; // TODO: fix flagging questions to be per-user (isn't this already done...? Check if db field still there and remove code)
     public $type;
     public $isDeleted;
     
@@ -245,8 +245,47 @@ class Question
         }
         return $fillIns;
     }
+
+    /**
+     * Load MatchingQuestionItem list for a given chapter
+     *
+     * @param int $chapterID
+     * @param int $languageID
+     * @param PDO $db
+     *
+     * @return array<MatchingQuestionItem>
+     */
+    public static function loadMatchingFillInQuestionsForChapterAndLanguage(int $chapterID, int $languageID, PDO $db): array
+    {
+        $query = '
+            SELECT q.Question, v.VerseID, v.Number AS VerseNumber, b.Name, c.Number AS ChapterNumber
+            FROM Questions q 
+                JOIN Verses v ON q.StartVerseID = v.VerseID 
+                JOIN Chapters c ON c.ChapterID = v.ChapterID
+                JOIN Books b ON b.BookID = c.BookID
+            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?';
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $chapterID,
+            $languageID,
+            self::getBibleQnAFillType()
+        ]);
+        $data = $stmt->fetchAll();
+        $output = [];
+        foreach ($data as $row) {
+            $matchingItem = new MatchingQuestionItem(
+                -1,
+                $row['Name'] . ' ' . $row['ChapterNumber'] . ':' . $row['VerseNumber'],
+                $row['Question']
+            );
+            $matchingItem->startVerseID = $row['VerseID'];
+            $output[] = $matchingItem;
+        }
+        return $output;
+    }
     
-    public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db) : string
+    public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db): array
     {
         try {
             $whereClause = '';
@@ -416,10 +455,10 @@ class Question
                 $totalQuestions = $row['QuestionCount'];
             }
     
-            $output = json_encode(array( // TODO: return array and let controller do the json_encode
+            $output = [
                 'questions' => $questions,
                 'totalQuestions' => $totalQuestions
-            ));
+            ];
             return $output;
         }
         catch (PDOException $e) {
@@ -428,5 +467,6 @@ class Question
         catch (Exception $e) {
             return print_r($e, true);
         }
+        return [];
     }
 }

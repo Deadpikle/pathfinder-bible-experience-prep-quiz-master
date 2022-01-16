@@ -12,13 +12,18 @@
 
 <h1 class="matching-quiz-page-title">Matching Quiz</h1>
 <p>Drag items from the question bank on the left to the corresponding matches/answers on the right. Then, to check your answers, click the "Check Answers" button at the bottom. If a match is correct, you will see that item turn green and a <i class="fas fa-check-circle"></i> icon. If the match is not correct, you will see that item turn red and a <i class="fas fa-exclamation-triangle"></i> icon. When you've finished one quiz and you're ready to do a new quiz, just click the "Generate Matching Quiz" button again!</p>
-<p><em>There are {{ questionSets | length }} question set{{ questionSets | length == 1 ? '' : 's' }} available for matching quizzes.</em></p>
+<p><em>There are {{ (questionSets | length) + (fillInData | length) }} question set{{ (questionSets | length) + (fillInData | length) == 1 ? '' : 's' }} available for matching quizzes.</em></p>
 
 <div class="row mb-0">
     <div class="input-field col s6 m4">
         <select id="question-set" name="question-set" autocomplete="off">
             {% for questionSet in questionSets %}
-                <option value="{{ questionSet.matchingQuestionSetID }}">{{ questionSet.name }} ({{ questionSet.questions | length }} possible matches)</option>
+                <option value="set|{{ questionSet.matchingQuestionSetID }}">{{ questionSet.name }} ({{ questionSet.questions | length }} possible matches)</option>
+            {% endfor %}
+            {% for fillInDataItem in fillInData %}
+                {% if fillInDataItem.numberOfQuestions > 0 %}
+                    <option value="fill|{{ fillInDataItem.chapterID }}|{{ fillInDataItem.language.languageID }}">Verse Matching - {{ fillInDataItem.bookName }} {{ fillInDataItem.chapterNumber }} ({{ fillInDataItem.numberOfQuestions | length }} verses) [{{ fillInDataItem.language.name }}]</option>
+                {% endif %}
             {% endfor %}
         </select>
         <label>* Question Set</label>
@@ -123,7 +128,7 @@
             type: "POST",
             url: '{{ app.yurl('/matching-quiz/generate') }}',
             data: {
-                questionSetID: questionSetSelect.value,
+                questionSet: questionSetSelect.value,
                 numberQuestions: numberQuestionsInput.value,
                 numberSets: numberSetsInput.value
             },

@@ -58,7 +58,7 @@ class QuestionController
             User::currentUserID(), 
             $app->db
         );
-        echo $questionData;
+        echo json_encode($questionData);
     }
 
     private function loadQuestionEditingData(PBEAppConfig $app)

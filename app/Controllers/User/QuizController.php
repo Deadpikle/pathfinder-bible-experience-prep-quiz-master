@@ -2,6 +2,7 @@
 
 namespace App\Controllers\User;
 
+use App\Models\BibleFillInData;
 use Yamf\Request;
 use Yamf\Responses\ErrorMessage;
 use Yamf\Responses\JsonResponse;
@@ -12,6 +13,7 @@ use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\Commentary;
 use App\Models\Language;
+use App\Models\MatchingQuestionItem;
 use App\Models\MatchingQuestionSet;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
@@ -222,7 +224,11 @@ class QuizController
         }
         $currentYear = Year::loadCurrentYear($app->db);
         $questionSets = MatchingQuestionSet::loadAllMatchingSetsForYear($currentYear->yearID, $app->db);
-        return new TwigView('user/quiz/matching-quiz', compact('currentYear', 'questionSets'), 'Matching Quiz');
+
+        // other sets, dynamically generated
+        $fillInData = BibleFillInData::loadFillInData(Year::loadCurrentYear($app->db), $app->db);
+
+        return new TwigView('user/quiz/matching-quiz', compact('currentYear', 'questionSets', 'fillInData'), 'Matching Quiz');
     }
 
     public function generateMatchingQuiz(PBEAppConfig $app, Request $request): Response
@@ -230,14 +236,36 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Response(401);
         }
-        $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->post, 'questionSetID'), $app->db);
+        $questionSetData = Util::validateString($request->post, 'questionSet');
+        $parts = explode('|', $questionSetData);
+        if (count($parts) < 2) {
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Invalid question set information'], 400);            
+        }
         $numQuestions = Util::validateInteger($request->post, 'numberQuestions');
         $numSets = Util::validateInteger($request->post, 'numberSets');
-        if ($questionSet === null) {
-            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set not found'], 404);
-        }
         if ($numQuestions < 1) {
             return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Number of questions must be greater than 1'], 404);
+        }
+        if ($parts[0] === 'set') {
+            $questionSet = MatchingQuestionSet::loadMatchingSetByID(intval($parts[1]), $app->db);
+        } else if ($parts[0] === 'fill') {
+            if (count($parts) !== 3) {
+                return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Invalid question set information'], 400);            
+            }
+            // create based on chapter ID
+            $chapterID = intval($parts[1]);
+            $languageID = intval($parts[2]);
+            $language = Language::loadLanguageWithID($languageID, $app->db);
+            if ($language === null) {
+                return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Language not found'], 404);
+            }
+            $questions = Question::loadMatchingFillInQuestionsForChapterAndLanguage($chapterID, $language->languageID, $app->db);
+            $questionSet = new MatchingQuestionSet(-1, $chapterID);
+            $questionSet->languageID = $language->languageID;
+            $questionSet->questions = $questions;
+        }
+        if ($questionSet === null) {
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set not found'], 404);
         }
         if (count($questionSet->questions) < 1) {
             return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Question set has no questions'], 404);
