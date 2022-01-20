@@ -20,7 +20,13 @@
         {% endfor %}
     </ul>
     <h4>Active Conferences</h4>
-    <p>There have been {{ conferences | length }} conference{{ (conferences | length) == 1 ? '' : 's' }} active on the website within the last 30 days.
+    {% set confCount = 0 %}
+    {% for conference in conferences %}
+        {% if conferenceCounts[conference.conferenceID] is defined %}
+            {% set confCount = confCount + 1 %}
+        {% endif %}
+    {% endfor %}
+    <p>There have been {{ confCount }} conference{{ confCount == 1 ? '' : 's' }} active on the website within the last 30 days.
     <ul class="browser-default">
         {% for conference in conferences %}
             {% if conferenceCounts[conference.conferenceID] is defined %}
