@@ -214,7 +214,7 @@ class HomeController
                 $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
                 $errors = [];
                 $resp = $recaptcha
-                    ->setExpectedHostname($app->$app->recaptchaExpectedDomain)
+                    ->setExpectedHostname($app->recaptchaExpectedDomain)
                     ->verify($request->post['g-recaptcha-response'] ?? '');
                 /** @var \ReCaptcha\Response $resp */
                 if ($resp->isSuccess()) {
