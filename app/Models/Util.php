@@ -102,4 +102,14 @@ class Util
         }
         return $input;
     }
+
+    public static function sendContactFormEmail(string $toEmail, string $fromEmail, string $fromName, string $subjectPrefix, string $subject, string $message): bool
+    {
+        $to      = $toEmail;
+        $subject = '[' . $subjectPrefix . '] ' . $subject;
+        $headers = 'From: ' . $fromName . '<' . $to . ">\n" .
+            'Reply-To: ' . $fromEmail . "\n" .
+            'X-Mailer: PHP/' . phpversion();
+        return mail($to, $subject, $message, $headers);
+    }
 }

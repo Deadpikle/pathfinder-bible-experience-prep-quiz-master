@@ -1,0 +1,53 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+
+{% include 'includes/scripts/datatables.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+
+<h4>Contact Submissions</h4>
+
+<div>
+    <table class="striped tablesorter-materialize" id="submissions-table">
+        <thead>
+            <tr>
+                <th>Submission Date</th>
+                <th>Title</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+                <tr>
+                    <td data-sort="{{ submission.dateTimeSubmitted }}">{{ submission.dateTimeSubmitted | date('D, M d, Y, g:i a') }}</td>
+                    <td>{{ submission.title }}</td>
+                    <td>{{ submission.personName }}</td>
+                    <td>{{ submission.email }}</td>
+                    <td>{{ submission.message }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        datatablesProps.columnDefs = [
+            { orderable: false, targets: [] }
+        ];
+        datatablesProps.language = {
+            searchPlaceholder: "Search submissions..."
+        };
+        datatablesProps.order = [[ 0, 'asc' ]];
+        $('#submissions-table').DataTable(datatablesProps);
+    });
+</script>
+
+{% endblock %}

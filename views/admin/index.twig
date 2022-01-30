@@ -24,18 +24,26 @@
     {% endif %}
     {% if app.isWebAdmin %}
         <h4>Web Administrator Functions</h4>
-        <a class="btn blue white-text waves-effect waves-light" href="{{ app.yurl('/admin/help') }}">Web Admin Help</a>
-        <ul>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/commentaries') }}">Commentaries</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/conferences') }}">Conferences</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-fill-ins') }}">Manage Bible Fill in the Blank Questions</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/matching-question-sets') }}">Manage Matching Question Sets</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-qna-questions') }}">Manage Q&amp;A Questions</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/non-blankable-words') }}">Non-Blankable Words</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/settings') }}">Website Settings</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/years') }}">Years</a></li>
-        </ul>
+        <div class="row">
+            <div class="col s6 m5">
+                <ul class="mt-0">
+                    <li><a class="btn blue white-text waves-effect waves-light" href="{{ app.yurl('/admin/help') }}">Web Admin Help</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/commentaries') }}">Commentaries</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/conferences') }}">Conferences</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/contact-submissions') }}">Contact Form Submissions</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-fill-ins') }}">Manage Bible Fill in the Blank Questions</a></li>
+                </ul>
+            </div>
+            <div class="col s6 m5">
+                <ul class="mt-0">
+                    <li><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/matching-question-sets') }}">Manage Matching Question Sets</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-qna-questions') }}">Manage Q&amp;A Questions</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/non-blankable-words') }}">Non-Blankable Words</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/settings') }}">Website Settings</a></li>
+                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/years') }}">Years</a></li>
+                </ul>
+            </div>
     {% endif %}
 </div>
 

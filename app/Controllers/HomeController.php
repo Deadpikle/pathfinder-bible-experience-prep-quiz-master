@@ -8,14 +8,18 @@ use Yamf\Responses\View;
 
 use App\Models\Club;
 use App\Models\Conference;
+use App\Models\ContactFormSubmission;
 use App\Models\HomeInfoSection;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\StudyGuide;
 use App\Models\User;
+use App\Models\Util;
+use App\Models\ValidationStatus;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\StatsLoader;
+use ReCaptcha\ReCaptcha;
 
 class HomeController
 {
@@ -160,5 +164,79 @@ class HomeController
         }
 
         return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'totalQuestions'), 'Stats');
+    }
+
+    public function showContactForm(PBEAppConfig $app, Request $request)
+    {
+        return new TwigView('home/contact-us', [], 'Contact');
+    }
+
+    private function validateContactSubmission(PBEAppConfig $app, Request $request): ValidationStatus
+    {
+        $title = Util::validateEmail($request->post, 'title');
+        $name = Util::validateString($request->post, 'name');
+        $email = Util::validateEmail($request->post, 'email');
+        $message = Util::validateString($request->post, 'message');
+
+        $submission = new ContactFormSubmission(-1, $title);
+        $submission->personName = $name;
+        $submission->email = $email;
+        $submission->message = $message;
+        
+        if ($submission->title === null || $submission->title === '') {
+            return new ValidationStatus(false, $submission, 'Title is required');
+        }
+        if ($submission->personName === null || $submission->personName === '') {
+            return new ValidationStatus(false, $submission, 'Name is required');
+        }
+        if ($submission->email === null || $submission->email === '') {
+            return new ValidationStatus(false, $submission, 'Email is required');
+        }
+        if ($submission->message === null || $submission->message === '') {
+            return new ValidationStatus(false, $submission, 'Message is required');
+        }
+
+        return new ValidationStatus(true, $submission);
+    }
+
+    public function handleContactSubmission(PBEAppConfig $app, Request $request)
+    {
+        $status = $this->validateContactSubmission($app, $request);
+        $submission = $status->output;
+        /** @var ContactFormSubmission $submission */
+        $errors = [];
+        if ($status->didValidate) {
+            if ($app->isLocalHost) {
+                // create contact form submission record
+                $submission->create($app->db);
+                return new Redirect('/contact?success');
+            } else {
+                $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
+                $errors = [];
+                $resp = $recaptcha
+                    ->setExpectedHostname($app->$app->recaptchaExpectedDomain)
+                    ->verify($request->post['g-recaptcha-response'] ?? '');
+                /** @var \ReCaptcha\Response $resp */
+                if ($resp->isSuccess()) {
+                    // Verified!
+                    $submission->create($app->db);
+                    // send email
+                    Util::sendContactFormEmail(
+                        $app->contactToEmail,
+                        $submission->email, 
+                        $submission->personName,
+                        $app->contactSubjectPrefix,
+                        $submission->title,
+                        $submission->message
+                    );
+                    return new Redirect('/contact?success');
+                } else {
+                    $errors = $resp->getErrorCodes();
+                }
+            }
+        } else {
+            $errors = [$status->error];
+        }
+        return new TwigView('home/contact-us', compact('errors', 'submission'), 'Contact');
     }
 }

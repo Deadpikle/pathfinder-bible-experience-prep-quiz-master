@@ -1,0 +1,72 @@
+{% extends "layouts/main.twig" %}
+
+{% block headers %}
+    {% if not app.isLocalHost %}
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+
+<h3>Contact Us</h3>
+<p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
+
+{% if not isLocalHost %}
+    <script type="text/javascript">
+       function onSubmit(token) {
+            document.getElementById('contact-form').submit();
+       }
+     </script>
+{% endif %}
+
+{% if _get['success'] is defined %}
+    <div class="green white-text p-1 mb-1 rounded-border">
+        <span class="ml-1">Message successfully submitted! We'll get back to you as soon as we can.</span>
+    </div>
+{% endif %}
+
+{% if errors is defined and errors | length > 0 %}
+    <div class="red white-text p-1 mb-1 rounded-border">
+        <span class="ml-1">Error submitting contact form: {{ errors | join('; ') }}</span>
+    </div>
+{% endif %}
+
+<form id="contact-form" method="post">
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <input type="text" class="form-control" id="name" name="name" placeholder="First-Name Last-Name" required maxlength="250" data-length="250" value="{{ submission.personName }}">
+            <label for="name">* Your name</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required maxlength="250" data-length="250" value="{{ submission.email }}">
+            <label for="email">* Your email address</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <input type="text" class="form-control" id="title" name="title" placeholder="Title" required maxlength="150" data-length="150" value="{{ submission.title }}">
+            <label for="title">* Subject</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <textarea class="materialize-textarea" id="message" name="message" placeholder="Message" rows="5" required data-length="10000"> {{ submission.message }}</textarea>
+            <label for="message">* Message</label>
+        </div>
+    </div>
+    {% if isLocalHost %}
+        <button type="submit" class="btn waves-effect waves-light submit g-recaptcha" 
+            data-sitekey="{{ app.recaptchaPublicKey }}"
+            data-callback="onSubmit">Submit</button>
+    {% else %}
+        <button type="submit" class="btn waves-effect waves-light submit">Submit</button>
+    {% endif %}
+    <p id="contact-note"><em>Note: If this contact form fails due to some unusual error, you can email {{ app.contactName }} at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>.</em></p>
+</form>
+
+
+{% endblock %}

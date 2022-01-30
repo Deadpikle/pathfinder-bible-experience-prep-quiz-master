@@ -59,6 +59,9 @@
         '/login' => [['GET', 'HomeController', 'showLoginScreen'],
                      ['POST', 'HomeController', 'attemptLogin']],
         '/logout' => ['HomeController', 'logout'],
+        '/contact' => 
+            [['GET', 'HomeController', 'showContactForm'],
+            ['POST', 'HomeController', 'handleContactSubmission']],
         '/about' => ['HomeController', 'about'],
         '/active-clubs' => ['HomeController', 'activeClubs'],
         '/stats' => ['HomeController', 'currentYearStats'],
@@ -89,6 +92,7 @@
         '/admin/help' => ['Admin/AdminController', 'help'],
         '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
                                 ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
+        '/admin/contact-submissions' => ['Admin/ContactSubmissionController', 'viewContactSubmissions'],
         // users
         '/admin/users' => ['Admin/UserController', 'viewUsers'],
         '/admin/users/create' => [['GET', 'Admin/UserController', 'createUser'],

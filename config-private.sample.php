@@ -43,3 +43,10 @@ $app->sessionName = 'pbe';
 $app->showCookieConsent = false;
 $app->cookieDomain = 'example.com';
 $app->headerForAnalytics = ''; // e.g. <script data-goatcounter="" async src="//mysite.com/count.js"></script>
+
+$app->contactFromEmail = '';
+$app->contactToEmail = '';
+$app->contactSubjectPrefix = '';
+$app->recaptchaExpectedDomain = '';
+$app->recaptchaPrivateKey = '';
+$app->recaptchaPublicKey = '';
