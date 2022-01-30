@@ -62,11 +62,11 @@
         <button type="submit" class="btn waves-effect waves-light submit g-recaptcha" 
             data-sitekey="{{ app.recaptchaPublicKey }}"
             data-callback="onSubmit">Submit</button>
-        <p>
+        {# <p>
             <em>This site is protected by reCAPTCHA and the Google
             <a href="https://policies.google.com/privacy">Privacy Policy</a> and
             <a href="https://policies.google.com/terms">Terms of Service</a> apply.</em>
-        </p>
+        </p> #}
     {% else %}
         <button type="submit" class="btn waves-effect waves-light submit">Submit</button>
     {% endif %}
