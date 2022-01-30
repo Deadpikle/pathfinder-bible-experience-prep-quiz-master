@@ -13,7 +13,7 @@
 <h3>Contact Us</h3>
 <p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
 
-{% if not isLocalHost %}
+{% if not app.isLocalHost %}
     <script type="text/javascript">
        function onSubmit(token) {
             document.getElementById('contact-form').submit();
@@ -58,10 +58,15 @@
             <label for="message">* Message</label>
         </div>
     </div>
-    {% if isLocalHost %}
+    {% if not app.isLocalHost %}
         <button type="submit" class="btn waves-effect waves-light submit g-recaptcha" 
             data-sitekey="{{ app.recaptchaPublicKey }}"
             data-callback="onSubmit">Submit</button>
+        <p>
+            <em>This site is protected by reCAPTCHA and the Google
+            <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+            <a href="https://policies.google.com/terms">Terms of Service</a> apply.</em>
+        </p>
     {% else %}
         <button type="submit" class="btn waves-effect waves-light submit">Submit</button>
     {% endif %}
