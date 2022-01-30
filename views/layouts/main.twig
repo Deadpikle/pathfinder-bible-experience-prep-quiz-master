@@ -16,8 +16,9 @@
 {% set homeHeaderActiveStatus = 'home' in currentRequest and not 'home-section' in currentRequest ? 'active' : '' %}
 {% set contactHeaderActiveStatus = 'contact' in currentRequest and 'admin' not in currentRequest ? 'active' : '' %}
 {% set aboutHeaderActiveStatus = 'about' in currentRequest ? 'active' : '' %}
+{% set loginHeaderActiveStatus = 'login' in currentRequest ? 'active' : '' %}
 {% set adminHeaderActiveStatus = 'admin' in currentRequest ? 'active' : '' %}
-{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' and contactHeaderActiveStatus == '' %}
+{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' and contactHeaderActiveStatus == '' and loginHeaderActiveStatus == '' %}
     {% set homeHeaderActiveStatus = 'active' %}
 {% endif %}
 
@@ -84,6 +85,8 @@
                         <ul class="right hide-on-med-and-down">
                             {% if app.loggedIn %}
                                 <li class="{{ homeHeaderActiveStatus }}"><a href="{{ homePath }}">Home</a></li>
+                            {% else %}
+                                <li class="{{ loginHeaderActiveStatus }}"><a href="{{ app.yurl('/login') }}">Login</a></li>
                             {% endif %}
                             <li class="{{ contactHeaderActiveStatus }}"><a href="{{ app.yurl('/contact') }}">Contact Us</a></li>
                             <li class="{{ aboutHeaderActiveStatus }}"><a href="{{ app.yurl('/about') }}">About</a></li>
@@ -98,6 +101,8 @@
                             <li><a class="center-align white-text" id="side-nav-title" href="{{ homePath}}">{{ app.websiteName }}</a></li>
                             {% if app.loggedIn %}
                                 <li class="{{ homeHeaderActiveStatus }}"><a class="white-text" href="{{ homePath }}">Home</a></li>
+                            {% else %}
+                                <li class="{{ loginHeaderActiveStatus }}"><a href="{{ app.yurl('/login') }}">Login</a></li>
                             {% endif %}
                             <li class="{{ contactHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/contact') }}">Contact</a></li>
                             <li class="{{ aboutHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/about') }}">About</a></li>
