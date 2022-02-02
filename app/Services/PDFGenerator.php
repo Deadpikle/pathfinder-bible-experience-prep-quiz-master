@@ -9,32 +9,32 @@ use Yamf\Util as YamfUtil;
 class PDFGenerator
 {
     private static function get_question_text($question) {
-        $type = $question["type"];
-        $output = trim($question["question"]);
+        $type = $question['type'];
+        $output = trim($question['question']);
         $isFillIn = Question::isTypeFillIn($type);
         // TODO: rework logic here to be....right.
         if (!$isFillIn) {
             $output = Util::fixQuestionMarkOnQuestion($output);
         }
         if (Question::isTypeBibleQnA($type)) {
-            $startBook = $question["startBook"];
-            $startChapter = $question["startChapter"];
-            $startVerse = $question["startVerse"];
-            $endBook = $question["endBook"];
-            $endChapter = $question["endChapter"];
-            $endVerse = $question["endVerse"];
-            $verseText = $startBook . " " . $startChapter . ":" . $startVerse;
-            if ($endBook !== "" && $startVerse != $endVerse) {
+            $startBook = $question['startBook'];
+            $startChapter = $question['startChapter'];
+            $startVerse = $question['startVerse'];
+            $endBook = $question['endBook'];
+            $endChapter = $question['endChapter'];
+            $endVerse = $question['endVerse'];
+            $verseText = $startBook . ' ' . $startChapter . ':' . $startVerse;
+            if ($endBook !== '' && $startVerse != $endVerse) {
                 if ($startChapter == $endChapter) {
-                    $verseText .= "-" . $endVerse;
+                    $verseText .= '-' . $endVerse;
                 }
                 else {
-                    $endPart = $endChapter . ":" . $endVerse;
-                    $verseText .= "-" . $endPart;
+                    $endPart = $endChapter . ':' . $endVerse;
+                    $verseText .= '-' . $endPart;
                 }
             }
             if ($isFillIn) {
-                $output = "Fill in the blanks for " . $verseText . ".";
+                $output = 'Fill in the blanks for ' . $verseText . '.';
             }
             else {
                 if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
@@ -44,24 +44,22 @@ class PDFGenerator
             }
         }
         else if (Question::isTypeCommentaryQnA($type)) {
-            $volume = $question["volume"];
-            $startPage = $question["startPage"];
-            $endPage = isset($question["endPage"]) ? $question["endPage"] : null;
-            $pageStr = "";
-            if ($endPage != null && $endPage != "" && $endPage > $startPage) {
-                $pageStr = "pp. " . $startPage . "-" . $endPage;
-            }
-            else {
-                $pageStr = "p. " . $startPage;
+            $volume = $question['volume'];
+            $startPage = trim($question['startPage'] ?? '');
+            $endPage = isset($question['endPage']) ? trim($question['endPage'] ?? '') : null;
+            $pageStr = '';
+            if ($endPage != null && $endPage != '' && $endPage > $startPage) {
+                $pageStr = 'pp. ' . $startPage . '-' . $endPage;
+            } else if ($startPage !== '') {
+                $pageStr = 'p. ' . $startPage;
             }
             if ($isFillIn) {
-                $output = "Fill in the blanks for SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ".";
-            }
-            else {
+                $output = 'Fill in the blanks for SDA Bible Commentary, Volume ' . $volume . ', ' . $pageStr . '.';
+            } else {
                 if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = "According to the SDA Bible Commentary, Volume " . $volume . ", " . $pageStr . ", " . $output;
+                $output = 'According to the SDA Bible Commentary, Volume ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
             }
         }
         return $output;

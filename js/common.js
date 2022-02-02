@@ -1,16 +1,19 @@
 
 function pageString(startPage, endPage) {
-    if (typeof endPage !== 'undefined' && endPage != null && endPage != "" && endPage > startPage) {
+    if (typeof endPage !== 'undefined' && endPage != null && endPage != '' && endPage > startPage) {
         return 'pp. ' + startPage + '-' + endPage;
-    }
-    else {
+    } else if (typeof startPage !== 'undefined' && startPage !== null && startPage !== '') {
         return 'p. ' + startPage;
     }
+    return '';
 }
 
 function commentaryVolumeString(volume, startPage, endPage) {
     var str = 'Volume ' + volume;
-    str += ', ' + pageString(startPage, endPage);
+    var pageStr = pageString(startPage, endPage);
+    if (pageStr !== '') {
+        str += ', ' + pageStr;
+    }
     return str;
 }
 

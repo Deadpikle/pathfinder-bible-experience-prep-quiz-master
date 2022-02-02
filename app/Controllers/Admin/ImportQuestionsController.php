@@ -56,6 +56,7 @@ class ImportQuestionsController extends BaseAdminController
         $rows = explode("\r", $contents);
         // get csv data
         $csv = array_map('str_getcsv', $rows);
+        /** @var array $csv */
         // make it an associate array with csv keys => values
         array_walk($csv, function(&$a) use ($csv) {
             if (count($a) == count($csv[0])) {
@@ -251,6 +252,12 @@ class ImportQuestionsController extends BaseAdminController
                     $commentaryTopic = trim($row["Commentary Topic"]);
                     $commentaryStartPage = $row["Start Page"];
                     $commentaryEndPage = $row["End Page"];
+                    if ($commentaryStartPage === '') {
+                        $commentaryStartPage = null;
+                    }
+                    if ($commentaryEndPage === '') {
+                        $commentaryEndPage = null;
+                    }
                     $commentaryKey = $commentaryNumber . $commentaryTopic;
                     if (isset($commentaryMap[$commentaryKey])) {
                         $commentaryID = $commentaryMap[$commentaryKey]->commentaryID;

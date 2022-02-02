@@ -513,8 +513,10 @@
                     $(fillInDiv).show();
                 }
                 else {
-                    var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", " 
-                        + pageStr + ", ";
+                    var questionText = "According to the SDA Bible Commentary, Volume " + data.volume + ", ";
+                    if (pageStr !== '') {
+                        questionText += pageStr + ", ";
+                    } 
                     var dataQuestion = data.question;
                     if (!strStartsWith(data.question, data.volume) && shouldLowercaseOutput(data.question)) {
                         dataQuestion = lowercaseFirstLetter(dataQuestion);
