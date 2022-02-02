@@ -157,13 +157,18 @@ class HomeController
         $year = Year::loadCurrentYear($app->db);
         $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db);
         $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db);
+        $commentaryStats = StatsLoader::loadCommentaryQuestionsByYear($year->yearID, $app->db);
 
         $totalQuestions = 0;
+        $totalCommentaryQuestions = 0;
         foreach ($chapterStats as $stats) {
             $totalQuestions += $stats['count'];
         }
+        foreach ($commentaryStats as $stats) {
+            $totalCommentaryQuestions += $stats['count'];
+        }
 
-        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'totalQuestions'), 'Stats');
+        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'commentaryStats', 'totalQuestions', 'totalCommentaryQuestions'), 'Stats');
     }
 
     public function showContactForm(PBEAppConfig $app, Request $request)

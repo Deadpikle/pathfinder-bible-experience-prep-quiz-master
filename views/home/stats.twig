@@ -12,7 +12,15 @@
 
 <h3>Statistics</h3>
 
-<p>This page shows the number of Q&amp;A questions that have the given chapter or verse as the question's start verse. There {{ totalQuestions == 1 ? 'is' : 'are' }} {{ totalQuestions | number_format }} {{ totalQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year!</p>
+<p>
+    This page shows the number of Q&amp;A questions that have the given chapter or verse as the question's start verse. There {{ totalQuestions == 1 ? 'is' : 'are' }} {{ totalQuestions | number_format }} {{ totalQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year!
+</p>
+
+{% if totalCommentaryQuestions > 0 %}
+    <p>
+        There are also {{ totalCommentaryQuestions }} {{ totalCommentaryQuestions == 1 ? 'question' : 'questions' }} SDA Bible commentary questions available for this PBE year.
+    </p>
+{% endif %}
 
 <h4>Questions by Chapter</h4>
 
@@ -28,6 +36,29 @@
             {% for item in chapterStats %}
                 <tr>
                     <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
+                    <td>{{ item.count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<hr/>
+
+<h4>Questions by Commentary</h4>
+
+<div id="qna-by-chapter">
+    <table class="striped responsive-table">
+        <thead>
+            <tr>
+                <th>Commentary</th>
+                <th>Question Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in commentaryStats %}
+                <tr>
+                    <td>{{ item.topic }}</td>
                     <td>{{ item.count }}</td>
                 </tr>
             {% endfor %}

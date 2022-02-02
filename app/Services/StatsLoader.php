@@ -37,6 +37,32 @@ class StatsLoader
         return $output;
     }
 
+    public static function loadCommentaryQuestionsByYear(int $yearID, PDO $db) : array
+    {
+        $query = '
+            SELECT c.TopicName, c.Number, COUNT(*) AS Count
+            FROM Questions q 
+                JOIN Commentaries c ON c.CommentaryID = q.CommentaryID
+            WHERE c.YearID = ? AND q.Type = ?
+            GROUP BY c.TopicName, c.Number
+            ORDER BY c.TopicName, c.Number';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $yearID,
+            Question::getCommentaryQnAType()
+        ]);
+        $data = $stmt->fetchAll();
+        $output = [];
+        foreach ($data as $row) {
+            $output[] = [
+                'topic' => $row['TopicName'],
+                'number' => $row['Number'],
+                'count' => $row['Count']
+            ];
+        }
+        return $output;
+    }
+
     public static function loadQnAQuestionsByChapterAndVerseInYear(int $yearID, PDO $db) : array
     {
         $query = '
