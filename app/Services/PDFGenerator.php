@@ -182,6 +182,7 @@ class PDFGenerator
                     $question["a-height"] = $pdf->GetHeight($question["a-row-count"]);
                     $question["output-height"] = max($question["q-height"], $question["a-height"]);
                     $question["q-taller"] = $question["q-height"] > $question["a-height"];
+                    $questionNumber++;
                 }
                 $pdf->OutputFrontBackPages($quizMaterials["questions"]);
             }
