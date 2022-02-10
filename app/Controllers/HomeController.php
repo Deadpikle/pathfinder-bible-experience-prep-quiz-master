@@ -178,7 +178,7 @@ class HomeController
 
     private function validateContactSubmission(PBEAppConfig $app, Request $request): ValidationStatus
     {
-        $title = Util::validateEmail($request->post, 'title');
+        $title = Util::validateString($request->post, 'title');
         $name = Util::validateString($request->post, 'name');
         $email = Util::validateEmail($request->post, 'email');
         $message = Util::validateString($request->post, 'message');
