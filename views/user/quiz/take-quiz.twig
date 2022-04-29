@@ -153,6 +153,7 @@
 
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
+        var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
         var userID = {{ userID }};
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -206,8 +207,13 @@
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
-                var showAnswer = document.getElementById('show-answer');
-                showAnswer.click();
+                if (!disableAutoShowAnswer){
+                    var showAnswer = document.getElementById('show-answer');
+                    showAnswer.click();
+                }
+                else{
+                    $('#question-timer').html("<b>TIME'S UP!</b>")
+                }
             });
         
             preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
