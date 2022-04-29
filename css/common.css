@@ -207,6 +207,7 @@ h5#question-timer {
 }
 
 #timer-icon {
+    display: inline;
     font-size: 2rem;
 }
 

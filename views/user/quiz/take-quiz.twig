@@ -39,10 +39,8 @@
                 <div id="countdown">
                     <h5 id="countdown-text"></h5>
                     <h5 id="question-pretimer"></h5>
-                    <div id="timer-container">
-                        <h5 id="question-timer"></h5>
-                        <i class="material-icons" id="timer-icon"></i>
-                    </div>
+                    <h5 id="question-timer"></h5>
+                    <i class="material-icons" id="timer-icon"></i>
                 </div>
                 <h6 id="user-points-earned"></h6>
                 <div class="divider"></div>
@@ -367,6 +365,8 @@
         showAnswer.addEventListener('click', function() {
             preTimer.stop();
             timer.stop();
+            $("#question-timer").html("");
+            $("#timer-icon").html("");
             $("#qna-question :input").attr("disabled", true);
             $("#fill-in-question :input").attr("disabled", true);
             showAnswerToUser();
