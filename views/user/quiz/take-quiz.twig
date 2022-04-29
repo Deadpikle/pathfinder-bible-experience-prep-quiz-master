@@ -369,10 +369,7 @@
 
         var showAnswer = document.getElementById('show-answer');
         showAnswer.addEventListener('click', function() {
-            preTimer.stop();
-            timer.stop();
-            $("#question-timer").html("");
-            $("#timer-icon").html("");
+            stopTimer();
             $("#qna-question :input").attr("disabled", true);
             $("#fill-in-question :input").attr("disabled", true);
             showAnswerToUser();
@@ -384,6 +381,15 @@
                 $(tallyPoints).show();
             }
         }, false);
+        
+        function stopTimer(){
+            preTimer.stop();
+            timer.stop();
+            $("#countdown-text").html("");
+            $("#question-pretimer").html("");
+            $("#question-timer").html("");
+            $("#timer-icon").html("");
+        }
 
         function moveToNextQuestion() {
             if (currentQuestionIndex < questions.length - 1) {
