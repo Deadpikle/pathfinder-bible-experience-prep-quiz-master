@@ -203,6 +203,11 @@ h5#question-pretimer {
 
 h5#question-timer {
     color: red;
+    display: inline;
+}
+
+#timer-icon {
+    font-size: 2rem;
 }
 
 p#quiz-question-show-answer {

@@ -39,7 +39,10 @@
                 <div id="countdown">
                     <h5 id="countdown-text"></h5>
                     <h5 id="question-pretimer"></h5>
-                    <h5 id="question-timer"></h5>
+                    <div id="timer-container">
+                        <h5 id="question-timer"></h5>
+                        <i class="material-icons" id="timer-icon"></i>
+                    </div>
                 </div>
                 <h6 id="user-points-earned"></h6>
                 <div class="divider"></div>
@@ -217,6 +220,7 @@
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html(timerLength);
+                $("#timer-icon").html("timer");
                 timer.stop();
                 timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
      
