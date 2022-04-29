@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% include 'includes/scripts/easytimer.twig' %}
+
+
 <div id="quiz-taking">
     <div id="loading-quiz">
         <h4 class="center-align">Generating quiz...</h4>
@@ -33,6 +36,11 @@
             <div class="col s12" id="current-question">
                 <h4 id="quiz-progress"></h4>
                 <h5 id="question-points"></h5>
+                <div id="countdown">
+                    <h5 id="countdown-text"></h5>
+                    <h5 id="question-pretimer"></h5>
+                    <h5 id="question-timer"></h5>
+                </div>
                 <h6 id="user-points-earned"></h6>
                 <div class="divider"></div>
                 <div id="qna-question" class="row">
@@ -143,6 +151,7 @@
     $(document).ready(function() {
 
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
+        var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var userID = {{ userID }};
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -185,6 +194,31 @@
         $(saveData).hide();
         $(endQuiz).hide();
         $(historyFillInDiv).hide();
+
+        var preTimer = new easytimer.Timer();
+        var timer = new easytimer.Timer();
+        
+        function countdownTimer(timerLength){
+        
+            preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
+            preTimer.addEventListener('secondsUpdated', function (e) {
+                $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
+            });
+            preTimer.addEventListener('targetAchieved', function (e) {
+                var finishedText = timerLength + " second timer starts now!";
+                $("#countdown-text").html(finishedText);
+                $("#question-pretimer").html(" ");
+                timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
+                timer.addEventListener('secondsUpdated', function (e) {
+                    $('#question-timer').html(timer.getTotalTimeValues().seconds);
+                });
+            });
+            // Simulating "Show Answer" button click when timer finishes
+            timer.addEventListener('targetAchieved', function (e) {
+                var showAnswer = document.getElementById('show-answer');
+                showAnswer.click();
+            });
+        }
 
         function showQuizError(message) {
             $("#quiz-error").html(message).show();
@@ -324,6 +358,8 @@
 
         var showAnswer = document.getElementById('show-answer');
         showAnswer.addEventListener('click', function() {
+            preTimer.stop();
+            timer.stop();
             $("#qna-question :input").attr("disabled", true);
             $("#fill-in-question :input").attr("disabled", true);
             showAnswerToUser();
@@ -436,6 +472,8 @@
         nextQuestion.addEventListener('click', function() {
             saveQuestionResponse();
             moveToNextQuestion();
+            $('#question-pretimer').html("10");
+
         }, false);
 
         tallyPoints.addEventListener('click', function() {
@@ -539,6 +577,26 @@
                 focusFirstFillInField();
             } else {
                 focusQnAField();
+            }
+
+            if (!disableQuestionTimer){
+                const point_map = {1:25, 2:30, 3:35, 4:40, 5:45, 6:50, 7:55, 8:60};
+                if (data.points > 8){
+                    var questionLength = 60;
+                }
+                else{
+                    var questionLength = point_map[data.points];
+                }
+                var countdownText = questionLength + " second timer starts in ";
+                $("#countdown-text").html(countdownText);
+                $("#question-timer").html(questionLength);
+                $("#question-pretimer").html("10");
+                countdownTimer(questionLength);
+            }
+            else{
+                $("#countdown-text").html("");
+                $("#question-pretimer").html("");
+                $("#question-timer").html("");
             }
         }
 

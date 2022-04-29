@@ -193,6 +193,18 @@ main {
     margin-bottom: -2em;
 }
 
+h5#countdown-text {
+    display: inline;
+}
+
+h5#question-pretimer {
+    display: inline;
+}
+
+h5#question-timer {
+    color: red;
+}
+
 p#quiz-question-show-answer {
     margin-bottom: 0.75em;
 }
