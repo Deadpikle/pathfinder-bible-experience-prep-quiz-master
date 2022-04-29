@@ -199,25 +199,28 @@
         var timer = new easytimer.Timer();
         
         function countdownTimer(timerLength){
-        
-            preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
-            preTimer.addEventListener('secondsUpdated', function (e) {
-                $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
-            });
-            preTimer.addEventListener('targetAchieved', function (e) {
-                var finishedText = timerLength + " second timer starts now!";
-                $("#countdown-text").html(finishedText);
-                $("#question-pretimer").html(" ");
-                timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
-                timer.addEventListener('secondsUpdated', function (e) {
-                    $('#question-timer').html(timer.getTotalTimeValues().seconds);
-                });
+
+            timer.addEventListener('secondsUpdated', function (e) {
+                $('#question-timer').html(timer.getTotalTimeValues().seconds);
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
                 var showAnswer = document.getElementById('show-answer');
                 showAnswer.click();
             });
+        
+            preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
+            preTimer.addEventListener('secondsUpdated', function (e) {
+                $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
+            });
+            preTimer.addEventListener('targetAchieved', function (e) {
+                $("#countdown-text").html("");
+                $("#question-pretimer").html("");
+                $("#question-timer").html(timerLength);
+                timer.stop();
+                timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
+     
+            });            
         }
 
         function showQuizError(message) {
@@ -377,6 +380,7 @@
                 currentQuestionIndex++;
                 showQuestionAtCurrentIndex();
             }
+            
         }
 
         function statsKeyForQuestion(question) {
@@ -473,6 +477,7 @@
             saveQuestionResponse();
             moveToNextQuestion();
             $('#question-pretimer').html("10");
+            $("#question-timer").html("");
 
         }, false);
 
@@ -589,7 +594,6 @@
                 }
                 var countdownText = questionLength + " second timer starts in ";
                 $("#countdown-text").html(countdownText);
-                $("#question-timer").html(questionLength);
                 $("#question-pretimer").html("10");
                 countdownTimer(questionLength);
             }
