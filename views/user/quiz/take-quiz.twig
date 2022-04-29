@@ -597,7 +597,10 @@
             if (!disableQuestionTimer){
                 const point_map = {1:25, 2:30, 3:35, 4:40, 5:45, 6:50, 7:55, 8:60};
                 if (data.points > 8){
-                    var questionLength = 60;
+                    var questionLength = 60 + ((data.points - 8) * 15);
+                }
+                else if (data.points === 0){
+                    var questionLength = 25;
                 }
                 else{
                     var questionLength = point_map[data.points];
