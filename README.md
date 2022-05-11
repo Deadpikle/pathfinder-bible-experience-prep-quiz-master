@@ -1,8 +1,6 @@
 # Pathfinder Bible Experience Prep and Quiz Master
 
-**If you are looking for the PBE Quiz Engine by Tony Phillips, please visit http://pbequizengine.com/.**
-
-NOTICE: If you are looking for the website at http://pbe.uccsda.org (PBE Quiz Master), it is no longer available. A replacement is in the works and is available at https://pbeprep.com. Thanks for your patience while we work on getting things operational again!
+Live at https://pbeprep.com! If you are looking for the website at http://pbe.uccsda.org (PBE Quiz Master), that site is now located at https://pbeprep.com.
 
 The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bible-experience) (PBE) Prep and Quiz Master is a Bible quiz website specifically tailored for the [Pathfinders](http://www.pathfindersonline.org/) in the North American Division of Seventh-day Adventists. It can be used for a general purpose Bible quiz website, though! It supports the following nifty features:
 
@@ -48,3 +46,7 @@ Minimum requirements: PHP 7.1+ and a MariaDB database.
 If you have issues with the database migrations, https://stackoverflow.com/a/25782795/3938401 might be helpful, and you might want to use 127.0.0.1 instead of `localhost`
 
 You should now be able to login via `pbedb7`. I highly suggest changing that password via your preferred database modification method.
+
+## Other
+
+**If you are looking for the PBE Quiz Engine by Tony Phillips, please visit http://pbequizengine.com/.**
