@@ -211,6 +211,11 @@ h5#question-timer {
     display: inline;
 }
 
+h5#seconds-text {
+    margin-left: .1em;
+    display: inline;
+}
+
 #timer-icon {
     display: inline;
     font-size: 2rem;

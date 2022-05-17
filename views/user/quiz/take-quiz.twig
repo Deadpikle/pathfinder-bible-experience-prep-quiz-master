@@ -41,6 +41,7 @@
                     <h5 id="question-pretimer"></h5>
                     <i class="material-icons" id="timer-icon"></i>
                     <h5 id="question-timer"></h5>
+                    <h5 id="seconds-text"></h5>
                 </div>
                 <h6 id="user-points-earned"></h6>
                 <div class="divider"></div>
@@ -219,12 +220,16 @@
             preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
             preTimer.addEventListener('secondsUpdated', function (e) {
                 $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
+                if (preTimer.getTotalTimeValues().seconds === 1){
+                    $("#seconds-text").html("second...");
+                }
             });
             preTimer.addEventListener('targetAchieved', function (e) {
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html(timerLength);
                 $("#timer-icon").html("timer");
+                $("#seconds-text").html("");
                 timer.stop();
                 timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
      
@@ -615,11 +620,13 @@
                 $("#countdown-text").html(countdownText);
                 $("#question-pretimer").html("10");
                 countdownTimer(questionLength);
+                $("#seconds-text").html("seconds...");
             }
             else{
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html("");
+                $("#seconds-text").html("");
             }
         }
 
