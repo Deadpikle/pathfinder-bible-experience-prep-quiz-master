@@ -218,7 +218,6 @@
                 else{
                     $('#question-timer').html("<b>TIME'S UP!</b>");
                 }
-                $('#question-timer').css("color", "black");
             });
         
             preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
@@ -394,9 +393,11 @@
         function stopTimer(){
             preTimer.stop();
             timer.stop();
+            $('#question-timer').css("color", "black");
             $("#countdown-text").html("");
             $("#question-pretimer").html("");
             $("#question-timer").html("");
+            $("#seconds-text").html("");
             $("#timer-icon").html("");
         }
 
