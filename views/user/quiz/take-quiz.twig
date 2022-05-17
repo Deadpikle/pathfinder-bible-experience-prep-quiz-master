@@ -502,7 +502,9 @@
         nextQuestion.addEventListener('click', function() {
             saveQuestionResponse();
             moveToNextQuestion();
-            $('#question-pretimer').html("10");
+            if (!disableQuestionTimer) {
+                $('#question-pretimer').html("10");
+            }
             $("#question-timer").html("");
 
         }, false);
