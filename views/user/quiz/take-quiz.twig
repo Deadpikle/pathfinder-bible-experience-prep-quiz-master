@@ -205,6 +205,9 @@
 
             timer.addEventListener('secondsUpdated', function (e) {
                 $('#question-timer').html(timer.getTotalTimeValues().seconds);
+                if (timer.getTotalTimeValues().seconds === 10){
+                    $('#question-timer').css("color", "red");
+                }   
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
@@ -213,8 +216,9 @@
                     showAnswer.click();
                 }
                 else{
-                    $('#question-timer').html("<b>TIME'S UP!</b>")
+                    $('#question-timer').html("<b>TIME'S UP!</b>");
                 }
+                $('#question-timer').css("color", "black");
             });
         
             preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
@@ -232,7 +236,7 @@
                 $("#seconds-text").html("");
                 timer.stop();
                 timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
-     
+                
             });            
         }
 
