@@ -204,29 +204,27 @@
         var preTimer = new easytimer.Timer();
         var timer = new easytimer.Timer();
         
-        function countdownTimer(timerLength){
-
+        function countdownTimer(timerLength) {
             timer.addEventListener('secondsUpdated', function (e) {
                 $('#question-timer').html(timer.getTotalTimeValues().seconds);
-                if (timer.getTotalTimeValues().seconds === 10){
+                if (timer.getTotalTimeValues().seconds === 10) {
                     $('#question-timer').css("color", "red");
                 }   
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
-                if (!disableAutoShowAnswer){
+                if (!disableAutoShowAnswer) {
                     var showAnswer = document.getElementById('show-answer');
                     showAnswer.click();
                 }
-                else{
+                else {
                     $('#question-timer').html("<b>TIME'S UP!</b>");
                 }
             });
-        
-            preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
+            preTimer.start({countdown: true, precision: 'seconds', startValues: {seconds: 10}});
             preTimer.addEventListener('secondsUpdated', function (e) {
                 $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
-                if (preTimer.getTotalTimeValues().seconds === 1){
+                if (preTimer.getTotalTimeValues().seconds === 1) {
                     $("#seconds-text").html("second...");
                 }
             });
@@ -237,8 +235,7 @@
                 $("#timer-icon").html("timer");
                 $("#seconds-text").html("");
                 timer.stop();
-                timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
-                
+                timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
             });            
         }
 
@@ -393,7 +390,7 @@
             }
         }, false);
         
-        function stopTimer(){
+        function stopTimer() {
             preTimer.stop();
             timer.stop();
             $('#question-timer').css("color", "black");
@@ -615,15 +612,15 @@
                 focusQnAField();
             }
 
-            if (!disableQuestionTimer){
+            if (!disableQuestionTimer) {
                 const point_map = {1:25, 2:30, 3:35, 4:40, 5:45, 6:50, 7:55, 8:60};
-                if (data.points > 8){
+                if (data.points > 8) {
                     var questionLength = 60 + ((data.points - 8) * 15);
                 }
-                else if (data.points === 0){
+                else if (data.points === 0) {
                     var questionLength = 25;
                 }
-                else{
+                else {
                     var questionLength = point_map[data.points];
                 }
                 var countdownText = questionLength + " second timer starts in ";
@@ -632,7 +629,7 @@
                 countdownTimer(questionLength);
                 $("#seconds-text").html("seconds...");
             }
-            else{
+            else {
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html("");
