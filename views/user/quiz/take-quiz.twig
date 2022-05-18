@@ -1,9 +1,12 @@
 {% extends "layouts/main.twig" %}
 
-{% block content %}
+{% block headers %}
 
 {% include 'includes/scripts/easytimer.twig' %}
 
+{% endblock %}
+
+{% block content %}
 
 <div id="quiz-taking">
     <div id="loading-quiz">
@@ -39,8 +42,9 @@
                 <div id="countdown">
                     <h5 id="countdown-text"></h5>
                     <h5 id="question-pretimer"></h5>
-                    <h5 id="question-timer"></h5>
                     <i class="material-icons" id="timer-icon"></i>
+                    <h5 id="question-timer"></h5>
+                    <h5 id="seconds-text"></h5>
                 </div>
                 <h6 id="user-points-earned"></h6>
                 <div class="divider"></div>
@@ -200,34 +204,38 @@
         var preTimer = new easytimer.Timer();
         var timer = new easytimer.Timer();
         
-        function countdownTimer(timerLength){
-
+        function countdownTimer(timerLength) {
             timer.addEventListener('secondsUpdated', function (e) {
                 $('#question-timer').html(timer.getTotalTimeValues().seconds);
+                if (timer.getTotalTimeValues().seconds === 10) {
+                    $('#question-timer').css("color", "red");
+                }   
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
-                if (!disableAutoShowAnswer){
+                if (!disableAutoShowAnswer) {
                     var showAnswer = document.getElementById('show-answer');
                     showAnswer.click();
                 }
-                else{
-                    $('#question-timer').html("<b>TIME'S UP!</b>")
+                else {
+                    $('#question-timer').html("<b>TIME'S UP!</b>");
                 }
             });
-        
-            preTimer.start({countdown:true, precision: 'seconds', startValues: {seconds: 10}});
+            preTimer.start({countdown: true, precision: 'seconds', startValues: {seconds: 10}});
             preTimer.addEventListener('secondsUpdated', function (e) {
                 $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
+                if (preTimer.getTotalTimeValues().seconds === 1) {
+                    $("#seconds-text").html("second...");
+                }
             });
             preTimer.addEventListener('targetAchieved', function (e) {
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html(timerLength);
                 $("#timer-icon").html("timer");
+                $("#seconds-text").html("");
                 timer.stop();
-                timer.start({countdown:true, precision: 'seconds', startValues: {seconds: timerLength}}); 
-     
+                timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
             });            
         }
 
@@ -382,12 +390,14 @@
             }
         }, false);
         
-        function stopTimer(){
+        function stopTimer() {
             preTimer.stop();
             timer.stop();
+            $('#question-timer').css("color", "black");
             $("#countdown-text").html("");
             $("#question-pretimer").html("");
             $("#question-timer").html("");
+            $("#seconds-text").html("");
             $("#timer-icon").html("");
         }
 
@@ -396,7 +406,6 @@
                 currentQuestionIndex++;
                 showQuestionAtCurrentIndex();
             }
-            
         }
 
         function statsKeyForQuestion(question) {
@@ -492,9 +501,10 @@
         nextQuestion.addEventListener('click', function() {
             saveQuestionResponse();
             moveToNextQuestion();
-            $('#question-pretimer').html("10");
+            if (!disableQuestionTimer) {
+                $('#question-pretimer').html("10");
+            }
             $("#question-timer").html("");
-
         }, false);
 
         tallyPoints.addEventListener('click', function() {
@@ -600,26 +610,28 @@
                 focusQnAField();
             }
 
-            if (!disableQuestionTimer){
+            if (!disableQuestionTimer) {
                 const point_map = {1:25, 2:30, 3:35, 4:40, 5:45, 6:50, 7:55, 8:60};
-                if (data.points > 8){
+                if (data.points > 8) {
                     var questionLength = 60 + ((data.points - 8) * 15);
                 }
-                else if (data.points === 0){
+                else if (data.points === 0) {
                     var questionLength = 25;
                 }
-                else{
+                else {
                     var questionLength = point_map[data.points];
                 }
                 var countdownText = questionLength + " second timer starts in ";
                 $("#countdown-text").html(countdownText);
                 $("#question-pretimer").html("10");
                 countdownTimer(questionLength);
+                $("#seconds-text").html("seconds...");
             }
-            else{
+            else {
                 $("#countdown-text").html("");
                 $("#question-pretimer").html("");
                 $("#question-timer").html("");
+                $("#seconds-text").html("");
             }
         }
 

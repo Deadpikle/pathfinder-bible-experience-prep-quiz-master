@@ -109,11 +109,6 @@ main {
     margin-bottom: -1em;
 }
 
-#question-autoshow {
-    margin-top: 2em;
-    margin-bottom: -1em;
-}
-
 #unflag-question .input-field {
     margin-top: -2em;
     margin-bottom: 1em;
@@ -207,13 +202,18 @@ h5#question-pretimer {
 }
 
 h5#question-timer {
-    color: red;
+    display: inline;
+}
+
+h5#seconds-text {
+    margin-left: .1em;
     display: inline;
 }
 
 #timer-icon {
     display: inline;
     font-size: 2rem;
+    vertical-align: text-bottom;
 }
 
 p#quiz-question-show-answer {
