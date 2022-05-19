@@ -158,6 +158,7 @@
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
+        var disableDingSound = {{ disableDingSound ? 'true' : 'false' }};
         var userID = {{ userID }};
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -213,6 +214,9 @@
             });
             // Simulating "Show Answer" button click when timer finishes
             timer.addEventListener('targetAchieved', function (e) {
+                if (!disableDingSound){
+                    timerDing();
+                }
                 if (!disableAutoShowAnswer) {
                     var showAnswer = document.getElementById('show-answer');
                     showAnswer.click();
@@ -237,6 +241,11 @@
                 timer.stop();
                 timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
             });            
+        }
+
+        function timerDing(){
+            var ding = new Audio('../files/Timer-Ding.mp3');
+            ding.play();
         }
 
         function showQuizError(message) {
