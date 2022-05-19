@@ -203,6 +203,7 @@ h5#question-pretimer {
 
 h5#question-timer {
     display: inline;
+    vertical-align: text-bottom;
 }
 
 h5#seconds-text {
