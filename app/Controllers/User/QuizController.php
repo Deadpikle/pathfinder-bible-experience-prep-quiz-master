@@ -173,8 +173,10 @@ class QuizController
 
         $quizQuestions = $this->getQuizQuestions($app, $request, false, false);
         $userID = User::currentUserID();
+        $disableQuestionTimer = Util::validateBoolean($request->post, 'disable-question-timer');
+        $disableAutoShowAnswer = Util::validateBoolean($request->post, 'autoshow-answer');
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
-        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'viewFillInTheBlankAnswersInBold'), 'Take Quiz');
+        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'disableQuestionTimer', 'disableAutoShowAnswer', 'viewFillInTheBlankAnswersInBold'), 'Take Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)

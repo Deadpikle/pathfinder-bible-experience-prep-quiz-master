@@ -1,5 +1,6 @@
 body {
-    display: flex; /* ...why did I put this here? It concerns me...maybe it's causing issues... */
+    display: flex;
+    /* ...why did I put this here? It concerns me...maybe it's causing issues... */
     min-height: 100vh;
     flex-direction: column;
 }
@@ -11,13 +12,14 @@ body {
 main {
     flex: 1 0 auto;
 }
-      
+
 .back {
     margin-top: 1em;
 }
 
 .left-margin-fix {
-    margin-left: 0.75em; /* ugh */
+    margin-left: 0.75em;
+    /* ugh */
 }
 
 #page-list .add {
@@ -54,7 +56,7 @@ main {
 }
 
 .waves-effect.waves-blue .waves-ripple {
-    background-color: rgba(33,150,243,0.7);
+    background-color: rgba(33, 150, 243, 0.7);
 }
 
 #table-controls {
@@ -77,11 +79,13 @@ main {
     margin-bottom: 1em;
 }
 
-#start-quiz-btn, .flash-cards-btn {
+#start-quiz-btn,
+.flash-cards-btn {
     margin-top: 1em;
 }
 
-.flash-cards-btn, #start-quiz-btn {
+.flash-cards-btn,
+#start-quiz-btn {
     margin-right: 1em;
 }
 
@@ -96,6 +100,11 @@ main {
 }
 
 #question-filtering {
+    margin-top: 2em;
+    margin-bottom: -1em;
+}
+
+#question-countdown {
     margin-top: 2em;
     margin-bottom: -1em;
 }
@@ -132,6 +141,7 @@ main {
 .hidden {
     display: none;
 }
+
 /* https://stackoverflow.com/a/38251646/3938401 */
 .no-uppercase {
     text-transform: none;
@@ -152,18 +162,19 @@ main {
     /*text-align: center;*/
 }
 
-.fill-in-blank-input:disabled, #quiz-answer:disabled {
+.fill-in-blank-input:disabled,
+#quiz-answer:disabled {
     border-bottom: 1px solid black !important;
     color: inherit !important;
 }
 
 /* https://stackoverflow.com/a/34961662/3938401 */
 [contenteditable] b {
-  font-weight: normal;
+    font-weight: normal;
 }
-    
+
 [contenteditable] i {
-  font-style: normal;
+    font-style: normal;
 }
 
 #question-fill-in {
@@ -172,14 +183,38 @@ main {
     margin-left: -8px;
 }
 
-.nowrap { 
-    white-space: nowrap; 
+.nowrap {
+    white-space: nowrap;
 }
 
 #fill-in-percent-div {
     margin-left: 1em;
     margin-top: 3em;
     margin-bottom: -2em;
+}
+
+h5#countdown-text {
+    display: inline;
+}
+
+h5#question-pretimer {
+    display: inline;
+}
+
+h5#question-timer {
+    display: inline;
+    vertical-align: text-bottom;
+}
+
+h5#seconds-text {
+    margin-left: .1em;
+    display: inline;
+}
+
+#timer-icon {
+    display: inline;
+    font-size: 2rem;
+    vertical-align: text-bottom;
 }
 
 p#quiz-question-show-answer {
@@ -204,14 +239,23 @@ h5#question-text {
     margin-left: 1.2em;
 }
 
-.tablesorter-materialize { margin-top: 2em; }
-.tablesorter-materialize thead .disabled { display: none }
-.tablesorter-materialize .tablesorter-header.sorter-false { background-image: url(); }
+.tablesorter-materialize {
+    margin-top: 2em;
+}
 
- /* label focus color https://stackoverflow.com/a/37127156/3938401 */
-.blue-inputs input[type=text]:focus + label {
+.tablesorter-materialize thead .disabled {
+    display: none
+}
+
+.tablesorter-materialize .tablesorter-header.sorter-false {
+    background-image: url();
+}
+
+/* label focus color https://stackoverflow.com/a/37127156/3938401 */
+.blue-inputs input[type=text]:focus+label {
     color: #4285f4;
 }
+
 /* label underline focus color https://stackoverflow.com/a/37127156/3938401 */
 .blue-inputs input[type=text]:focus {
     border-bottom: 1px solid #4285f4;
@@ -449,7 +493,7 @@ div.answer-item .answer-text-container {
     padding-left: 0.5em;
 }
 
-li.sortable-drop-placeholder, 
+li.sortable-drop-placeholder,
 li.sortable-drag {
     background-color: #c0eefd !important;
 }
