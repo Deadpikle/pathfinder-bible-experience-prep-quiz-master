@@ -284,6 +284,34 @@ class Question
         }
         return $output;
     }
+
+    public static function loadFillInsForChapterAndLanguage(int $chapterID, int $languageID, PDO $db): array
+    {
+        $query = '
+            SELECT q.Question, v.VerseID, v.Number AS VerseNumber, b.Name, c.Number AS ChapterNumber
+            FROM Questions q 
+                JOIN Verses v ON q.StartVerseID = v.VerseID 
+                JOIN Chapters c ON c.ChapterID = v.ChapterID
+                JOIN Books b ON b.BookID = c.BookID
+            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?';
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $chapterID,
+            $languageID,
+            self::getBibleQnAFillType()
+        ]);
+        $data = $stmt->fetchAll();
+        $output = [];
+        foreach ($data as $row) {
+            $output[] = [
+                'question' => $row['Question'],
+                'chapter' => $row['ChapterNumber'],
+                'verse' => $row['VerseNumber']
+            ];
+        }
+        return $output;
+    }
     
     public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db): array
     {

@@ -156,6 +156,8 @@
         '/admin/bible-fill-ins/{chapterID}/{languageID}/delete' => 
             [['GET', 'Admin/BibleFillInController', 'verifyDeleteFillInsForChapter'],
             ['POST', 'Admin/BibleFillInController', 'deleteFillInsForChapter']],
+        '/admin/bible-fill-ins/{chapterID}/{languageID}/letter-pdf' => 
+            [['GET', 'Admin/BibleFillInController', 'createLetterPDF']],
         // bible q&a management
         '/admin/bible-qna-questions' => ['Admin/BibleQnAController', 'viewBibleQuestions'],
         '/admin/bible-qna-questions/{languageID}/delete' => 

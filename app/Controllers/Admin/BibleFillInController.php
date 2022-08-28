@@ -10,10 +10,13 @@ use Yamf\Request;
 use App\Models\Conference;
 use App\Models\CSRF;
 use App\Models\Language;
+use App\Models\NonBlankableWord;
 use App\Models\PBEAppConfig;
+use App\Models\Question;
 use App\Models\Util;
 use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
+use App\Models\Views\TwigPDFView;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use Yamf\Responses\NotFound;
@@ -96,4 +99,31 @@ class BibleFillInController extends BaseAdminController
         }
     }
 
+    public function createLetterPDF(PBEAppConfig $app, Request $request)
+    {
+        $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'] ?? 0, $app->db);
+        $language = Language::loadLanguageWithID($request->routeParams['languageID'] ?? 0, $app->db);
+        $book = Book::loadBookByID($chapter->bookID ?? 0, $app->db);
+        if ($chapter === null || $language === null || $book === null) {
+            return new TwigNotFound();
+        }
+        $questions = Question::loadFillInsForChapterAndLanguage($chapter->chapterID, $language->languageID, $app->db);
+        $lines = [];
+        foreach ($questions as $questionData) {
+            $wordData = NonBlankableWord::generateFillInQuestion($questionData['question'], 0, []);
+            $str = '';
+            foreach ($wordData['data'] as $item) {
+                $firstChar = mb_substr($item['word'], 0, 1);
+                if ($str !== '') {
+                    $str .= ' ';
+                }
+                $str .= trim($item['before'] . $firstChar . $item['after']);
+            }
+            $lines[] = $str;
+        }
+        // create PDF
+        $chapterNumber = $chapter->number;
+        return new TwigPDFView('pdf/fill-in-first-letters', compact('lines', 'chapterNumber'), $book->name . ' ' . 
+            $chapter->number, $book->name . ' ' . $chapter->number . ' First Letters.pdf');
+    }
 }

@@ -30,7 +30,10 @@
                         <td><b>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</b></td>
                         <td><b>{{ data.language.getDisplayName() }}</b></td>
                         <td>{{ data.numberOfQuestions | number_format }} {{ questionString }}</td>
-                        <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}">Delete</a></td>
+                        <td>
+                            <a class="waves-effect waves-light btn blue white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/letter-pdf') }}">Generate Letter PDF</a>
+                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}">Delete</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
