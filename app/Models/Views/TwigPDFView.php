@@ -56,6 +56,7 @@ class TwigPDFView extends Response
                 'orientation' => 'P',
                 'mode' => 'utf-8',
                 'format' => 'Legal',
+                'tempDir' => 'views/_cache',
                 //'default_font' => 'sans'
             ];
             $mpdf = new Mpdf($options);
