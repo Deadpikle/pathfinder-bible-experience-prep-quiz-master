@@ -165,7 +165,8 @@ class ImportQuestionsController extends BaseAdminController
                     $errors .= "Unable to add question: " . $row["Question"] . " -- Couldn't find language " . $language . ".<br>";
                     continue;
                 }
-                $isFillInTheBlank = trim($row["Fill in?"]) === "Yes";
+                $fillInDataFromUser = strtolower(trim($row["Fill in?"]));
+                $isFillInTheBlank = $fillInDataFromUser === "yes" || $fillInDataFromUser === "true" || $fillInDataFromUser === 1;
                 $row["Type"] = trim($row["Type"]);
                 $needsToSubtractTotalBibleFillInIfFailed = false;
                 if ($row["Type"] === "Bible") {
