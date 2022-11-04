@@ -13,6 +13,8 @@
 <h3>Contact Us</h3>
 <p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
 
+<p>If you are requesting access to the website using this form, please include information on your Pathfinder Club and Conference so that you can be added to the right places in the system. Thank you!</p>
+
 {% if not app.isLocalHost %}
     <script type="text/javascript">
        function onSubmit(token) {
@@ -71,6 +73,10 @@
         <button type="submit" class="btn waves-effect waves-light submit">Submit</button>
     {% endif %}
     <p id="contact-note" class="mt-2"><em>Note: If this contact form fails due to some unusual error, you can email {{ app.contactName }} at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>.</em></p>
+
+    <p>If you're submitting information about your Pathfinder club, please send the club name, a link to the club's website or Facebook page (if available), and the name and email address of one or more club leaders who are in charge of the club.</p>
+
+    <p>If you're submitting information about your conference, please send the conference name, a link to the conference's website, and the name and email address of person who will administer website use for your conference.</p>
 </form>
 
 
