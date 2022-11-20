@@ -41,9 +41,7 @@
                 </select>
                 <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
             </div>
-        </div>
-        <div class="row negat-" id="quiz-setup-language-select-container">
-            <div class="input-field col s12 m3">
+            <div class="input-field col s12 m3 l3" id="quiz-setup-language-select-container">
                 <select id="language-select" name="language-select">
                     {% for language in languages %}
                         {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
@@ -92,7 +90,7 @@
             </div>
         </div>
         <p class=""><b>Maximum number of questions and maximum number of points per question</b></p>
-        <div class="row">
+        <div class="row mb-0">
             <div class="input-field col s6 m3">
                 <input type="number" id="max-questions" name="max-questions" required value="30" max="{{ app.isGuest ? 100 : 500 }}" min="1"/>
                 <label for="max-questions">Maximum Questions</label>
@@ -102,38 +100,42 @@
                 <label for="max-points">Maximum Points</label>
             </div>
         </div>
-        <p id="question-types"><b>Question types</b></p>
         <div class="row">
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="both" value="both"/>
-                <label class="black-text" for="both">Both Q&amp;A and fill in the blank</label>
+            <div class="col s12 m5 negative-top-margin">
+                <p id="question-types" class="mb-0"><b>Question types</b></p>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap" name="question-types" id="both" value="both"/>
+                    <label class="black-text" for="both">Both Q&amp;A and fill in the blank</label>
+                </div>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" checked/>
+                    <label class="black-text" for="qa-only">Q&amp;A only</label>
+                </div>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only"/>
+                    <label class="black-text" for="fill-in-only">Fill in the blank only</label>
+                </div>
             </div>
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" checked/>
-                <label class="black-text" for="qa-only">Q&amp;A only</label>
+            <div class="col s12 m5 negative-top-margin">
+                <p id="question-order" class="mb-0"><b>Question selection and order</b></p>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />
+                    <label class="black-text" for="sequential-sequential">Sequential</label>
+                </div>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" checked/>
+                    <label class="black-text" for="random-sequential">Random selection and sequential order</label>
+                </div>
+                <div class="input-field mt-0">
+                    <input type="radio" class="with-gap" name="order" id="random-random" value="random-random"  />
+                    <label class="black-text" for="random-random">Random selection and random order</label>
+                </div>
             </div>
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only"/>
-                <label class="black-text" for="fill-in-only">Fill in the blank only</label>
-            </div>
+        </div>
+        <div class="row">
             <div class="input-field col s2" id="fill-in-percent-div">
                 <input type="number" name="fill-in-percent" id="fill-in-percent" value="30" min="1" max="100"/>
                 <label class="" for="fill-in-percent">% Blanks</label>
-            </div>
-        </div>
-        <p id="question-order"><b>Question selection and order</b></p>
-        <div class="row">
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />
-                <label class="black-text" for="sequential-sequential">Sequential</label>
-            </div>
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" checked/>
-                <label class="black-text" for="random-sequential">Random selection and sequential order</label>
-            </div>
-            <div class="input-field col s12">
-                <input type="radio" class="with-gap" name="order" id="random-random" value="random-random"  />
-                <label class="black-text" for="random-random">Random selection and random order</label>
             </div>
         </div>
         <p id="question-countdown"><b>Question timer</b></p>
@@ -161,7 +163,7 @@
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
                 <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings, including weighted question distribution!)</label>
             </div>
-            <div class="input-field col s12 m4" id="fill-in-percent-div">
+            <div class="input-field col s12 m4" id="days-back-div">
                 <input type="number" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31"/>
                 <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
             </div>
@@ -176,9 +178,10 @@
         <div class="row" id="quiz-setup-button-row">
             <div class="input-field col s12 m10">
                 <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
-                <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Left/Right Flash Cards</button>
-                <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">Front/Back Flash Cards</button>
-                <button id="presentation-btn" class="flash-cards-btn btn waves-effect waves-light submit" type="button">PowerPoint Presentation</button>
+                <br/>
+                <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit indigo" type="button">Left/Right Flash Cards</button>
+                <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit blue" type="button">Front/Back Flash Cards</button>
+                <button id="presentation-btn" class="flash-cards-btn btn waves-effect waves-light submit purple" type="button">PowerPoint Presentation</button>
             </div>
         </div>
         <div class="divider"></div>

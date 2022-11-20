@@ -89,16 +89,6 @@ main {
     margin-right: 1em;
 }
 
-#question-types {
-    margin-top: -1em;
-    margin-bottom: -1em;
-}
-
-#question-order {
-    margin-top: 2em;
-    margin-bottom: -1em;
-}
-
 #question-filtering {
     margin-top: 2em;
     margin-bottom: -1em;
@@ -127,7 +117,7 @@ main {
 }
 
 .negative-top-margin {
-    margin-top: -1em;
+    margin-top: -0.75em;
 }
 
 #quiz-setup-button-row {
@@ -189,6 +179,12 @@ main {
 
 #fill-in-percent-div {
     margin-left: 1em;
+    margin-top: 1em;
+    margin-bottom: -2em;
+}
+
+#days-back-div {
+    margin-left: 0.75em;
     margin-top: 3em;
     margin-bottom: -2em;
 }
@@ -319,10 +315,6 @@ h5#question-text {
     margin-bottom: -1em;
 }
 
-#quiz-setup-language-select-container {
-    margin-top: -1.2em;
-}
-
 #language-select-add-edit-question-container {
     margin-top: -1.2em;
     margin-bottom: -1em;
@@ -372,23 +364,23 @@ h5#question-text {
 }
 
 .mt-1 {
-    margin-top: 1em;
+    margin-top: 1em !important;
 }
 
 .mt-2 {
-    margin-top: 2em;
+    margin-top: 2em !important;
 }
 
 .mb-1 {
-    margin-bottom: 1em;
+    margin-bottom: 1em !important;
 }
 
 .mb-2 {
-    margin-bottom: 2em;
+    margin-bottom: 2em !important;
 }
 
 .rounded-border {
-    border-radius: 4px;
+    border-radius: 4px !important;
 }
 
 .mt-0 {
@@ -396,7 +388,7 @@ h5#question-text {
 }
 
 .mb-0 {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
 }
 
 p.quiz-bank-item {
