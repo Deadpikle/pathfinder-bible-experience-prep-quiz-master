@@ -49,6 +49,16 @@ If you have issues with the database migrations, https://stackoverflow.com/a/257
 
 You should now be able to login via `pbedb7`. I highly suggest changing that password via your preferred database modification method.
 
+## Attributions
+
+Bible names copyright Creative Commons Attribution-ShareAlike 3.0 Unported License, Wikipedia.
+
+Favicon copyright FontAwesome.
+
+Various libraries under their own license.
+
+Everything else MIT, copyright Deadpikle. (If I missed something, please let me know.)
+
 ## Other
 
 **If you are looking for the PBE Quiz Engine by Tony Phillips, please visit http://pbequizengine.com/.**
