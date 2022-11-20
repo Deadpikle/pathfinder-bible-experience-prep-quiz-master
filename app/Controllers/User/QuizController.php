@@ -26,7 +26,10 @@ use App\Models\Views\JsonStatusCodeResponse;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\PDFGenerator;
+use App\Services\PowerPointGenerator;
 use App\Services\QuizGenerator;
+use PhpOffice\PhpPresentation\IOFactory;
+use PhpOffice\PhpPresentation\PhpPresentation;
 use Yamf\Responses\Response;
 
 class QuizController
@@ -196,6 +199,15 @@ class QuizController
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
         $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold);
         $pdf->Output();
+    }
+
+    public function generatePresentation(PBEAppConfig $app, Request $request)
+    {
+        $quizQuestionData = $this->getQuizQuestions($app, $request, true, false);
+        $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
+        $generator = new PowerPointGenerator();
+        $generator->outputPowerPoint($quizQuestionData, $viewFillInTheBlankAnswersInBold);
+        return new Response(200);
     }
 
     public function saveQuizAnswers(PBEAppConfig $app, Request $request)

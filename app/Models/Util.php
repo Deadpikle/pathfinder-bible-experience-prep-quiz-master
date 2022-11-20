@@ -72,6 +72,98 @@ class Util
         return $UUID;
     }
 
+    public static function getFullQuestionTextFromQuestion($question) {
+        $type = $question['type'];
+        $output = trim($question['question']);
+        $isFillIn = Question::isTypeFillIn($type);
+        // TODO: rework logic here to be....right.
+        if (!$isFillIn) {
+            $output = self::fixQuestionMarkOnQuestion($output);
+        }
+        if (Question::isTypeBibleQnA($type)) {
+            $startBook = $question['startBook'];
+            $startChapter = $question['startChapter'];
+            $startVerse = $question['startVerse'];
+            $endBook = $question['endBook'];
+            $endChapter = $question['endChapter'];
+            $endVerse = $question['endVerse'];
+            $verseText = $startBook . ' ' . $startChapter . ':' . $startVerse;
+            if ($endBook !== '' && $startVerse != $endVerse) {
+                if ($startChapter == $endChapter) {
+                    $verseText .= '-' . $endVerse;
+                }
+                else {
+                    $endPart = $endChapter . ':' . $endVerse;
+                    $verseText .= '-' . $endPart;
+                }
+            }
+            if ($isFillIn) {
+                $output = 'Fill in the blanks for ' . $verseText . '.';
+            }
+            else {
+                if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
+                    $output = lcfirst($output);
+                }
+                $output = "According to " . $verseText . ", " . $output;
+            }
+        }
+        else if (Question::isTypeCommentaryQnA($type)) {
+            $volume = $question['volume'];
+            $startPage = trim($question['startPage'] ?? '');
+            $endPage = isset($question['endPage']) ? trim($question['endPage'] ?? '') : null;
+            $pageStr = '';
+            if ($endPage != null && $endPage != '' && $endPage > $startPage) {
+                $pageStr = 'pp. ' . $startPage . '-' . $endPage;
+            } else if ($startPage !== '') {
+                $pageStr = 'p. ' . $startPage;
+            }
+            if ($isFillIn) {
+                $output = 'Fill in the blanks for SDA Bible Commentary, Volume ' . $volume . ', ' . $pageStr . '.';
+            } else {
+                if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
+                    $output = lcfirst($output);
+                }
+                $output = 'According to the SDA Bible Commentary, Volume ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
+            }
+        }
+        return trim($output);
+    }
+
+    public static function generateFillInDataFromQuestion($question) {
+        $data = $question["fillInData"];
+        $blankedOutput = "";
+        $boldedOutput = "";
+        $i = 0;
+        $blankedWords = [];
+        foreach ($data as $questionWords) {
+            if ($questionWords["before"] !== "") {
+                $blankedOutput .= $questionWords["before"];
+                $boldedOutput .= $questionWords["before"];
+            }
+            if ($questionWords["word"] !== "") {
+                if ($questionWords["shouldBeBlanked"]) {
+                    $blankedWords[] = $questionWords["word"];
+                    $blankedOutput .= "________";
+                    $boldedOutput .= "<b>" . $questionWords["word"] . "</b>";
+                }
+                else {
+                    $blankedOutput .= $questionWords["word"];
+                    $boldedOutput .= $questionWords["word"];
+                }
+            }
+            if ($questionWords["after"] !== "" && $questionWords["after"] !== "...") {
+                $blankedOutput .= $questionWords["after"];
+                $boldedOutput .= $questionWords["after"];
+            }
+            if ($i != count($data) - 1) {
+                $blankedOutput .= " ";
+                $boldedOutput .= " ";
+            }
+            $i++;
+        }
+        return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
+    }
+
     public static function shouldLowercaseOutput($output) : bool
     {
         return !\Yamf\Util::strStartsWith($output, 'T or') && 

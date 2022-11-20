@@ -83,6 +83,7 @@
         '/matching-quiz/generate' => ['POST', 'User/QuizController', 'generateMatchingQuiz'],
         '/quiz/flash-cards/left-right' => ['POST', 'User/QuizController', 'generateLeftRightFlashCards'],
         '/quiz/flash-cards/front-back' => ['POST', 'User/QuizController', 'generateFrontBackFlashCards'],
+        '/quiz/presentation' => ['POST', 'User/QuizController', 'generatePresentation'],
         '/quiz/answers/remove' => [['GET', 'User/QuizController', 'checkBeforeRemovingAnswers'],
                                    ['POST', 'User/QuizController', 'removeAnswers']],
         '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],

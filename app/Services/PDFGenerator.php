@@ -8,98 +8,6 @@ use Yamf\Util as YamfUtil;
 
 class PDFGenerator
 {
-    private static function get_question_text($question) {
-        $type = $question['type'];
-        $output = trim($question['question']);
-        $isFillIn = Question::isTypeFillIn($type);
-        // TODO: rework logic here to be....right.
-        if (!$isFillIn) {
-            $output = Util::fixQuestionMarkOnQuestion($output);
-        }
-        if (Question::isTypeBibleQnA($type)) {
-            $startBook = $question['startBook'];
-            $startChapter = $question['startChapter'];
-            $startVerse = $question['startVerse'];
-            $endBook = $question['endBook'];
-            $endChapter = $question['endChapter'];
-            $endVerse = $question['endVerse'];
-            $verseText = $startBook . ' ' . $startChapter . ':' . $startVerse;
-            if ($endBook !== '' && $startVerse != $endVerse) {
-                if ($startChapter == $endChapter) {
-                    $verseText .= '-' . $endVerse;
-                }
-                else {
-                    $endPart = $endChapter . ':' . $endVerse;
-                    $verseText .= '-' . $endPart;
-                }
-            }
-            if ($isFillIn) {
-                $output = 'Fill in the blanks for ' . $verseText . '.';
-            }
-            else {
-                if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
-                    $output = lcfirst($output);
-                }
-                $output = "According to " . $verseText . ", " . $output;
-            }
-        }
-        else if (Question::isTypeCommentaryQnA($type)) {
-            $volume = $question['volume'];
-            $startPage = trim($question['startPage'] ?? '');
-            $endPage = isset($question['endPage']) ? trim($question['endPage'] ?? '') : null;
-            $pageStr = '';
-            if ($endPage != null && $endPage != '' && $endPage > $startPage) {
-                $pageStr = 'pp. ' . $startPage . '-' . $endPage;
-            } else if ($startPage !== '') {
-                $pageStr = 'p. ' . $startPage;
-            }
-            if ($isFillIn) {
-                $output = 'Fill in the blanks for SDA Bible Commentary, Volume ' . $volume . ', ' . $pageStr . '.';
-            } else {
-                if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
-                    $output = lcfirst($output);
-                }
-                $output = 'According to the SDA Bible Commentary, Volume ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
-            }
-        }
-        return $output;
-    }
-
-    private static function generate_fill_in($question) {
-        $data = $question["fillInData"];
-        $blankedOutput = "";
-        $boldedOutput = "";
-        $i = 0;
-        $blankedWords = [];
-        foreach ($data as $questionWords) {
-            if ($questionWords["before"] !== "") {
-                $blankedOutput .= $questionWords["before"];
-                $boldedOutput .= $questionWords["before"];
-            }
-            if ($questionWords["word"] !== "") {
-                if ($questionWords["shouldBeBlanked"]) {
-                    $blankedWords[] = $questionWords["word"];
-                    $blankedOutput .= "________";
-                    $boldedOutput .= "<b>" . $questionWords["word"] . "</b>";
-                }
-                else {
-                    $blankedOutput .= $questionWords["word"];
-                    $boldedOutput .= $questionWords["word"];
-                }
-            }
-            if ($questionWords["after"] !== "" && $questionWords["after"] !== "...") {
-                $blankedOutput .= $questionWords["after"];
-                $boldedOutput .= $questionWords["after"];
-            }
-            if ($i != count($data) - 1) {
-                $blankedOutput .= " ";
-                $boldedOutput .= " ";
-            }
-            $i++;
-        }
-        return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
-    }
-
     public static function generatePDF(array $quizMaterials, bool $isFrontBack, bool $viewFillInTheBlankAnswersInBold) : PBEPDF // TODO: not nullable
     {
         $pdf = new PBEPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
@@ -131,14 +39,14 @@ class PDFGenerator
                     $points = $question["points"];
                     $pointsStr = $points == 1 ? "point" : "points";
                     $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                    $questionText = trim(PDFGenerator::get_question_text($question));
+                    $questionText = Util::getFullQuestionTextFromQuestion($question);
                     if (!Question::isTypeFillIn($question["type"])) {
                         $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
                     }
                     else {
                         // for fill in the blanks, the full answer is stored
                         // in the question field
-                        $fillIn = PDFGenerator::generate_fill_in($question);
+                        $fillIn = Util::generateFillInDataFromQuestion($question);
                         $questionText .= "\n" . trim($fillIn["question"]);
                         if ($viewFillInTheBlankAnswersInBold) {
                             $pdf->OutputQuestionAnswerRow($questionText, trim($fillIn["answer"]), $title);
@@ -157,9 +65,9 @@ class PDFGenerator
                     $points = $question["points"];
                     $pointsStr = $points == 1 ? "point" : "points";
                     $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
-                    $questionText = trim(PDFGenerator::get_question_text($question));
+                    $questionText = trim(Util::getFullQuestionTextFromQuestion($question));
                     if (Question::isTypeFillIn($question["type"])) {
-                        $fillIn = PDFGenerator::generate_fill_in($question);
+                        $fillIn = Util::generateFillInDataFromQuestion($question);
                         $questionText .= "\n" . trim($fillIn["question"]);
                         $question["is-fill-in"] = true;
                         if ($viewFillInTheBlankAnswersInBold) {
