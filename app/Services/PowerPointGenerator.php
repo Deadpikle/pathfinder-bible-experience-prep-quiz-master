@@ -47,7 +47,7 @@ class PowerPointGenerator
             ->setSize(36);
     }
 
-    private function addQuestionTextToSlide(Slide $slide, string $questionText)
+    private function addQuestionTextToSlide(Slide $slide, string $questionText, int $points = 1)
     {
         $shape = $slide->createRichTextShape()
             ->setHeight(350)
@@ -69,7 +69,7 @@ class PowerPointGenerator
         $shape->getActiveParagraph()->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_LEFT)
             ->setVertical(Alignment::VERTICAL_TOP);
-        $shape->createTextRun('Question')
+        $shape->createTextRun('Question — ' . $points . ' ' . ($points === 1 ? 'point' : 'points'))
             ->getFont()->setSize(34)->setBold(true);
         $shape->createBreak();
         $shape->createTextRun($questionText)
