@@ -319,6 +319,7 @@ class Question
             $whereClause = '';
             $isFlagged = false;
             $flaggedJoinClause = '';
+            $extraSelect = '';
             if (isset($questionFilter)) {
                 if ($questionFilter == 'recent') {
                     $eightDaysAgo = date('Y-m-d 00:00:00', strtotime('-8 days'));
@@ -327,6 +328,7 @@ class Question
                     $isFlagged = true;
                     $flaggedJoinClause =  ' JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID ';
                     $whereClause = ' WHERE UserID = ' . $userID;
+                    $extraSelect = ', uf.Reason AS FlagReason ';
                 }
             }
             $questionType = $questionType ?? Question::getBibleQnAType();
@@ -394,7 +396,7 @@ class Question
                     bStart.Name AS StartBook, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
                     bEnd.Name AS EndBook, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
                     Type, comm.Number AS CommentaryVolume, comm.TopicName, CommentaryStartPage, CommentaryEndPage,
-                    l.LanguageID, l.Name AS LanguageName, l.AltName AS LanguageAltName ';
+                    l.LanguageID, l.Name AS LanguageName, l.AltName AS LanguageAltName ' . $extraSelect;
             $fromPortion = '
                 FROM Questions q 
                     LEFT JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
@@ -477,11 +479,14 @@ class Question
                 }
                 // set output to tmpQuestions
                 $questions = $tmpQuestions;
-            }
-            else {
+            } else {
                 $stmt = $db->query('SELECT COUNT(*) AS QuestionCount ' . $fromPortion);
                 $row = $stmt->fetch(); 
                 $totalQuestions = $row['QuestionCount'];
+            }
+            foreach ($questions as &$question) {
+                $question['IsFlagged'] = $isFlagged;
+                $question['FlagReason'] = FlagReason::toHumanReadable($isFlagged);
             }
     
             $output = [

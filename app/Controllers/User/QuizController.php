@@ -12,6 +12,7 @@ use Yamf\Responses\View;
 use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\Commentary;
+use App\Models\FlagReason;
 use App\Models\Language;
 use App\Models\MatchingQuestionItem;
 use App\Models\MatchingQuestionSet;
@@ -213,9 +214,9 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Response(401);
         }
-
         $userID = User::currentUserID();
-        $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $app->db);
+        $flagReason =FlagReason::validateReason(Util::validateString($request->post, 'reason'));
+        $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $flagReason, $app->db);
         return new JsonResponse(['status' => $hasFlagged ? 200 : 400]);
     }
 

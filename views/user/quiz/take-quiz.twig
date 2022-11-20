@@ -94,7 +94,24 @@
                 </div>
                 <div class="divider"></div>
                 <p id="quiz-message"></p>
-                <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
+                <div class="row valign-wrapper">
+                    <div class="input-field col s12 m8">
+                        <select id="flag-reason">
+                            <option value="">Select a reason for flagging this question...</option>
+                            <option value="{{ getConst('FlagReason', 'CONFUSING') }}">Confusing question/answer</option>
+                            <option value="{{ getConst('FlagReason', 'INCORRECT_POINTS') }}">Incorrect number of points</option>
+                            <option value="{{ getConst('FlagReason', 'NEEDS_MORE_DETAILS') }}">Needs more details in answer or question</option>
+                            <option value="{{ getConst('FlagReason', 'TOO_VAGUE') }}">Question is too vague</option>
+                            <option value="{{ getConst('FlagReason', 'SPELLING_TYPOS') }}">Typos (spelling, punctuation, etc.)</option>
+                            <option value="{{ getConst('FlagReason', 'WRONG_REFERENCE') }}">Wrong book/chapter/verse reference</option>
+                            <option value="{{ getConst('FlagReason', 'OTHER') }}">Other</option>
+                        </select>
+                        <label for="flag-reason">Flag reason</label>
+                    </div>
+                    <div class="col s12 m4">
+                        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
+                    </div>
+                </div>
                 <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
                 <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
             </div>
@@ -154,7 +171,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+        $("#flag-reason").material_select();
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
@@ -257,16 +274,17 @@
                 type: "POST",
                 url: '{{ app.yurl('/quiz/questions/flag') }}',
                 data: {
-                    questionID: currentQuestion.id
+                    questionID: currentQuestion.id,
+                    reason: document.getElementById('flag-reason').value,
                 },
                 success: function(response) {
                     if (response.status == 200) {
                         // successfully flagged
                         flagQuestion.disabled = true;
+                        document.getElementById('flag-reason').disabled = true;
+                        $('#flag-reason').material_select();
                         showQuizMessage("Question successfully flagged!");
-                    }
-                    else {
-                        // 
+                    } else {
                         alert("Error flagging question: " + response);
                     }
                 },
@@ -649,10 +667,16 @@
             currentQuestion = questions[currentQuestionIndex];
             if (currentQuestion.isFlagged == 0 && currentQuestion.isFlagged == "0") {
                 flagQuestion.disabled = false;
-            }
-            else {
+                document.getElementById('flag-reason').disabled = false;
+            } else {
                 flagQuestion.disabled = true;
+                document.getElementById('flag-reason').disabled = true;
             }
+            // reset flag question selector
+            var select = $('#flag-reason');
+            select.find('option:first').prop('selected', true);
+            select.material_select();
+            // display the question
             displayQuestion(currentQuestion);
         }
 

@@ -112,6 +112,11 @@ class AppViewExtension extends AbstractExtension
         return $_SERVER['REQUEST_URI'];
     }
 
+    function getConst($className, $constantName): string
+    {
+        return constant('\\App\\Models\\' . $className . '::' . $constantName);
+    }
+
     // // // settings
     // // //
 
@@ -131,6 +136,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('currentUsername', [$this, 'currentUsername']),
             new TwigFunction('currentConferenceID', [$this, 'currentConferenceID']),
             new TwigFunction('webAdminConferenceID', [$this, 'webAdminConferenceID']),
+            new TwigFunction('getConst', [$this, 'getConst']),
         ];
         return $twigFunctions;
     }

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use App\Models\FlagReason;
+use App\Models\UserFlagged;
 use Phinx\Migration\AbstractMigration;
 
 final class AddFlagReason extends AbstractMigration
@@ -19,7 +21,7 @@ final class AddFlagReason extends AbstractMigration
     public function change(): void
     {
         $table = $this->table('UserFlagged');
-        $table->addColumn('Reason', 'string', ['limit' => 50]);
+        $table->addColumn('Reason', 'string', ['limit' => 50, 'default' => FlagReason::UNKNOWN]);
         $table->update();
     }
 }

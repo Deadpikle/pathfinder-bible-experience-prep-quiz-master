@@ -182,6 +182,9 @@
             if (isBibleQuestion(questionType)) {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
+                if (questionFilter === 'flagged') {
+                    html += '<th>Flag Reason</th>';
+                }
                 html += '<th class="nowrap">Fill-in?</th>';
                 html += '<th>Start</th>';
                 html += '<th>End</th>';
@@ -191,6 +194,9 @@
             else if (isCommentaryQuestion(questionType)) {
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
+                if (questionFilter === 'flagged') {
+                    html += '<th>Flag Reason</th>';
+                }
                 html += '<th class="nowrap">Fill-in?</th>';
                 html += '<th>Volume</th>';
                 html += '<th>Points</th>';
@@ -237,6 +243,9 @@
                     }
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
+                    if (questionFilter === 'flagged') {
+                        html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
+                    }
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
                     var startVerseDataSort = padZeros(question.StartBibleOrder, 3) + '-' + question.StartBook + '-' + 
                         padZeros(question.StartChapter, 3) + 
@@ -252,6 +261,9 @@
                     volume += ' - ' + question.TopicName;
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
+                    if (questionFilter === 'flagged') {
+                        html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
+                    }
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
                     var volumeDataSort = padZeros(question.CommentaryVolume, 2) + '-' + padZeros(question.CommentaryStartPage, 3) + 
                         padZeros(question.CommentaryEndPage, 3);
@@ -306,6 +318,7 @@
                 resetQuestionFilterSelectorClasses();
                 setQuestionSelectorSelected(element);
                 emptyQuestionBody();
+                setupTableHeader(questionType);
                 loadQuestions();
             }
         }
