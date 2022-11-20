@@ -203,7 +203,7 @@ class PowerPointGenerator
         }
         // output presentation
         $oWriterPPTX = IOFactory::createWriter($presentation, 'PowerPoint2007');
-        $filename = date('Y-m-d-h-i-s') . '.pptx';
+        $filename = 'PBE Prep - Presentation - Generated on ' . date('Y-m-d-h-i-s') . '.pptx';
         header('Content-Type: application/application/vnd.openxmlformats-officedocument.presentationml.presentation');
         header('Content-Disposition: attachment; filename="'. urlencode($filename).'"');
         ob_end_clean();
