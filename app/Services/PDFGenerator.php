@@ -38,7 +38,7 @@ class PDFGenerator
                 foreach ($quizMaterials["questions"] as $question) {
                     $points = $question["points"];
                     $pointsStr = $points == 1 ? "point" : "points";
-                    $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
+                    $title = "Question " . $questionNumber . " — " . $points . " " . $pointsStr;
                     $questionText = Util::getFullQuestionTextFromQuestion($question);
                     if (!Question::isTypeFillIn($question["type"])) {
                         $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
@@ -64,7 +64,7 @@ class PDFGenerator
                 foreach ($quizMaterials["questions"] as &$question) {
                     $points = $question["points"];
                     $pointsStr = $points == 1 ? "point" : "points";
-                    $title = "Question " . $questionNumber . " -- " . $points . " " . $pointsStr;
+                    $title = "Question " . $questionNumber . " — " . $points . " " . $pointsStr;
                     $questionText = trim(Util::getFullQuestionTextFromQuestion($question));
                     if (Question::isTypeFillIn($question["type"])) {
                         $fillIn = Util::generateFillInDataFromQuestion($question);
