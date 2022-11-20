@@ -205,7 +205,7 @@ class PowerPointGenerator
         $oWriterPPTX = IOFactory::createWriter($presentation, 'PowerPoint2007');
         $filename = 'PBE Prep - Presentation - Generated on ' . date('Y-m-d-h-i-s') . '.pptx';
         header('Content-Type: application/application/vnd.openxmlformats-officedocument.presentationml.presentation');
-        header('Content-Disposition: attachment; filename="'. urlencode($filename).'"');
+        header('Content-Disposition: attachment; filename="'. $filename . '"');
         ob_end_clean();
         $oWriterPPTX->save('php://output');
     }
