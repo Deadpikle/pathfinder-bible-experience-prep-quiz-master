@@ -273,12 +273,17 @@
 
         var flagQuestion = document.getElementById('flag-question');
         flagQuestion.addEventListener('click', function() {
+            var reason = document.getElementById('flag-reason').value;
+            if (reason === '') {
+                alert('Please select a reason for flagging this question.');
+                return;
+            }
             $.ajax({
                 type: "POST",
                 url: '{{ app.yurl('/quiz/questions/flag') }}',
                 data: {
                     questionID: currentQuestion.id,
-                    reason: document.getElementById('flag-reason').value,
+                    reason: reason,
                 },
                 success: function(response) {
                     if (response.status == 200) {
