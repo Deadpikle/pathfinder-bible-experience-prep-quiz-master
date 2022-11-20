@@ -62,7 +62,7 @@ class Chapter
     public static function loadChaptersWithActiveQuestions(Year $year, PDO $db) : array
     {
         $query = '
-            SELECT DISTINCT c.BookID, c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
+            SELECT DISTINCT b.Name, c.BookID, c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
             FROM Chapters c
                 JOIN Books b ON b.BookID = c.BookID
                 JOIN Verses v ON c.ChapterID = v.ChapterID
