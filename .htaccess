@@ -6,7 +6,6 @@
     RewriteRule ^(.*)$ init.php/$1?%{QUERY_STRING} [L]
 
     RewriteRule ^phinx\.yml$ - [F]
-    RewriteRule ^phinx\.php$ - [F]
     RewriteRule ^config\.php$ - [F]
     RewriteRule ^config.sample\.php$ - [F]
     RewriteRule ^database\.php$ - [F]
