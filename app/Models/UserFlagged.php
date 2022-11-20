@@ -31,6 +31,16 @@ class UserFlagged
         $stmt->execute($params);
     }
 
+    public static function deleteAllFlagsForQuestion(int $questionID, PDO $db)
+    {
+        $query = 'DELETE FROM UserFlagged WHERE QuestionID = ?';
+        $params = [
+            $questionID
+        ];
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+    }
+
     public static function addFlagIfNecessary(int $questionID, int $userID, string $flagReason, PDO $db) : bool
     {
         try {
@@ -68,6 +78,17 @@ class UserFlagged
         $stmt->execute([
             $questionID,
             $userID
+        ]);
+        $data = $stmt->fetchAll();
+        return count($data) > 0;
+    }
+
+    public static function isFlaggedByAnyUser(int $questionID, PDO $db) : bool
+    {
+        $query = ' SELECT UserFlaggedID FROM UserFlagged WHERE QuestionID = ? ';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            $questionID,
         ]);
         $data = $stmt->fetchAll();
         return count($data) > 0;

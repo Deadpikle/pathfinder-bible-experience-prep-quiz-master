@@ -313,7 +313,7 @@ class Question
         return $output;
     }
     
-    public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PDO $db): array
+    public static function loadQuestionsWithFilters(string $questionFilter, string $questionType, string $bookFilter, string $chapterFilter, string $volumeFilter, string $searchText, int $pageSize, int $pageOffset, int $languageID, int $userID, PBEAppConfig $app, PDO $db): array
     {
         try {
             $whereClause = '';
@@ -327,7 +327,11 @@ class Question
                 } else if ($questionFilter == 'flagged') {
                     $isFlagged = true;
                     $flaggedJoinClause =  ' JOIN UserFlagged uf ON q.QuestionID = uf.QuestionID ';
-                    $whereClause = ' WHERE UserID = ' . $userID;
+                    if (!$app->isWebAdmin) {
+                        // if web admin, can view all flagged questions from all users.
+                        // otherwise, only see your own.
+                        $whereClause = ' WHERE uf.UserID = ' . $userID;
+                    }
                     $extraSelect = ', uf.Reason AS FlagReason ';
                 }
             }

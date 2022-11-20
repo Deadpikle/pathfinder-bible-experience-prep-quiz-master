@@ -56,6 +56,7 @@ class QuestionController
             $request->post['pageOffset'],
             $request->post['languageID'],
             User::currentUserID(), 
+            $app,
             $app->db
         );
         echo json_encode($questionData);
@@ -177,8 +178,12 @@ class QuestionController
         }
         $editData = $this->loadQuestionEditingData($app);
         $editData['isCreating'] = false;
-        $editData['question'] = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
-        $editData['isFlagged'] = UserFlagged::isFlagged($request->routeParams['questionID'], User::currentUserID(), $app->db);
+        $questionID = Util::validateInteger($request->routeParams, 'questionID');
+        $editData['question'] = Question::loadQuestionWithID($questionID, $app->db);
+        $editData['isFlagged'] = 
+            $app->isWebAdmin 
+                ? UserFlagged::isFlaggedByAnyUser($questionID, $app->db)
+                : UserFlagged::isFlagged($questionID, User::currentUserID(), $app->db);
 
         return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
     }
@@ -199,7 +204,11 @@ class QuestionController
             // check if validated before removing flag!
             $shouldRemoveFlag = Util::validateBoolean($request->post, 'remove-question-flag');
             if ($shouldRemoveFlag) {
-                UserFlagged::deleteFlag($question->questionID, User::currentUserID(), $app->db);
+                if ($app->isWebAdmin) {
+                    UserFlagged::deleteAllFlagsForQuestion($question->questionID, $app->db);
+                } else {
+                    UserFlagged::deleteFlag($question->questionID, User::currentUserID(), $app->db);
+                }
             }
             return new Redirect('/questions');
         } else {
@@ -207,7 +216,10 @@ class QuestionController
             $editData['isCreating'] = true;
             $editData['error'] = $validation->error;
             $editData['question'] = $question;
-            $editData['isFlagged'] = UserFlagged::isFlagged($request->routeParams['questionID'], User::currentUserID(), $app->db);
+            $editData['isFlagged'] = 
+                $app->isWebAdmin 
+                    ? UserFlagged::isFlaggedByAnyUser($question->questionID, $app->db)
+                    : UserFlagged::isFlagged($question->questionID, User::currentUserID(), $app->db);
             return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
     }
