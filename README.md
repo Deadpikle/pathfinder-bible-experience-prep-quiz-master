@@ -15,8 +15,10 @@ The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bi
     * Quizzes that work offline (except for quiz generation and flagging questions) -- generate a 500 question quiz, jump in the car, and take the quiz while on the go! 
     * While taking a quiz, view statistics on how well you're doing overall or per Bible Chapter/Commentary
     * View previously answered questions at any time while taking a quiz
+    * Flag questions while taking a quiz so you can remember which ones you may need to fix later
 * PDF print outs of quizzes that can be front/back print outs or show both questions and answers (or fill in the blank answers) on the same page
 * Create PDF print outs that only contain recently added questions so you don't have to sort through old questions 
+* Create PowerPoint presentations so you're ready to quiz with a group
 * Admins can upload study materials for other users to download
 * Website administrators can edit pretty much everything from an Admin panel
 * Responsive website -- use on your tablet or phone!
