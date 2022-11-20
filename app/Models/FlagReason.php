@@ -12,6 +12,8 @@ class FlagReason
     public const INCORRECT_POINTS = 'incorrect-points';
     public const SPELLING_TYPOS = 'spelling-typos';
     public const CONFUSING = 'confusing';
+    public const NEEDS_PRACTICE = 'needs-practice';
+    public const SAVE_FOR_LATER = 'save-for-later';
     public const OTHER = 'other';
 
     public static function validateReason(string $reason): string
@@ -22,6 +24,8 @@ class FlagReason
             $reason === FlagReason::INCORRECT_POINTS ||
             $reason === FlagReason::SPELLING_TYPOS ||
             $reason === FlagReason::CONFUSING ||
+            $reason === FlagReason::NEEDS_PRACTICE ||
+            $reason === FlagReason::SAVE_FOR_LATER ||
             $reason === FlagReason::OTHER) {
             return $reason;
         }
@@ -44,6 +48,10 @@ class FlagReason
                 return 'Spelling/Typos';
             case FlagReason::CONFUSING:
                 return 'Confusing';
+            case FlagReason::NEEDS_PRACTICE:
+                return 'Need to practice this question';
+            case FlagReason::SAVE_FOR_LATER:
+                return 'Save this question for later';
             case FlagReason::OTHER:
                 return 'Other';
         }

@@ -99,9 +99,11 @@
                         <select id="flag-reason">
                             <option value="">Select a reason for flagging this question...</option>
                             <option value="{{ getConst('FlagReason', 'CONFUSING') }}">Confusing question/answer</option>
+                            <option value="{{ getConst('FlagReason', 'NEEDS_PRACTICE') }}">I need to practice this question</option>
                             <option value="{{ getConst('FlagReason', 'INCORRECT_POINTS') }}">Incorrect number of points</option>
                             <option value="{{ getConst('FlagReason', 'NEEDS_MORE_DETAILS') }}">Needs more details in answer or question</option>
                             <option value="{{ getConst('FlagReason', 'TOO_VAGUE') }}">Question is too vague</option>
+                            <option value="{{ getConst('FlagReason', 'SAVE_FOR_LATER') }}">Save this question to look at later</option>
                             <option value="{{ getConst('FlagReason', 'SPELLING_TYPOS') }}">Typos (spelling, punctuation, etc.)</option>
                             <option value="{{ getConst('FlagReason', 'WRONG_REFERENCE') }}">Wrong book/chapter/verse reference</option>
                             <option value="{{ getConst('FlagReason', 'OTHER') }}">Other</option>
