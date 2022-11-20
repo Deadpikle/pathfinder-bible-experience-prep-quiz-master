@@ -177,26 +177,26 @@ class PowerPointGenerator
             if (!Question::isTypeFillIn($question["type"])) {
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
-                $this->addQuestionTextToSlide($slide, $questionText);
+                $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                 // make answer slide
                 $slide = $presentation->createSlide();
                 $this->addQuestionNumber($slide, $i + 1);
-                $this->addQuestionTextToSlide($slide, $questionText);
+                $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                 $this->addAnswerTextToSlide($slide, $question['answer']);
             } else {
                 $fillIn = Util::generateFillInDataFromQuestion($question);
                 $questionText .= "\n" . trim($fillIn["question"]);
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
-                $this->addQuestionTextToSlide($slide, $questionText);
+                $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                 if ($viewFillInTheBlankAnswersInBold) {
                     // make question slide
                     $this->addQuestionNumber($slide, $i + 1);
-                    $this->addQuestionTextToSlide($slide, $questionText);
+                    $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                     $this->addAnswerTextToSlide($slide, $fillIn['answer']);
                 } else {
                     $this->addQuestionNumber($slide, $i + 1);
-                    $this->addQuestionTextToSlide($slide, $questionText);
+                    $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                     $this->addAnswerTextToSlide($slide, join(', ', $fillIn['blanked-words']));
                 }
             }
