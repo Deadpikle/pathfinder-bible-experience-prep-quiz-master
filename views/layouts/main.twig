@@ -36,14 +36,15 @@
         <!-- Import timer icon -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <!-- Favicon Items -->
+        {# <!-- Favicon Items -->
         <link rel="apple-touch-icon" sizes="180x180" href="{{ app.yurl('/files/apple-touch-icon.png') }}">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ app.yurl('/files/favicon-32x32.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ app.yurl('/files/favicon-16x16.png') }}">
         <link rel="manifest" href="{{ app.yurl('/files/site.webmanifest') }}">
         <link rel="mask-icon" href="{{ app.yurl('/files/safari-pinned-tab.svg') }}" color="#5bbad5">
         <meta name="msapplication-TileColor" content="#00aba9">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#ffffff"> #}
+        <link rel="icon" type="image/x-icon" href="{{ app.yurl('favicon.png') }}">
 
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -127,7 +128,7 @@
             </div>
         </main>
         <footer class="container">
-            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com. Favicon: <a href="https://thenounproject.com/term/bible/22633/" target="_blank">Bible</a> by Dan Hetteix from <a href="http://thenounproject.com/" target="_blank">the Noun Project</a>.<br>{{ app.footerText }}</p>
+            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com. <br>{{ app.footerText }}</p>
         </footer>
         <script type="text/javascript">
             $(document).ready(function() {
