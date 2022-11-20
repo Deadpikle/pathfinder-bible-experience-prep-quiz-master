@@ -164,13 +164,29 @@ class Util
         return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
     }
 
-    public static function shouldLowercaseOutput($output) : bool
+    public static function getBibleNames(): array
     {
+        static $names = [];
+        if (count($names) === 0) {
+            $names = json_decode(file_get_contents('files/bible-names/all-names.json'));
+        }
+        return $names;
+    }
+
+    public static function shouldLowercaseOutput($output): bool
+    {
+        $names = self::getBibleNames();
+        $firstWords = explode(' ', $output);
+        $firstWord = '';
+        if (count($firstWords) > 0) {
+            $firstWord = $firstWords[0];
+        }
         return !\Yamf\Util::strStartsWith($output, 'T or') && 
                !(\Yamf\Util::strStartsWith($output, 'God') && !\Yamf\Util::strStartsWith($output, 'Gods') && 
                 !\Yamf\Util::strStartsWith($output, 'gods')) &&
                !\Yamf\Util::strStartsWith($output, 'Christ') && 
-               !\Yamf\Util::strStartsWith($output, 'Jesus');
+               !\Yamf\Util::strStartsWith($output, 'Jesus') &&
+               !in_array($firstWord, $names);
     }
 
     public static function fixQuestionMarkOnQuestion(string $input): string

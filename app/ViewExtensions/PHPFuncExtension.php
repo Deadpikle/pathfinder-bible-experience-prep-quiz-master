@@ -34,6 +34,7 @@ class PHPFuncExtension extends AbstractExtension
         'print_r',
         'in_array',
         'json_encode',
+        'json_decode',
         'count',
         'var_dump',
         'str_contains',
