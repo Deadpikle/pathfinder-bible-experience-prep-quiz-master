@@ -5,8 +5,10 @@ namespace App\Models;
 use PDO;
 
 use App\Models\Year;
+use DateTime;
 use Exception;
 use PDOException;
+use Throwable;
 
 class Question
 {
@@ -332,7 +334,7 @@ class Question
                         // otherwise, only see your own.
                         $whereClause = ' WHERE uf.UserID = ' . $userID;
                     }
-                    $extraSelect = ', uf.Reason AS FlagReason ';
+                    $extraSelect = ', uf.Reason AS FlagReason, uf.DateTimeFlagged AS FlagDateTime ';
                 }
             }
             $questionType = $questionType ?? Question::getBibleQnAType();
@@ -490,7 +492,11 @@ class Question
             }
             foreach ($questions as &$question) {
                 $question['IsFlagged'] = $isFlagged;
-                $question['FlagReason'] = FlagReason::toHumanReadable($isFlagged);
+                $question['FlagReason'] = FlagReason::toHumanReadable($question['FlagReason'] ?? '');
+                $question['FlagDateTime'] = $question['FlagDateTime'] ?? '';
+                $question['FlagReadableDateTime'] = isset($question['FlagDateTime']) 
+                    ? (new DateTime($question['FlagDateTime']))->format('F j, Y \\a\\t h:i A') 
+                    : '';
             }
     
             $output = [
@@ -500,10 +506,10 @@ class Question
             return $output;
         }
         catch (PDOException $e) {
-            return print_r($e, true); // TODO: return an actual error!
+            return ['error' => print_r($e, true)]; // TODO: return an actual error!
         }
-        catch (Exception $e) {
-            return print_r($e, true);
+        catch (Throwable $e) {
+            return ['error' => print_r($e, true)];
         }
         return [];
     }

@@ -131,7 +131,7 @@
                         try {
                             //console.log(response);
                             var data = JSON.parse(response);
-                            console.log(data);
+                            //console.log(data);
                             setupTable(data.questions);
                             var totalQuestions = data.questions.length != 0 ? data.questions.length : 0;
                             maxPageNumber = totalQuestions != 0 ? Math.ceil(data.totalQuestions / pageSize) - 1 : 0;
@@ -183,6 +183,7 @@
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
                 if (questionFilter === 'flagged') {
+                    html += '<th>Flag Date/Time</th>';
                     html += '<th>Flag Reason</th>';
                 }
                 html += '<th class="nowrap">Fill-in?</th>';
@@ -195,6 +196,7 @@
                 html += '<th>Question</th>';
                 html += '<th>Answer</th>';
                 if (questionFilter === 'flagged') {
+                    html += '<th>Flag Date/Time</th>';
                     html += '<th>Flag Reason</th>';
                 }
                 html += '<th class="nowrap">Fill-in?</th>';
@@ -244,6 +246,7 @@
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     if (questionFilter === 'flagged') {
+                        html += '<td data-sort="' + question.FlagDateTime + '">' + (question.IsFlagged && question.FlagDateTime !== '' ? question.FlagReadableDateTime : '') + '</td>';
                         html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
                     }
                     html += '<td>' + checkboxTypeForFillIn + '</td>';
@@ -262,6 +265,7 @@
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     if (questionFilter === 'flagged') {
+                        html += '<td data-sort="' + question.FlagDateTime + '">' + (question.IsFlagged && question.FlagDateTime !== '' ? question.FlagReadableDateTime : '') + '</td>';
                         html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
                     }
                     html += '<td>' + checkboxTypeForFillIn + '</td>';

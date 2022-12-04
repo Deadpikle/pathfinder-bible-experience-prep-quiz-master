@@ -12,12 +12,15 @@ class UserFlagged
     public $questionID;
     public $reason;
 
+    public $dateTimeFlagged;
+
     public function __construct(int $userFlaggedID, int $userID, int $questionID)
     {
         $this->userFlaggedID = $userFlaggedID;
         $this->userID = $userID;
         $this->questionID = $questionID;
         $this->reason = FlagReason::UNKNOWN;
+        $this->dateTimeFlagged = '2000-12-07 10:02:00';
     }
 
     public static function deleteFlag(int $questionID, int $userID, PDO $db)
