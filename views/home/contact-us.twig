@@ -59,9 +59,12 @@
     <div class="row">
         <div class="input-field col s12 m6">
             <select id="type" name="type" required>
-                <option value="pathfinder">Pathfinder</option>
-                <option value="leader">PBE Leader/Pathfinder Leader/Director</option>
-                <option value="other">Other</option>
+                {% set selected = submission.type == 'pathfinder' ? 'selected' : '' %}
+                <option value="pathfinder" {{ selected }}>Pathfinder</option>
+                {% set selected = submission.type == 'leader' ? 'selected' : '' %}
+                <option value="leader" {{ selected }}>PBE Leader/Pathfinder Leader/Director</option>
+                {% set selected = submission.type == 'other' ? 'selected' : '' %}
+                <option value="other" {{ selected }}>Other</option>
             </select>
             <label for="type">* I am a...</label>
         </div>

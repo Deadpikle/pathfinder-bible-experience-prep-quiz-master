@@ -46,6 +46,9 @@ class ContactFormSubmission
             $submission->email = $row['Email'];
             $submission->message = $row['Message'];
             $submission->dateTimeSubmitted = $row['DateTimeSubmitted'];
+            $submission->club = $row['Club'];
+            $submission->conference = $row['Conference'];
+            $submission->type = $row['Type'];
             $output[] = $submission;
         }
         return $output;

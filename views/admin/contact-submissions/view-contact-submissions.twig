@@ -19,6 +19,9 @@
                 <th>Submission Date</th>
                 <th>Title</th>
                 <th>Name</th>
+                <th>Club</th>
+                <th>Conference</th>
+                <th>Type</th>
                 <th>Email</th>
                 <th>Message</th>
             </tr>
@@ -29,6 +32,9 @@
                     <td data-sort="{{ submission.dateTimeSubmitted }}">{{ submission.dateTimeSubmitted | date('D, M d, Y, g:i a') }}</td>
                     <td>{{ submission.title }}</td>
                     <td>{{ submission.personName }}</td>
+                    <td>{{ submission.club }}</td>
+                    <td>{{ submission.conference }}</td>
+                    <td>{{ submission.type }}</td>
                     <td>{{ submission.email }}</td>
                     <td>{{ submission.message }}</td>
                 </tr>
