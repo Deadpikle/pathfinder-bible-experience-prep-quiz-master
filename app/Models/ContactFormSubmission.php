@@ -15,16 +15,24 @@ class ContactFormSubmission
     public $message;
     public $dateTimeSubmitted;
 
+    public $club;
+    public $conference;
+    public $type;
+
     public function __construct(int $contactFormSubmissionID, string $title)
     {
         $this->contactFormSubmissionID = $contactFormSubmissionID;
         $this->title = $title;
+        $this->club = '';
+        $this->conference = '';
+        $this->type = '';
     }
 
     private static function loadSubmissions(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
-            SELECT ContactFormSubmissionID, Title, PersonName, Email, Message, DateTimeSubmitted
+            SELECT ContactFormSubmissionID, Title, PersonName, Email, Message, DateTimeSubmitted,
+                Club, Conference, Type
             FROM ContactFormSubmissions
             ' . $whereClause . '
             ORDER BY DateTimeSubmitted DESC';
@@ -57,15 +65,20 @@ class ContactFormSubmission
     public function create(PDO $db)
     {
         $query = '
-            INSERT INTO ContactFormSubmissions (Title, PersonName, Email, Message, DateTimeSubmitted) 
-            VALUES (?, ?, ?, ?, ?)';
+            INSERT INTO ContactFormSubmissions (Title, PersonName, Email, Message, DateTimeSubmitted,
+                Club, Conference, Type) 
+            VALUES (?, ?, ?, ?, ?,
+                ?, ?, ?)';
         $stmnt = $db->prepare($query);
         $stmnt->execute([
             $this->title,
             $this->personName,
             $this->email,
             $this->message,
-            date('Y-m-d H:i:s')
+            date('Y-m-d H:i:s'),
+            $this->club,
+            $this->conference,
+            $this->type,
         ]);
         $this->contactFormSubmissionID = intval($db->lastInsertId());
     }

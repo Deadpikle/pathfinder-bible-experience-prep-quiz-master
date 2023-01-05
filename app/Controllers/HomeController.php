@@ -182,12 +182,18 @@ class HomeController
         $name = Util::validateString($request->post, 'name');
         $email = Util::validateEmail($request->post, 'email');
         $message = Util::validateString($request->post, 'message');
+        $club = Util::validateString($request->post, 'club');
+        $conference = Util::validateString($request->post, 'conference');
+        $type = Util::validateString($request->post, 'type');
 
         $submission = new ContactFormSubmission(-1, $title);
         $submission->personName = $name;
         $submission->email = $email;
         $submission->message = $message;
-        
+        $submission->club = $club;
+        $submission->conference = $conference;
+        $submission->type = $type;
+
         if ($submission->title === null || $submission->title === '') {
             return new ValidationStatus(false, $submission, 'Title is required');
         }
@@ -232,7 +238,10 @@ class HomeController
                         $submission->personName,
                         $app->contactSubjectPrefix,
                         $submission->title,
-                        $submission->message
+                        $submission->message . "\n\n" .
+                            'Club: ' . $submission->club . "\n\n" .
+                            'Conference: ' . $submission->conference . "\n\n" .
+                            'Submission from: ' . ucfirst($submission->type) . "\n\n"
                     );
                     return new Redirect('/contact?success');
                 } else {

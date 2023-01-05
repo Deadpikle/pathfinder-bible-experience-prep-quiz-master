@@ -13,7 +13,7 @@
 <h3>Contact Us</h3>
 <p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
 
-<p>If you are requesting access to the website using this form, please include information on your Pathfinder Club and Conference so that you can be added to the right places in the system. Thank you!</p>
+<p>If you are requesting access to the website using this form, <strong>please include information on your Pathfinder Club and Conference so that you can be added to the right places and with the right permissions in the system</strong>. Thank you!</p>
 
 {% if not app.isLocalHost %}
     <script type="text/javascript">
@@ -41,11 +41,29 @@
             <input type="text" class="form-control" id="name" name="name" placeholder="First-Name Last-Name" required maxlength="250" data-length="250" value="{{ submission.personName }}">
             <label for="name">* Your name</label>
         </div>
-    </div>
-    <div class="row">
         <div class="input-field col s12 m6">
             <input type="email" class="form-control" id="email" name="email" placeholder="Email" required maxlength="250" data-length="250" value="{{ submission.email }}">
             <label for="email">* Your email address</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <input type="text" class="form-control" id="club" name="club" placeholder="Dayton Area Eagles" maxlength="150" data-length="150" value="{{ submission.club }}">
+            <label for="club">* Pathfinder Club</label>
+        </div>
+        <div class="input-field col s12 m6">
+            <input type="text" class="form-control" id="conference" name="conference" placeholder="Upper Columbia Conference" maxlength="150" data-length="150" value="{{ submission.conference }}">
+            <label for="conference">* SDA Conference</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s12 m6">
+            <select id="type" name="type" required>
+                <option value="pathfinder">Pathfinder</option>
+                <option value="leader">PBE Leader/Pathfinder Leader/Director</option>
+                <option value="other">Other</option>
+            </select>
+            <label for="type">* I am a...</label>
         </div>
     </div>
     <div class="row">
@@ -56,7 +74,7 @@
     </div>
     <div class="row">
         <div class="input-field col s12 m6">
-            <textarea class="materialize-textarea" id="message" name="message" placeholder="Message" rows="5" required data-length="10000"> {{ submission.message }}</textarea>
+            <textarea class="materialize-textarea" id="message" name="message" placeholder="I would like an access code to...I belong to the Pathfinder club named..." rows="5" required data-length="10000"> {{ submission.message }}</textarea>
             <label for="message">* Message</label>
         </div>
     </div>
@@ -79,5 +97,11 @@
     <p>If you're submitting information about your conference, please send the conference name, a link to the conference's website, and the name and email address of person who will administer website use for your conference.</p>
 </form>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('select').material_select();
+        fixRequiredSelectorCSS();
+    });
+</script>
 
 {% endblock %}
