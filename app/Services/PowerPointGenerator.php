@@ -189,8 +189,9 @@ class PowerPointGenerator
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
                 $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
+                // make answer slide
+                $slide = $presentation->createSlide();
                 if ($viewFillInTheBlankAnswersInBold) {
-                    // make question slide
                     $this->addQuestionNumber($slide, $i + 1);
                     $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
                     $this->addAnswerTextToSlide($slide, $fillIn['answer']);
