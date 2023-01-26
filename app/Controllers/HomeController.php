@@ -16,6 +16,7 @@ use App\Models\StudyGuide;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\ValidationStatus;
+use App\Models\Views\TwigErrorMessage;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\StatsLoader;
@@ -216,6 +217,9 @@ class HomeController
         $submission = $status->output;
         /** @var ContactFormSubmission $submission */
         $errors = [];
+        if ($submission->email === 'ericjonesmyemail@gmail.com') {
+            return new TwigErrorMessage('No spam, thanks.'); // we get so much spam from this email....
+        }
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
