@@ -340,7 +340,9 @@
 					var quizBankDataID = quizBankListItem.getAttribute('data-id');
                     var quizBankAnswer = quizBankListItem.getAttribute('data-answer').trim();
                     var answerItemAnswer = answerListItem.getAttribute('data-answer').trim();
-					if (quizBankDataID === answerDataID || quizBankAnswer === answerItemAnswer) {
+                    //console.log(quizBankDataID, answerDataID);
+                    //console.log(quizBankAnswer, answerItemAnswer);
+					if ((quizBankDataID !== '-1' && quizBankDataID !== -1 && quizBankDataID === answerDataID) || quizBankAnswer === answerItemAnswer) {
 						// answer is right!
 						answerItemContainer.classList.add('correct-quiz-answer');
 						answerItemContainer.querySelector('.correct-answer-icon').classList.remove('hidden');
