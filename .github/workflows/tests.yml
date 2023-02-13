@@ -13,7 +13,7 @@ jobs:
     # https://github.com/php-actions/example-phpunit
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.5
         with:
           path: /tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
@@ -37,4 +37,5 @@ jobs:
           php_extensions: gd zip
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
+          version: 9
         # args: --coverage-text
