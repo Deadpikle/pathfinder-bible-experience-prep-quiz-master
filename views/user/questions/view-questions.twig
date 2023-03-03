@@ -21,7 +21,7 @@
 
 <h3>Questions</h3>
 
-{% if not app.isGuest %}
+{% if not app.isGuest and not app.isPathfinder %}
     <div id="create" class="row">
         <div class="col s12"> 
             <a class="waves-effect waves-light btn" href="{{ app.yurl('/questions/add') }}">Add Question</a>
