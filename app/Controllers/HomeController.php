@@ -51,7 +51,7 @@ class HomeController
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID
                 LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
-            WHERE EntryCode = ?';
+            WHERE EntryCode = ? AND u.WasDeleted = 0 ';
         $stmt = $app->db->prepare($query);
         $params = [
             $request->post['access-code']

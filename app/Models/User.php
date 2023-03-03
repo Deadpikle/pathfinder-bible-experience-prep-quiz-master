@@ -18,10 +18,13 @@ class User
     public $createdByID;
     public $defaultLanguageID;
 
+    public $wasDeleted;
+
     public function __construct(int $userID, string $username)
     {
         $this->userID = $userID;
         $this->username = $username;
+        $this->wasDeleted = false;
     }
 
     public static function isLoggedIn()
@@ -96,22 +99,22 @@ class User
 
     public static function loadAllUsers(PDO $db) : array
     {
-        return User::loadUsers('', [], $db);
+        return User::loadUsers(' WHERE WasDeleted = 0 ', [], $db);
     }
 
     public static function loadUsersInClub(int $clubID, PDO $db) : array
     {
-        return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" ', [ $clubID ], $db);
+        return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" AND WasDeleted = 0 ', [ $clubID ], $db);
     }
 
     public static function loadUsersInConference(int $conferenceID, PDO $db) : array
     {
-        return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" ', [ $conferenceID ], $db);
+        return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" AND WasDeleted = 0 ', [ $conferenceID ], $db);
     }
 
     public static function loadUserByID(int $userID, PDO $db) : ?User
     {
-        $data = User::loadUsers(' WHERE UserID = ? ', [ $userID ], $db);
+        $data = User::loadUsers(' WHERE UserID = ? AND WasDeleted = 0 ', [ $userID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
@@ -157,8 +160,8 @@ class User
     public function create(PDO $db)
     {
         $query = '
-            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)';
+            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate, WasDeleted) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
         $this->entryCode = $this->generateEntryCode($db);
         $stmnt = $db->prepare($query);
         $stmnt->execute([
@@ -168,7 +171,8 @@ class User
             $this->entryCode,
             User::currentUserID(),
             '',
-            '1989-12-25 00:00:00' // default, not-yet-logged-in date
+            '1989-12-25 00:00:00', // default, not-yet-logged-in date
+            $this->wasDeleted
         ]);
         $this->userID = $db->lastInsertId();
     }
@@ -189,7 +193,7 @@ class User
 
     public function delete(PDO $db)
     {
-        $query = 'DELETE FROM Users WHERE UserID = ?';
+        $query = 'UPDATE Users SET WasDeleted = 1 WHERE UserID = ?';
         $stmnt = $db->prepare($query);
         $stmnt->execute([ $this->userID ]);
     }
