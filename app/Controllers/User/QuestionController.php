@@ -163,6 +163,7 @@ class QuestionController
             $editData = $this->loadQuestionEditingData($app);
             $editData['isCreating'] = true;
             $editData['error'] = $validation->error;
+            $editData['question'] = $validation->output;
             return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
     }
