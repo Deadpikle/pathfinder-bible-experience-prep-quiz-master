@@ -14,6 +14,7 @@ use App\Models\PBEAppConfig;
 use App\Models\Question;
 use App\Models\StudyGuide;
 use App\Models\User;
+use App\Models\Util;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 
@@ -307,6 +308,19 @@ class ImportQuestionsController extends BaseAdminController
                 $answerText = str_replace("\xD3", '"', $answerText);
                 $answerText = str_replace("\xD4", "'", $answerText);
                 $answerText = str_replace("\xD5", "'", $answerText);
+
+                if (!Util::doesTextPassWordFilter($questionText)) {
+                    $errors .= "Unable to add question: " . $row["Question"] . " -- The question text has invalid text<br>";
+                    if ($needsToSubtractTotalBibleFillInIfFailed) {
+                        $bibleFillIns[$languageID]--;
+                    }
+                }
+                if (!Util::doesTextPassWordFilter($answerText)) {
+                    $errors .= "Unable to add question: " . $row["Question"] . " -- The answer text has invalid text<br>";
+                    if ($needsToSubtractTotalBibleFillInIfFailed) {
+                        $bibleFillIns[$languageID]--;
+                    }
+                }
 
                 $params = [
                     $questionType, 

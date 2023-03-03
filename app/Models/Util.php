@@ -220,4 +220,19 @@ class Util
             'X-Mailer: PHP/' . phpversion();
         return mail($to, $subject, $message, $headers);
     }
+
+    public static function doesTextPassWordFilter(string $text): bool
+    {
+        static $bannedWords = '';
+        if ($bannedWords === '') {
+            $bannedWords = file_get_contents('files/banned-words.txt');
+        }
+        $list = explode(',', $bannedWords);
+        foreach ($list as $word) {
+            if (strpos(mb_strtolower($text), mb_strtolower($word)) !== false) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -146,6 +146,12 @@ class QuestionController
                 return new ValidationStatus(false, $question, 'Maximum amount of Bible fill-in questions reached');
             }
         }
+        if (!Util::doesTextPassWordFilter($question->question)) {
+            return new ValidationStatus(false, $question, 'The question text for this Q&A has invalid text');
+        }
+        if (!Util::doesTextPassWordFilter($question->answer)) {
+            return new ValidationStatus(false, $question, 'The answer text for this Q&A has invalid text');
+        }
         return new ValidationStatus(true, $question);
     }
     

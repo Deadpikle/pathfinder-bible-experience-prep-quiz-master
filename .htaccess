@@ -15,4 +15,5 @@
     RewriteRule ^TODO\.txt$ - [F]
     RewriteRule ^phpunit\.xml$ - [F]
     RewriteRule ^docs/pathfinder-bible-exp-engine\.mwb$ - [F]
+    RewriteRule ^files/banned-words\.txt$ - [F]
 </IfModule>
