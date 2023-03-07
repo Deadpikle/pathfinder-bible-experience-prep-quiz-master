@@ -172,7 +172,7 @@ class User
             User::currentUserID(),
             '',
             '1989-12-25 00:00:00', // default, not-yet-logged-in date
-            $this->wasDeleted
+            (bool)$this->wasDeleted
         ]);
         $this->userID = $db->lastInsertId();
     }
