@@ -21,7 +21,7 @@ class StudyGuide
         $this->displayName = $displayName;
     }
 
-    private function loadStudyGuides(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadStudyGuides(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
             SELECT StudyGuideID, DisplayName, FileName, StudyGuides.YearID, Years.Year
