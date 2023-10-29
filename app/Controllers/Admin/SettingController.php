@@ -26,6 +26,7 @@ class SettingController extends BaseAdminController implements IRequestValidator
      */
     public function validateRequest(AppConfig $app, Request $request) : ?Response
     {
+        /** @var PBEAppConfig $app */
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
             if ($app->isWebAdmin) {
@@ -57,6 +58,8 @@ class SettingController extends BaseAdminController implements IRequestValidator
                                  Util::validateString($request->post, Setting::WebsiteTabTitleKey()), $app->db);
             Setting::saveSetting(Setting::FooterTextKey(), 
                                  Util::validateString($request->post, Setting::FooterTextKey()), $app->db);
+            Setting::saveSetting(Setting::CurrentFillInChapters(), 
+                                Util::validateString($request->post, Setting::CurrentFillInChapters()), $app->db);
             // re-init settings
             Setting::initAppWithSettings($app);
         } else {

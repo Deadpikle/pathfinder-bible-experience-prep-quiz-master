@@ -19,9 +19,10 @@
         {% for setting in settings %}
             {% if setting.displayName != 'Analytics URL' and setting.displayName != 'Analytics Site ID' %}
                 <div class="row">
-                    <div class="input-field col s12 m4">
+                    <div class="input-field col s12 m6">
                         <input type="text" id="{{ setting.key }}" name="{{ setting.key }}" 
-                        value="{{ setting.value }}" required data-length="150"/>
+                            placeholder="{{ setting.displayName }}" 
+                            value="{{ setting.value }}" required data-length="150"/>
                         <label for="{{ setting.key }}">{{ setting.displayName }}</label>
                     </div>
                 </div>
