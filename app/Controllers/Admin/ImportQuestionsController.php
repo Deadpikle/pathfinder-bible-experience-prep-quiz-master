@@ -116,7 +116,7 @@ class ImportQuestionsController extends BaseAdminController
                 || !isset($row["Start Chapter"]) || !isset($row["Start Verse"]) || !isset($row["Type"])) {
                 if (count($row) > 1) {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . (isset($row["Question"]) ? $row["Questions"] : "(question unavailable)") . " -- Invalid column data.<br>";
+                    $errors .= "Unable to add question: " . ($row["Question"] ?? ("(question unavailable)") . " -- Invalid column data.<br>");
                 }
                 // else it was probably just a blank row!
                 continue; // get rid of blank rows.
