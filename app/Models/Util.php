@@ -229,7 +229,10 @@ class Util
         }
         $list = explode(',', $bannedWords);
         foreach ($list as $word) {
-            if (strpos(mb_strtolower($text), mb_strtolower($word)) !== false) {
+            $text = trim($text);
+            $word = trim($word);
+            if (strpos(mb_strtolower($text), mb_strtolower($word)) !== false && 
+                mb_strlen($text) === mb_strlen($word)) {
                 return false;
             }
         }
