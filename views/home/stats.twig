@@ -18,7 +18,7 @@
 
 {% if totalCommentaryQuestions > 0 %}
     <p>
-        There are also {{ totalCommentaryQuestions }} {{ totalCommentaryQuestions == 1 ? 'question' : 'questions' }} SDA Bible commentary questions available for this PBE year.
+        There {{ totalCommentaryQuestions == 1 ? 'is' : 'are' }} also {{ totalCommentaryQuestions }} SDA Bible Commentary {{ totalCommentaryQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year.
     </p>
 {% endif %}
 
