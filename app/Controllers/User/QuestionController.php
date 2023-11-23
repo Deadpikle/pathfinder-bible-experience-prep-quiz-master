@@ -192,7 +192,7 @@ class QuestionController
                 ? UserFlagged::isFlaggedByAnyUser($questionID, $app->db)
                 : UserFlagged::isFlagged($questionID, User::currentUserID(), $app->db);
 
-        return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
+        return new TwigView('user/questions/create-edit-question', $editData, 'Edit Question');
     }
     
     public function saveQuestionEdits(PBEAppConfig $app, Request $request)
@@ -227,7 +227,7 @@ class QuestionController
                 $app->isWebAdmin 
                     ? UserFlagged::isFlaggedByAnyUser($question->questionID, $app->db)
                     : UserFlagged::isFlagged($question->questionID, User::currentUserID(), $app->db);
-            return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
+            return new TwigView('user/questions/create-edit-question', $editData, 'Edit Question');
         }
     }
 
