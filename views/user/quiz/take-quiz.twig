@@ -180,6 +180,7 @@
         var userID = {{ userID }};
         var bibleNames = {{ json_encode(bibleNames) | raw }};
         var translations = {{ json_encode(translations) | raw }};
+        var userLangAbbr = "{{ userLangAbbr }}";
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
         
@@ -579,7 +580,7 @@
                 data.question = fixQuestionMarkOnQuestion(data.question);
             }
             var needToReaddUpsideDownQMark = false;
-            if (data.question.startsWith('¿')) {
+            if (data.question.startsWith('¿') || userLangAbbr === 'es') {
                 data.question = data.question.substr(1);
                 needToReaddUpsideDownQMark = true;
             }
