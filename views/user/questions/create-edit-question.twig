@@ -14,7 +14,7 @@
         <p id="question-type-paragraph">Question Type</p>
         <div id="question-type" class="row">
             <div class="input-field col s12">
-                {% set checked = question.isBibleQnA() or question is not defined ? 'checked' : '' %}
+                {% set checked = question.isBibleQnA() or question is not defined or question is null ? 'checked' : '' %}
                 <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" {{ checked }}/>
                 <label class="black-text" for="bible-qna">Bible</label>
             </div>
