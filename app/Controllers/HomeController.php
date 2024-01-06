@@ -155,21 +155,55 @@ class HomeController
         if (!$app->loggedIn) {
             return new Redirect('/login');
         }
+        $languagesByID = Language::loadAllLanguagesByID($app->db);
         $year = Year::loadCurrentYear($app->db);
+
         $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db);
         $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db);
         $commentaryStats = StatsLoader::loadCommentaryQuestionsByYear($year->yearID, $app->db);
 
+        $chapterStatsByLanguageID = [];
+        foreach ($chapterStats as $chapterStat) {
+            if (!isset($chapterStatsByLanguageID[$chapterStat['language']])) {
+                $chapterStatsByLanguageID[$chapterStat['language']] = [];
+            }
+            $chapterStatsByLanguageID[$chapterStat['language']][] = $chapterStat;
+        }
+        $verseStatsByLanguageID = [];
+        foreach ($verseStats as $verseStat) {
+            if (!isset($verseStatsByLanguageID[$verseStat['language']])) {
+                $verseStatsByLanguageID[$verseStat['language']] = [];
+            }
+            $verseStatsByLanguageID[$verseStat['language']][] = $verseStat;
+        }
+        $commentaryStatsByLanguageID = [];
+        foreach ($commentaryStats as $commentaryStat) {
+            if (!isset($commentaryStatsByLanguageID[$commentaryStat['language']])) {
+                $commentaryStatsByLanguageID[$commentaryStat['language']] = [];
+            }
+            $commentaryStatsByLanguageID[$commentaryStat['language']][] = $commentaryStat;
+        }
+
         $totalQuestions = 0;
         $totalCommentaryQuestions = 0;
+        $totalQuestionsByLanguageID = [];
+        $totalCommentaryQuestionsByLanguageID = [];
         foreach ($chapterStats as $stats) {
             $totalQuestions += $stats['count'];
+            if (!isset($totalQuestionsByLanguageID[$stats['language']])) {
+                $totalQuestionsByLanguageID[$stats['language']] = 0;
+            }
+            $totalQuestionsByLanguageID[$stats['language']] += $stats['count'];
         }
         foreach ($commentaryStats as $stats) {
             $totalCommentaryQuestions += $stats['count'];
+            if (!isset($totalCommentaryQuestionsByLanguageID[$stats['language']])) {
+                $totalCommentaryQuestionsByLanguageID[$stats['language']] = 0;
+            }
+            $totalCommentaryQuestionsByLanguageID[$stats['language']] += $stats['count'];
         }
 
-        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'commentaryStats', 'totalQuestions', 'totalCommentaryQuestions'), 'Stats');
+        return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'commentaryStats', 'totalQuestions', 'totalCommentaryQuestions', 'languagesByID', 'chapterStatsByLanguageID', 'verseStatsByLanguageID', 'commentaryStatsByLanguageID', 'totalQuestionsByLanguageID', 'totalCommentaryQuestionsByLanguageID'), 'Stats');
     }
 
     public function showContactForm(PBEAppConfig $app, Request $request)

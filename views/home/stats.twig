@@ -15,80 +15,90 @@
 <p>
     This page shows the number of Q&amp;A questions that have the given chapter or verse as the question's start verse. There {{ totalQuestions == 1 ? 'is' : 'are' }} {{ totalQuestions | number_format }} {{ totalQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year!
 </p>
-
 {% if totalCommentaryQuestions > 0 %}
     <p>
         There {{ totalCommentaryQuestions == 1 ? 'is' : 'are' }} also {{ totalCommentaryQuestions }} SDA Bible Commentary {{ totalCommentaryQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year.
     </p>
 {% endif %}
+<p>Here are the statistics on a per-language basis. Click the language names to switch between language statistics.</p>
 
-<h4>Questions by Chapter</h4>
-
-<div id="qna-by-chapter">
-    <table class="striped responsive-table">
-        <thead>
-            <tr>
-                <th>Chapter</th>
-                <th>Question Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in chapterStats %}
-                <tr>
-                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
-                    <td>{{ item.count }}</td>
-                </tr>
+<div class="row" id="quiz-tabs">
+    <div class="col s12">
+        <ul class="tabs">
+            {% for language in languagesByID %}            
+                <li class="tab"><a class="active teal-text" href="#{{ language.languageID }}">{{ language.name }}</a></li>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+            <div class="indicator teal" style="z-index:1"></div>
+        </ul>
+    </div>
+    {% for language in languagesByID %}  
+        <div class="col s12" id="{{ language.languageID }}">
+            <p>
+                Q&amp;A questions: {{ totalQuestionsByLanguageID[language.languageID] | default(0) }}
+                </br>
+                Commentary questions: {{ totalCommentaryQuestionsByLanguageID[language.languageID] | default(0) }}
+            </p>
+            <h4>Questions by Chapter</h4>
+            <table class="striped responsive-table">
+                <thead>
+                    <tr>
+                        <th>Chapter</th>
+                        <th>Question Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in chapterStatsByLanguageID[language.languageID] %}
+                        <tr>
+                            <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-<hr/>
+            <hr/>
 
-<h4>Questions by Commentary</h4>
+            <h4>Questions by Commentary</h4>
+            <table class="striped responsive-table">
+                <thead>
+                    <tr>
+                        <th>Commentary</th>
+                        <th>Question Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in commentaryStatsByLanguageID[language.languageID] %}
+                        <tr>
+                            <td>{{ item.topic }}</td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-<div id="qna-by-chapter">
-    <table class="striped responsive-table">
-        <thead>
-            <tr>
-                <th>Commentary</th>
-                <th>Question Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in commentaryStats %}
-                <tr>
-                    <td>{{ item.topic }}</td>
-                    <td>{{ item.count }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            <hr/>
 
-<hr/>
-
-<h4>Questions by Verse</h4>
-
-<div id="qna-by-verse">
-    <table class="striped responsive-table">
-        <thead>
-            <tr>
-                <th>Verse</th>
-                <th>Question Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in verseStats %}
-                <tr>
-                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}-{{ '%03d' | format(item.verse) }}">
-                        {{ item.book }} {{ item.chapter }}:{{ item.verse }}
-                    </td>
-                    <td>{{ item.count }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <h4>Questions by Verse</h4>
+            <table class="striped responsive-table">
+                <thead>
+                    <tr>
+                        <th>Verse</th>
+                        <th>Question Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in verseStatsByLanguageID[language.languageID] %}
+                        <tr>
+                            <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}-{{ '%03d' | format(item.verse) }}">
+                                {{ item.book }} {{ item.chapter }}:{{ item.verse }}
+                            </td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
 </div>
 
 <script type="text/javascript">
@@ -101,8 +111,7 @@
         };
         datatablesProps.iDisplayLength = 50;
         datatablesProps.order = [[ 0, 'asc' ]];
-        $('#qna-by-chapter table').DataTable(datatablesProps);
-        $('#qna-by-verse table').DataTable(datatablesProps);
+        $('table').DataTable(datatablesProps);
     });
 </script>
 

@@ -12,14 +12,14 @@ class StatsLoader
     public static function loadQnAQuestionsByChapterInYear(int $yearID, PDO $db) : array
     {
         $query = '
-            SELECT b.Name, c.Number, COUNT(*) AS Count
+            SELECT q.LanguageID, b.Name, c.Number, COUNT(*) AS Count
             FROM Questions q 
                 JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ? AND q.Type = ?
-            GROUP BY b.Name, c.Number
-            ORDER BY b.Name, c.Number';
+            GROUP BY q.LanguageID, b.Name, c.Number
+            ORDER BY q.LanguageID, b.Name, c.Number';
         $stmt = $db->prepare($query);
         $stmt->execute([
             $yearID, 
@@ -29,6 +29,7 @@ class StatsLoader
         $output = [];
         foreach ($data as $row) {
             $output[] = [
+                'language' => $row['LanguageID'],
                 'book' => $row['Name'],
                 'chapter' => $row['Number'],
                 'count' => $row['Count']
@@ -40,12 +41,12 @@ class StatsLoader
     public static function loadCommentaryQuestionsByYear(int $yearID, PDO $db) : array
     {
         $query = '
-            SELECT c.TopicName, c.Number, COUNT(*) AS Count
+            SELECT q.LanguageID, c.TopicName, c.Number, COUNT(*) AS Count
             FROM Questions q 
                 JOIN Commentaries c ON c.CommentaryID = q.CommentaryID
             WHERE c.YearID = ? AND q.Type = ?
-            GROUP BY c.TopicName, c.Number
-            ORDER BY c.TopicName, c.Number';
+            GROUP BY q.LanguageID, c.TopicName, c.Number
+            ORDER BY q.LanguageID, c.TopicName, c.Number';
         $stmt = $db->prepare($query);
         $stmt->execute([
             $yearID,
@@ -55,6 +56,7 @@ class StatsLoader
         $output = [];
         foreach ($data as $row) {
             $output[] = [
+                'language' => $row['LanguageID'],
                 'topic' => $row['TopicName'],
                 'number' => $row['Number'],
                 'count' => $row['Count']
@@ -66,14 +68,14 @@ class StatsLoader
     public static function loadQnAQuestionsByChapterAndVerseInYear(int $yearID, PDO $db) : array
     {
         $query = '
-            SELECT b.Name, c.Number AS Chapter, v.Number AS Verse, COUNT(*) AS Count
+            SELECT q.LanguageID, b.Name, c.Number AS Chapter, v.Number AS Verse, COUNT(*) AS Count
             FROM Questions q 
                 JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ? AND q.Type = ?
-            GROUP BY b.Name, c.Number, v.Number
-            ORDER BY b.Name, c.Number, v.Number';
+            GROUP BY q.LanguageID, b.Name, c.Number, v.Number
+            ORDER BY q.LanguageID, b.Name, c.Number, v.Number';
         $stmt = $db->prepare($query);
         $stmt->execute([
             $yearID,
@@ -83,6 +85,7 @@ class StatsLoader
         $output = [];
         foreach ($data as $row) {
             $output[] = [
+                'language' => $row['LanguageID'],
                 'book' => $row['Name'],
                 'chapter' => $row['Chapter'],
                 'verse' => $row['Verse'],
