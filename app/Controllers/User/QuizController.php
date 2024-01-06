@@ -2,6 +2,7 @@
 
 namespace App\Controllers\User;
 
+use App\Helpers\Translations;
 use App\Models\BibleFillInData;
 use Yamf\Request;
 use Yamf\Responses\ErrorMessage;
@@ -42,7 +43,7 @@ class QuizController
         $currentYear = Year::loadCurrentYear($app->db);
         $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db); // TODO: need to only load ones with active questions!
         $languages = Language::loadAllLanguages($app->db);
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
 
         $books = Book::loadBooksForYear($currentYear, $app->db);
         if ($app->isGuest) {
@@ -107,15 +108,15 @@ class QuizController
             }
         }
         if ($enableQuestionDistribution && 
-            isset($request->post["quiz-items"]) && 
-            count($request->post["quiz-items"]) > 0) {
+            isset($request->post['quiz-items']) && 
+            count($request->post['quiz-items']) > 0) {
             // ok, safe to do weighted question distribution
             $bibleWeights = [];
             $commentaryWeights = [];
             foreach ($request->post as $key => $value) {
-                if (Util::str_contains("table-input-chapter-", $key)) {
+                if (Util::str_contains('table-input-chapter-', $key)) {
                     $bibleWeights[$key] = $value;
-                } else if (Util::str_contains("table-input-commentary-", $key)) {
+                } else if (Util::str_contains('table-input-commentary-', $key)) {
                     $commentaryWeights[$key] = $value;
                 }
             }
@@ -181,7 +182,9 @@ class QuizController
         $disableAutoShowAnswer = Util::validateBoolean($request->post, 'autoshow-answer');
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
         $bibleNames = Util::getBibleNames();
-        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'disableQuestionTimer', 'disableAutoShowAnswer', 'viewFillInTheBlankAnswersInBold', 'bibleNames'), 'Take Quiz');
+        $userLangAbbr = User::getPreferredLanguage($app->db)->abbreviation;
+        $translations = Translations::getTranslationsForLanguageAbbr($userLangAbbr);
+        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'disableQuestionTimer', 'disableAutoShowAnswer', 'viewFillInTheBlankAnswersInBold', 'bibleNames', 'userLangAbbr', 'translations'), 'Take Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
@@ -189,7 +192,7 @@ class QuizController
         // TODO: errors if not enough data sent
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
-        $pdf = PDFGenerator::generatePDF($quizQuestions, false, $viewFillInTheBlankAnswersInBold);
+        $pdf = PDFGenerator::generatePDF($quizQuestions, false, $viewFillInTheBlankAnswersInBold, User::getPreferredLanguage($app->db)->abbreviation ?? 'en');
         $pdf->Output();
     }
 
@@ -198,7 +201,7 @@ class QuizController
         // TODO: errors if not enough data sent
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
-        $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold);
+        $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold, User::getPreferredLanguage($app->db)->abbreviation ?? 'en');
         $pdf->Output();
     }
 

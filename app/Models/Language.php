@@ -10,12 +10,14 @@ class Language
     public $name;
     public $isDefault;
     public $altName;
+    public string $abbreviation;
 
     public function __construct(int $languageID, string $name)
     {
         $this->languageID = $languageID;
         $this->name = $name;
         $this->isDefault = false;
+        $this->abbreviation = '';
     }
 
     public function getDisplayName() : string
@@ -27,10 +29,11 @@ class Language
         return $name;
     }
 
+    /** @return array<Language> */
     private static function loadLanguages(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
-            SELECT LanguageID, Name, IsDefault, AltName
+            SELECT LanguageID, Name, IsDefault, AltName, Abbreviation
             FROM Languages
             ' . $whereClause . '
             ORDER BY Name';
@@ -42,14 +45,27 @@ class Language
             $language = new Language($row['LanguageID'], $row['Name']);
             $language->isDefault = $row['IsDefault'];
             $language->altName = $row['AltName'];
+            $language->abbreviation = $row['Abbreviation'];
             $output[] = $language;
         }
         return $output;
     }
 
+    /** @return array<Language> */
     public static function loadAllLanguages(PDO $db) : array
     {
         return Language::loadLanguages('', [], $db);
+    }
+
+    /** @return array<int, Language> */
+    public static function loadAllLanguagesByID(PDO $db) : array
+    {
+        $languages = Language::loadLanguages('', [], $db);
+        $languagesByID = [];
+        foreach ($languages as $language) {
+            $languagesByID[$language->languageID] = $language;
+        }
+        return $languagesByID;
     }
 
     public static function loadLanguageWithID(int $languageID, PDO $db) : ?Language

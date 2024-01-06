@@ -34,6 +34,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }

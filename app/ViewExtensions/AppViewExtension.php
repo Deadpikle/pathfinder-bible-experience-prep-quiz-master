@@ -4,6 +4,7 @@
 
 namespace App\ViewExtensions;
 
+use App\Helpers\Translations;
 use App\Models\AFMAppConfig;
 use App\Models\Conference;
 use App\Models\CSRF;
@@ -117,6 +118,11 @@ class AppViewExtension extends AbstractExtension
         return constant('\\App\\Models\\' . $className . '::' . $constantName);
     }
 
+    function translate(string $str, string $languageAbbreviation): string
+    {
+        return Translations::t($str, $languageAbbreviation);
+    }
+
     // // // settings
     // // //
 
@@ -137,6 +143,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('currentConferenceID', [$this, 'currentConferenceID']),
             new TwigFunction('webAdminConferenceID', [$this, 'webAdminConferenceID']),
             new TwigFunction('getConst', [$this, 'getConst']),
+            new TwigFunction('translate', [$this, 'translate']),
         ];
         return $twigFunctions;
     }

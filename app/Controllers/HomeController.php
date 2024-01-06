@@ -127,7 +127,7 @@ class HomeController
             return new Redirect('/login');
         }
         $languages = Language::loadAllLanguages($app->db);
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
 
         $didUpdate = false;
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
@@ -144,7 +144,7 @@ class HomeController
         
         $_SESSION['PreferredLanguageID'] = $languageIDToUse; // TODO: refactor to User somewhere
         
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
 
         $didUpdate = true;
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');

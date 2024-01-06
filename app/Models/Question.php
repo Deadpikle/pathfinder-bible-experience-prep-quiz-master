@@ -30,14 +30,15 @@ class Question
     public $commentaryStartPage;
     public $commentaryEndPage;
     public $languageID;
+    public ?Language $language;
 
     public function __construct(int $questionID)
     {
         $this->questionID = $questionID;
+        $this->language = null;
     }
 
-    // TODO: rename function :sweat_smile: have to quit and don't have time to rename things
-    private static function loadQuestions(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadQuestions(string $whereClause, array $whereParams, PDO $db): array
     {
         // IFnull(uf.UserFlaggedID, 0) AS IsFlagged
         $query = '
@@ -52,6 +53,8 @@ class Question
         $data = $stmt->fetchAll();
 
         $output = [];
+        $questionIDToLanguageID = [];
+        $questionsByQuestionID = [];
         foreach ($data as $row) {
             $question = new Question($row['QuestionID']);
             $question->question = $row['Question'];
@@ -71,18 +74,25 @@ class Question
             $question->commentaryStartPage = $row['CommentaryStartPage'];
             $question->commentaryEndPage = $row['CommentaryEndPage'];
             $question->languageID = $row['LanguageID'];
+            $questionIDToLanguageID[$question->questionID] = $question->languageID;
+            $questionsByQuestionID[$question->questionID] = $question;
 
             $output[] = $question;
+        }
+        $languagesByID = Language::loadAllLanguagesByID($db);
+        foreach ($questionIDToLanguageID as $questionID => $languageID) {
+            $questionsByQuestionID[$questionID]->language = $languagesByID[$languageID];
         }
         return $output;
     }
 
-    public static function loadAllNonDeletedQuestions(PDO $db) : array
+    /** @return array<Question> */
+    public static function loadAllNonDeletedQuestions(PDO $db): array
     {
         return Question::loadQuestions('WHERE IsDeleted = 0', [], $db);
     }
 
-    public static function loadQuestionWithID(int $questionID, PDO $db) : ?Question
+    public static function loadQuestionWithID(int $questionID, PDO $db): ?Question
     {
         $data = Question::loadQuestions('WHERE QuestionID = ?', [$questionID], $db);
         return count($data) > 0 ? $data[0] : null;

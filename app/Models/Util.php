@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\Translations;
 use DateTime;
-use PDO;
 use Yamf\Util as YamfUtil;
 
 class Util
@@ -72,13 +72,20 @@ class Util
         return $UUID;
     }
 
-    public static function getFullQuestionTextFromQuestion($question) {
+    public static function getFullQuestionTextFromQuestion($question, bool $useISO8859 = false)
+    {
         $type = $question['type'];
         $output = trim($question['question']);
         $isFillIn = Question::isTypeFillIn($type);
+        $languageAbbr = $question['language']->abbreviation;
         // TODO: rework logic here to be....right.
         if (!$isFillIn) {
             $output = self::fixQuestionMarkOnQuestion($output);
+        }
+        $needToAddFirstQMark = false;
+        if (YamfUtil::strStartsWith($output, '¿')) {
+            $output = trim($output, '¿');
+            $needToAddFirstQMark = true;
         }
         if (Question::isTypeBibleQnA($type)) {
             $startBook = $question['startBook'];
@@ -87,7 +94,7 @@ class Util
             $endBook = $question['endBook'];
             $endChapter = $question['endChapter'];
             $endVerse = $question['endVerse'];
-            $verseText = $startBook . ' ' . $startChapter . ':' . $startVerse;
+            $verseText = Translations::t($startBook, $languageAbbr, $useISO8859) . ' ' . $startChapter . ':' . $startVerse;
             if ($endBook !== '' && $startVerse != $endVerse) {
                 if ($startChapter == $endChapter) {
                     $verseText .= '-' . $endVerse;
@@ -98,13 +105,13 @@ class Util
                 }
             }
             if ($isFillIn) {
-                $output = 'Fill in the blanks for ' . $verseText . '.';
+                $output = Translations::t('Fill in the blanks for', $languageAbbr, $useISO8859) . ' ' . $verseText . '.';
             }
             else {
                 if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = "According to " . $verseText . ", " . $output;
+                $output = Translations::t('According to', $languageAbbr, $useISO8859) . ' ' . $verseText . ', ' . $output;
             }
         }
         else if (Question::isTypeCommentaryQnA($type)) {
@@ -118,13 +125,18 @@ class Util
                 $pageStr = 'p. ' . $startPage;
             }
             if ($isFillIn) {
-                $output = 'Fill in the blanks for SDA Bible Commentary, Volume ' . $volume . ', ' . $pageStr . '.';
+                $output = Translations::t('Fill in the blanks for SDA Bible Commentary, Volume', $languageAbbr, $useISO8859) . ' ' . $volume . ($pageStr !== '' ? ', ' . $pageStr : '') . '.';
             } else {
                 if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = 'According to the SDA Bible Commentary, Volume ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
+                $output = Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr, $useISO8859) . ' ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
             }
+        }
+        if ($needToAddFirstQMark) {
+            $output = $useISO8859 
+                ? Translations::utf8('¿') . $output 
+                : '¿' . $output;
         }
         return trim($output);
     }

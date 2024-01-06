@@ -19,6 +19,7 @@ use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use Yamf\Responses\Response;
 
 class QuestionController
 {
@@ -32,7 +33,7 @@ class QuestionController
         $languages = Language::loadAllLanguages($app->db);
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
         $volumes = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
 
         return new TwigView('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage'), 'Questions');
     }
@@ -62,14 +63,21 @@ class QuestionController
         echo json_encode($questionData);
     }
 
-    private function loadQuestionEditingData(PBEAppConfig $app)
+    private function showCreateOrEditQuestion(PBEAppConfig $app, Request $request, bool $isCreating, ?Question $question = null, string $error = ''): Response
     {
         $currentYear = Year::loadCurrentYear($app->db);
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
         $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
         $languages = Language::loadAllLanguages($app->db);
-        $userLanguage = Language::findLanguageWithID($_SESSION['PreferredLanguageID'], $languages);
-        return compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage');
+        $isFlagged = false;
+        if ($question !== null) {
+            $isFlagged = $app->isWebAdmin 
+                ? UserFlagged::isFlaggedByAnyUser($question->questionID, $app->db)
+                : UserFlagged::isFlagged($question->questionID, User::currentUserID(), $app->db);
+        }
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+
+        return new TwigView('user/questions/create-edit-question', compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage', 'isCreating', 'question', 'error', 'isFlagged'), $isCreating ? 'Add Question' : 'Edit Question');
     }
 
     public function createNewQuestion(PBEAppConfig $app, Request $request)
@@ -77,11 +85,7 @@ class QuestionController
         if ($app->isGuest) {
             return new Redirect('/');
         }
-
-        $editData = $this->loadQuestionEditingData($app);
-        $editData['isCreating'] = true;
-
-        return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
+        return $this->showCreateOrEditQuestion($app, $request, true);
     }
 
     private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating) : ValidationStatus
@@ -165,13 +169,8 @@ class QuestionController
             $question = $validation->output;
             $question->create($app->db);
             return new Redirect('/questions');
-        } else {
-            $editData = $this->loadQuestionEditingData($app);
-            $editData['isCreating'] = true;
-            $editData['error'] = $validation->error;
-            $editData['question'] = $validation->output;
-            return new TwigView('user/questions/create-edit-question', $editData, 'Add Question');
         }
+        return $this->showCreateOrEditQuestion($app, $request, true, $validation->output, $validation->error);
     }
     
     public function editQuestion(PBEAppConfig $app, Request $request)
@@ -179,20 +178,11 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
+        $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
-        $editData = $this->loadQuestionEditingData($app);
-        $editData['isCreating'] = false;
-        $questionID = Util::validateInteger($request->routeParams, 'questionID');
-        $editData['question'] = Question::loadQuestionWithID($questionID, $app->db);
-        $editData['isFlagged'] = 
-            $app->isWebAdmin 
-                ? UserFlagged::isFlaggedByAnyUser($questionID, $app->db)
-                : UserFlagged::isFlagged($questionID, User::currentUserID(), $app->db);
-
-        return new TwigView('user/questions/create-edit-question', $editData, 'Edit Question');
+        return $this->showCreateOrEditQuestion($app, $request, false, $question);
     }
     
     public function saveQuestionEdits(PBEAppConfig $app, Request $request)
@@ -200,7 +190,7 @@ class QuestionController
         if (!User::isLoggedIn() || $app->isGuest) {
             return new Redirect('/');
         }
-        $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
+        $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
@@ -218,17 +208,8 @@ class QuestionController
                 }
             }
             return new Redirect('/questions');
-        } else {
-            $editData = $this->loadQuestionEditingData($app);
-            $editData['isCreating'] = true;
-            $editData['error'] = $validation->error;
-            $editData['question'] = $question;
-            $editData['isFlagged'] = 
-                $app->isWebAdmin 
-                    ? UserFlagged::isFlaggedByAnyUser($question->questionID, $app->db)
-                    : UserFlagged::isFlagged($question->questionID, User::currentUserID(), $app->db);
-            return new TwigView('user/questions/create-edit-question', $editData, 'Edit Question');
         }
+        return $this->showCreateOrEditQuestion($app, $request, false, $validation->output, $validation->error);
     }
 
     public function verifyDeleteQuestion(PBEAppConfig $app, Request $request)

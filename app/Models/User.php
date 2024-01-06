@@ -57,21 +57,6 @@ class User
         ]);
     }
 
-    public static function currentConferenceID() : int
-    {
-        return $_SESSION['ConferenceID'] ?? -1;
-    }
-
-    public static function currentConferenceName() : string
-    {
-        return $_SESSION['ConferenceName'] ?? '';
-    }
-
-    public static function currentPreferredLanguageID() : int
-    {
-        return $_SESSION['PreferredLanguageID'] ?? -1;
-    }
-
     private static function loadUsers(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
@@ -207,5 +192,25 @@ class User
             $userID
         ];
         $statement->execute($params);
+    }
+
+    public static function currentConferenceID() : int
+    {
+        return $_SESSION['ConferenceID'] ?? -1;
+    }
+
+    public static function currentConferenceName() : string
+    {
+        return $_SESSION['ConferenceName'] ?? '';
+    }
+
+    public static function getPreferredLanguageID(): ?int
+    {
+        return $_SESSION['PreferredLanguageID'] ?? null;
+    }
+
+    public static function getPreferredLanguage(PDO $db): ?Language
+    {
+        return Language::loadLanguageWithID(self::getPreferredLanguageID(), $db);
     }
 }

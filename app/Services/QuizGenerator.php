@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Language;
 use App\Models\NonBlankableWord;
 use App\Models\Question;
 use App\Models\Util;
@@ -46,11 +47,13 @@ class QuizGenerator
         $percentFillIn = $percentFillIn / 100.0;
 
         $shouldShowOnlyRecentlyAdded = isset($showOnlyRecentOnFlashCards) ? filter_var($showOnlyRecentOnFlashCards, FILTER_VALIDATE_BOOLEAN) : false;
-        $recentlyAddedAmount = isset($showOnlyRecentOnFlashCardsAmount) ? filter_var($showOnlyRecentOnFlashCardsAmount, FILTER_VALIDATE_INT, array("options" => array(
-            "default" => 30,
-            "min_range" => 1,
-            "max_range" => 31
+        $recentlyAddedAmount = isset($showOnlyRecentOnFlashCardsAmount) ? filter_var($showOnlyRecentOnFlashCardsAmount, FILTER_VALIDATE_INT, array('options' => array(
+            'default' => 30,
+            'min_range' => 1,
+            'max_range' => 31
         ))) : 30;
+
+        $languagesByID = Language::loadAllLanguagesByID($db);
 
         // question type values:
         // both
@@ -110,7 +113,7 @@ class QuizGenerator
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
                 bStart.Name AS StartBook, bStart.BibleOrder AS StartBibleOrder, cStart.Number AS StartChapter, vStart.Number AS StartVerse,
                 bEnd.Name AS EndBook, bEnd.BibleOrder AS EndBibleOrder, cEnd.Number AS EndChapter, vEnd.Number AS EndVerse,
-                IFnull(uf.UserFlaggedID, 0) AS IsFlagged ';
+                IFnull(uf.UserFlaggedID, 0) AS IsFlagged, q.LanguageID ';
         $fromPortion = '
             FROM Questions q 
                 JOIN Verses vStart ON q.StartVerseID = vStart.VerseID
@@ -175,7 +178,8 @@ class QuizGenerator
         $selectPortion = '
             SELECT q.QuestionID, q.Type, Question, q.Answer, NumberPoints, DateCreated,
                 IFnull(uf.UserFlaggedID, 0) AS IsFlagged,
-                comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage, comm.TopicName AS CommentaryTopic ';
+                comm.Number AS CommentaryNumber, CommentaryStartPage, CommentaryEndPage, comm.TopicName AS CommentaryTopic,
+                q.LanguageID ';
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
@@ -349,7 +353,10 @@ class QuizGenerator
                 'volume' => -1, // probably not right; used for sequential sorting at the end
                 'topic' => '',
                 'startPage' => -1,
-                'endPage' => -1
+                'endPage' => -1,
+                'language' => isset($languagesByID[$question['LanguageID']]) 
+                    ? $languagesByID[$question['LanguageID']]
+                    : null
             );
             if (Question::isTypeBibleQnA($question['Type'])) {
                 // Bible Q&A

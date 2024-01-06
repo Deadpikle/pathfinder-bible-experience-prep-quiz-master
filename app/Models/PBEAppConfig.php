@@ -19,6 +19,16 @@ class PBEAppConfig extends AppConfig
     
     public string $currentFillInChapters;
 
+    public bool $loggedIn;
+    public bool $ENABLE_NKJV_RESTRICTIONS;
+    public bool $isGuest;
+
+    public string $contactToEmail;
+    public string $contactSubjectPrefix;
+
+    public string $recaptchaExpectedDomain;
+    public string $recaptchaPrivateKey;
+
     public function __construct(bool $isLocalHost, string $basePath)
     {
         parent::__construct($isLocalHost, $basePath);
@@ -33,5 +43,12 @@ class PBEAppConfig extends AppConfig
         $this->analyticsSiteID = '';
         $this->footerText = '';
         $this->currentFillInChapters = '';
+        $this->ENABLE_NKJV_RESTRICTIONS = false;
+        $this->isGuest = true;
+        $this->loggedIn = false;
+        $this->contactToEmail = '';
+        $this->contactSubjectPrefix = '';
+        $this->recaptchaExpectedDomain = '';
+        $this->recaptchaPrivateKey = '';
     }
 }

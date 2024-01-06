@@ -56,7 +56,9 @@
             <div class="input-field col s12 m2">
                 <select class="" id="language-select" name="language-select" required>
                     {% for language in languages %}
-                        {% set selected = language.languageID == question.languageID ? 'selected' : '' %}
+                        {% set selected = question.languageID is defined and question.languageID > 0 
+                            ? (language.languageID == question.languageID ? 'selected' : '')
+                            : (language.languageID == userLanguage.languageID ? 'selected' : '') %}
                         <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
                     {% endfor %}
                 </select>

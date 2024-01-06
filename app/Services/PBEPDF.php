@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Helpers\Translations;
+
 // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
 // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
@@ -17,6 +19,8 @@ class PBEPDF extends \FPDF {
     protected $WIDTH_OFFSET = 0;
     protected $DRAW_RECT = false;
     protected $USE_CELL_OFFSET = false;
+
+    public string $userLanguageAbbr;
     
     function WriteHTML($html) {
         // HTML parser
@@ -111,13 +115,14 @@ class PBEPDF extends \FPDF {
         $this->SetY(15.4);
         $this->SetFont('Arial', 'B', 15);
         // Draw centered title
-        $this->Cell(165.1, 10, 'PBE Study Guide', 0, 0, 'C');
+        $this->Cell(165.1, 10, Translations::t('PBE Study Guide', $this->userLanguageAbbr, true), 0, 0, 'C');
         // Line break
         $this->Ln(15);
     }
 
-    function utf8($str) {
-        return iconv("UTF-8", "ISO-8859-1", $str);
+    function utf8($str)
+    {
+        return iconv('UTF-8', 'ISO-8859-1', $str);
     }
     
     // Page footer
