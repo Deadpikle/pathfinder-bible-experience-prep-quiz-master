@@ -344,7 +344,7 @@ class Question
                         // otherwise, only see your own.
                         $whereClause = ' WHERE uf.UserID = ' . $userID;
                     }
-                    $extraSelect = ', uf.Reason AS FlagReason, uf.DateTimeFlagged AS FlagDateTime ';
+                    $extraSelect = ', uf.UserFlaggedID AS FlagUserID, uf.Reason AS FlagReason, uf.DateTimeFlagged AS FlagDateTime ';
                 }
             }
             $questionType = $questionType ?? Question::getBibleQnAType();
@@ -502,6 +502,7 @@ class Question
             }
             foreach ($questions as &$question) {
                 $question['IsFlagged'] = $isFlagged;
+                $question['FlagUserID'] = $question['FlagUserID'] ?? -1;
                 $question['FlagReason'] = FlagReason::toHumanReadable($question['FlagReason'] ?? '');
                 $question['FlagDateTime'] = $question['FlagDateTime'] ?? '';
                 $question['FlagReadableDateTime'] = isset($question['FlagDateTime']) 
