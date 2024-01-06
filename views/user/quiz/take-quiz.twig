@@ -165,15 +165,15 @@
         return this;
     }
     Stats.prototype.toString = function() {
-        var earnedStr = this.earned == 1 ? "point" : "points";
-        var possibleStr = this.possible == 1 ? "point" : "points";
+        var earnedStr = this.earned == 1 ? translate('point') : translate('points');
+        var possibleStr = this.possible == 1 ? translate('point') : translate('points');
         return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + this.percent + "%)";
     }
 </script>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#flag-reason").material_select();
+        $('#flag-reason').material_select();
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
@@ -194,7 +194,7 @@
         var history = [];
 
 
-        var $questionAnswerText = $("#quiz-question-show-answer");
+        var $questionAnswerText = $('#quiz-question-show-answer');
 
         var qnaDiv = document.getElementById('qna-question');
         var fillInDiv = document.getElementById('fill-in-question');
@@ -213,7 +213,7 @@
         var historyFillInCheckbox = document.getElementById('history-fill-in-bold');
 
         $(quizMessageLabel).hide();
-        $("#stats-progress").hide();
+        $('#stats-progress').hide();
         $(tallyPoints).hide();
         var saveData = document.getElementById('save-data');
         var endQuiz = document.getElementById('end-quiz');
@@ -230,13 +230,13 @@
             }
             return str;
         }
-        var answerIsPrefix = translate("The answer is:");
+        var answerIsPrefix = translate('The answer is:');
         
         function countdownTimer(timerLength) {
             timer.addEventListener('secondsUpdated', function (e) {
                 $('#question-timer').html(timer.getTotalTimeValues().seconds);
                 if (timer.getTotalTimeValues().seconds === 10) {
-                    $('#question-timer').css("color", "red");
+                    $('#question-timer').css('color', 'red');
                 }   
             });
             // Simulating "Show Answer" button click when timer finishes
@@ -246,29 +246,29 @@
                     showAnswer.click();
                 }
                 else {
-                    $('#question-timer').html("<b>TIME'S UP!</b>");
+                    $('#question-timer').html('<b>TIME\'S UP!</b>');
                 }
             });
             preTimer.start({countdown: true, precision: 'seconds', startValues: {seconds: 10}});
             preTimer.addEventListener('secondsUpdated', function (e) {
                 $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
                 if (preTimer.getTotalTimeValues().seconds === 1) {
-                    $("#seconds-text").html("second...");
+                    $('#seconds-text').html('second...');
                 }
             });
             preTimer.addEventListener('targetAchieved', function (e) {
-                $("#countdown-text").html("");
-                $("#question-pretimer").html("");
-                $("#question-timer").html(timerLength);
-                $("#timer-icon").html("timer");
-                $("#seconds-text").html("");
+                $('#countdown-text').html('');
+                $('#question-pretimer').html('');
+                $('#question-timer').html(timerLength);
+                $('#timer-icon').html('timer');
+                $('#seconds-text').html('');
                 timer.stop();
                 timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
             });            
         }
 
         function showQuizError(message) {
-            $("#quiz-error").html(message).show();
+            $('#quiz-error').html(message).show();
         }
 
         function showQuizMessage(message) {
@@ -287,8 +287,8 @@
                 return;
             }
             $.ajax({
-                type: "POST",
-                url: '{{ app.yurl('/quiz/questions/flag') }}',
+                type: 'POST',
+                url: '{{ app.yurl("/quiz/questions/flag") }}',
                 data: {
                     questionID: currentQuestion.id,
                     reason: reason,
@@ -299,21 +299,21 @@
                         flagQuestion.disabled = true;
                         document.getElementById('flag-reason').disabled = true;
                         $('#flag-reason').material_select();
-                        showQuizMessage("Question successfully flagged!");
+                        showQuizMessage('Question successfully flagged!');
                     } else {
-                        alert("Error flagging question: " + response);
+                        alert('Error flagging question: ' + response);
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert("Unable to flag question. Please make sure you are connected to the internet or try again later.");
+                    alert('Unable to flag question. Please make sure you are connected to the internet or try again later.');
                 }
             });
         }, false);
 
         saveData.addEventListener('click', function() {
-            showQuizMessage("Saving answers...");
+            showQuizMessage('Saving answers...');
             $.ajax({
-                type: "POST",
+                type: 'POST',
                 url: '{{ app.yurl('/quiz/answers/save') }}',
                 data: {
                     answers: userAnswers
@@ -322,27 +322,27 @@
                     if (response.status == 200) {
                         // successfully saved
                         saveData.disabled = true;
-                        showQuizMessage("Answers successfully saved!");
+                        showQuizMessage('Answers successfully saved!');
                     }
                     else {
-                        showQuizMessage("Error saving answers: " + response);
+                        showQuizMessage('Error saving answers: ' + response);
                     }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    showQuizMessage("Unable to save answers. Please make sure you are connected to the internet or try again later.");
+                    showQuizMessage('Unable to save answers. Please make sure you are connected to the internet or try again later.');
                 }
             });
         }, false);
 
         endQuiz.addEventListener('click', function() {
             if (!saveData.disabled && questions.length > 0) {
-                var result = confirm("You haven't saved your answers yet! Are you sure you want to leave this quiz?");
+                var result = confirm('You haven\'t saved your answers yet! Are you sure you want to leave this quiz?');
                 if (result) {
-                    window.location.href = '{{ app.yurl('/quiz/setup') }}';
+                    window.location.href = '{{ app.yurl("/quiz/setup") }}';
                 }
             }
             else {
-                window.location.href = '{{ app.yurl('/quiz/setup') }}';
+                window.location.href = '{{ app.yurl("/quiz/setup") }}';
             }
         });
 
@@ -350,7 +350,7 @@
             showAnswer.disabled = true;
             correctAnswerCheckbox.checked = false;
             pointsEarnedInput.value = 0;
-            $("#points-earned-row").show();
+            $('#points-earned-row').show();
             $(answerDivider).show();
             var isFillIn = isFillInQuestion(currentQuestion.type);
             if (isFillIn) {
@@ -388,14 +388,14 @@
             for (var i = 0; i < history.length; i++) {
                 var isFillIn = isFillInQuestion(history[i].type);
                 if (isFillIn) {
-                    var answerText = "";
+                    var answerText = '';
                     if (this.checked) {
                         answerText = fillInText(history[i].fillInData, true);
                     }
                     else {
                         answerText = fillInAnswerString(history[i].fillInData);
                     }
-                    $("#history-" + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
+                    $('#history-' + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
                 }
             }
         });
