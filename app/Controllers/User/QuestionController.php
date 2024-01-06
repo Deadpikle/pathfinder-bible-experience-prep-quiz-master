@@ -34,8 +34,8 @@ class QuestionController
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
         $volumes = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
-
-        return new TwigView('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage'), 'Questions');
+        $usersByID = User::loadAllUsersByID($app->db);
+        return new TwigView('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage', 'usersByID'), 'Questions');
     }
 
     // TODO: better response instead of echo

@@ -344,7 +344,7 @@ class Question
                         // otherwise, only see your own.
                         $whereClause = ' WHERE uf.UserID = ' . $userID;
                     }
-                    $extraSelect = ', uf.UserFlaggedID AS FlagUserID, uf.Reason AS FlagReason, uf.DateTimeFlagged AS FlagDateTime ';
+                    $extraSelect = ', uf.UserID AS FlagUserID, uf.Reason AS FlagReason, uf.DateTimeFlagged AS FlagDateTime ';
                 }
             }
             $questionType = $questionType ?? Question::getBibleQnAType();

@@ -83,6 +83,7 @@
 <script type="text/javascript">
     var books = {{ json_encode(bookData) | raw }};
     var volumes = {{ json_encode(volumes) | raw }};
+    var usersByID = {{ json_encode(usersByID) | raw }};
     var isAdmin = {{ app.isAdmin ? 'true' : 'false' }};
     var isGuestMode = {{ app.isGuest ? 'true' : 'false' }};
     var questionURLBase = '{{ app.yurl('/questions/') }}';
@@ -246,7 +247,15 @@
                     html += '<td>' + question.Question + '</td>';
                     html += '<td>' + answer + '</td>';
                     if (questionFilter === 'flagged') {
-                        html += '<td data-sort="' + question.FlagDateTime + '">' + (question.IsFlagged && question.FlagDateTime !== '' ? question.FlagReadableDateTime : '') + '</td>';
+                        html += '<td data-sort="' + question.FlagDateTime + '">';
+                        html += question.IsFlagged && question.FlagDateTime !== '' 
+                            ? question.FlagReadableDateTime 
+                            : '';
+                        html += question.IsFlagged && question.FlagUserID > 0 && question.FlagUserID in usersByID 
+                            ? '<br>(User: ' + usersByID[question.FlagUserID].username + ')' 
+                            : '';
+                        html += '</td>';
+
                         html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
                     }
                     html += '<td>' + checkboxTypeForFillIn + '</td>';

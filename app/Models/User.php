@@ -27,22 +27,22 @@ class User
         $this->wasDeleted = false;
     }
 
-    public static function isLoggedIn()
+    public static function isLoggedIn(): bool
     {
         return isset($_SESSION['UserID']);
     }
 
-    public static function currentUserID() : int
+    public static function currentUserID(): int
     {
         return $_SESSION['UserID'] ?? -1;
     }
 
-    public static function currentClubID() : int
+    public static function currentClubID(): int
     {
         return $_SESSION['ClubID'] ?? -1;
     }
 
-    public static function currentClubName() : string
+    public static function currentClubName(): string
     {
         return $_SESSION['ClubName'] ?? '';
     }
@@ -57,7 +57,8 @@ class User
         ]);
     }
 
-    private static function loadUsers(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<User> */
+    private static function loadUsers(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT UserID, Username, EntryCode, ut.UserTypeID, ut.Type, ut.DisplayName AS UserTypeDisplayName, 
@@ -82,12 +83,25 @@ class User
         return $output;
     }
 
-    public static function loadAllUsers(PDO $db) : array
+    /** @return array<User> */
+    public static function loadAllUsers(PDO $db): array
     {
         return User::loadUsers(' WHERE WasDeleted = 0 ', [], $db);
     }
 
-    public static function loadUsersInClub(int $clubID, PDO $db) : array
+    /** @return array<int, User> */
+    public static function loadAllUsersByID(PDO $db): array
+    {
+        $users = self::loadAllUsers($db);
+        $usersByID = [];
+        foreach ($users as $user) {
+            $usersByID[$user->userID] = $user;
+        }
+        return $usersByID;
+    }
+
+    /** @return array<User> */
+    public static function loadUsersInClub(int $clubID, PDO $db): array
     {
         return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" AND WasDeleted = 0 ', [ $clubID ], $db);
     }
