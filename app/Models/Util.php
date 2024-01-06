@@ -181,12 +181,16 @@ class Util
         if (count($firstWords) > 0) {
             $firstWord = $firstWords[0];
         }
-        return !\Yamf\Util::strStartsWith($output, 'T or') && 
-               !(\Yamf\Util::strStartsWith($output, 'God') && !\Yamf\Util::strStartsWith($output, 'Gods') && 
-                !\Yamf\Util::strStartsWith($output, 'gods')) &&
-               !\Yamf\Util::strStartsWith($output, 'Christ') && 
-               !\Yamf\Util::strStartsWith($output, 'Jesus') &&
-               !in_array($firstWord, $names);
+        $wordsNotToBeLowercased = [
+            'T or', 'God', 'Gods', 'gods', 'Christ', 'Jesus'
+        ];
+        foreach ($wordsNotToBeLowercased as $word) {
+            $isValid = !YamfUtil::strStartsWith($output, $word);
+            if (!$isValid) {
+                return false;
+            }
+        }
+        return !in_array($firstWord, $names);
     }
 
     public static function fixQuestionMarkOnQuestion(string $input): string
