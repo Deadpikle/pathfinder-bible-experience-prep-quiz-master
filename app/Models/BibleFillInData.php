@@ -26,11 +26,7 @@ class BibleFillInData
             ORDER BY b.bibleOrder, b.Name, c.Number, q.LanguageID';
         
         $data = [];
-        $languages = Language::loadAllLanguages($db);
-        $languagesByID = [];
-        foreach ($languages as $language) {
-            $languagesByID[$language->languageID] = $language;
-        }
+        $languagesByID = Language::loadAllLanguagesByID($db);
         $stmt = $db->prepare($query);
         $stmt->execute([ 
             $year->yearID, 
