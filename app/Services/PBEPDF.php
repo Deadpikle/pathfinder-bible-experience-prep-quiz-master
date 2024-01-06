@@ -131,7 +131,8 @@ class PBEPDF extends \FPDF {
         // Arial italic 8
         $this->SetFont('Arial', '', 12);
         // Page number
-        $this->Cell(0, 10, 'Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
+        $this->Cell(0, 10, Translations::t('Page', $this->userLanguageAbbr, true) . ' ' . $this->PageNo() . ' ' 
+            . Translations::t('of', $this->userLanguageAbbr, true) . ' {nb}', 0, 0, 'C');
         $this->Ln(10);
         $this->SetFont('Arial', '', 7);
         $this->MultiCell(165.1, 5, 'Scripture taken from the New King James Version' . $this->utf8("®") . '. Copyright ' . $this->utf8("©") . ' 1982 by Thomas Nelson. Used by permission. All rights reserved.', 0, 'C');

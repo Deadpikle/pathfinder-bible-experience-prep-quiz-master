@@ -24,6 +24,7 @@ class Translations
                 'points' => 'puntos',
                 'Volume' => 'volumen',
                 'of' => 'de',
+                'Page' => 'Página',
                 'point possible' => 'punto posible',
                 'points possible' => 'puntos posibles',
                 'Answer' => 'Respuesta',
