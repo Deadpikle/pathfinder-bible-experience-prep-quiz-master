@@ -585,6 +585,9 @@ function SetFont($family, $style='', $size=0)
 
 	// Test if font is already loaded
 	$fontkey = strtolower($family.$style);
+	if(!isset($this->fonts[$fontkey])) {
+		$fontkey = $family.$style;
+	}
 	if(!isset($this->fonts[$fontkey]))
 	{
 		// Test if one of the core fonts
