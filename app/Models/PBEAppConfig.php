@@ -7,6 +7,8 @@ use Yamf\AppConfig;
 class PBEAppConfig extends AppConfig
 {
     public bool $isWebAdmin;
+    public bool $isConferenceAdmin;
+    public bool $isGuest;
 
     public array $settings;
     public string $contactName;
@@ -21,7 +23,6 @@ class PBEAppConfig extends AppConfig
 
     public bool $loggedIn;
     public bool $ENABLE_NKJV_RESTRICTIONS;
-    public bool $isGuest;
 
     public string $contactToEmail;
     public string $contactSubjectPrefix;
@@ -33,6 +34,8 @@ class PBEAppConfig extends AppConfig
     {
         parent::__construct($isLocalHost, $basePath);
         $this->isWebAdmin = false;
+        $this->isConferenceAdmin = false;
+        $this->isGuest = false;
         
         $this->settings = [];
         $this->contactName = '';
