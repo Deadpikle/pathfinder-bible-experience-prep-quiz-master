@@ -3,19 +3,19 @@
 namespace App\Services;
 
 use App\Helpers\Translations;
+use tFPDF;
 use tFPDF\PDF;
 
 // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
 // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
-// require_once('lib/fpdf181/fpdf.php');
+// may want to switch to tPDF at https://github.com/DocnetUK/tfpdf
+// eventually but it will require substantial changes to our subclass
+// as they have changed var names, etc. 
+// (May be needed for PHP 8 compatibility; unknown if this will be the case.)
 
-// class PBEPDF extends \FPDF {
-
-
-// require_once('lib/tfpdf/tfpdf.php');
-
-class PBEPDF extends PDF {
+require_once('lib/tfpdf/tfpdf.php');
+class PBEPDF extends tFPDF {
 
     protected $B = 0;
     protected $I = 0;
@@ -387,10 +387,10 @@ class PBEPDF extends PDF {
         $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
         // offset question output by 1 row since the title was printed
         $this->SetY($y + $this->lineHeight);
-        $this->DrawOutput(Translations::utf8($question), $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
+        $this->DrawOutput($question, $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
         $this->SetXY($x + $this->widths[0], $y);
         // Draw answer
-        $this->DrawOutput(Translations::utf8($answer), $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
+        $this->DrawOutput($answer, $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
         $this->SetXY($x + $this->widths[1], $y);
         // Go to the next line
         $this->Ln($outputHeight + 4 + ($cellOffset / 2));
@@ -425,7 +425,7 @@ class PBEPDF extends PDF {
             $answerHeight = $answer["a-height"];
             $answerRowCount = $answer["a-row-count"];
             $isQuestionHeightBigger = $answer["q-taller"];
-            $this->DrawOutput(Translations::utf8($answerText), $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
+            $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
             $this->SetY($y);
             $this->outputHorizontalSeparator($outputColumn, $outputHeight, $y);
             // Go to the next line
@@ -519,7 +519,7 @@ class PBEPDF extends PDF {
             $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
             // offset question output by 1 row since the title was printed
             $this->SetY($y + $this->lineHeight);
-            $this->DrawOutput(Translations::utf8($question["question-text"]), $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
+            $this->DrawOutput($question["question-text"], $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
             $this->SetY($y);
             $this->outputHorizontalSeparator($currentColumn, $outputHeight, $y);
             $this->Ln($outputHeight + 4 + ($cellOffset / 2));

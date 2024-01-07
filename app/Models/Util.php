@@ -72,7 +72,7 @@ class Util
         return $UUID;
     }
 
-    public static function getFullQuestionTextFromQuestion($question, bool $useISO8859 = false)
+    public static function getFullQuestionTextFromQuestion($question)
     {
         $type = $question['type'];
         $output = trim($question['question']);
@@ -94,7 +94,7 @@ class Util
             $endBook = $question['endBook'];
             $endChapter = $question['endChapter'];
             $endVerse = $question['endVerse'];
-            $verseText = Translations::t($startBook, $languageAbbr, $useISO8859) . ' ' . $startChapter . ':' . $startVerse;
+            $verseText = Translations::t($startBook, $languageAbbr) . ' ' . $startChapter . ':' . $startVerse;
             if ($endBook !== '' && $startVerse != $endVerse) {
                 if ($startChapter == $endChapter) {
                     $verseText .= '-' . $endVerse;
@@ -105,13 +105,13 @@ class Util
                 }
             }
             if ($isFillIn) {
-                $output = Translations::t('Fill in the blanks for', $languageAbbr, $useISO8859) . ' ' . $verseText . '.';
+                $output = Translations::t('Fill in the blanks for', $languageAbbr) . ' ' . $verseText . '.';
             }
             else {
                 if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = Translations::t('According to', $languageAbbr, $useISO8859) . ' ' . $verseText . ', ' . $output;
+                $output = Translations::t('According to', $languageAbbr) . ' ' . $verseText . ', ' . $output;
             }
         }
         else if (Question::isTypeCommentaryQnA($type)) {
@@ -125,18 +125,16 @@ class Util
                 $pageStr = 'p. ' . $startPage;
             }
             if ($isFillIn) {
-                $output = Translations::t('Fill in the blanks for SDA Bible Commentary, Volume', $languageAbbr, $useISO8859) . ' ' . $volume . ($pageStr !== '' ? ', ' . $pageStr : '') . '.';
+                $output = Translations::t('Fill in the blanks for SDA Bible Commentary, Volume', $languageAbbr) . ' ' . $volume . ($pageStr !== '' ? ', ' . $pageStr : '') . '.';
             } else {
                 if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr, $useISO8859) . ' ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
+                $output = Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr) . ' ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
             }
         }
         if ($needToAddFirstQMark) {
-            $output = $useISO8859 
-                ? Translations::utf8('¿') . $output 
-                : '¿' . $output;
+            $output = '¿' . $output;
         }
         return trim($output);
     }
@@ -194,7 +192,8 @@ class Util
             $firstWord = $firstWords[0];
         }
         $wordsNotToBeLowercased = [
-            'T or', 'God', 'Gods', 'gods', 'Christ', 'Jesus'
+            'T or', 'God', 'Gods', 'gods', 'Christ', 'Jesus',
+            'Jehová'
         ];
         foreach ($wordsNotToBeLowercased as $word) {
             $isValid = !YamfUtil::strStartsWith($output, $word);
