@@ -20,7 +20,7 @@
         </style>
     </head>
     <body>
-        <h1 class="center">{{ title }} - First Letters</h1>
+        <h1 class="center">{{ title }} - First Letters [{{ language.name }}]</h1>
         {% for line in lines %}
             <p class="mb-1 mt-0">{{ chapterNumber }}:{{ loop.index }} - {{ line }}</p>
         {% endfor %}

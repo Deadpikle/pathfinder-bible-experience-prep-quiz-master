@@ -123,7 +123,7 @@ class BibleFillInController extends BaseAdminController
         }
         // create PDF
         $chapterNumber = $chapter->number;
-        return new TwigPDFView('pdf/fill-in-first-letters', compact('lines', 'chapterNumber'), $book->name . ' ' . 
-            $chapter->number, $book->name . ' ' . $chapter->number . ' First Letters.pdf');
+        return new TwigPDFView('pdf/fill-in-first-letters', compact('lines', 'chapterNumber', 'language'), $book->name . ' ' . 
+            $chapter->number, $book->name . ' ' . $chapter->number . ' First Letters [' . $language->name . '].pdf');
     }
 }
