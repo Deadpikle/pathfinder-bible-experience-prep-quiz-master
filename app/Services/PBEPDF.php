@@ -3,13 +3,19 @@
 namespace App\Services;
 
 use App\Helpers\Translations;
+use tFPDF\PDF;
 
 // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
 // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
-require_once('lib/fpdf181/fpdf.php');
+// require_once('lib/fpdf181/fpdf.php');
 
-class PBEPDF extends \FPDF {
+// class PBEPDF extends \FPDF {
+
+
+// require_once('lib/tfpdf/tfpdf.php');
+
+class PBEPDF extends PDF {
 
     protected $B = 0;
     protected $I = 0;
@@ -19,6 +25,8 @@ class PBEPDF extends \FPDF {
     protected $WIDTH_OFFSET = 0;
     protected $DRAW_RECT = false;
     protected $USE_CELL_OFFSET = false;
+    protected $widths;
+    protected $aligns;
 
     public string $userLanguageAbbr;
     
@@ -113,7 +121,7 @@ class PBEPDF extends \FPDF {
         // $this->Image('logo.png',10,6,30);
         // Arial bold 15
         $this->SetY(15.4);
-        $this->SetFont('Arial', 'B', 15);
+        $this->SetFont('DejaVu', 'b', 15);
         // Draw centered title
         $this->Cell(165.1, 10, Translations::t('PBE Study Guide', $this->userLanguageAbbr, true), 0, 0, 'C');
         // Line break
@@ -129,7 +137,7 @@ class PBEPDF extends \FPDF {
     function Footer() {
         $this->SetY(-23.4);
         // Arial italic 8
-        $this->SetFont('Arial', '', 12);
+        $this->SetFont('DejaVu', '', 12);
         // Page number
         $this->Cell(0, 10, Translations::t('Page', $this->userLanguageAbbr, true) . ' ' . $this->PageNo() . ' ' 
             . Translations::t('of', $this->userLanguageAbbr, true) . ' {nb}', 0, 0, 'C');
@@ -163,9 +171,93 @@ class PBEPDF extends \FPDF {
         }
     }
 
-    function NbLines($w, $txt) {
+    public function NbLines($w,$txt)
+    {
+        // tPDF version of NbLines: https://stackoverflow.com/a/64555676/3938401
+        $unifontSubset = property_exists($this, 'unifontSubset') && $this->unifontSubset;   # compatible with FPDF and TFPDF.
+    
+        // Output text with automatic or explicit line breaks
+        if(!isset($this->CurrentFont))
+            $this->Error('No font has been set');
+        $cw = &$this->CurrentFont['cw'];
+        if($w==0)
+            $w = $this->w-$this->rMargin-$this->x;
+        $wmax = ($w-2*$this->cMargin);
+        //$wmax = ($w-2*$this->cMargin)*1000/$this->FontSize;
+        $s = str_replace("\r",'',(string)$txt);
+        if ($unifontSubset) {
+            $nb=mb_strlen($s, 'utf-8');
+            while($nb>0 && mb_substr($s,$nb-1,1,'utf-8')=="\n") $nb--;
+        }
+        else {
+            $nb = strlen($s);
+            if($nb>0 && substr($s, $nb-1, 1) == "\n")
+                $nb--;
+        }
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $ns = 0;
+        $nl = 1;
+        while($i<$nb)
+        {
+            // Get next character
+            if ($unifontSubset) {
+                $c = mb_substr($s,$i,1,'UTF-8');
+            }
+            else {
+                $c = substr($s,$i,1);
+            }
+            if($c=="\n")
+            {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $ns = 0;
+                $nl++;
+                continue;
+            }
+            if($c==' ')
+            {
+                $sep = $i;
+                $ls = $l;
+                $ns++;
+            }
+    
+            if ($unifontSubset) { $l += $this->GetStringWidth($c); }
+            else { $l += $cw[$c]*$this->FontSize/1000; }
+    
+            if($l>$wmax)
+            {
+                // Automatic line break
+                if($sep==-1)
+                {
+                    if($i==$j)
+                        $i++;
+                }
+                else
+                {
+                    $i = $sep+1;
+                }
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $ns = 0;
+                $nl++;
+            }
+            else
+                $i++;
+        }
+        return $nl;
+    }
+    
+
+    function NbLinesOldFpdf($w, $txt) {
         // Computes the number of lines a MultiCell of width w will take.
-        // This was modified from fpdf examples.
+        // This was slightly modified from fpdf examples - for formatting and var names; not algorithmically.
+        // http://www.fpdf.org/en/script/script3.php
         $cw = &$this->CurrentFont['cw'];
         if ($w == 0) {
             $w= $this->w - $this->rMargin - $this->x;
@@ -218,7 +310,7 @@ class PBEPDF extends \FPDF {
 
     function DrawQuestionTitle($title, $x, $y, $w, $h) {
         //echo $this->GetY() . "<br>";
-        $this->SetFont('Arial', 'B', 14);
+        $this->SetFont('DejaVu', 'b', 14);
         // print title
         $this->Cell($w - $this->WIDTH_OFFSET, $this->lineHeight, $title, 0, 1, 'C');
     }
@@ -249,7 +341,7 @@ class PBEPDF extends \FPDF {
         if ($shouldVerticallyCenter) {
             $this->SetY($y + (($rowHeight - ($this->lineHeight * $numberOfLines)) / 2), false);
         }
-        $this->SetFont('Arial', '', 14);
+        $this->SetFont('DejaVu', '', 14);
         // have to set left margin and right margins properly so the html wrapping works just right and wraps
         // text to the correct location
         $lm = $this->lMargin;
@@ -295,10 +387,10 @@ class PBEPDF extends \FPDF {
         $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
         // offset question output by 1 row since the title was printed
         $this->SetY($y + $this->lineHeight);
-        $this->DrawOutput($question, $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
+        $this->DrawOutput(Translations::utf8($question), $questionHeight, $questionRowCount, $cellOffset, 0, !$isQuestionHeightBigger, $outputHeight);
         $this->SetXY($x + $this->widths[0], $y);
         // Draw answer
-        $this->DrawOutput($answer, $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
+        $this->DrawOutput(Translations::utf8($answer), $answerHeight, $answerRowCount, $cellOffset, 1, $isQuestionHeightBigger, $outputHeight);
         $this->SetXY($x + $this->widths[1], $y);
         // Go to the next line
         $this->Ln($outputHeight + 4 + ($cellOffset / 2));
@@ -333,7 +425,7 @@ class PBEPDF extends \FPDF {
             $answerHeight = $answer["a-height"];
             $answerRowCount = $answer["a-row-count"];
             $isQuestionHeightBigger = $answer["q-taller"];
-            $this->DrawOutput($answerText, $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
+            $this->DrawOutput(Translations::utf8($answerText), $answerHeight, $answerRowCount, $cellOffset, $outputColumn, $isQuestionHeightBigger, $outputHeight);
             $this->SetY($y);
             $this->outputHorizontalSeparator($outputColumn, $outputHeight, $y);
             // Go to the next line
@@ -427,7 +519,7 @@ class PBEPDF extends \FPDF {
             $this->DrawQuestionTitle($title, $x, $y, $firstWidth, $outputHeight);
             // offset question output by 1 row since the title was printed
             $this->SetY($y + $this->lineHeight);
-            $this->DrawOutput($question["question-text"], $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
+            $this->DrawOutput(Translations::utf8($question["question-text"]), $questionHeight, $questionRowCount, $cellOffset, $currentColumn, !$isQuestionHeightBigger, $outputHeight);
             $this->SetY($y);
             $this->outputHorizontalSeparator($currentColumn, $outputHeight, $y);
             $this->Ln($outputHeight + 4 + ($cellOffset / 2));

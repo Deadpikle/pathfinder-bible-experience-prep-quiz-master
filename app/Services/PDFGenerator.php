@@ -5,13 +5,19 @@ namespace App\Services;
 use App\Helpers\Translations;
 use App\Models\Question;
 use App\Models\Util;
-use Yamf\Util as YamfUtil;
 
 class PDFGenerator
 {
     public static function generatePDF(array $quizMaterials, bool $isFrontBack, bool $viewFillInTheBlankAnswersInBold, string $userLanguageAbbr = 'en'): PBEPDF // TODO: not nullable
     {
         $pdf = new PBEPDF('P','mm','Letter'); // 8.5 x 11 with Letter size
+
+        $pdf->AddFont('DejaVu','','DejaVuSansCondensed.ttf',true);
+        $pdf->AddFont('DejaVu','b','DejaVuSansCondensed-Bold.ttf',true);
+        $pdf->AddFont('DejaVu','bi','DejaVuSansCondensed-BoldOblique.ttf',true);
+        $pdf->AddFont('DejaVu','i','DejaVuSansCondensed-Oblique.ttf',true);
+        $pdf->SetFont('DejaVu','',14);
+
         $pdf->userLanguageAbbr = $userLanguageAbbr;
         $pdf->SetTitle(Translations::t('PBE Study Guide', $userLanguageAbbr, true));
         $pdf->SetAuthor("Quiz Master"); // TODO: should be website name
@@ -24,9 +30,10 @@ class PDFGenerator
         $pdf->SetAligns(['L', 'L']);
         $pdf->setCellMargin(3);
         $pdf->AddPage();
+       
         // 8.5 - 2 = 6.5 inches for content width = 165.1 mm
         // 165.1 / 2 = 82.55 mm for each half (questions on left, answers on right)
-        $pdf->SetFont('Arial','', 14);
+        // $pdf->SetFont('Arial','', 14);
         //$pdf->Cell(40,10,'Hello World!', 1);
         if ($quizMaterials["totalQuestions"] <= 0) {
             $pdf->MultiCell(165.1, 10, 
@@ -40,7 +47,7 @@ class PDFGenerator
                 foreach ($quizMaterials["questions"] as $question) {
                     $points = $question['points'];
                     $pointsStr = Translations::t($points == 1 ? 'point' : 'points', $question['language']->abbreviation, true);
-                    $title = Translations::t('Question', $question['language']->abbreviation, true) . ' ' . $questionNumber . " -- " . $points . ' ' . $pointsStr;
+                    $title = Translations::t('Question', $question['language']->abbreviation, true) . ' ' . $questionNumber . " — " . $points . ' ' . $pointsStr;
                     $questionText = Util::getFullQuestionTextFromQuestion($question, true);
                     if (!Question::isTypeFillIn($question["type"])) {
                         $pdf->OutputQuestionAnswerRow($questionText, $question["answer"], $title);
@@ -66,7 +73,7 @@ class PDFGenerator
                 foreach ($quizMaterials["questions"] as &$question) {
                     $points = $question["points"];
                     $pointsStr = Translations::t($points == 1 ? 'point' : 'points', $question['language']->abbreviation, true);
-                    $title = Translations::t('Question', $question['language']->abbreviation, true) . ' ' . $questionNumber . " -- " . $points . " " . $pointsStr;
+                    $title = Translations::t('Question', $question['language']->abbreviation, true) . ' ' . $questionNumber . " — " . $points . " " . $pointsStr;
                     $questionText = trim(Util::getFullQuestionTextFromQuestion($question, true));
                     if (Question::isTypeFillIn($question["type"])) {
                         $fillIn = Util::generateFillInDataFromQuestion($question);
