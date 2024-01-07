@@ -4,11 +4,6 @@ namespace App\Helpers;
 
 class Translations
 {
-    public static function utf8($str): string
-    {
-        return iconv('UTF-8', 'ISO-8859-1', $str);
-    }
-
     public static function getTranslationsForLanguageAbbr(string $languageAbbr): array
     {
         if ($languageAbbr === 'es') {
@@ -38,7 +33,7 @@ class Translations
         return [];
     }
 
-    public static function translate(string $str, string $languageAbbr, bool $useISO8859 = false): string
+    public static function translate(string $str, string $languageAbbr): string
     {
         // TODO: we need a full translation setup with string substitutions and everything else. for now, hack something in...
         if ($languageAbbr === 'en' || $languageAbbr === null || $languageAbbr === '') {
@@ -47,15 +42,15 @@ class Translations
         if ($languageAbbr === 'es') {
             $translations = self::getTranslationsForLanguageAbbr($languageAbbr);
             $output = isset($translations[$str]) ? $translations[$str] : $str;
-            return $useISO8859 ? self::utf8($output) : $output;
+            return $output;
         }
         if ($languageAbbr === 'fr') {
             return $str; // don't have any yet
         }
     }
 
-    public static function t(string $str, string $languageAbbr, bool $useISO8859 = false): string
+    public static function t(string $str, string $languageAbbr): string
     {
-        return self::translate($str, $languageAbbr, $useISO8859);
+        return self::translate($str, $languageAbbr);
     }
 }
