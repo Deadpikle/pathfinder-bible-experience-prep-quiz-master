@@ -50,8 +50,10 @@ class ImportQuestionsController extends BaseAdminController
         $tmpName = $_FILES['csv']['tmp_name'];
         $contents = file_get_contents($tmpName);
         // check if UTF-8 encoded file
+        $isUTF8 = false;
         if ($contents[0] == $this->getHexChar('EF') && $contents[1] == $this->getHexChar('BB') && $contents[2] == $this->getHexChar('BF')) {
             $contents = substr($contents, 3);
+            $isUTF8 = true;
         }
         // split file by items
         $rows = explode("\r", $contents);
