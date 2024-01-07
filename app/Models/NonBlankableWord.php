@@ -72,7 +72,7 @@ class NonBlankableWord
     }
 
 	const SKIPPABLE = ['a', 'is', 'and', 'or', 'but', 'the', '...'];
-    const PUNCTUATION = ['.', '?', '!', ',', ' '];
+    const PUNCTUATION = ['.', '?', '!', ',', ' ', '¿', '«', '»'];
     const DEBUG = false;
 
     // $percentToBlank should be a decimal
@@ -114,6 +114,9 @@ class NonBlankableWord
     private static function tokenize($phrase, $nonBlankableWords) {
         preg_match_all("/[^\s]+/", $phrase, $words);
         $words = $words[0];
+        if (NonBlankableWord::DEBUG) {
+            print_r($words);
+        }
         $adjustedWords = array();
         foreach ($words as $word) {
             if (strpos($word, '...') !== false) {
@@ -137,8 +140,12 @@ class NonBlankableWord
         for ($i = 0; $i < count($words); $i++) {
             $word = $words[$i];
             // could add ^' to keep words like 'taint (as in "'taint so") in the word section and not in the before section
-            preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
+            // preg_match("/^([^\w]*)(.*?)([^\w]*)$/", $word, $matches);
+            preg_match("/^([^\w]*)(.*?)([^\w]*)$/u", $word, $matches);
             $actualWord = trim($matches[2]);
+            if (NonBlankableWord::DEBUG) {
+                echo $actualWord . '<br>';
+            }
             $wordToLookFor = strtolower($actualWord);
             $isBlankable = true;
             foreach ($nonBlankableWords as $nonBlankableWord) {
