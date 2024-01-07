@@ -209,7 +209,12 @@ class Util
         if (mb_strlen($input) > 0) {
             if (YamfUtil::strEndsWith(mb_strtolower($input), "specific.") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "specific") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "be specific")) {
+                YamfUtil::strEndsWith(mb_strtolower($input), "be specific") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "se específico") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "específico") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "específico.") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "especfico") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "especfico.")) {
                 if (!YamfUtil::strEndsWith($input, '.')) {
                     $input .= '.';
                 }

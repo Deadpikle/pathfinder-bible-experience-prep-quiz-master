@@ -558,7 +558,12 @@
                 var lowercase = question.toLowerCase();
                 if (lowercase.endsWith('specific.') ||
                     lowercase.endsWith('specific') ||
-                    lowercase.endsWith('be specific')) {
+                    lowercase.endsWith('be specific') ||
+                    lowercase.endsWith('se específico') ||
+                    lowercase.endsWith('específico') ||
+                    lowercase.endsWith('específico.') ||
+                    lowercase.endsWith('especfico') ||
+                    lowercase.endsWith('especfico.')) {
                     if (!question.endsWith('.')) {
                         question += '.';
                     }
