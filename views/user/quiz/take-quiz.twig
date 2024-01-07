@@ -580,7 +580,7 @@
                 data.question = fixQuestionMarkOnQuestion(data.question);
             }
             var needToReaddUpsideDownQMark = false;
-            if (data.question.startsWith('¿') || userLangAbbr === 'es') {
+            if (data.question.startsWith('¿') || (userLangAbbr === 'es' && !isFillInQuestion(data.type))) {
                 data.question = data.question.substr(1);
                 needToReaddUpsideDownQMark = true;
             }

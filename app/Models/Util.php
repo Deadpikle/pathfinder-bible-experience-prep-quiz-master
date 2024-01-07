@@ -83,7 +83,7 @@ class Util
             $output = self::fixQuestionMarkOnQuestion($output);
         }
         $needToAddFirstQMark = false;
-        if (YamfUtil::strStartsWith($output, '¿') || $languageAbbr === 'es') {
+        if (YamfUtil::strStartsWith($output, '¿') || ($languageAbbr === 'es' && !$isFillIn)) {
             $output = trim($output, '¿');
             $needToAddFirstQMark = true;
         }
