@@ -558,6 +558,7 @@
                     lowercase.endsWith('specific') ||
                     lowercase.endsWith('be specific') ||
                     lowercase.endsWith('se específico') ||
+                    lowercase.endsWith('ser específico') ||
                     lowercase.endsWith('específico') ||
                     lowercase.endsWith('específico.') ||
                     lowercase.endsWith('especfico') ||
@@ -583,8 +584,11 @@
                 data.question = fixQuestionMarkOnQuestion(data.question);
             }
             var needToReaddUpsideDownQMark = false;
-            if (data.question.startsWith('¿') || (userLangAbbr === 'es' && !isFillInQuestion(data.type))) {
-                data.question = data.question.substr(1);
+            var startsWithUpsideDownQMark = data.question.startsWith('¿');
+            if (startsWithUpsideDownQMark || (userLangAbbr === 'es' && !isFillInQuestion(data.type))) {
+                if (startsWithUpsideDownQMark) {
+                    data.question = data.question.substr(1);
+                }
                 needToReaddUpsideDownQMark = true;
             }
             if (isBibleQuestion(data.type)) {
@@ -607,13 +611,14 @@
                 else {
                     var questionText = translate('According to') + ' ' + verseText + ", ";
                     var dataQuestion = data.question;
+
                     if (!strStartsWith(data.question, data.startBook) && shouldLowercaseOutput(data.question, bibleNames)) {
                         dataQuestion = lowercaseFirstLetter(dataQuestion);
                     }
-                    questionText += dataQuestion;
                     if (needToReaddUpsideDownQMark) {
-                        questionText = '¿' + questionText;
+                        dataQuestion = '¿' + uppercaseFirstLetter(dataQuestion);
                     }
+                    questionText += dataQuestion;
                     $("#question-text").html(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();
@@ -622,25 +627,28 @@
             else if (isCommentaryQuestion(data.type)) {
                 var pageStr = pageString(data.startPage, data.endPage);
                 if (isFillInQuestion(data.type)) {
-                    var questionTitleText = translate('Fill in the blanks for SDA Bible Commentary, Volume') + ' ' + data.volume + ', ' + pageStr;
+                    var questionTitleText = 
+                        translate('Fill in the blanks for the SDA Bible Commentary for') + ' ' +
+                        translate(data.topic) + ', ' + pageStr;
                     $("#fill-in-title").empty().html(questionTitleText);
                     $("#fill-in-data").empty().html(createFillInInput("#fill-in-data", data.fillInData));
                     $(qnaDiv).hide();
                     $(fillInDiv).show();
                 }
                 else {
-                    var questionText = translate('According to the SDA Bible Commentary, Volume') + ' ' + data.volume + ' [' + translate(data.topic) + '], ';
+                    var questionText = 
+                        translate('According to the SDA Bible Commentary for') + ' ' + translate(data.topic) + ', ';
                     if (pageStr !== '') {
                         questionText += pageStr + ', ';
-                    } 
+                    }
                     var dataQuestion = data.question;
                     if (!strStartsWith(data.question, data.volume) && shouldLowercaseOutput(data.question, bibleNames)) {
                         dataQuestion = lowercaseFirstLetter(dataQuestion);
                     }
-                    questionText += dataQuestion;
                     if (needToReaddUpsideDownQMark) {
-                        questionText = '¿' + questionText;
+                        dataQuestion = '¿' + uppercaseFirstLetter(dataQuestion);
                     }
+                    questionText += dataQuestion;
                     $('#question-text').html(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();

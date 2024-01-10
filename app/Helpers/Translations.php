@@ -8,10 +8,10 @@ class Translations
     {
         if ($languageAbbr === 'es') {
             return [
-                'According to' => 'Según',
-                'Fill in the blanks for' => 'Llene los espacios en blanco para',
-                'According to the SDA Bible Commentary, Volume' => 'Según el Comentario Bíblico Adventista, Volumen',
-                'Fill in the blanks for SDA Bible Commentary, Volume' => 'Llene los espacios en blanco para el Comentario Bíblico Adventista, Volumen',
+                'According to' => 'De acuerdo a',
+                'Fill in the blanks for' => 'Llenar los espacios',
+                'According to the SDA Bible Commentary for' => 'De acuerdo al Comentario Bíblico Adventista sobre',
+                'Fill in the blanks for the SDA Bible Commentary for' => 'Llenar los espacios al Comentario Bíblico Adventista, Volumen',
                 'PBE Study Guide' => 'Guía de Estudio PBE',
                 'PBE Study Guides' => 'Guías de Estudio PBE',
                 'Question' => 'Pregunta',

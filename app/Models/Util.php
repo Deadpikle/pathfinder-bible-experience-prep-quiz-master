@@ -83,7 +83,8 @@ class Util
             $output = self::fixQuestionMarkOnQuestion($output);
         }
         $needToAddFirstQMark = false;
-        if (YamfUtil::strStartsWith($output, '¿') || ($languageAbbr === 'es' && !$isFillIn)) {
+        $startsWithUpsideDownQMark = YamfUtil::strStartsWith($output, '¿');
+        if ($startsWithUpsideDownQMark || ($languageAbbr === 'es' && !$isFillIn)) {
             $output = trim($output, '¿');
             $needToAddFirstQMark = true;
         }
@@ -111,6 +112,9 @@ class Util
                 if (!\Yamf\Util::strStartsWith($output, $startBook) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
+                if ($needToAddFirstQMark) {
+                    $output = '¿' . ucfirst($output);
+                }
                 $output = Translations::t('According to', $languageAbbr) . ' ' . $verseText . ', ' . $output;
             }
         }
@@ -125,19 +129,21 @@ class Util
                 $pageStr = 'p. ' . $startPage;
             }
             if ($isFillIn) {
-                $output = Translations::t('Fill in the blanks for SDA Bible Commentary, Volume', $languageAbbr) . ' ' . $volume . ($pageStr !== '' ? ', ' . $pageStr : '') . '.';
+                $output = Translations::t('Fill in the blanks for the SDA Bible Commentary for', $languageAbbr) . ' ' . 
+                Translations::t($question['topic'], $languageAbbr) . ', '
+                ($pageStr !== '' ? ', ' . $pageStr : '') . '.';
             } else {
                 if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
+                if ($needToAddFirstQMark) {
+                    $output = '¿' . ucfirst($output);
+                }
                 $output = 
-                    Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr) . ' ' . 
-                    $volume . ' [' . Translations::t($question['topic'], $languageAbbr) . '], ' . 
+                    Translations::t('According to the SDA Bible Commentary for', $languageAbbr) . ' ' . 
+                    Translations::t($question['topic'], $languageAbbr) . ', ' . 
                     ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
             }
-        }
-        if ($needToAddFirstQMark) {
-            $output = '¿' . $output;
         }
         return trim($output);
     }
@@ -214,6 +220,7 @@ class Util
                 YamfUtil::strEndsWith(mb_strtolower($input), "specific") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "be specific") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "se específico") ||
+                YamfUtil::strEndsWith(mb_strtolower($input), "ser específico") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "específico") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "específico.") ||
                 YamfUtil::strEndsWith(mb_strtolower($input), "especfico") ||
