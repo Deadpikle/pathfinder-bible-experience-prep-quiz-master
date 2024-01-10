@@ -68,7 +68,7 @@ class Language
         return $languagesByID;
     }
 
-    public static function loadLanguageWithID(int $languageID, PDO $db) : ?Language
+    public static function loadLanguageWithID(?int $languageID, PDO $db) : ?Language
     {
         $data = Language::loadLanguages(' WHERE LanguageID = ? ', [$languageID], $db);
         return count($data) > 0 ? $data[0] : null;
@@ -80,7 +80,7 @@ class Language
         return count($data) > 0 ? $data[0] : new Language(1, 'English');
     }
 
-    public static function findLanguageWithID(int $languageID, array $languages) : ?Language
+    public static function findLanguageWithID(?int $languageID, array $languages) : ?Language
     {
         foreach ($languages as $language) {
             if ($language->languageID === $languageID) {
