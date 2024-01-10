@@ -19,11 +19,11 @@ class PDFGenerator
         $pdf->SetFont('DejaVu','',14);
 
         $pdf->userLanguageAbbr = $userLanguageAbbr;
-        $pdf->SetTitle(Translations::t('PBE Study Guide', $userLanguageAbbr));
+        $pdf->SetTitle(Translations::t('PBE Study Guide', $userLanguageAbbr), true);
         $pdf->SetAuthor("Quiz Master"); // TODO: should be website name
         $pdf->SetCreator("Quiz Master");
         $pdf->SetKeywords("quiz study Bible PBE Pathfinder");
-        $pdf->SetSubject(Translations::t('PBE Study Guides', $userLanguageAbbr));
+        $pdf->SetSubject(Translations::t('PBE Study Guides', $userLanguageAbbr), true);
         $pdf->AliasNbPages();
         $pdf->SetMargins(25.4, 25.4); // 1 inch in mm
         $pdf->SetWidths([82.55, 82.55]);
