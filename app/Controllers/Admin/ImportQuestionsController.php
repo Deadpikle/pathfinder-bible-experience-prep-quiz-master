@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Helpers\Translations;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
@@ -106,6 +107,11 @@ class ImportQuestionsController extends BaseAdminController
             }
             $rawBooks[$bookName][$chapterNumber][$verseNumber] = $verseID;
         }
+        // get translations (yes this should be more dynamic but right now we only have 2 hardcoded languages)
+        $translations = [];
+        foreach ($languages as $language) {
+            $translations[$language->abbreviation] = Translations::getTranslationsForLanguageAbbr('es');
+        }
         // prepare the statement
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
@@ -209,6 +215,16 @@ class ImportQuestionsController extends BaseAdminController
                 if (Question::isTypeBibleQnA($questionType)) {
                     // find verse id for start
                     $bookName = trim($row["Start Book"]);
+                    if (!isset($rawBooks[$bookName])) {
+                        // check translations
+                        foreach ($translations as $translationList) {
+                            $key = array_search($bookName, $translationList, true);
+                            if ($key !== false) {
+                                $bookName = $key;
+                                break;
+                            }
+                        }
+                    }
                     $chapterNumber = trim($row["Start Chapter"]);
                     $verseNumber = trim($row["Start Verse"]);
                     if ($bookName !== ''
@@ -263,10 +279,20 @@ class ImportQuestionsController extends BaseAdminController
                         $commentaryEndPage = null;
                     }
                     $commentaryKey = $commentaryNumber . $commentaryTopic;
+                    if (!isset($commentaryMap[$commentaryKey])) {
+                        // check translations
+                        foreach ($translations as $translationList) {
+                            $key = array_search($commentaryTopic, $translationList, true);
+                            if ($key !== false) {
+                                $commentaryTopic = $key;
+                                $commentaryKey = $commentaryNumber . $commentaryTopic;
+                                break;
+                            }
+                        }
+                    }
                     if (isset($commentaryMap[$commentaryKey])) {
                         $commentaryID = $commentaryMap[$commentaryKey]->commentaryID;
-                    }
-                    else {
+                    } else {
                         $questionsFailedToAdd++;
                         $errors .= "Unable to add commentary question: " . $row["Question"] . " -- Invalid number and/or topic.<br>";
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
