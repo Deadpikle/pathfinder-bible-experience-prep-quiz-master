@@ -128,7 +128,7 @@
             </div>
         </main>
         <footer class="container">
-            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ app.footerText }}</p>
+            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
         </footer>
         <script type="text/javascript">
             $(document).ready(function() {

@@ -5,12 +5,10 @@ TODO:
 -Refactor settings to an actual class
 -Refactor more things to PBEAppConfig
 
--This would be a _great_ opportunity to make this website UTF-8 compatible
-    -https://dba.stackexchange.com/a/104866 for a script -- could probably work this into a migration...?
-    -ok i edited old migrations, but might need mb_* functions and other fixes. pdfs need UTF8 compat anyway.
-
 Eventual:
 -Revamp UI everywhere
     -Switch to Bootstrap 4!!!
     -Use select2 for searchable dropdowns
     -Use breadcrumbs
+-the language translation definitely is in need of better code/upgrades
+    -need to show copyright multi-language if there are multiple languages of questions showing up (e.g. user has site in spanish but loads english questions)

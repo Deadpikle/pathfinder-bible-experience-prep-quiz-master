@@ -12,6 +12,7 @@ use App\Models\PBEAppConfig;
 use App\Models\Setting;
 use App\Models\User;
 use DateTime;
+use PDO;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Yamf\AppConfig;
@@ -123,6 +124,11 @@ class AppViewExtension extends AbstractExtension
         return Translations::t($str, $languageAbbreviation);
     }
 
+    function getUserLanguageAbbr(PDO $db): string
+    {
+        return User::getPreferredLanguage($db)->abbreviation ?? 'en';
+    }
+
     // // // settings
     // // //
 
@@ -144,6 +150,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('webAdminConferenceID', [$this, 'webAdminConferenceID']),
             new TwigFunction('getConst', [$this, 'getConst']),
             new TwigFunction('translate', [$this, 'translate']),
+            new TwigFunction('getUserLanguageAbbr', [$this, 'getUserLanguageAbbr']),
         ];
         return $twigFunctions;
     }

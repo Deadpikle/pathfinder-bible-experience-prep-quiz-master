@@ -155,7 +155,10 @@ class PowerPointGenerator
         $shape->getActiveParagraph()->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_RIGHT)
             ->setVertical(Alignment::VERTICAL_BOTTOM);
-        $shape->createTextRun('Presentation created on pbeprep.com. Scripture taken from the New King James Version®. Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved.')
+        $shape->createTextRun(
+                Translations::t('Presentation created on pbeprep.com.', $this->languageAbbr) . ' ' . 
+                Translations::t('Scripture taken from the New King James Version® Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved.', $this->languageAbbr)
+            )
             ->getFont()
             ->setSize(18);
     }
@@ -171,7 +174,7 @@ class PowerPointGenerator
         $properties = $presentation->getDocumentProperties();
         $properties->setCreator('pbeprep.com');
         $properties->setCompany('pbeprep.com');
-        $properties->setTitle('PBE Prep & Quiz Master');
+        $properties->setTitle('PBE Prep & Quiz Master'); // TODO: this should be the website name, not hardcoded
         $properties->setLastModifiedBy('pbeprep.com');
 
         $questions = $quizQuestionData['questions'];

@@ -25,6 +25,8 @@ class Translations
                 'Answer' => 'Respuesta',
                 'Show Answer' => 'Mostrar Respuesta',
                 'The answer is:' => 'La respuesta es:',
+                'Presentation created on pbeprep.com.' => 'Presentation created on pbeprep.com.', // todo: site URL
+                'Scripture taken from the New King James Version® Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved.' => 'Scripture: Reina-Valera 95® © Sociedades Bíblica Unidas, 1995',
                 // Bible books
                 'Joshua' => 'Josué',
                 'Judges' => 'Jueces',
