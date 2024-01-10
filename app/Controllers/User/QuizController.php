@@ -210,6 +210,7 @@ class QuizController
         $quizQuestionData = $this->getQuizQuestions($app, $request, true, false);
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
         $generator = new PowerPointGenerator();
+        $generator->languageAbbr = User::getPreferredLanguage($app->db)->abbreviation ?? 'en';
         $generator->outputPowerPoint($quizQuestionData, $viewFillInTheBlankAnswersInBold);
         return new Response(200);
     }

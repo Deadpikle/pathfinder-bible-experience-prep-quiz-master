@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\Translations;
 use App\Models\Question;
 use App\Models\Util;
 use PhpOffice\PhpPresentation\DocumentLayout;
@@ -21,10 +22,13 @@ class PowerPointGenerator
     // TODO: footer for pbeprep.com (in slide master?) and footer for copyright
     // TODO: background image
 
+    public string $languageAbbr;
+
     public function __construct()
     {
         $this->slideWidth = 1920;
         $this->slideHeight = 1080;
+        $this->languageAbbr = 'en';
     }
 
     private function addQuestionNumber(Slide $slide, int $number)
@@ -41,7 +45,7 @@ class PowerPointGenerator
         $shape->getActiveParagraph()->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_LEFT)
             ->setVertical(Alignment::VERTICAL_CENTER);
-        $textRun = $shape->createTextRun('  Question ' . $number)
+        $textRun = $shape->createTextRun('  ' . Translations::t('Question', $this->languageAbbr) . ' ' . $number)
             ->getFont()
             ->setColor(new Color(Color::COLOR_WHITE))
             ->setSize(36);
@@ -69,7 +73,8 @@ class PowerPointGenerator
         $shape->getActiveParagraph()->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_LEFT)
             ->setVertical(Alignment::VERTICAL_TOP);
-        $shape->createTextRun('Question — ' . $points . ' ' . ($points === 1 ? 'point' : 'points'))
+        $shape->createTextRun(Translations::t('Question', $this->languageAbbr) . ' — ' . $points . ' ' . 
+                Translations::t($points === 1 ? 'point' : 'points', $this->languageAbbr))
             ->getFont()->setSize(34)->setBold(true);
         $shape->createBreak();
         $shape->createTextRun($questionText)
