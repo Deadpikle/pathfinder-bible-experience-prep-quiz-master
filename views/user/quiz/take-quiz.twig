@@ -148,6 +148,14 @@
 
 <script type="text/javascript">
     // TODO: refactor this to its own file
+    var translations = {{ json_encode(translations) | raw }};
+    function translate(str) {
+        if (str in translations && typeof translations[str] !== undefined && translations[str] !== 'undefined') {
+            return translations[str];
+        }
+        return str;
+    }
+
     function Stats() {
         this.earned = 0;
         this.possible = 0;
@@ -169,9 +177,6 @@
         var possibleStr = this.possible == 1 ? translate('point') : translate('points');
         return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + this.percent + "%)";
     }
-</script>
-
-<script type="text/javascript">
     $(document).ready(function() {
         $('#flag-reason').material_select();
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
@@ -179,7 +184,6 @@
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
         var userID = {{ userID }};
         var bibleNames = {{ json_encode(bibleNames) | raw }};
-        var translations = {{ json_encode(translations) | raw }};
         var userLangAbbr = "{{ userLangAbbr }}";
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -225,12 +229,6 @@
         var preTimer = new easytimer.Timer();
         var timer = new easytimer.Timer();
 
-        function translate(str) {
-            if (str in translations && typeof translations[str] !== undefined && translations[str] !== 'undefined') {
-                return translations[str];
-            }
-            return str;
-        }
         var answerIsPrefix = translate('The answer is:');
         
         function countdownTimer(timerLength) {
@@ -631,7 +629,7 @@
                     $(fillInDiv).show();
                 }
                 else {
-                    var questionText = translate('According to the SDA Bible Commentary, Volume') + ' ' + data.volume + ", ";
+                    var questionText = translate('According to the SDA Bible Commentary, Volume') + ' ' + data.volume + ' [' + translate(data.topic) + '], ';
                     if (pageStr !== '') {
                         questionText += pageStr + ', ';
                     } 

@@ -130,7 +130,10 @@ class Util
                 if (!\Yamf\Util::strStartsWith($output, $volume) && Util::shouldLowercaseOutput($output)) {
                     $output = lcfirst($output);
                 }
-                $output = Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr) . ' ' . $volume . ', ' . ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
+                $output = 
+                    Translations::t('According to the SDA Bible Commentary, Volume', $languageAbbr) . ' ' . 
+                    $volume . ' [' . Translations::t($question['topic'], $languageAbbr) . '], ' . 
+                    ($pageStr !== '' ? $pageStr . ', ' : '') . $output;
             }
         }
         if ($needToAddFirstQMark) {
