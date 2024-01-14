@@ -29,7 +29,8 @@ class QuizGenerator
         int $languageID,
         int $userID,
         array $itemsForQuiz,
-        PDO $db
+        PDO $db,
+        int $intPercentOfQuestionsFillInTheBlank = 10 // should be >= 0 and <= 100
         )
     {
         if ($maxQuestions > 500) {
@@ -43,8 +44,10 @@ class QuizGenerator
             $maxPoints = 1;
         }
         
-        $percentFillIn = isset($fillInPercent) ? filter_var($fillInPercent, FILTER_VALIDATE_INT) : 30;
-        $percentFillIn = $percentFillIn / 100.0;
+        $percentBlanksInFillIn = isset($fillInPercent) ? filter_var($fillInPercent, FILTER_VALIDATE_INT) : 30;
+        $percentBlanksInFillIn = $percentBlanksInFillIn / 100.0;
+        // $floatPercentOfFIBQuestionsInOutput >= 0 && <= 1
+        $floatPercentOfFIBQuestionsInOutput = $intPercentOfQuestionsFillInTheBlank / 100.0;
 
         $shouldShowOnlyRecentlyAdded = isset($showOnlyRecentOnFlashCards) ? filter_var($showOnlyRecentOnFlashCards, FILTER_VALIDATE_BOOLEAN) : false;
         $recentlyAddedAmount = isset($showOnlyRecentOnFlashCardsAmount) ? filter_var($showOnlyRecentOnFlashCardsAmount, FILTER_VALIDATE_INT, array('options' => array(
@@ -60,8 +63,8 @@ class QuizGenerator
         // qa-only
         // fill-in-only
         if ($shouldShowOnlyRecentlyAdded) { // override all user settings and load recent questions instead
-            $questionTypes = "both"; 
-            $questionOrder = "sequential-sequential";
+            $questionTypes = 'both';
+            $questionOrder = 'sequential-sequential';
             unset($itemsForQuiz);
             $shouldAvoidPastCorrectAnswers = false;
             $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-' . $recentlyAddedAmount . ' days'));
@@ -70,6 +73,11 @@ class QuizGenerator
         $userWantsFillIn = $questionTypes === "fill-in-only" || $questionTypes === "both";
         $areRandomQuestionsPulled = $questionOrder == "random-sequential" || $questionOrder == "random-random";
         $isOutputSequential = $questionOrder == "random-sequential" || $questionOrder == "sequential-sequential";
+        if ($questionTypes === 'fill-in-only') {
+            $floatPercentOfFIBQuestionsInOutput = 1;
+        } else if ($questionTypes === 'qa-only') {
+            $floatPercentOfFIBQuestionsInOutput = 0;
+        }
 
         // see if user wants to load any possible question or just from a specific chapter of the Bible (or Bible commentary volume)
         if (!isset($itemsForQuiz)) {
@@ -285,11 +293,33 @@ class QuizGenerator
         $bibleFillInIndex = 0;
         $commentaryIndex = 0;
         $commentaryFillInIndex = 0;
+        $numberFillInTheBlankUsed = 0;
+        $maxFIBQuestions = ceil($maxQuestions * $floatPercentOfFIBQuestionsInOutput);
+        //$totalQuestionsAvailable = $bibleCount + $bibleFillInCount + $commentaryCount + $commentaryFillInCount;
+        //echo 'total B: ' . $bibleCount . '<br>';
+        //echo 'total B FIB: ' . $bibleFillInCount . '<br>';
+        //echo 'total C: ' . $commentaryCount . '<br>';
+        //echo 'total CFIB: ' . $commentaryFillInCount . '<br>';
+        //echo 'total ALL: ' . $totalQuestionsAvailable . '<br>';
+        //die('out of ' . $maxQuestions . ' we are aiming for ' . $maxFIBQuestions . ' fib questions which is ' .($maxFIBQuestions / $maxQuestions));
         for ($i = 0; $i < $maxQuestions; $i++) {
+            $canContinueToUseFIB = $numberFillInTheBlankUsed < $maxFIBQuestions;
             $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
-            $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
+            $hasBibleFillInLeft = 
+                $bibleFillInIndex < $bibleFillInCount && $canContinueToUseFIB;
             $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
-            $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
+            $hasCommentaryFillInQuestionLeft = 
+                $commentaryFillInIndex < $commentaryFillInCount && $canContinueToUseFIB;
+            
+            if (!$hasBibleQuestionLeft && !$hasCommentaryQuestionLeft &&
+                !$canContinueToUseFIB && $userWantsFillIn) {
+                // if we've run out of questions by hitting the max FIB limit BUT
+                // we still need more questions, allow FIB to continue to be used 
+                // so user gets the # of questions they want
+                $canContinueToUseFIB = true;
+                $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
+                $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
+            }
 
             if (!$hasBibleQuestionLeft && !$hasCommentaryQuestionLeft && 
                 !$hasBibleFillInLeft && !$hasCommentaryFillInQuestionLeft) {
@@ -300,13 +330,13 @@ class QuizGenerator
             if ($hasBibleQuestionLeft) {
                 $availableArraysOfQuestions[] = Question::getBibleQnAType();
             }
-            if ($hasBibleFillInLeft) {
+            if ($hasBibleFillInLeft && $canContinueToUseFIB) {
                 $availableArraysOfQuestions[] = Question::getBibleQnAFillType();
             }
             if ($hasCommentaryQuestionLeft) {
                 $availableArraysOfQuestions[] = Question::getCommentaryQnAType();
             }
-            if ($hasCommentaryFillInQuestionLeft) {
+            if ($hasCommentaryFillInQuestionLeft && $canContinueToUseFIB) {
                 $availableArraysOfQuestions[] = Question::getCommentaryQnAFillType();
             }
             // now choose one
@@ -321,6 +351,7 @@ class QuizGenerator
                 $output[] = $bibleFillIn[$bibleFillInIndex];
                 $bibleFillInIndex++;
                 $bibleFillInAdded++;
+                $numberFillInTheBlankUsed++;
             } else if ($typeToAdd == Question::getCommentaryQnAType()) {
                 $output[] = $commentaryQnA[$commentaryIndex];
                 $commentaryIndex++;
@@ -329,6 +360,7 @@ class QuizGenerator
                 $output[] = $commentaryFillIn[$commentaryFillInIndex];
                 $commentaryFillInIndex++;
                 $commentaryFillInAdded++;
+                $numberFillInTheBlankUsed++;
             }
         }
         // set questions to output of this little merging algorithm
@@ -376,7 +408,7 @@ class QuizGenerator
                 $data['endPage'] = $question["CommentaryEndPage"];
             }
             if (Question::isTypeFillIn($question['Type'])) {
-                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question["Question"]), $percentFillIn, $words);
+                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question["Question"]), $percentBlanksInFillIn, $words);
                 $data['fillInData'] = $fillInData['data'];
                 $data['points'] = $fillInData['blank-count'];
             }
@@ -430,7 +462,9 @@ class QuizGenerator
         array $bibleWeights, // key/value pairs: chapter ID -> weight; post['table-input-chapter-{}']
         array $commentaryWeights, // key/value pairs: commentary ID -> weight; post['table-input-commentary-{}']
         array $quizItems, // array of ; post['quiz-items']
-        PDO $db)
+        PDO $db,
+        int $intPercentOfQuestionsFillInTheBlank = 10 // should be >= 0 and <= 100
+    )
     {
         $DEBUG = false;
         // performing custom question distribution!
@@ -514,7 +548,8 @@ class QuizGenerator
                     $languageID,
                     $userID,
                     $quizItemsForQuizGeneration,
-                    $db
+                    $db,
+                    $intPercentOfQuestionsFillInTheBlank
                 );
                 $allGenerated[] = $generatedQuestions;
                 $totalGenerated += (int)$generatedQuestions['totalQuestions'];
@@ -561,7 +596,8 @@ class QuizGenerator
                     $languageID,
                     $userID,
                     [ $quizItem ],
-                    $db
+                    $db,
+                    $intPercentOfQuestionsFillInTheBlank
                 );
                 $otherGenerated[] = $generatedQuestions;
                 //echo "Got " . $generatedQuestions["totalQuestions"] . " out\n";

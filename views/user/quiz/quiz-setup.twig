@@ -97,7 +97,7 @@
             </div>
             <div class="input-field col s6 m3">
                 <input type="number" id="max-points" name="max-points" required value="10" max="500" min="0"/>
-                <label for="max-points">Maximum Points</label>
+                <label for="max-points">Maximum Points for Q&amp;A Questions</label>
             </div>
         </div>
         <div class="row">
@@ -132,10 +132,14 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s2" id="fill-in-percent-div">
+        <div class="row" id="fill-in-question-options">
+            <div class="input-field col s5" id="fill-in-percent-questions-div">
+                <input type="number" name="fill-in-percent-questions" id="fill-in-percent-questions" value="10" min="0" max="100"/>
+                <label class="" for="fill-in-percent-questions">Maximum Ratio of Fill in the Blank Questions to Q&amp;A Questions (0% - 100%)</label>
+            </div>
+            <div class="input-field col s5" id="fill-in-percent-div">
                 <input type="number" name="fill-in-percent" id="fill-in-percent" value="30" min="1" max="100"/>
-                <label class="" for="fill-in-percent">% Blanks</label>
+                <label class="" for="fill-in-percent">% Blanks in Fill in the Blank Questions (1% - 100%)</label>
             </div>
         </div>
         <p id="question-countdown"><b>Question timer</b></p>
@@ -330,6 +334,32 @@
         $("#enable-question-distribution").trigger("change");
         $("#quiz-items").trigger("change");
         $("#language-select").material_select();
+
+        // 
+        var bothQuestionTypesRadio = document.getElementById('both');
+        var onlyQAQuestionsRadio = document.getElementById('qa-only');
+        var onlyFIBQuestionsRadio = document.getElementById('fill-in-only');
+        function handleQuestionTypeChange() {
+            document.getElementById('fill-in-percent-questions-div').style.display = '';
+            if (onlyQAQuestionsRadio.checked) {
+                document.getElementById('fill-in-question-options').style.display = 'none';
+            } else {
+                document.getElementById('fill-in-question-options').style.display = '';
+                if (onlyFIBQuestionsRadio.checked) {
+                    document.getElementById('fill-in-percent-questions-div').style.display = 'none';
+                }
+            }
+        }
+        bothQuestionTypesRadio.addEventListener('change', function() {
+            handleQuestionTypeChange();
+        });
+        onlyQAQuestionsRadio.addEventListener('change', function() {
+            handleQuestionTypeChange();
+        });
+        onlyFIBQuestionsRadio.addEventListener('change', function() {
+            handleQuestionTypeChange();
+        });
+        handleQuestionTypeChange();
     });
 </script>
 
