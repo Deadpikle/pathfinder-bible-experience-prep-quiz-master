@@ -416,24 +416,7 @@ class QuizGenerator
             $outputQuestions[] = $data;
             $number++;
         }
-        // doesn't work quite right -- TODO: fix this so final output is in sequential order; remove previous sorting mechanism
-        /*if ($isOutputSequential) {
-            array_multisort(
-                array_column($outputQuestions, 'startBibleOrder'), SORT_ASC,
-                array_column($outputQuestions, 'startBook'), SORT_ASC, 
-                array_column($outputQuestions, 'startChapter'), SORT_ASC, 
-                array_column($outputQuestions, 'startVerse'), SORT_ASC,
-                array_column($outputQuestions, 'endBibleOrder'), SORT_ASC,
-                array_column($outputQuestions, 'endBook'), SORT_ASC,
-                array_column($outputQuestions, 'endChapter'), SORT_ASC,
-                array_column($outputQuestions, 'endVerse'), SORT_ASC,
-                array_column($outputQuestions, 'volume'), SORT_ASC, 
-                array_column($outputQuestions, 'topic'), SORT_ASC, 
-                array_column($outputQuestions, 'startPage'), SORT_ASC, 
-                array_column($outputQuestions, 'endPage'), SORT_ASC,
-                array_column($outputQuestions, 'id'), SORT_ASC,
-                $outputQuestions);
-        }*/
+        $outputQuestions = self::sortQuestionsSequentially($outputQuestions);
 
         $output = [ 
             'bibleQuestions' => $bibleAdded,
@@ -705,100 +688,7 @@ class QuizGenerator
         // everything so that the output is what the user expects!
 
         if ($isOutputSequential) {
-            // have to break questions out into each kind and then sort and then reorder them
-            $totalQuestions = count($output['questions']);
-            $bibleQnA = [];
-            $bibleFillIn = [];
-            $commentaryQnA = [];
-            $commentaryFillIn = [];
-            foreach ($output['questions'] as $question) {
-                if ($question['type'] == 'bible-qna') {
-                    $bibleQnA[] = $question;
-                } else if ($question['type'] == 'bible-qna-fill') {
-                    $bibleFillIn[] = $question;
-                } else if ($question['type'] == 'commentary-qna') {
-                    $commentaryQnA[] = $question;
-                } else if ($question['type'] == 'commentary-qna-fill') {
-                    $commentaryFillIn[] = $question;
-                }
-            }
-            // sort!
-            array_multisort(
-                array_column($bibleQnA, 'startBook'), SORT_ASC, 
-                array_column($bibleQnA, 'startChapter'), SORT_ASC, 
-                array_column($bibleQnA, 'startVerse'), SORT_ASC,
-                array_column($bibleQnA, 'endBook'), SORT_ASC,
-                array_column($bibleQnA, 'endChapter'), SORT_ASC,
-                array_column($bibleQnA, 'endVerse'), SORT_ASC,
-                array_column($bibleQnA, 'id'), SORT_ASC,
-                $bibleQnA);
-            array_multisort(
-                array_column($bibleFillIn, 'startBook'), SORT_ASC, 
-                array_column($bibleFillIn, 'startChapter'), SORT_ASC, 
-                array_column($bibleFillIn, 'startVerse'), SORT_ASC,
-                array_column($bibleFillIn, 'endBook'), SORT_ASC,
-                array_column($bibleFillIn, 'endChapter'), SORT_ASC,
-                array_column($bibleFillIn, 'endVerse'), SORT_ASC,
-                array_column($bibleFillIn, 'id'), SORT_ASC,
-                $bibleFillIn);
-            array_multisort(
-                array_column($commentaryQnA, 'number'), SORT_ASC, 
-                array_column($commentaryQnA, 'topic'), SORT_ASC, 
-                array_column($commentaryQnA, 'startPage'), SORT_ASC, 
-                array_column($commentaryQnA, 'endPage'), SORT_ASC,
-                array_column($commentaryQnA, 'id'), SORT_ASC,
-                $commentaryQnA);
-            array_multisort(
-                array_column($commentaryFillIn, 'number'), SORT_ASC, 
-                array_column($commentaryFillIn, 'topic'), SORT_ASC, 
-                array_column($commentaryFillIn, 'startPage'), SORT_ASC, 
-                array_column($commentaryFillIn, 'endPage'), SORT_ASC,
-                array_column($commentaryFillIn, 'id'), SORT_ASC,
-                $commentaryFillIn);
-            // now mash them back into a quiz.
-            $reorderedQuestions = [];
-            $bibleIndex = 0;
-            $bibleFillInIndex = 0;
-            $commentaryIndex = 0;
-            $commentaryFillInIndex = 0;
-            $bibleCount = count($bibleQnA);
-            $bibleFillInCount = count($bibleFillIn);
-            $commentaryCount = count($commentaryQnA);
-            $commentaryFillInCount = count($commentaryFillIn);
-            for ($i = 0; $i < $totalQuestions; $i++) {
-                $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
-                $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
-                $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
-                $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
-
-                $availableArraysOfQuestions = [];
-                if ($hasBibleQuestionLeft) {
-                    $availableArraysOfQuestions[] = 'bible-qna';
-                }
-                if ($hasBibleFillInLeft) {
-                    $availableArraysOfQuestions[] = 'bible-qna-fill';
-                }
-                if ($hasCommentaryQuestionLeft) {
-                    $availableArraysOfQuestions[] = 'commentary-qna';
-                }
-                if ($hasCommentaryFillInQuestionLeft) {
-                    $availableArraysOfQuestions[] = 'commentary-qna-fill';
-                }
-                //echo "i = " . $i . "\n";
-                //echo "bible = " . $bibleIndex . ", bible fill = " . $bibleFillInIndex . ", commentary = " . $commentaryIndex . ", comm fill = ". $commentaryFillInIndex . "\n";
-                $index = random_int(0, count($availableArraysOfQuestions) - 1);
-                $typeToAdd = $availableArraysOfQuestions[$index];
-                if ($typeToAdd == 'bible-qna') {
-                    $reorderedQuestions[] = $bibleQnA[$bibleIndex++];
-                } else if ($typeToAdd == 'bible-qna-fill') {
-                    $reorderedQuestions[] = $bibleFillIn[$bibleFillInIndex++];
-                } else if ($typeToAdd == 'commentary-qna') {
-                    $reorderedQuestions[] = $commentaryQnA[$commentaryIndex++];
-                } else if ($typeToAdd == 'commentary-qna-fill') {
-                    $reorderedQuestions[] = $commentaryFillIn[$commentaryFillInIndex++];
-                }
-            }
-            $output['questions'] = $reorderedQuestions;
+            $output['questions'] = self::sortQuestionsSequentially($output['questions']);
         } else {
             // random output! shuffle 2x (2x because 1x is boring)
             shuffle($output['questions']);
@@ -828,5 +718,103 @@ class QuizGenerator
             die();
         }
         return $output;
+    }
+
+    private static function sortQuestionsSequentially(array $questions): array
+    {
+        // have to break questions out into each kind and then sort and then reorder them
+        $totalQuestions = count($questions);
+        $bibleQnA = [];
+        $bibleFillIn = [];
+        $commentaryQnA = [];
+        $commentaryFillIn = [];
+        foreach ($questions as $question) {
+            if ($question['type'] == 'bible-qna') {
+                $bibleQnA[] = $question;
+            } else if ($question['type'] == 'bible-qna-fill') {
+                $bibleFillIn[] = $question;
+            } else if ($question['type'] == 'commentary-qna') {
+                $commentaryQnA[] = $question;
+            } else if ($question['type'] == 'commentary-qna-fill') {
+                $commentaryFillIn[] = $question;
+            }
+        }
+        // sort!
+        array_multisort(
+            array_column($bibleQnA, 'startBibleOrder'), SORT_ASC,
+            array_column($bibleQnA, 'startChapter'), SORT_ASC, 
+            array_column($bibleQnA, 'startVerse'), SORT_ASC,
+            array_column($bibleQnA, 'endBibleOrder'), SORT_ASC,
+            array_column($bibleQnA, 'endChapter'), SORT_ASC,
+            array_column($bibleQnA, 'endVerse'), SORT_ASC,
+            array_column($bibleQnA, 'id'), SORT_ASC,
+            $bibleQnA);
+        array_multisort(
+            array_column($bibleFillIn, 'startBibleOrder'), SORT_ASC,
+            array_column($bibleFillIn, 'startChapter'), SORT_ASC, 
+            array_column($bibleFillIn, 'startVerse'), SORT_ASC,
+            array_column($bibleFillIn, 'endBibleOrder'), SORT_ASC,
+            array_column($bibleFillIn, 'endChapter'), SORT_ASC,
+            array_column($bibleFillIn, 'endVerse'), SORT_ASC,
+            array_column($bibleFillIn, 'id'), SORT_ASC,
+            $bibleFillIn);
+        array_multisort(
+            array_column($commentaryQnA, 'number'), SORT_ASC, 
+            array_column($commentaryQnA, 'topic'), SORT_ASC, 
+            array_column($commentaryQnA, 'startPage'), SORT_ASC, 
+            array_column($commentaryQnA, 'endPage'), SORT_ASC,
+            array_column($commentaryQnA, 'id'), SORT_ASC,
+            $commentaryQnA);
+        array_multisort(
+            array_column($commentaryFillIn, 'number'), SORT_ASC, 
+            array_column($commentaryFillIn, 'topic'), SORT_ASC, 
+            array_column($commentaryFillIn, 'startPage'), SORT_ASC, 
+            array_column($commentaryFillIn, 'endPage'), SORT_ASC,
+            array_column($commentaryFillIn, 'id'), SORT_ASC,
+            $commentaryFillIn);
+        // now mash them back into a quiz.
+        $reorderedQuestions = [];
+        $bibleIndex = 0;
+        $bibleFillInIndex = 0;
+        $commentaryIndex = 0;
+        $commentaryFillInIndex = 0;
+        $bibleCount = count($bibleQnA);
+        $bibleFillInCount = count($bibleFillIn);
+        $commentaryCount = count($commentaryQnA);
+        $commentaryFillInCount = count($commentaryFillIn);
+        for ($i = 0; $i < $totalQuestions; $i++) {
+            $hasBibleQuestionLeft = $bibleIndex < $bibleCount;
+            $hasBibleFillInLeft = $bibleFillInIndex < $bibleFillInCount;
+            $hasCommentaryQuestionLeft = $commentaryIndex < $commentaryCount;
+            $hasCommentaryFillInQuestionLeft = $commentaryFillInIndex < $commentaryFillInCount;
+
+            $availableArraysOfQuestions = [];
+            if ($hasBibleQuestionLeft) {
+                $availableArraysOfQuestions[] = 'bible-qna';
+            }
+            if ($hasBibleFillInLeft) {
+                $availableArraysOfQuestions[] = 'bible-qna-fill';
+            }
+            if ($hasCommentaryQuestionLeft) {
+                $availableArraysOfQuestions[] = 'commentary-qna';
+            }
+            if ($hasCommentaryFillInQuestionLeft) {
+                $availableArraysOfQuestions[] = 'commentary-qna-fill';
+            }
+            //echo "i = " . $i . "\n";
+            //echo "bible = " . $bibleIndex . ", bible fill = " . $bibleFillInIndex . ", commentary = " . $commentaryIndex . ", comm fill = ". $commentaryFillInIndex . "\n";
+            $index = random_int(0, count($availableArraysOfQuestions) - 1);
+            $typeToAdd = $availableArraysOfQuestions[$index];
+            if ($typeToAdd == 'bible-qna') {
+                $reorderedQuestions[] = $bibleQnA[$bibleIndex++];
+            } else if ($typeToAdd == 'bible-qna-fill') {
+                $reorderedQuestions[] = $bibleFillIn[$bibleFillInIndex++];
+            } else if ($typeToAdd == 'commentary-qna') {
+                $reorderedQuestions[] = $commentaryQnA[$commentaryIndex++];
+            } else if ($typeToAdd == 'commentary-qna-fill') {
+                $reorderedQuestions[] = $commentaryFillIn[$commentaryFillInIndex++];
+            }
+        }
+        return $reorderedQuestions;
     }
 }
