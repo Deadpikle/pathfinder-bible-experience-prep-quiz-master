@@ -194,8 +194,9 @@ class QuizController
         // TODO: errors if not enough data sent
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
-        $pdf = PDFGenerator::generatePDF($quizQuestions, false, $viewFillInTheBlankAnswersInBold, User::getPreferredLanguage($app->db)->abbreviation ?? 'en');
-        $pdf->Output();
+        $userLanguageAbbr = User::getPreferredLanguage($app->db)->abbreviation ?? 'en';
+        $pdf = PDFGenerator::generatePDF($quizQuestions, false, $viewFillInTheBlankAnswersInBold, $userLanguageAbbr);
+        $pdf->Output('', Translations::t('PBE Study Guide', $userLanguageAbbr), true);
     }
 
     public function generateFrontBackFlashCards(PBEAppConfig $app, Request $request)
@@ -203,8 +204,9 @@ class QuizController
         // TODO: errors if not enough data sent
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
         $quizQuestions = $this->getQuizQuestions($app, $request, true, false);
-        $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold, User::getPreferredLanguage($app->db)->abbreviation ?? 'en');
-        $pdf->Output();
+        $userLanguageAbbr = User::getPreferredLanguage($app->db)->abbreviation ?? 'en';
+        $pdf = PDFGenerator::generatePDF($quizQuestions, true, $viewFillInTheBlankAnswersInBold, $userLanguageAbbr);
+        $pdf->Output('', Translations::t('PBE Study Guide', $userLanguageAbbr), true);
     }
 
     public function generatePresentation(PBEAppConfig $app, Request $request)
