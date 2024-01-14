@@ -46,7 +46,10 @@ class Book
         return $output;
     }
 
-    public static function loadAllBooks(PDO $db) : array
+    /**
+     * @return array<Book>
+     */
+    public static function loadAllBooks(PDO $db): array
     {
         return Book::loadBooks('', [], $db);
     }
