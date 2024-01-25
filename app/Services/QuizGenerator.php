@@ -373,7 +373,9 @@ class QuizGenerator
             $outputQuestions[] = $data;
             $number++;
         }
-        $outputQuestions = self::sortQuestionsSequentially($outputQuestions, $db);
+        if ($isOutputSequential) {
+            $outputQuestions = self::sortQuestionsSequentially($outputQuestions, $db);
+        }
 
         $output = [ 
             'bibleQuestions' => $bibleAdded,
