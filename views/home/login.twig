@@ -2,20 +2,23 @@
 
 {% block content %}
 
-<h2>Welcome!</h2>
+<h2>Welcome to {{ app.websiteName }}!</h2>
 
 <p>Please type in your access code below. Don't have an access code? Please <a href="{{ app.yurl('/about') }}">view the About page by clicking here</a> to contact us and get access, use this site's <a href="{{ app.yurl('/contact') }}">contact form</a> to get in touch with us, or use code <code>4guest</code> to get a preview of the website. <strong>Access codes are 100% free</strong>. We do not charge for use of this website.</p>
 
 {% include 'includes/error-message.twig' %}
 
 <form method="post">
-    <div class="row">
-        <div class="input-field col s12 m4">
-            <input type="password" id="access-code" name="access-code" required/>
-            <label for="access-code">Enter your access code here</label>
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="access-code" class="col-form-label">Enter your access code here:</label>
+        </div>
+        <div class="form-group-inline col-auto">
+            <input class="form-control" type="password" id="access-code" name="access-code" required placeholder="Access Code" autofocus/>
+            {# <label for="access-code">Enter your access code here</label> #}
         </div>
     </div>
-    <button class="btn waves-effect waves-light submit" type="submit" name="action">Login</button>
+    <button class="btn btn-primary mt-1" type="submit" name="action">Login</button>
 </form>
 
 <div class="row mt-2">
