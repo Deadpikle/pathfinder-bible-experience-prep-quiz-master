@@ -1,10 +1,23 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/users') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/users') }}">Users</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create User' : 'Edit User' }}</li>
+    </ol>
+</nav>
 
-<h4>{{ isCreating ? 'Create' : 'Edit' }} User</h4>
+<h4>{{ isCreating ? 'Create User' : 'Edit User' }}</h4>
 
 {% include 'includes/error-message.twig' %}
 
@@ -51,8 +64,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('select').material_select();
-        fixRequiredSelectorCSS();
+        $('#club').select2({
+            placeholder: 'Select a Pathfinder club...',
+            allowClear: true
+        });
+        $('#user-type').select2({
+            placeholder: 'Select a Pathfinder club...',
+            allowClear: true
+        });
     });
 </script>
 

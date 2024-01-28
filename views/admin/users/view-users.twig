@@ -8,9 +8,16 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
 
-<h4>Website Users</h4>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Users</li>
+    </ol>
+</nav>
+
+<h4>Users</h4>
 
 {% if _get['created'] %}
     <div class="green white-text p-1 rounded-border">

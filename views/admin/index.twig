@@ -2,6 +2,13 @@
 
 {% block content %}
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Admin</li>
+    </ol>
+</nav>
+
 <h2>Administrator Panel</h2>
 
 <div id="admin-links">
