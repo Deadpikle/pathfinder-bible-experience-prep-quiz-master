@@ -17,7 +17,12 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Questions</li>
+    </ol>
+</nav>
 
 <h3>Questions</h3>
 
@@ -56,7 +61,7 @@
 <div class="divider"></div>
 
 <div id="questions-table">
-    <table id="questions" class="striped responsive-table">
+    <table id="questions" class="table table-sm table-striped table-bordered responsive-table">
         <thead>
             <tr id="table-header-row">
             </tr>
@@ -67,17 +72,8 @@
 </div>
 
 <div id="loading-bar" class="preloader-wrapper active">
-    <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-            <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-            <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-            <div class="circle"></div>
-        </div>
-    </div>
+    <i class="fas fa-cog fa-spin fa-3x"></i> 
+    Loading questions...
 </div>
 
 <script type="text/javascript">
@@ -285,8 +281,8 @@
                     html += '<td>' + languageName + '</td>';
                 }
                 if (isAdmin && !isGuestMode) {
-                    html += '<td><a class="waves-effect waves-light btn" href="' + questionURLBase + id + '/edit">Edit</a></td>';
-                    html += '<td><a class="waves-effect waves-light btn red" href="' + questionURLBase + id + '/delete">Delete</a></td>';
+                    html += '<td><a class="btn btn-sm btn-primary" href="' + questionURLBase + id + '/edit"><i class="fas fa-pencil"></i> Edit</a></td>';
+                    html += '<td><a class="btn btn-sm btn-danger" href="' + questionURLBase + id + '/delete"><i class="fas fa-trash-alt"></i> Delete</a></td>';
                 }
                 html += '</tr>';
                 $questionsBody.append(html);
@@ -369,8 +365,6 @@
             resetTable();
             loadQuestions();
         });
-        
-        $('#language-select').material_select();
 
         // load questions
         loadQuestions();

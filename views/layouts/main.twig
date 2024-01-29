@@ -71,7 +71,7 @@
     </head>
     <body>
         <header>
-            <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+            <nav class="navbar navbar-expand-lg bg-primary shadow" data-bs-theme="dark">
                 <div class="container">
                     <a href="{{ homePath }}" class="navbar-brand">{{ app.websiteName }}</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,8 +105,10 @@
                 {% endblock %}
             </div>
         </main>
-        <footer class="container">
-            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
+        <footer class="site-footer">
+            <div class="container">
+                <p class="mt-2 mb-2"><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
+            </div>
         </footer>
         <script type="text/javascript">
             $(document).ready(function() {

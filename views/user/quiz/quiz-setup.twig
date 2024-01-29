@@ -5,7 +5,12 @@
 {% set areAnyQuestionsAvailable = (chapters | length > 0) or (commentaries | length > 0) %}
 {% set lastBookSeen = '' %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Quiz Setup</li>
+    </ol>
+</nav>
 
 <h4>Quiz Setup</h4>
 {% if areAnyQuestionsAvailable %}
