@@ -8,7 +8,12 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+    </ol>
+</nav>
 
 <h3>Contact Us</h3>
 <p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
