@@ -4,7 +4,11 @@
 
 <h2>Welcome to {{ app.websiteName }}!</h2>
 
-<p>Please type in your access code below. Don't have an access code? Please <a href="{{ app.yurl('/about') }}">view the About page by clicking here</a> to contact us and get access, use this site's <a href="{{ app.yurl('/contact') }}">contact form</a> to get in touch with us, or use code <code>4guest</code> to get a preview of the website. <strong>Access codes are 100% free</strong>. We do not charge for use of this website.</p>
+<div class="row">
+    <div class="col-12 col-sm-9">
+        <p>Please type in your access code below. Don't have an access code? Please <a href="{{ app.yurl('/about') }}">view the About page by clicking here</a> to find your conference's contact person to get an access codde, use this site's <a href="{{ app.yurl('/contact') }}">contact form</a> to request a code, or use code <code>4guest</code> to get a preview of the website. <strong>Access codes are 100% free</strong>. We do not charge for use of this website.</p>
+    </div>
+</div>
 
 {% include 'includes/error-message.twig' %}
 
@@ -22,8 +26,8 @@
 </form>
 
 <div class="row mt-2">
-    <div class="col s8">
-        <p><em>Why are access codes required?</em> Login access codes are required to prevent system abuse in case someone with access to edit questions or add/remove users decides to do things that aren't kind to other users. If someone decides to do things that aren't kind, then website administrators can remove their access to the system.</p>
+    <div class="col-sm-8">
+        <p><em>Why are access codes required?</em> Login access codes are required to prevent system abuse in case someone with access to edit questions or add/remove users decides to do things that aren't kind to other users. If someone decides to do things that aren't kind, then website administrators can remove their access to the system. (And yes, being able to track negative user behavior has unfortunately been necessary in the past.)</p>
     </div>
 </div>
 

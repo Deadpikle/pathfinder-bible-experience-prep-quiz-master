@@ -65,11 +65,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#club').select2({
+            theme: 'bootstrap-5',
             placeholder: 'Select a Pathfinder club...',
+            searchInputPlaceholder: 'Search clubs...',
             allowClear: true
         });
         $('#user-type').select2({
-            placeholder: 'Select a Pathfinder club...',
+            theme: 'bootstrap-5',
+            placeholder: 'Select a user type...',
+            searchInputPlaceholder: 'Search types...',
             allowClear: true
         });
     });

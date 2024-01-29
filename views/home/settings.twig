@@ -1,32 +1,47 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+    {{ include('includes/scripts/select2.twig') }}
+{% endblock %}
+
 {% block content %}
    
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Settings</li>
+    </ol>
+</nav>
 
 {% if didUpdate %}
     <p>Settings successfully updated!</p>
 {% endif %}
 
+<h3>User Settings</h3>
+
 <form method="post">
-    <p><b>Adjust Default Quiz/Question Language</b></p>
     <div class="row">
-        <div class="input-field col s12 m4">
-            <select id="language-select" name="language-select">
+        <div class="form-group col-12 col-md-4">
+            <label for="language-select">Default Question Language</label>
+            <select id="language-select" name="language-select" class="form-control">
                 {% for language in languages %}
                     {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
                     <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
                 {% endfor %}
             </select>
-            <label for="language-select">Filter by language</label>
         </div>
     </div>
-    <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+    <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
 </form>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#language-select").material_select();
+        $('#language-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select language...',
+            searchInputPlaceholder: 'Search languages...',
+            allowClear: false
+        });
     });
 </script>
 

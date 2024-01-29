@@ -4,6 +4,7 @@
     {% if not app.isLocalHost %}
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {% endif %}
+    {{ include('includes/scripts/select2.twig') }}
 {% endblock %}
 
 {% block content %}
@@ -28,7 +29,7 @@
      </script>
 {% endif %}
 
-{% if _get['success'] is defined %}
+{% if _get['success'] is defined %} {# TODO: fix this border/error messages #}
     <div class="green white-text p-1 mb-1 rounded-border">
         <span class="ml-1">Message successfully submitted! We'll get back to you as soon as we can.</span>
     </div>
@@ -42,28 +43,29 @@
 
 <form id="contact-form" method="post">
     <div class="row">
-        <div class="input-field col s12 m6">
-            <input type="text" class="form-control" id="name" name="name" placeholder="First-Name Last-Name" required maxlength="250" data-length="250" value="{{ submission.personName }}">
+        <div class="form-group col-12 col-md-4 mt-1">
             <label for="name">* Your name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="First-Name Last-Name" required maxlength="250" value="{{ submission.personName }}">
         </div>
-        <div class="input-field col s12 m6">
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email" required maxlength="250" data-length="250" value="{{ submission.email }}">
+        <div class="form-group col-12 col-md-4 mt-1">
             <label for="email">* Your email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="somebody@nowhere.com" required maxlength="250" data-length="250" value="{{ submission.email }}">
         </div>
     </div>
-    <div class="row">
-        <div class="input-field col s12 m6">
-            <input type="text" class="form-control" id="club" name="club" placeholder="Dayton Area Eagles" maxlength="150" data-length="150" value="{{ submission.club }}">
+    <div class="row mt-1">
+        <div class="form-group col-12 col-md-4 mt-1">
             <label for="club">* Pathfinder Club</label>
+            <input type="text" class="form-control" id="club" name="club" placeholder="Dayton Area Eagles" maxlength="150" data-length="150" value="{{ submission.club }}">
         </div>
-        <div class="input-field col s12 m6">
-            <input type="text" class="form-control" id="conference" name="conference" placeholder="Upper Columbia Conference" maxlength="150" data-length="150" value="{{ submission.conference }}">
+        <div class="form-group col-12 col-md-4 mt-1">
             <label for="conference">* SDA Conference</label>
+            <input type="text" class="form-control" id="conference" name="conference" placeholder="Upper Columbia Conference" maxlength="150" data-length="150" value="{{ submission.conference }}">
         </div>
     </div>
-    <div class="row">
-        <div class="input-field col s12 m6">
-            <select id="type" name="type" required>
+    <div class="row mt-1">
+        <div class="form-group col-sm-12 col-md-6 mt-1">
+            <label for="type">* I am a...</label>
+            <select id="type" class="form-control" name="type" required>
                 <option value="">Select whether you are a Pathfinder, PBE/Club leader, or...</option>
                 {% set selected = submission.type == 'pathfinder' ? 'selected' : '' %}
                 <option value="pathfinder" {{ selected }}>Pathfinder</option>
@@ -72,33 +74,36 @@
                 {% set selected = submission.type == 'other' ? 'selected' : '' %}
                 <option value="other" {{ selected }}>Other</option>
             </select>
-            <label for="type">* I am a...</label>
         </div>
     </div>
-    <div class="row">
-        <div class="input-field col s12 m6">
-            <input type="text" class="form-control" id="title" name="title" placeholder="Title" required maxlength="150" data-length="150" value="{{ submission.title }}">
+    <div class="row mt-1">
+        <div class="form-group col-12 col-md-6 mt-1">
             <label for="title">* Subject</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Title" required maxlength="150" data-length="150" value="{{ submission.title }}">
         </div>
     </div>
-    <div class="row">
-        <div class="input-field col s12 m6">
-            <textarea class="materialize-textarea" id="message" name="message" placeholder="I would like an access code to...I belong to the Pathfinder club named..." rows="5" required data-length="10000"> {{ submission.message }}</textarea>
+    <div class="row mt-1">
+        <div class="form-group col-12 col-md-6 mt-1">
             <label for="message">* Message</label>
+            <textarea class="form-control" id="message" name="message" placeholder="I would like an access code to...I belong to the Pathfinder club named..." rows="5" required maxlength="10000">{{ submission.message }}</textarea>
         </div>
     </div>
-    {% if not app.isLocalHost %}
-        <button type="submit" class="btn waves-effect waves-light submit g-recaptcha" 
-            data-sitekey="{{ app.recaptchaPublicKey }}"
-            data-callback="onSubmit">Submit</button>
-        {# <p>
-            <em>This site is protected by reCAPTCHA and the Google
-            <a href="https://policies.google.com/privacy">Privacy Policy</a> and
-            <a href="https://policies.google.com/terms">Terms of Service</a> apply.</em>
-        </p> #}
-    {% else %}
-        <button type="submit" class="btn waves-effect waves-light submit">Submit</button>
-    {% endif %}
+    <div class="row mt-2">
+        <div class="col">
+            {% if not app.isLocalHost %}
+                <button type="submit" class="btn btn-sm btn-primary g-recaptcha" 
+                    data-sitekey="{{ app.recaptchaPublicKey }}"
+                    data-callback="onSubmit"><i class="fa fa-paper-plane"></i> Submit</button>
+                {# <p>
+                    <em>This site is protected by reCAPTCHA and the Google
+                    <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                    <a href="https://policies.google.com/terms">Terms of Service</a> apply.</em>
+                </p> #}
+            {% else %}
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-paper-plane"></i> Submit</button>
+            {% endif %}
+        </div>
+    </div>
     <p id="contact-note" class="mt-2"><em>Note: If this contact form fails due to some unusual error, you can email {{ app.contactName }} at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>.</em></p>
 
     <p>If you're submitting information about your Pathfinder club, please send the club name, a link to the club's website or Facebook page (if available), and the name and email address of one or more club leaders who are in charge of the club.</p>
@@ -108,8 +113,12 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('select').material_select();
-        fixRequiredSelectorCSS();
+        $('#type').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select type of Pathfinder...',
+            searchInputPlaceholder: 'Search Pathfinder types...',
+            allowClear: false
+        });
     });
 </script>
 
