@@ -3,7 +3,30 @@ body {
     /* ...why did I put this here? It concerns me...maybe it's causing issues... */
     min-height: 100vh;
     flex-direction: column;
+}
+
+html {
     background-color: #fafafa;
+}
+
+html[data-bs-theme="dark"] body {
+    background-color: #212528;
+}
+
+html[data-bs-theme="dark"] nav.navbar {    
+    box-shadow: 0px 1px 2px rgba(184, 184, 184, 0.5) !important;
+}
+
+html[data-bs-theme="dark"] footer {    
+    box-shadow: 0px -1px 2px rgba(184, 184, 184, 0.5) !important;
+}
+
+html[data-bs-theme="dark"] body .breadcrumb {
+    background-color: rgb(67, 67, 67);
+}
+
+html[data-bs-theme="dark"] .dataTables_filter label {
+    color: #dee2e6 !important;
 }
 
 nav.navbar {
