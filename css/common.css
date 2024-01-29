@@ -13,6 +13,7 @@ nav.navbar {
 
 footer {
     box-shadow: 0px -1px 2px rgba(0, 0, 0, 0.4) !important;
+    margin-top: 1em;
 }
 
 footer, footer a {
