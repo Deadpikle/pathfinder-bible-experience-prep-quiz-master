@@ -25,7 +25,7 @@
         </form>
     </div>
     {% if app.isWebAdmin %}
-        <div class="divider"></div>
+        <hr/>
             <div class="section">
             <h5>Change Conference</h5>
             <form action="{{ app.yurl('/admin/home-sections/' ~ currentConferenceID ~ '/sections/change') }}" method="post">
@@ -46,7 +46,7 @@
         </div>
     {% endif %}
     
-    <div class="divider"></div>
+    <hr/>
     <div class="section">
         <h5>Copy Sections from Past/Admins</h5>
         <p>If you'd like to copy over the home info sections from a previous year or from the website admins, choose the year to copy from and click the applicable button. This will not overwrite any of your current information that you've set up for the current year ({{ currentYear.year }}).</p>

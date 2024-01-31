@@ -13,42 +13,42 @@
 
 <div id="admin-links">
     <h4>Club Administrator Functions</h4>
-    <ul>
-        <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/upload-csv') }}">Import Questions from Excel</a></li>
-        <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/users') }}">Users</a></li>
+    <ul class="list-style-none">
+        <li><a class="btn btn-primary" href="{{ app.yurl('/admin/upload-csv') }}"><i class="fas fa-fw fa-file-excel"></i> Import Questions from Excel</a></li>
+        <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/users') }}"><i class="fas fa-fw fa-users"></i> Users</a></li>
     </ul>
     {% if app.isConferenceAdmin or app.isWebAdmin %}
         <h4>Conference Administrator Functions</h4>
-        <ul>
+        <ul class="list-style-none">
             {% if app.isWebAdmin %}
-                {# <li class="home-buttons">
-                    <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
+                {# <li>
+                    <a class="btn btn-primary" href="{{ app.yurl('/admin/home-sections/' ~ conferenceID ~ '/sections') }}">Home Page Info</a>
                 </li> #}
             {% endif %}
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/clubs') }}">Pathfinder Clubs</a></li>
-            <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/study-guides') }}">Study Guides</a></li>
+            <li><a class="btn btn-primary" href="{{ app.yurl('/admin/clubs') }}"><i class="fas fa-fw fa-id-card"></i> Pathfinder Clubs</a></li>
+            <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/study-guides') }}"><i class="fas fa-fw fa-file-pdf"></i> Study Guides</a></li>
         </ul>
     {% endif %}
     {% if app.isWebAdmin %}
         <h4>Web Administrator Functions</h4>
         <div class="row">
             <div class="col s6 m5">
-                <ul class="mt-0">
-                    <li><a class="btn blue white-text waves-effect waves-light" href="{{ app.yurl('/admin/help') }}">Web Admin Help</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/commentaries') }}">Commentaries</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/conferences') }}">Conferences</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/contact-submissions') }}">Contact Form Submissions</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-fill-ins') }}">Manage Bible Fill in the Blank Questions</a></li>
+                <ul class="mt-0 list-style-none">
+                    <li><a class="btn blue white-text btn-primary" href="{{ app.yurl('/admin/help') }}"><i class="fas fa-fw fa-question-circle"></i> Web Admin Help</a></li>
+                    <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/books') }}"><i class="fas fa-fw fa-book"></i> Bible Books</a></li>
+                    <li><a class="btn btn-tertiary mt-1" href="{{ app.yurl('/admin/commentaries') }}"><i class="fas fa-fw fa-chalkboard-teacher"></i> Commentaries</a></li>
+                    <li><a class="btn btn-primary mt-1" href="{{ app.yurl('/admin/conferences') }}"><i class="fas fa-fw fa-address-book"></i> Conferences</a></li>
+                    <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/contact-submissions') }}"><i class="fas fa-fw fa-envelope-open"></i> Contact Form Submissions</a></li>
+                    <li><a class="btn btn-tertiary mt-1" href="{{ app.yurl('/admin/bible-fill-ins') }}"><i class="fas fa-fw fa-comment"></i> Manage Bible Fill in the Blank Questions</a></li>
                 </ul>
             </div>
             <div class="col s6 m5">
-                <ul class="mt-0">
-                    <li><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/matching-question-sets') }}">Manage Matching Question Sets</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/bible-qna-questions') }}">Manage Q&amp;A Questions</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/non-blankable-words') }}">Non-Blankable Words</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/settings') }}">Website Settings</a></li>
-                    <li class="home-buttons"><a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/years') }}">Years</a></li>
+                <ul class="mt-0 list-style-none">
+                    <li><a class="btn btn-primary" href="{{ app.yurl('/admin/matching-question-sets') }}"><i class="fas fa-fw fa-list-ul"></i> Manage Matching Question Sets</a></li>
+                    <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/bible-qna-questions') }}"><i class="fas fa-fw fa-question"></i> Manage Q&amp;A Questions</a></li>
+                    <li><a class="btn btn-tertiary mt-1" href="{{ app.yurl('/admin/non-blankable-words') }}"><i class="fas fa-fw fa-comments"></i> Non-Blankable Words</a></li>
+                    <li><a class="btn btn-primary mt-1" href="{{ app.yurl('/admin/settings') }}"><i class="fas fa-fw fa-cogs"></i> Website Settings</a></li>
+                    <li><a class="btn btn-info mt-1" href="{{ app.yurl('/admin/years') }}"><i class="fas fa-fw fa-calendar"></i> Years</a></li>
                 </ul>
             </div>
     {% endif %}

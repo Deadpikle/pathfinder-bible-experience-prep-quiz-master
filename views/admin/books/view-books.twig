@@ -8,7 +8,13 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Bible Books</li>
+    </ol>
+</nav>
 
 <h4>Bible Books</h4>
 
@@ -18,35 +24,38 @@
         {% include 'includes/error-message.twig' %}
         <form action="{{ app.yurl('/admin/books/create') }}" method="post">
             <div class="row mb-0">
-                <div class="input-field col s6 m4">
-                    <input type="text" id="name" name="name" value="{{ bookName }}" placeholder="2 Kings" required data-length="150"/>
+                <div class="form-group col-sm-6 col-md-4">
                     <label for="name">Name</label>
+                    <input class="form-control" type="text" id="name" name="name" value="{{ bookName }}" placeholder="2 Kings" required maxlength="150"/>
                 </div>
-                <div class="input-field col s6 m4">
-                    <input type="number" id="number-chapters" name="number-chapters" placeholder="1" value="{{ numberOfChapters }}" required min="1" max="150"/>
+                <div class="form-group col-sm-6 col-md-4">
                     <label for="number-chapters">Number of Chapters</label>
+                    <input class="form-control" type="number" id="number-chapters" name="number-chapters" placeholder="1" value="{{ numberOfChapters }}" required min="1" max="150"/>
                 </div>
-                <div class="input-field col s6 m4">
-                    <input type="number" id="bible-order" name="bible-order" placeholder="1" value="{{ bibleOrder }}" required min="1" max="66"/>
-                    <label for="number-chapters">Bible Order (Genesis = 1, Exodus = 2, Matthew = 40...)</label>
+                <div class="form-group col-sm-6 col-md-4 mt-1">
+                    <label for="number-chapters">Bible Book Order</label>
+                    <input class="form-control" type="number" id="bible-order" name="bible-order" placeholder="1" value="{{ bibleOrder }}" required min="1" max="66"/>
+                    <small>(Genesis = 1, Exodus = 2, Matthew = 40...)</small>
                 </div>
             </div>
             <div class="row mt-0">
                 <div class="input-field col s6 m4">
-                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Book</button>
+                    <button class="inline btn btn-sm btn-primary submit" type="submit" name="action"><i class="fas fa-save"></i> Add Book</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="divider"></div>
+    <hr/>
     <div class="">
-        <table class="striped responsive-table" id="books-table">
+        <table class="table table-striped table-responsive table-bordered" id="books-table">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Number of Chapters</th>
                     <th>Bible Order</th>
                     <th>Year</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -57,10 +66,14 @@
                         <td>{{ book.numberChapters }}</td>
                         <td>{{ book.bibleOrder }}</td>
                         <td>{{ book.year }}</td>
-                        <td>
-                            <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Manage Chapters</a>
-                            <a class="waves-effect waves-light btn blue" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/edit') }}">Edit</a>
-                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/delete') }}">Remove</a>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-info" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}"><i class="fas fa-eye"></i> Manage Chapters</a>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit</a>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Remove</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -72,7 +85,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
-            { orderable: false, targets: [-1] }
+            { orderable: false, targets: [-1, -2, -3] }
         ];
         datatablesProps.language = {
             searchPlaceholder: "Search books..."

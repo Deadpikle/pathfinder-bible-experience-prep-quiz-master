@@ -35,7 +35,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div class="divider"></div>
+        <hr/>
 
         {% for language in languages %}
             <p><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-qna-questions/' ~ language.languageID ~ '/delete') }}">Delete All {{ language.getDisplayName() }} Bible Q&amp;A Questions</a></p>
