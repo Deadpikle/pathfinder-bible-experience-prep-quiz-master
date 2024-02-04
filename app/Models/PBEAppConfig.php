@@ -8,6 +8,7 @@ class PBEAppConfig extends AppConfig
 {
     public bool $isWebAdmin;
     public bool $isConferenceAdmin;
+    public bool $isClubAdmin;
     public bool $isGuest;
 
     public array $settings;
@@ -35,6 +36,7 @@ class PBEAppConfig extends AppConfig
         parent::__construct($isLocalHost, $basePath);
         $this->isWebAdmin = false;
         $this->isConferenceAdmin = false;
+        $this->isClubAdmin = false;
         $this->isGuest = false;
         
         $this->settings = [];
