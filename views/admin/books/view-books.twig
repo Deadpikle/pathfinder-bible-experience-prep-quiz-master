@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="row mt-0">
-                <div class="input-field col s6 m4">
+                <div class="input-field col">
                     <button class="inline btn btn-sm btn-primary submit" type="submit" name="action"><i class="fas fa-save"></i> Add Book</button>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit</a>
                         </td>
                         <td class="text-center">
-                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Remove</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a>
                         </td>
                     </tr>
                 {% endfor %}

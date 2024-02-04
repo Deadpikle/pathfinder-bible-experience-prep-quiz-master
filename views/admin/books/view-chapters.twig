@@ -7,7 +7,8 @@
         <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
         <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
         <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Chapters for {{ book.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ book.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">Chapters</li>
     </ol>
 </nav>
 
@@ -55,7 +56,7 @@
                         <td>
                             <a class="btn btn-sm btn-info" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/download-excel')}}"><i class="fas fa-file-excel"></i> Excel Template for English Questions <i class="fas fa-download"></i></a>
                             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses')}}"><i class="fas fa-eye"></i> Manage Verses</a>
-                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/delete')}}"><i class="fas fa-trash-alt"></i> Remove</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/delete')}}"><i class="fas fa-trash-alt"></i> Delete</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/conferences') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/conferences') }}">Conferences</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create Conference' : 'Edit Conference' }}</li>
+    </ol>
+</nav>
 
 <h4>{{ isCreating ? 'Create Conference' : 'Edit Conference' }}</h4>
 
@@ -11,28 +18,26 @@
 <div id="create-edit-conference">
     <form method="post">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="name" name="name" value="{{ conference.name }}" placeholder="Upper Columbia Conference"  
-                    required data-length="150"/>
+            <div class="form-group col-sm-12 col-md-4">
                 <label for="name">Conference Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ conference.name }}" placeholder="Upper Columbia Conference" required maxlength="150"/>
             </div>
-            <div class="input-field col s12 m4">
-                <input type="url" id="url" name="url" value="{{ conference.url }}" placeholder="https://uccsda.org" 
-                    required data-length="350"/>
+            <div class="form-group col-sm-12 col-md-4">
                 <label for="name">Website URL</label>
+                <input type="url" class="form-control" id="url" name="url" value="{{ conference.url }}" placeholder="https://uccsda.org" required maxlength="350"/>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="contact-name" name="contact-name" value="{{ conference.contactName }}" placeholder="First-Name Last-Name" required data-length="150"/>
+        <div class="row mt-1">
+            <div class="form-group col-sm-12 col-md-4">
                 <label for="contact-name">Contact Name</label>
+                <input type="text" class="form-control" id="contact-name" name="contact-name" value="{{ conference.contactName }}" placeholder="First-Name Last-Name" required maxlength="150"/>
             </div>
-            <div class="input-field col s12 m4">
-                <input type="email" id="contact-email" name="contact-email" value="{{ conference.contactEmail }}" placeholder="person@somewhere.com" required data-length="150"/>
+            <div class="form-group col-sm-12 col-md-4">
                 <label for="contact-name">Contact Email</label>
+                <input type="email" class="form-control" id="contact-email" name="contact-email" value="{{ conference.contactEmail }}" placeholder="person@somewhere.com" required maxlength="150"/>
             </div>
         </div>
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        <button class="btn btn-primary btn-sm mt-2" type="submit" name="action"><i class="fas fa-save"></i> {{ isCreating ? 'Add Conference' : 'Save Changes' }}</button>
     </form>
 </div>
 

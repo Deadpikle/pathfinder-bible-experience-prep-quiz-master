@@ -8,11 +8,11 @@
 
 {% include 'includes/error-message.twig' %}
 
-<div id="delete-user">
+<div id="delete-study-guide">
     <h4> Are you sure you want to delete the study guide {{ studyGuide.displayName }} for the year {{ studyGuide.year }}? </h4>
     <form method="post">
         {{ csrf('delete-study-guide') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Study Guide</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Study Guide</button>
     </form>
 </div>
 

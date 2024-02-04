@@ -8,7 +8,17 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ book.name }}</li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Chapters</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ chapter.number }}</li>
+        <li class="breadcrumb-item active" aria-current="page">Verses</li>
+    </ol>
+</nav>
 
 <h4>{{ book.name }} {{ chapter.number }} Verses</h4>
 
@@ -18,36 +28,36 @@
         {% include 'includes/error-message.twig' %}
         <form method="post">
             <div class="row mb-0">
-                <div class="input-field col s6 m4">
-                    <input type="number" id="number" name="number" placeholder="1" required min="1" max="176"/>
+                <div class="form-group col-sm-6 col-md-4 col-lg-2">
                     <label for="number">Verse Number</label>
-                </div>
-                <div class="input-field col s6 m4">
-                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Verse</button>
+                    <input type="number" class="form-control" id="number" name="number" placeholder="1" required min="1" max="176"/>
                 </div>
             </div>
+            <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Add Verse</button>
         </form>
     </div>
     <hr/>
-    <div class="">
-        <table class="striped responsive-table" id="verses-table">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for verse in verses %}
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <table class="table table-striped table-bordered" id="verses-table">
+                <thead>
                     <tr>
-                        <td>{{ verse.number }}</td>
-                        <td>
-                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses/' ~ verse.verseID ~ '/delete') }}">Delete Verse</a>
-                        </td>
+                        <th>Number</th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for verse in verses %}
+                        <tr>
+                            <td>{{ verse.number }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses/' ~ verse.verseID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete Verse</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

@@ -12,7 +12,7 @@
     <h4> Are you sure you want to delete all of the {{ language.getDisplayName() }} Bible fill in questions for {{ book.name }} chapter {{ chapter.number }}? </h4>
     <form method="post">
         {{ csrf('delete-chapter-bible-fill-ins') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Questions</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Questions</button>
     </form>
 </div>
 

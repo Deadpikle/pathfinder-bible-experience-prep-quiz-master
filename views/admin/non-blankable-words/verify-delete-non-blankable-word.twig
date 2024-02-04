@@ -12,7 +12,7 @@
     <h4> Are you sure you want to delete the non-blankable word {{ nonBlankableWord.word }}? </h4>
     <form method="post">
         {{ csrf('delete-non-blankable-word') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Non-blankable Word</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Non-blankable Word</button>
     </form>
 </div>
 

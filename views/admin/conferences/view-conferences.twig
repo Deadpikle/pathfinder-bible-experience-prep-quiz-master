@@ -8,16 +8,22 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Conferences</li>
+    </ol>
+</nav>
 
 <h4>Conferences</h4>
 
 <div id="create-conference">
-    <a class="btn waves-effect waves-light" href="{{ app.yurl('/admin/conferences/create') }}">Create Conference</a>
+    <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/conferences/create') }}"><i class="fas fa-plus"></i> Create Conference</a>
 </div>
 
 <div id="conferences-div">
-    <table class="striped responsive-table" id="conferences-table">
+    <table class="table table-striped table-bordered table-responsive" id="conferences-table">
         <thead>
             <tr>
                 <th>Conference Name</th>
@@ -34,10 +40,9 @@
                     <td>{{ conference.name }}</td>
                     <td><a href="{{ conference.url }}" target="_blank">{{ conference.url }}</a></td>
                     <td>{{ conference.contactName }}</td>
-                    <td>{{ conference.contactEmail }}</td>
-                    <td><a class="waves-effect waves-light btn" 
-                        href="{{ app.yurl('/admin/conferences/' ~ conference.conferenceID ~ '/edit') }}">Edit Conference</a></td>
-                    <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/conferences/' ~ conference.conferenceID ~ '/delete') }}">Delete Conference</a></td>
+                    <td><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></td>
+                    <td><a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/conferences/' ~ conference.conferenceID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit Conference</a></td>
+                    <td><a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/conferences/' ~ conference.conferenceID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete Conference</a></td>
                 </tr>
             {% endfor %}
         </tbody>

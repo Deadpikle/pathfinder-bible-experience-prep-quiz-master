@@ -527,3 +527,7 @@ nav.navbar {
 thead th {
     text-transform: none;
 }
+
+.table td {
+    vertical-align: middle;
+}

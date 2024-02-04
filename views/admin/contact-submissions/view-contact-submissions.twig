@@ -8,49 +8,55 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contact Form Submissions</li>
+    </ol>
+</nav>
 
 <h4>Contact Submissions</h4>
 
-<div>
-    <table class="striped tablesorter-materialize" id="submissions-table">
-        <thead>
+<table class="table table-striped table-responsive table-bordered w-100" id="submissions-table">
+    <thead>
+        <tr>
+            <th>Submission Date</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>Club</th>
+            <th>Conference</th>
+            <th>Type</th>
+            <th>Email</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for submission in submissions %}
             <tr>
-                <th>Submission Date</th>
-                <th>Title</th>
-                <th>Name</th>
-                <th>Club</th>
-                <th>Conference</th>
-                <th>Type</th>
-                <th>Email</th>
-                <th>Message</th>
+                <td data-priority="1" data-sort="{{ submission.dateTimeSubmitted }}">{{ submission.dateTimeSubmitted | date('D, M d, Y, g:i a') }}</td>
+                <td>{{ submission.title }}</td>
+                <td>{{ submission.personName }}</td>
+                <td>{{ submission.club }}</td>
+                <td>{{ submission.conference }}</td>
+                <td>{{ submission.type }}</td>
+                <td>{{ submission.email }}</td>
+                <td>{{ submission.message }}</td>
             </tr>
-        </thead>
-        <tbody>
-            {% for submission in submissions %}
-                <tr>
-                    <td data-sort="{{ submission.dateTimeSubmitted }}">{{ submission.dateTimeSubmitted | date('D, M d, Y, g:i a') }}</td>
-                    <td>{{ submission.title }}</td>
-                    <td>{{ submission.personName }}</td>
-                    <td>{{ submission.club }}</td>
-                    <td>{{ submission.conference }}</td>
-                    <td>{{ submission.type }}</td>
-                    <td>{{ submission.email }}</td>
-                    <td>{{ submission.message }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        {% endfor %}
+    </tbody>
+</table>
 
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
-            { orderable: false, targets: [] }
+            { orderable: false, targets: [] },
+            { className: 'dtr-control', 'targets': [0] }
         ];
         datatablesProps.language = {
             searchPlaceholder: "Search submissions..."
         };
+        datatablesProps.responsive = true;
         datatablesProps.order = [[ 0, 'desc' ]];
         $('#submissions-table').DataTable(datatablesProps);
     });
