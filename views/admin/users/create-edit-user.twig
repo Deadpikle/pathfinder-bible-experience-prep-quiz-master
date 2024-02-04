@@ -32,7 +32,7 @@
         <p class="mt-1">Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
         {% if app.isWebAdmin or app.isConferenceAdmin %}
             <div class="row">
-                <div class="form-group col s12 m5">
+                <div class="form-group col-sm-12 col-md-5">
                     <label for="club">Club</label>
                     <select id="club" name="club" class="form-control" required>
                         <option id="club-no-selection-option" value="">Select a club...</option>
@@ -46,7 +46,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-field col s12 m5">
+                <div class="form-group col-sm-12 col-md-5">
                     <label for="user-type">User Type</label>
                     <select id="user-type" name="user-type" class="form-control" required>
                         <option id="user-type-no-selection-option" value="">Select a user type...</option>

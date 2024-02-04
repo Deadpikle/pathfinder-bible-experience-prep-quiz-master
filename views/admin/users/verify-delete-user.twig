@@ -2,17 +2,23 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="./view-users.php">Back</a></p>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/users') }}">Users</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete User</li>
+    </ol>
+</nav>
 
 <h2>Delete User</h2>
 
 {% include 'includes/error-message.twig' %}
 
 <div id="delete-user">
-    <h4> Are you sure you want to delete the {{ user.type.displayName }} {{ user.username }}? </h4>
+    <h4>Are you sure you want to delete the {{ user.type.displayName }} {{ user.username }}? </h4>
     <form method="post">
         {{ csrf('delete-user') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete User</button>
+        <button class="btn btn-sm btn-danger" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete User</button>
     </form>
 </div>
 
