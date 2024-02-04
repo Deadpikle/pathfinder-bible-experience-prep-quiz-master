@@ -132,7 +132,8 @@ class User
     *                         to select from
     * @return string
     */
-    private function random_str($length, $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ') {
+    private function random_str($length, $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ')
+    {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < $length; ++$i) {
@@ -141,7 +142,8 @@ class User
         return $str;
     }
 
-    private function generateEntryCode(PDO $db) {
+    private function generateEntryCode(PDO $db)
+    {
         $didFindNewCode = false;
         // pre-create the sql statement for faster queries in the db
         $entryCodeQuery = 'SELECT 1 FROM Users WHERE EntryCode = ?';
@@ -186,6 +188,20 @@ class User
             $this->username,
             $this->type->userTypeID,
             $this->clubID,
+            $this->userID
+        ]);
+    }
+
+    public function resetAccessCode(PDO $db)
+    {
+        $this->entryCode = $this->generateEntryCode($db);
+        $query = '
+            UPDATE Users 
+            SET EntryCode = ? 
+            WHERE UserID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->entryCode,
             $this->userID
         ]);
     }

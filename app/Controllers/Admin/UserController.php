@@ -11,6 +11,7 @@ use App\Models\CSRF;
 use App\Models\PBEAppConfig;
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\Util;
 use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
@@ -123,10 +124,15 @@ class UserController extends BaseAdminController
         }
         $status = $this->validateUser($app, $request, $user);
         $user = $status->output;
+        /** @var User $user */
         if (!$status->didValidate) {
             return $this->createOrEditUser($app, $request, false, $user, $status->error);
         }
         $user->update($app->db);
+        if (Util::validateBoolean($request->post, 'regenerate-access-code')) {
+            $user->resetAccessCode($app->db);
+            return new Redirect('/admin/users?updated=' . $user->entryCode);
+        }
         return new Redirect('/admin/users');
     }
 

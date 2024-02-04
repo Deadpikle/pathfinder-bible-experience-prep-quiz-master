@@ -19,8 +19,14 @@
 <h4>Users</h4>
 
 {% if _get['created'] %}
-    <div class="green white-text p-1 rounded-border">
-        <span class="ml-1">User successfully created! Their access code is: {{ _get['created'] }}</span>
+    <div class="alert alert-success" role="alert">
+        <span class="ml-1">User successfully created! Their access code is: <strong>{{ _get['created'] }}</strong>.</span>
+    </div>
+{% endif %}
+
+{% if _get['updated'] %}
+    <div class="alert alert-success" role="alert">
+        <span class="ml-1">Successfully updated access code! The updated access code is: <strong>{{ _get['updated'] }}</strong>.</span>
     </div>
 {% endif %}
 

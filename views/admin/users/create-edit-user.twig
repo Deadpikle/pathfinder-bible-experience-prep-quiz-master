@@ -24,12 +24,12 @@
 <div id="edit-user">
     <form method="post">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <label for="first-name">Username</label>
-                <input type="text" id="username" name="username" value="{{ user.username }}" required data-length="150"/>
+            <div class="input-field col-sm-12 col-md-4">
+                <label for="username">Username</label>
+                <input class="form-control" type="text" id="username" name="username" value="{{ user.username }}" required maxlength="150" placeholder="My Pathfinder #32"/>
             </div>
         </div>
-        <p>Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
+        <p class="mt-1">Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
         {% if app.isWebAdmin or app.isConferenceAdmin %}
             <div class="row">
                 <div class="form-group col s12 m5">
@@ -58,7 +58,13 @@
                 </div>
             </div>
         {% endif %}
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        {% if app.isWebAdmin and not isCreating %}
+            <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="regenerate-access-code" name="regenerate-access-code">
+                <label class="custom-control-label" for="regenerate-access-code">Regenerate user access code</label>
+            </div>
+        {% endif %}
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
     </form>
 </div>
 
