@@ -20,7 +20,7 @@
         <form action="{{ app.yurl('/admin/non-blankable-words/create') }}" method="post">
             <div class="row">
                 <div class="input-field col s12 m4">
-                    <input type="text" id="blankable-word" name="blankable-word" value="" required data-length="300"/>
+                    <input type="text" id="blankable-word" name="blankable-word" value="" required maxlength="300"/>
                     <label for="blankable-word">Non-blankable Word</label>
                 </div>
                 <div class="input-field col s12 m4">

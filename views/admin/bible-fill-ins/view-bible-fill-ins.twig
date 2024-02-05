@@ -2,7 +2,13 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Bible Fill in the Blank Questions</li>
+    </ol>
+</nav>
 
 <h4>Bible Fill in the Blank Questions</h4>
 
@@ -14,7 +20,7 @@
 
 {% if totalQuestions > 0 %}
     <div id="bible-fill-in-div">
-        <table class="striped">
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Chapter</th>
@@ -31,8 +37,8 @@
                         <td><b>{{ data.language.getDisplayName() }}</b></td>
                         <td>{{ data.numberOfQuestions | number_format }} {{ questionString }}</td>
                         <td>
-                            <a class="waves-effect waves-light btn blue white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/letter-pdf') }}">Generate Letter PDF</a>
-                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}">Delete</a>
+                            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/letter-pdf') }}"><i class="fas fa-file-pdf"></i> Generate Letter PDF</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -41,16 +47,9 @@
         <hr/>
 
         {% for language in languages %}
-            <p><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/bible-fill-ins/' ~ language.languageID ~ '/delete') }}">Delete All {{ language.getDisplayName() }} Bible Fill In Questions</a></p>
+            <p><a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/bible-fill-ins/' ~ language.languageID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete All {{ language.getDisplayName() }} Bible Fill In Questions</a></p>
         {% endfor %}
     </div>
 {% endif %}
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('select').material_select();
-        fixRequiredSelectorCSS();
-    });
-</script>
 
 {% endblock %}

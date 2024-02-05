@@ -110,9 +110,11 @@
                 <p class="mt-2 mb-2"><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
             </div>
         </footer>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                {% if not app.isLocalHost and app.showCookieConsent %}
+        {% block scripts %}
+        {% endblock %}
+        {% if not app.isLocalHost and app.showCookieConsent %}
+            <script type="text/javascript">
+                $(document).ready(function() {
                     window.cookieconsent.initialise({
                         "palette": {
                             "popup": {
@@ -137,8 +139,8 @@
                             "secure": true
                         }
                     });
-                {% endif %}
-            });
-        </script>
+                });
+            </script>
+        {% endif %}
     </body>
 </html>
