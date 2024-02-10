@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/non-blankable-words') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/non-blankable-words') }}">Non-blankable Words</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create Non-blankable Word' : 'Edit Non-blankable Word' }}</li>
+    </ol>
+</nav>
 
 <h4>{{ isCreating ? 'Create Non-blankable Word' : 'Edit Non-blankable Word' }}</h4>
 
@@ -11,12 +18,12 @@
 <div id="create-edit-non-blankable-word">
     <form method="post">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="blankable-word" name="blankable-word" value="{{ nonBlankableWord.word }}" required maxlength="300"/>
-                <label for="blankable-word">Word</label>
+            <div class="form-group col-sm-12 col-md-4">
+                <label for="blankable-word">Non-blankable Word</label>
+                <input type="text" class="form-control" id="blankable-word" name="blankable-word" value="{{ nonBlankableWord.word }}" placeholder="from" required maxlength="300"/>
             </div>
         </div>
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> {{ isCreating ? 'Add Word' : 'Save Changes' }}</button>
     </form>
 </div>
 

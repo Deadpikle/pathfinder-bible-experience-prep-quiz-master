@@ -9,7 +9,13 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href=".">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Non-blankable Words</li>
+    </ol>
+</nav>
 
 <h4>Non-blankable Words</h4>
 
@@ -19,23 +25,20 @@
         <h5>Add Non-blankable Word</h5>
         <form action="{{ app.yurl('/admin/non-blankable-words/create') }}" method="post">
             <div class="row">
-                <div class="input-field col s12 m4">
-                    <input type="text" id="blankable-word" name="blankable-word" value="" required maxlength="300"/>
+                <div class="form-group col-sm-12 col-md-4">
                     <label for="blankable-word">Non-blankable Word</label>
-                </div>
-                <div class="input-field col s12 m4">
-                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Word</button>
+                    <input type="text" class="form-control" id="blankable-word" name="blankable-word" value="" placeholder="from" required maxlength="300"/>
                 </div>
             </div>
+            <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-plus"></i> Add Word</button>
         </form>
     </div>
     <hr/>
     {% if nonBlankableWords | length > 0 %}
-        <table class="striped" id="words-table">
+        <table class="table table-striped table-bordered" id="words-table">
             <thead>
                 <tr>
                     <th>Word</th>
-                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -43,8 +46,10 @@
                 {% for word in nonBlankableWords %}
                     <tr>
                         <td>{{ word.word }}</td>
-                        <td><a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/non-blankable-words/' ~ word.wordID ~ '/edit') }}">Edit Word</a></td>
-                        <td><a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/non-blankable-words/' ~ word.wordID ~ '/delete') }}">Delete Word</a></td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/non-blankable-words/' ~ word.wordID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit Word</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/non-blankable-words/' ~ word.wordID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete Word</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
