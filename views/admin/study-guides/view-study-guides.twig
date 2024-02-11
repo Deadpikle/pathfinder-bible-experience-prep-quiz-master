@@ -27,7 +27,6 @@
                     <th>Display Name</th>
                     <th>Year</th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,10 +34,12 @@
                     <tr width="100%">
                         <td><a target="_blank" class="" href="{{ app.yurl('/' ~ file.fileName) }}">{{ file.displayName }}</a></td> 
                         <td>{{ file.year }}</td>
-                        <td><a class="btn btn-sm btn-primary" 
-                                href="{{ app.yurl('/admin/study-guides/' ~ file.studyGuideID ~ '/edit') }}"><i class="fas fa-pencil"></i> Rename</a></td> 
-                        <td><a class="btn btn-sm btn-danger" 
-                                href="{{ app.yurl('/admin/study-guides/' ~ file.studyGuideID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a></td> 
+                        <td>
+                            <a class="btn btn-sm btn-primary" 
+                                href="{{ app.yurl('/admin/study-guides/' ~ file.studyGuideID ~ '/edit') }}"><i class="fas fa-pencil"></i> Rename</a>
+                            <a class="btn btn-sm btn-danger" 
+                                href="{{ app.yurl('/admin/study-guides/' ~ file.studyGuideID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a>
+                            </td> 
                     </tr>
                 {% endfor %}
             </tbody>
@@ -54,7 +55,7 @@
         datatablesProps.language = {
             searchPlaceholder: "Search study guides..."
         };
-        datatablesProps.order = [[ 0, 'asc' ]];
+        datatablesProps.order = [[ 1, 'desc' ], [0, 'asc']];
         $('#study-guides-table').DataTable(datatablesProps);
     });
 </script>
