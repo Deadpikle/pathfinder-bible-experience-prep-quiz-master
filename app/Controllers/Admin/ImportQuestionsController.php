@@ -103,7 +103,7 @@ class ImportQuestionsController extends BaseAdminController
                 $rawBooks[$bookName] = [];
             }
             if (!isset($rawBooks[$bookName][$chapterNumber])) {
-                $rawBooks[$bookName][$chapterNumber] = array();
+                $rawBooks[$bookName][$chapterNumber] = [];
             }
             $rawBooks[$bookName][$chapterNumber][$verseNumber] = $verseID;
         }

@@ -82,7 +82,7 @@ class Book
 
         $lastBookID = -1;
         $lastChapterID = -1;
-        $books = array();
+        $books = [];
         $book = null;
         $chapter = null;
         foreach ($data as $row) {

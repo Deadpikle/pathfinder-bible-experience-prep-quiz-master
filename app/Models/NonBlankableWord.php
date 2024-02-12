@@ -117,7 +117,7 @@ class NonBlankableWord
         if (NonBlankableWord::DEBUG) {
             print_r($words);
         }
-        $adjustedWords = array();
+        $adjustedWords = [];
         foreach ($words as $word) {
             if (strpos($word, '...') !== false) {
                 $parts = explode("...", $word);

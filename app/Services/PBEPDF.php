@@ -53,7 +53,7 @@ class PBEPDF extends tFPDF {
                     // Extract attributes
                     $a2 = explode(' ', $e);
                     $tag = strtoupper(array_shift($a2));
-                    $attr = array();
+                    $attr = [];
                     foreach($a2 as $v) {
                         if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
                             $attr[strtoupper($a3[1])] = $a3[2];

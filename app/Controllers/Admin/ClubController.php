@@ -30,6 +30,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin || $app->isConferenceAdmin) {
                 return null;
             }

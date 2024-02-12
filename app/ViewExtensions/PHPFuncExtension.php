@@ -42,7 +42,7 @@ class PHPFuncExtension extends AbstractExtension
         'substr'
     );
 
-    public function __construct(array $functions = array())
+    public function __construct(array $functions = [])
     {
         if ($functions) {
             $this->allowFunctions($functions);
@@ -51,7 +51,7 @@ class PHPFuncExtension extends AbstractExtension
 
     public function getFunctions()
     {
-        $twigFunctions = array();
+        $twigFunctions = [];
         foreach ($this->functions as $function) {
             $twigFunctions[] = new TwigFunction($function, $function);
         }

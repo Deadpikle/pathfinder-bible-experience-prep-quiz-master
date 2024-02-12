@@ -21,16 +21,17 @@ class Commentary
         $this->number = $number;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'SDA Commentary Volume ' . $this->number;
     }
 
-    public function getDisplayValue()
+    public function getDisplayValue(): string
     {
         return $this->getName() . ' - ' . $this->topicName;
     }
 
+    /** @return array<Commentary> */
     private static function loadCommentaries(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
@@ -54,6 +55,7 @@ class Commentary
         return $output;
     }
 
+    /** @return array<Commentary> */
     public static function loadAllCommentaries(PDO $db) : array
     {
         return Commentary::loadCommentaries('', [], $db);
