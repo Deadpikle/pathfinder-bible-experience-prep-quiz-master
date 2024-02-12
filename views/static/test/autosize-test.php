@@ -15,7 +15,6 @@ require_once(dirname(__FILE__)."/../init.php");
 
 <?php include(dirname(__FILE__)."/../header.php"); ?>
 
-
 <script type="text/javascript">
     var questionWords = <?= json_encode($question) ?>;
 </script>
