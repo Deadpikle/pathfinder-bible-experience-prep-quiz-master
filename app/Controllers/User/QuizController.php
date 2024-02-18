@@ -13,6 +13,7 @@ use Yamf\Responses\View;
 use App\Models\Book;
 use App\Models\Chapter;
 use App\Models\Commentary;
+use App\Models\CSRF;
 use App\Models\FlagReason;
 use App\Models\Language;
 use App\Models\MatchingQuestionItem;
@@ -76,7 +77,7 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Redirect('/');
         }
-        return new TwigView('user/quiz/verify-delete-user-answers', null, 'Delete Answers');
+        return new TwigView('user/quiz/verify-delete-user-answers', [], 'Delete Previously Saved Answers');
     }
 
     public function removeAnswers(PBEAppConfig $app, Request $request)
@@ -84,8 +85,13 @@ class QuizController
         if (!User::isLoggedIn()) {
             return new Redirect('/');
         }
-        UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
-        return new Redirect('/quiz/setup');
+        if (CSRF::verifyToken('delete-previous-answers')) {
+            UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
+            return new Redirect('/quiz/setup');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            return new TwigView('user/quiz/verify-delete-user-answers', compact('error'), 'Delete Previously Saved Answers');
+        }
     }
 
     private function getQuizQuestions(PBEAppConfig $app, Request $request, bool $isFlashCardQuiz, bool $isFrontBackFlashCards)

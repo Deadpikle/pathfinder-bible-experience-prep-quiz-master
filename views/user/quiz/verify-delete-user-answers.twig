@@ -2,13 +2,24 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/quiz/setup') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/quiz/setup') }}">Quiz Setup</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Previously Saved Answers</li>
+    </ol>
+</nav>
+
+<h2>Delete Previously Saved Answers</h2>
+
+{% include 'includes/error-message.twig' %}
 
 <div id="delete-user-answers">
     <h4> Are you sure you want to delete all of your previously saved answers?</h4>
-    <p>Questions you have answered correctly in the past will once again show up in quizzes if you choose to delete all of your answers. </p>
+    <p class="mb-1">Questions you have answered correctly in the past will once again show up in quizzes if you choose to delete all of your answers. </p>
     <form method="post">
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Answers</button>
+        {{ csrf('delete-previous-answers') | raw }}
+        <button class="btn btn-sm btn-danger" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Answers</button>
     </form>
 </div>
 
