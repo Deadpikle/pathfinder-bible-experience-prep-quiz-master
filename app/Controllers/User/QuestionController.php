@@ -123,7 +123,7 @@ class QuestionController
             }
         }
 
-        $question = new Question($request->post['question-id'] ?? -1);
+        $question = new Question($request->routeParams['questionID'] ?? -1);
         $question->question = trim($request->post['question-text']);
         $question->answer = isset($request->post['question-answer']) ? $request->post['question-answer'] : '';
         $question->type = $questionType;
@@ -139,7 +139,7 @@ class QuestionController
         if ($isCreating) {
             $question->creatorID = User::currentUserID();
         } else {
-            $dbQuestion = Question::loadQuestionWithID($request->post['question-id'], $app->db);
+            $dbQuestion = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
             $question->questionID = $dbQuestion->questionID;
             $question->creatorID = $dbQuestion->creatorID;
         }
