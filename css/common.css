@@ -530,3 +530,12 @@ thead th {
 .reset-answers-button {
     color: black;
 }
+
+.form-control::placeholder {
+    color: #ccc;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 0;
+    margin-right: 0;
+}

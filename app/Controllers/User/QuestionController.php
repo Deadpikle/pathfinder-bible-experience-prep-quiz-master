@@ -9,6 +9,7 @@ use Yamf\Responses\View;
 
 use App\Models\Book;
 use App\Models\Commentary;
+use App\Models\CSRF;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
@@ -221,7 +222,9 @@ class QuestionController
         if ($question === null) {
             return new TwigNotFound();
         }
-        return new TwigView('user/questions/verify-delete-question', compact('question'), 'Delete Question');
+        $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);
+        $commentariesByID = Commentary::loadAllCommentariesKeyedByID($app->db);
+        return new TwigView('user/questions/verify-delete-question', compact('question', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
     }
 
     public function deleteQuestion(PBEAppConfig $app, Request $request)
@@ -230,10 +233,17 @@ class QuestionController
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
-        if ($question === null || $question->questionID != $request->post['question-id']) {
+        if ($question === null) {
             return new TwigNotFound();
         }
-        $question->updateDeletedFlag(true, $app->db);
-        return new Redirect('/questions');
+        if (CSRF::verifyToken('delete-question')) {
+            $question->updateDeletedFlag(true, $app->db);
+            return new Redirect('/questions');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);
+            $commentariesByID = Commentary::loadAllCommentariesKeyedByID($app->db);
+            return new TwigView('user/questions/verify-delete-question', compact('question', 'error', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
+        }
     }
 }

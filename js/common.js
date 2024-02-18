@@ -152,8 +152,7 @@ function strStartsWith(haystack, needle) {
     return haystack.lastIndexOf(needle, 0) === 0;
 }
 
-function shouldLowercaseOutput(output, names)
-{
+function shouldLowercaseOutput(output, names) {
     // get first word (I was too lazy to write this myself): https://stackoverflow.com/a/46999443/3938401
     var firstWord = output.replace(/ .*/,'');
     return !strStartsWith(output, 'T or') && 
@@ -161,6 +160,18 @@ function shouldLowercaseOutput(output, names)
            !strStartsWith(output, 'Christ') && 
            !strStartsWith(output, 'Jesus') &&
            !names.includes(firstWord);
+}
+
+function updateSelect2(selector) {
+    $(selector).trigger('change');
+}
+
+function showElement(element) {
+    element.classList.remove('d-none');
+}
+
+function hideElement(element) {
+    element.classList.add('d-none');
 }
 /*
 $(document).ready(function() {

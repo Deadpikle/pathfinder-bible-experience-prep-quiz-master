@@ -65,7 +65,7 @@ class Book
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadAllBookChapterVerseDataForYear(Year $year, PDO $db) : array
+    public static function loadAllBookChapterVerseDataForYear(?Year $year, PDO $db) : array
     {
         $query = '
             SELECT b.BookID, b.Name, b.NumberChapters, b.BibleOrder,
@@ -74,7 +74,7 @@ class Book
             FROM Books b 
                 JOIN Chapters c ON b.BookID = c.BookID
                 LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
-            WHERE b.YearID = ' . $year->yearID . '
+            WHERE b.YearID = ' . ($year->yearID ?? 0) . '
             ORDER BY b.Name, ChapterNumber, VerseNumber';
         $stmt = $db->prepare($query);
         $stmt->execute([]);
@@ -125,6 +125,24 @@ class Book
             $books[] = $book;
         }
         return $books;
+    }
+
+    public static function getBookDataIndexedByVerse(?Year $year, PDO $db): array
+    {
+        $data = self::loadAllBookChapterVerseDataForYear($year, $db);
+        $output = [];
+        foreach ($data as $book) {
+            foreach ($book->chapters as $chapter) {
+                foreach ($chapter->verses as $verse) {
+                    $output[$verse->verseID] = [
+                        'book' => $book,
+                        'chapter' => $chapter,
+                        'verse' => $verse
+                    ];
+                }
+            }
+        }
+        return $output;
     }
 
     public static function createBook(string $name, int $numberOfChapters, int $yearID, int $bibleOrder, PDO $db)

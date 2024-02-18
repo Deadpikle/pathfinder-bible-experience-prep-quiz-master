@@ -61,6 +61,18 @@ class Commentary
         return Commentary::loadCommentaries('', [], $db);
     }
 
+    /** @return array<Commentary> */
+    public static function loadAllCommentariesKeyedByID(PDO $db): array
+    {
+        $commentaries = self::loadAllCommentaries($db);
+        $commentariesByID = [];
+        foreach ($commentaries as $commentary) {
+            $commentariesByID[$commentary->commentaryID] = $commentary;
+        }
+        return $commentariesByID;
+    }
+
+    /** @return array<Commentary> */
     public static function loadCommentariesForYear(int $yearID, PDO $db) : array
     {
         return Commentary::loadCommentaries('WHERE Years.YearID = ?', [$yearID], $db);
