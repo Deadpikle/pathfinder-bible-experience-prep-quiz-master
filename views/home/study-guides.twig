@@ -19,8 +19,7 @@
             {% for guide in guides %}
                 <li>
                     <td>
-                        <a target="_blank" class="btn-flat blue-text waves-effect waves-blue no-uppercase" 
-                            href="{{ app.yurl('/' ~  guide.fileName) }}">
+                        <a target="_blank" href="{{ app.yurl('/' ~ guide.fileName) }}">
                             {{ guide.displayName }}
                         </a>
                     </td> 
