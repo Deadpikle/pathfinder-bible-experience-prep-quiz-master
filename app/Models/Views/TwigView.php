@@ -20,7 +20,7 @@ class TwigView extends Response
     {
         parent::__construct();
         $this->name = $name;
-        $this->data = $data;
+        $this->data = $data ?? [];
         $this->title = $title;
     }
 
@@ -39,12 +39,13 @@ class TwigView extends Response
         $twig->addExtension(new PHPFuncExtension());
         $twig->addExtension(new AppViewExtension());
 
-        if ($this->data !== null) {
-            $this->data['app'] = $app;
-            $this->data['title'] = $this->title;
-            $this->data['_get'] = $_GET;
-            $this->data['_post'] = $_POST;
+        if ($this->data === null) {
+            $this->data = [];
         }
+        $this->data['app'] = $app;
+        $this->data['title'] = $this->title;
+        $this->data['_get'] = $_GET;
+        $this->data['_post'] = $_POST;
 
         $filename = $this->name . '.twig';
         try {
