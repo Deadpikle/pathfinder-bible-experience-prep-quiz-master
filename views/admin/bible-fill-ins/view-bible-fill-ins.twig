@@ -39,8 +39,8 @@
                 {% for data in fillInData %}
                     {% set questionString = data.numberOfQuestions == 1 ? 'question' : 'questions' %}
                     <tr>
-                        <td><b>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</b></td>
-                        <td><b>{{ data.language.getDisplayName() }}</b></td>
+                        <td><strong>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</strong></td>
+                        <td><strong>{{ data.language.getDisplayName() }}</strong></td>
                         <td>{{ data.numberOfQuestions | number_format }} {{ questionString }}</td>
                         <td>
                             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/bible-fill-ins/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/letter-pdf') }}"><i class="fas fa-file-pdf"></i> Generate Letter PDF</a>

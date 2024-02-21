@@ -39,8 +39,8 @@
                 {% for data in qnaData %}
                     {% set questionString = data.numberOfQuestions == 1 ? 'question' : 'questions' %}
                     <tr>
-                        <td><b>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</b></td>
-                        <td><b>{{ data.language.getDisplayName() }}</b></td>
+                        <td><strong>{{ data.bookName }}&nbsp;{{ data.chapterNumber }}</strong></td>
+                        <td><strong>{{ data.language.getDisplayName() }}</strong></td>
                         <td>{{ data.numberOfQuestions | number_format }} {{ questionString }}</td>
                         <td><a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/bible-qna-questions/' ~ data.chapterID ~ '/' ~ data.language.languageID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a></td>
                     </tr>
