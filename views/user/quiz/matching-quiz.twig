@@ -42,13 +42,13 @@
     <div class="col-sm-3 col-md-4">
         <div class="form-group">
             <label for="sets">* Max Number of Matching Sets</label>
-            <input type="number" class="form-control" id="sets" name="sets" value="5" min="1" max="50" autocomplete="off" required>
+            <input type="number" class="form-control" id="sets" name="sets" value="5" min="1" max="50" placeholder="5" autocomplete="off" required>
         </div>
     </div>
     <div class="col-sm-3 col-md-4">
         <div class="form-group">
             <label for="number">* Max Number of Matches per Matching Set</label>
-            <input type="number" class="form-control" id="number" name="number" value="5" min="1" max="999" autocomplete="off" required>
+            <input type="number" class="form-control" id="number" name="number" value="5" min="1" max="999" placeholder="5" autocomplete="off" required>
         </div>
     </div>
 </div>
@@ -162,14 +162,14 @@
                     document.getElementById('matching-quiz-container').classList.remove('hidden');
                     
                 } else {
-                    Materialize.toast('Error creating matching question quiz: ' + response.message, 5000);
+                    alert('Error creating matching question quiz: ' + response.message);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 try {
-                    Materialize.toast(xhr.responseJSON.message, 4000);
+                    alert(xhr.responseJSON.message);
                 } catch (error) {
-                    Materialize.toast('Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.', 4000);
+                    alert('Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.');
                 }
             }
         });
