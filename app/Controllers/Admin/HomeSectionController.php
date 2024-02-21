@@ -33,6 +33,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
      */
     public function validateRequest(AppConfig $app, Request $request) : ?Response
     {
+        /** @var PBEAppConfig $app */
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
             $currentConferenceID = $request->routeParams['conferenceID'];

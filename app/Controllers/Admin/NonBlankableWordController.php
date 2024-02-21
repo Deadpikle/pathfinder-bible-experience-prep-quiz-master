@@ -29,6 +29,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }

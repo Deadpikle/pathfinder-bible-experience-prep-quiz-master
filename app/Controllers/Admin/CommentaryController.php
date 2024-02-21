@@ -38,6 +38,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }

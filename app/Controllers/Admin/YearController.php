@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\CSRF;
+use App\Models\PBEAppConfig;
 use App\Models\Util;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
@@ -27,6 +28,7 @@ class YearController extends BaseAdminController implements IRequestValidator
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }
