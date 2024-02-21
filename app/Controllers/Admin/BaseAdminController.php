@@ -20,7 +20,7 @@ class BaseAdminController implements IRequestValidator
      */
     public function validateRequest(AppConfig $app, Request $request) : ?Response
     {
-        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== "Pathfinder" && $_SESSION['UserType'] !== "Guest";
+        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== 'Pathfinder' && $_SESSION['UserType'] !== 'Guest';
         if (!$canViewAdminPanel) {
             return new Redirect('/');
         }
