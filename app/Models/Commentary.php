@@ -56,7 +56,7 @@ class Commentary
     }
 
     /** @return array<Commentary> */
-    public static function loadAllCommentaries(PDO $db) : array
+    public static function loadAllCommentaries(PDO $db): array
     {
         return Commentary::loadCommentaries('', [], $db);
     }
@@ -73,18 +73,18 @@ class Commentary
     }
 
     /** @return array<Commentary> */
-    public static function loadCommentariesForYear(int $yearID, PDO $db) : array
+    public static function loadCommentariesForYear(int $yearID, PDO $db): array
     {
         return Commentary::loadCommentaries('WHERE Years.YearID = ?', [$yearID], $db);
     }
 
-    public static function loadCommentaryByID(int $commentaryID, PDO $db) : ?Commentary
+    public static function loadCommentaryByID(int $commentaryID, PDO $db): ?Commentary
     {
         $data = Commentary::loadCommentaries(' WHERE CommentaryID = ? ', [ $commentaryID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db) : array
+    public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db): array
     {
         $query = '
             SELECT DISTINCT c.CommentaryID, Number, TopicName, Years.Year
