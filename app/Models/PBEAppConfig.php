@@ -9,6 +9,11 @@ class PBEAppConfig extends AppConfig
     public bool $isWebAdmin;
     public bool $isConferenceAdmin;
     public bool $isClubAdmin;
+    /**
+     * isWebAdmin || isConferenceAdmin || isClubAdmin
+     */
+    public bool $isAdmin;
+    public bool $isPathfinder;
     public bool $isGuest;
 
     public array $settings;
@@ -37,6 +42,8 @@ class PBEAppConfig extends AppConfig
         $this->isWebAdmin = false;
         $this->isConferenceAdmin = false;
         $this->isClubAdmin = false;
+        $this->isAdmin = false;
+        $this->isPathfinder = false;
         $this->isGuest = false;
         
         $this->settings = [];
