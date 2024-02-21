@@ -51,7 +51,7 @@ class Util
 
     public static function validateInteger(array $array, string $key) : int
     {
-        return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_NUMBER_INT)) : 0;
+        return isset($array[$key]) && $array[$key] !== null ? intval(filter_var($array[$key], FILTER_SANITIZE_NUMBER_INT)) : 0;
     }
 
     public static function validateEmail(array $array, string $key) : string
