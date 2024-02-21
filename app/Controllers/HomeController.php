@@ -29,8 +29,6 @@ class HomeController
         if (!$app->loggedIn) {
             return new Redirect('/login');
         }
-        $title = 'Home';
-        
         $conference = Conference::loadAdminConference($app->db);
         $conferenceID = $conference->conferenceID ?? $_SESSION['ConferenceID'];
         $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $conferenceID, $app->db);
@@ -39,7 +37,7 @@ class HomeController
 
     public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
-        return new TwigView('home/login', null, 'Login');
+        return new TwigView('home/login', [], 'Login');
     }
 
     public function attemptLogin(PBEAppConfig $app, Request $request)
