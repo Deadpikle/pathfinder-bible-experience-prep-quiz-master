@@ -78,14 +78,14 @@ function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = fal
         if (wordData.word !== "") {
             if (wordData.shouldBeBlanked) {
                 if (shouldBoldWords) {
-                    var html = '<b>' + wordData.word + '</b>';
+                    var html = '<strong>' + wordData.word + '</strong>';
                     output += html;
                 }
                 else if (shouldAvoidInputFields) {
                     output += '________';
                 }
                 else {
-                    var html = '<span><input class="browser-default fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
+                    var html = '<span><input class="fill-in-blank-input" type="text" value="" data-autosize-input=\'{ "space": 4 }\'></input></span>';
                     output += html;
                 }
             }

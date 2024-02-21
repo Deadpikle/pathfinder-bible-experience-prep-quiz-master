@@ -163,7 +163,7 @@ class Util
                 if ($questionWords["shouldBeBlanked"]) {
                     $blankedWords[] = $questionWords["word"];
                     $blankedOutput .= "________";
-                    $boldedOutput .= "<b>" . $questionWords["word"] . "</b>";
+                    $boldedOutput .= "<strong>" . $questionWords["word"] . "</strong>";
                 }
                 else {
                     $blankedOutput .= $questionWords["word"];

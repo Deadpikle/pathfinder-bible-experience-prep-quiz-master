@@ -107,10 +107,10 @@ class PowerPointGenerator
         $shape->createTextRun('Answer')
             ->getFont()->setSize(34)->setBold(true);
         $shape->createBreak();
-        if (Util::str_contains('<b>', $answerText)) {
+        if (Util::str_contains('<strong>', $answerText)) {
             while (strlen($answerText) > 0) {
-                $startTagPos = strpos($answerText, '<b>');
-                $endTagPos = strpos($answerText, '</b>');
+                $startTagPos = strpos($answerText, '<strong>');
+                $endTagPos = strpos($answerText, '</strong>');
                 if ($startTagPos !== false && $endTagPos !== false) {
                     $before = substr($answerText, 0, $startTagPos);
                     $inside = substr($answerText, $startTagPos + 3, $endTagPos - $startTagPos - 3);
