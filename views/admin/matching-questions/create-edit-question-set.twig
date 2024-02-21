@@ -103,6 +103,15 @@
             placeholder: 'Select a language...',
             searchInputPlaceholder: 'Search languages...',
             allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
         });
     });
 </script>
