@@ -110,24 +110,12 @@ main {
     margin-bottom: 1em;
 }
 
-#start-quiz-btn,
 .flash-cards-btn {
     margin-top: 1em;
 }
 
-.flash-cards-btn,
-#start-quiz-btn {
+.flash-cards-btn {
     margin-right: 1em;
-}
-
-#question-filtering {
-    margin-top: 2em;
-    margin-bottom: -1em;
-}
-
-#question-countdown {
-    margin-top: 2em;
-    margin-bottom: -1em;
 }
 
 #unflag-question .input-field {
@@ -163,7 +151,9 @@ main {
     border-bottom: 1px solid black;
     min-width: 4em;
     display: inline-block;
-    margin-top: 1em;
+    vertical-align: text-bottom;
+    padding-bottom: 0em;
+    padding-left: 0.25em;
     /*text-align: center;*/
 }
 
@@ -171,6 +161,8 @@ main {
 #quiz-answer:disabled {
     border-bottom: 1px solid black !important;
     color: inherit !important;
+    border-radius: 0.25em 0.25em 0em 0em;
+    background-color: #eaeaea;
 }
 
 /* https://stackoverflow.com/a/34961662/3938401 */
@@ -184,12 +176,6 @@ main {
 
 .nowrap {
     white-space: nowrap;
-}
-
-#fill-in-percent-div {
-    margin-left: 1em;
-    margin-top: 1em;
-    margin-bottom: -2em;
 }
 
 #days-back-div {
@@ -224,15 +210,6 @@ h5#seconds-text {
 
 p#quiz-question-show-answer {
     margin-bottom: 0.75em;
-}
-
-h6#user-points-earned {
-    margin-top: 1em;
-    margin-left: 3px;
-}
-
-h5#question-text {
-    margin-left: 11px;
 }
 
 #extra-home-info .row {
@@ -286,24 +263,17 @@ h5#question-text {
     margin-bottom: 0em;
 }
 
-#full-fill-in-div {
-    padding-left: 0em;
-}
-
-#correct-answer-div {
-    padding-left: 0em;
-}
-
 #history-fill-in {
-    margin-left: 1.5em;
+    margin-left: 1em;
 }
 
-.no-questions-answered-yet {
-    margin-left: 1.5em;
+ol#history-list ul {
+    list-style: none;
+    padding-left: 0;
 }
 
 #stats-progress {
-    margin-left: 1.5em;
+    margin-left: 1em;
 }
 
 .table-input[type=number]:not(.browser-default) {
@@ -538,4 +508,12 @@ thead th {
 .navbar-nav .nav-item {
     margin-left: 0;
     margin-right: 0;
+}
+
+.align-center-flex {
+    align-self: center;
+}
+
+.align-bottom-button {
+    align-self: flex-end;
 }
