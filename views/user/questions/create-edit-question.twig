@@ -64,7 +64,7 @@
         <div class="row mt-2">
             <div class="form-group col-sm-6 col-md-3 col-lg-2">
                 <label for="number-of-points">Number of Points</label>
-                <input type="number" class="form-control" min="0" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required placeholder="1"/>
+                <input type="number" class="form-control" min="0" max="100" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required placeholder="1"/>
             </div>
             <div class="form-group col-sm-12 col-md-4 col-lg-2">
                 <label for="language-select">Language</label>
@@ -186,6 +186,15 @@
             placeholder: 'Select a book...',
             searchInputPlaceholder: 'Search books...',
             allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
         });
         $('#start-chapter-select').select2({
             theme: 'bootstrap-5',
@@ -198,6 +207,15 @@
             placeholder: 'Select a chapter...',
             searchInputPlaceholder: 'Search chapters...',
             allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
         });
         $('#start-verse-select').select2({
             theme: 'bootstrap-5',
@@ -210,6 +228,15 @@
             placeholder: 'Select a verse...',
             searchInputPlaceholder: 'Search verses...',
             allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
         });
         $('#commentary-volume').select2({
             theme: 'bootstrap-5',
@@ -239,7 +266,6 @@
         function hideCommentaryDiv() {
             $('.commentary-inputs').hide();
             commentaryVolume.required = false;
-            commentaryStartPage.required = false;
         }
 
         function hideBibleDiv() {
@@ -273,7 +299,6 @@
             // show commentary data and set fields as required
             $('.commentary-inputs').show();
             commentaryVolume.required = true;
-            commentaryStartPage.required = true;
             hideShowBibleVerseSelectorsAsNeeded();
         }, false);
 
@@ -438,7 +463,6 @@
 
         // setup initial selection for commentary volume
         if ((questionType == 'commentary-qna' || questionType == 'commentary-qna-fill') && commentaryID != "" && commentaryID != -1) {
-            //document.getElementById('commentary-volume').value = 'Seven';
             $('#commentary-volume option[value="' + commentaryID + '"]').prop('selected', true);
         }
         updateSelect2('#commentary-volume');
