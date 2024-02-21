@@ -3,18 +3,10 @@
 namespace App\Controllers\Admin;
 
 use Yamf\Request;
-use Yamf\Responses\Redirect;
-use Yamf\Responses\View;
-
-use App\Models\Club;
-use App\Models\Conference;
-use App\Models\Language;
 use App\Models\PBEAppConfig;
-use App\Models\StudyGuide;
 use App\Models\User;
+use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
-use App\Models\Year;
-use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\Response;
 
 class AdminController extends BaseAdminController
@@ -27,6 +19,9 @@ class AdminController extends BaseAdminController
 
     public function help(PBEAppConfig $app, Request $request) : Response
     {
+        if (!$app->isWebAdmin) {
+            return new TwigNotFound();
+        }
         return new TwigView('admin/help', [], 'Admin Help');
     }
 }
