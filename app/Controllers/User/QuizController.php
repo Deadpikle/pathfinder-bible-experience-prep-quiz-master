@@ -32,15 +32,32 @@ use App\Services\PowerPointGenerator;
 use App\Services\QuizGenerator;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\PhpPresentation;
+use Yamf\AppConfig;
 use Yamf\Responses\Response;
 
 class QuizController
 {
-    public function setupQuiz(PBEAppConfig $app, Request $request)
+    /**
+     * Validate a request before the normal controller method is called.
+     *
+     * Return null if the request is valid. Otherwise, return a response
+     * that will be output to the user rather than the normal controller method.
+     */
+    public function validateRequest(AppConfig $app, Request $request) : ?Response
     {
         if (!User::isLoggedIn()) {
+            if ($request->function === 'saveQuizAnswers' ||
+                $request->function === 'flagQuestion' ||
+                $request->function === 'generateMatchingQuiz') {
+                return new Response(401);
+            }
             return new Redirect('/');
         }
+        return null;
+    }
+
+    public function setupQuiz(PBEAppConfig $app, Request $request)
+    {
         $currentYear = Year::loadCurrentYear($app->db);
         $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db); // TODO: need to only load ones with active questions!
         $languages = Language::loadAllLanguages($app->db);
@@ -74,17 +91,11 @@ class QuizController
 
     public function checkBeforeRemovingAnswers(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn()) {
-            return new Redirect('/');
-        }
         return new TwigView('user/quiz/verify-delete-user-answers', [], 'Delete Previously Saved Answers');
     }
 
     public function removeAnswers(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn()) {
-            return new Redirect('/');
-        }
         if (CSRF::verifyToken('delete-previous-answers')) {
             UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
             return new Redirect('/quiz/setup');
@@ -168,9 +179,6 @@ class QuizController
 
     public function takeQuiz(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn()) {
-            return new Redirect('/');
-        }
         if (!isset($request->post["max-questions"])) {
             return new ErrorMessage("max-questions is required");
         }
@@ -227,10 +235,6 @@ class QuizController
 
     public function saveQuizAnswers(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn()) {
-            return new Response(401);
-        }
-
         $answers = $request->post['answers'] ?? [];
         $didSave = UserAnswer::saveUserAnswers($answers, $app->db);
         return new JsonResponse(['status' => $didSave ? 200 : 400]);
@@ -238,9 +242,6 @@ class QuizController
 
     public function flagQuestion(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn()) {
-            return new Response(401);
-        }
         $userID = User::currentUserID();
         $flagReason =FlagReason::validateReason(Util::validateString($request->post, 'reason'));
         $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $flagReason, $app->db);
@@ -249,9 +250,6 @@ class QuizController
 
     public function viewMatchingQuizPage(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn()) {
-            return new Response(401);
-        }
         $currentYear = Year::loadCurrentYear($app->db);
         $questionSets = MatchingQuestionSet::loadAllMatchingSetsForYear($currentYear->yearID, $app->db);
 
@@ -263,9 +261,6 @@ class QuizController
 
     public function generateMatchingQuiz(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn()) {
-            return new Response(401);
-        }
         $questionSetData = Util::validateString($request->post, 'questionSet');
         $parts = explode('|', $questionSetData);
         if (count($parts) < 2) {
@@ -274,7 +269,7 @@ class QuizController
         $numQuestions = Util::validateInteger($request->post, 'numberQuestions');
         $numSets = Util::validateInteger($request->post, 'numberSets');
         if ($numQuestions < 1) {
-            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Number of questions must be greater than 1'], 404);
+            return new JsonStatusCodeResponse(['didSucceed' => false, 'message' => 'Number of matches per set must be greater than 0'], 404);
         }
         if ($parts[0] === 'set') {
             $questionSet = MatchingQuestionSet::loadMatchingSetByID(intval($parts[1]), $app->db);

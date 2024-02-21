@@ -20,16 +20,31 @@ use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use Yamf\AppConfig;
+use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\Response;
 
-class QuestionController
+class QuestionController implements IRequestValidator
 {
-    public function viewQuestions(PBEAppConfig $app, Request $request)
+    /**
+     * Validate a request before the normal controller method is called.
+     *
+     * Return null if the request is valid. Otherwise, return a response
+     * that will be output to the user rather than the normal controller method.
+     */
+    public function validateRequest(AppConfig $app, Request $request) : ?Response
     {
         if (!User::isLoggedIn()) {
-            return new Redirect('/login');
+            if ($request->function === 'loadQuestions') {
+                return new Response(401);
+            }
+            return new Redirect('/');
         }
-        
+        return null;
+    }
+
+    public function viewQuestions(PBEAppConfig $app, Request $request)
+    {        
         $currentYear = Year::loadCurrentYear($app->db);
         $languages = Language::loadAllLanguages($app->db);
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
@@ -44,7 +59,7 @@ class QuestionController
     public function loadQuestions(PBEAppConfig $app, Request $request)
     {
         if (!User::isLoggedIn()) {
-            die();
+            return new Response(401);
         }
 
         $questionData = Question::loadQuestionsWithFilters(
@@ -83,7 +98,7 @@ class QuestionController
 
     public function createNewQuestion(PBEAppConfig $app, Request $request)
     {
-        if ($app->isGuest) {
+        if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
         }
         return $this->showCreateOrEditQuestion($app, $request, true);
@@ -162,7 +177,7 @@ class QuestionController
     
     public function saveNewQuestion(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
         }
         $validation = $this->validateQuestionForm($app, $request, true);
@@ -176,7 +191,7 @@ class QuestionController
     
     public function editQuestion(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
@@ -188,7 +203,7 @@ class QuestionController
     
     public function saveQuestionEdits(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
@@ -215,7 +230,7 @@ class QuestionController
 
     public function verifyDeleteQuestion(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
@@ -229,7 +244,7 @@ class QuestionController
 
     public function deleteQuestion(PBEAppConfig $app, Request $request)
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
