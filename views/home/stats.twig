@@ -33,7 +33,7 @@
         <ul class="nav nav-tabs" role="tablist">
             {% for language in languagesByID %}            
                 <li class="nav-item" role="presentation">
-                    <button type="button" class="nav-link {{ loop.first ? 'active' : '' }}" id="tab-{{ language.languageID }}" data-bs-toggle="tab" data-bs-target="#tab-data-{{ language.languageID }}" role="tab" aria-controls="tab-data-{{ language.languageID }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ language.name }}</a>
+                    <button type="button" class="nav-link {{ loop.first ? 'active' : '' }}" id="tab-{{ language.languageID }}" data-bs-toggle="tab" data-bs-target="#tab-data-{{ language.languageID }}" role="tab" aria-controls="tab-data-{{ language.languageID }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ language.name }}</button>
                 </li>
             {% endfor %}
         </ul>
