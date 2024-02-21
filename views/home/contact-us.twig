@@ -2,7 +2,11 @@
 
 {% block headers %}
     {% if not app.isLocalHost %}
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        {% if app.recaptchaType == 'google' %}
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        {% else %} {# cloudflare #}
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+        {% endif %}
     {% endif %}
     {{ include('includes/scripts/select2.twig') }}
 {% endblock %}
@@ -29,15 +33,23 @@
      </script>
 {% endif %}
 
-{% if _get['success'] is defined %} {# TODO: fix this border/error messages #}
-    <div class="green white-text p-1 mb-1 rounded-border">
-        <span class="ml-1">Message successfully submitted! We'll get back to you as soon as we can.</span>
+{% if _get['success'] is defined %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-success" role="alert">
+                <span class="ml-1">Message successfully submitted! We'll get back to you as soon as we can.</span>
+            </div>
+        </div>
     </div>
 {% endif %}
 
 {% if errors is defined and errors | length > 0 %}
-    <div class="red white-text p-1 mb-1 rounded-border">
-        <span class="ml-1">Error submitting contact form: {{ errors | join('; ') }}</span>
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-danger" role="alert">
+                <span class="ml-1">Error submitting contact form: {{ errors | join('; ') }}</span>
+            </div>
+        </div>
     </div>
 {% endif %}
 
