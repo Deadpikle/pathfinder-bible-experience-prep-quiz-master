@@ -7,9 +7,9 @@ TODO:
 
 Eventual:
 -Revamp UI everywhere
-    -Switch to Bootstrap 5!!!
-    -Use select2 for searchable dropdowns
-    -Use breadcrumbs
+    *-Switch to Bootstrap 5
+    *-Use select2 for searchable dropdowns
+    *-Use breadcrumbs
+    -Use Bootstrap 5 toast messages on matching quiz rather than `alert`
 -the language translation definitely is in need of better code/upgrades
     -need to show copyright multi-language if there are multiple languages of questions showing up (e.g. user has site in spanish but loads english questions)
--page # on question entry for commentary not reqd
