@@ -13,11 +13,17 @@
     </ol>
 </nav>
 
-{% if didUpdate %}
-    <p>Settings successfully updated!</p>
-{% endif %}
-
 <h3>User Settings</h3>
+
+{% if didUpdate %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-success mb-2" role="alert">
+                Settings successfully updated!
+            </div>
+        </div>
+    </div>
+{% endif %}
 
 <form method="post">
     <div class="row">
