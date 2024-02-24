@@ -429,8 +429,7 @@
         $(correctAnswerCheckbox).change(function() {
             if (this.checked) {
                 pointsEarnedInput.value = currentQuestion.points;
-            }
-            else {
+            } else {
                 pointsEarnedInput.value = 0;
             }
         });
@@ -481,7 +480,6 @@
         function saveQuestionResponse() {
             if (pointsEarnedInput.value === "") {
                 pointsEarnedInput.value = 0;
-                Materialize.updateTextFields(); // fixes issue where label covers the input amount
             }
             var pointsAchieved = Number(pointsEarnedInput.value);
             if (pointsAchieved > currentQuestion.points) {
@@ -717,6 +715,10 @@
             else {
                 $('#countdown').remove();
             }
+            
+            // reset flag selection
+            $('#flag-reason').val('');
+            updateSelect2('#flag-reason');
         }
 
         function showQuestionAtCurrentIndex() {
@@ -891,9 +893,6 @@
             currentQuestionIndex = 0;
             showQuestionAtCurrentIndex();
             $('#take-quiz').show();
-            // make sure the first tab is visibly selected. because it's hidden at first,
-            // materialize doesn't draw the little indicator line.
-            // $('ul.tabs').tabs('select_tab', 'current-question');
         } else {
             // no questions! user is done with all questions and should probably reset their saved question answers
             $(flagQuestion).hide();
