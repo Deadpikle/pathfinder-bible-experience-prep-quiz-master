@@ -62,7 +62,7 @@ class TwigPDFView extends Response
             ];
             $mpdf = new Mpdf($options);
             $mpdf->SetTitle($this->title);
-            $mpdf->SetHTMLFooter('<p class="center">Generated via the PBE Prep & Quiz Master Website — pbeprep.com — 2022</p>');
+            $mpdf->SetHTMLFooter('<p class="center">Generated via the PBE Prep & Quiz Master Website — pbeprep.com — © 2017 - ' . date('Y') . '</p>');
             $mpdf->SetAuthor('PBE Prep & Quiz Master');
             $mpdf->WriteHTML($pdfHTML);
             $mpdf->Output($this->filename, 'I');
