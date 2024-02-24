@@ -26,13 +26,13 @@
                 <a class="btn btn-tertiary mb-1" href="{{ app.yurl('/study-guides') }}"><i class="fas fa-file-pdf"></i> Study Guides</a>
                 <a class="btn btn-info" href="{{ app.yurl('/settings') }}"><i class="fas fa-gear"></i> Settings</a>
             </div>
-            <p>Thank you for using the PBE Prep &amp; Quiz Master website! We're happy you're here.</p>
-            <p><em>We are still learning how to write great PBE questions, so please feel free to contact us and/or use the Flag feature on confusing questions when taking a Quiz to alert us to questions that need improvement! Thank you for your patience and for using the website! We are thankful for all of you!</em></p>
+            {# <p><em>We are still learning how to write great PBE questions, so please feel free to contact us and/or use the Flag feature on confusing questions when taking a Quiz to alert us to questions that need improvement! Thank you for your patience and for using the website! We are thankful for all of you!</em></p> #}
         </div>
         <div class="col">
             {# {% include "includes/home-info-sections.twig" with {'sections': sections, 'isOnAdmin': false, 'selectedConferenceID': webAdminConferenceID(app) } %} #}
-            <h5>2023-2024 Dates</h5>
-            <ul class="section-items col-12 col-md-12">
+            <p class="mb-2">Thank you for using the PBE Prep &amp; Quiz Master website! We're happy you're here.</p>
+            <h5 class="mb-1">2023-2024 Dates</h5>
+            <ul class="section-items col-12 col-md-12 mb-2">
                 <li>**If you want your conference data displayed here, please email it to <a href="mailto:admin@pbeprep.com">admin@pbeprep.com</a>**</li>
                 <li>The dates for the 2024 NAD PBE Division Finals are TBD.</li>
             </ul>
@@ -63,8 +63,8 @@
                     </ul>
                 </div>
             </div> #}
-            <h5>Fill in the Blank Questions</h5>
-            <ul class="section-items col-12 col-md-10">
+            <h5 class="mb-1">Fill in the Blank Questions</h5>
+            <ul class="section-items col-12 col-md-10 mb-1">
                 <li>Because of NKJV copyrights, we can only have up to 500 verses of the NKJV text up at one time. Note that this ONLY APPLIES TO FILL-IN-THE-BLANK questions. This does NOT apply to normal Q&amp;A-style questions, which make up the majority of the content on this site!! </li>
                 <li>So, we will be alternating which verses are available for fill-in-the-blank questions every few weeks.</li>
                 <li>Right now, {{ app.currentFillInChapters }} are available for fill-in-the-blank quizzes and flash cards.</li>
@@ -72,8 +72,8 @@
             </ul>
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
-                    <h5>Resources</h5>
-                    <ul class="browser-default">
+                    <h5 class="mb-1">Resources</h5>
+                    <ul class="ps-4">
                         <li>
                             <a href="https://nadpbe.org/" target="_blank">Official PBE Website</a>
                         </li>
@@ -89,8 +89,8 @@
                     </ul>
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
-                    <h5>Other PBE Study Materials</h5>
-                    <ul class="browser-default">
+                    <h5 class="mb-1">Other PBE Study Materials</h5>
+                    <ul class="ps-4">
                         <li>
                             <a href="http://readyanswers.org/PathfinderBibleExperience/P24/P24b.html" target="_blank">Ready Answers Bible Memorization Curriculum</a>
                         </li>
@@ -108,6 +108,11 @@
     <h4>News</h4>
     <div class="row">
         <div class="col-8">
+            <p class="mb-0"><strong>May 1, 2024</strong></p>
+            <ul class="">
+                <li>The PBE website has been given a new facelift! Things will still be in generally the same place as before, but they will run a little bit more smoothly and look a bit more modern. You'll also see icons in various places to help you distinguish buttons by more than text. Behind the scenes, many smaller bugs and issues have been fixed, and things are easier to update and change for the website maintainers.</li>
+                <li>New feature: this website now has a dark mode (light text on a dark background rather than the other way around). You can opt-in to this website style via the Settings page.</li>
+            </ul>
             <p class="mb-0"><strong>January 14, 2024</strong></p>
             <ul class="">
                 <li>We've fixed several issues with sequential question output and also refined the ratio of fill-in-the-blank questions to Q&amp;A questions. You can now define the maximum ratio of fill-in-the-blank questions to Q&amp;A questions yourself. (The default ratio is 10%.)</li>
@@ -152,7 +157,7 @@
             </ul>
             <p class="mb-0"><strong>October 28, 2021</strong></p>
             <ul class="">
-                <li><strong>All Q&amp;A questions for all chapters are now complete!! Feel free to add more of your own, but with around 3,500 questions in the system for this PBE year, there is lots to learn and grow with! Enjoy! :)</li>
+                <li><strong>All Q&amp;A questions for all chapters are now complete!! Feel free to add more of your own, but with around 3,500 questions in the system for this PBE year, there is lots to learn and grow with! Enjoy! :)</strong></li>
             </ul>
             <p class="mb-0"><strong>August 22, 2021</strong></p>
             <ul class="">
