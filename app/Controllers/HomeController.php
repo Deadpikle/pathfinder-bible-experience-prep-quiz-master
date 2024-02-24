@@ -253,7 +253,7 @@ class HomeController
             return new TwigErrorMessage('No spam, thanks.'); // we get so much spam from this email....
         }
         $honeypotName = Util::validateString($request->post, 'fname');
-        $isCaughtInHoneypot = trim($honeypotName) !== '';
+        $isCaughtInHoneypot = $honeypotName !== '';
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
