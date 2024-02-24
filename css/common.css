@@ -505,3 +505,7 @@ thead th {
 .align-bottom-button {
     align-self: flex-end;
 }
+
+.honeybuzz {
+    display: none; /* honeypot */
+}

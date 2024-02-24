@@ -252,6 +252,8 @@ class HomeController
         if ($submission->email === 'ericjonesmyemail@gmail.com') {
             return new TwigErrorMessage('No spam, thanks.'); // we get so much spam from this email....
         }
+        $honeypotName = Util::validateString($request->post, 'fname');
+        $isCaughtInHoneypot = trim($honeypotName) !== '';
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
@@ -268,17 +270,19 @@ class HomeController
                     // Verified!
                     $submission->create($app->db);
                     // send email
-                    Util::sendContactFormEmail(
-                        $app->contactToEmail,
-                        $submission->email, 
-                        $submission->personName,
-                        $app->contactSubjectPrefix,
-                        $submission->title,
-                        $submission->message . "\n\n" .
+                    if (!$isCaughtInHoneypot) {
+                        Util::sendContactFormEmail(
+                            $app->contactToEmail,
+                            $submission->email, 
+                            $submission->personName,
+                            $app->contactSubjectPrefix,
+                            $submission->title,
+                            $submission->message . "\n\n" .
                             'Club: ' . $submission->club . "\n\n" .
                             'Conference: ' . $submission->conference . "\n\n" .
                             'Submission from: ' . ucfirst($submission->type) . "\n\n"
-                    );
+                        );
+                    }
                     return new Redirect('/contact?success');
                 } else {
                     $errors = $resp->getErrorCodes();
