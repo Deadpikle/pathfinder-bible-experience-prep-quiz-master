@@ -221,18 +221,6 @@ p#quiz-question-show-answer {
     margin-left: 1.2em;
 }
 
-.tablesorter-materialize {
-    margin-top: 2em;
-}
-
-.tablesorter-materialize thead .disabled {
-    display: none
-}
-
-.tablesorter-materialize .tablesorter-header.sorter-false {
-    background-image: url();
-}
-
 /* label focus color https://stackoverflow.com/a/37127156/3938401 */
 .blue-inputs input[type=text]:focus+label {
     color: #4285f4;

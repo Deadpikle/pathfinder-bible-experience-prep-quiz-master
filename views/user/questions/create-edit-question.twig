@@ -470,7 +470,6 @@
         // events for fill in the blank checkbox (fillInBlankCheckbox)
         var previousNumPointsValue = "1";
         function modifyAnswerField(isFillInChecked) {
-            // readOnly looks/acts quirky with Materialize, so we're just going to use disabled :\
             if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
