@@ -97,11 +97,6 @@ html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--s
 	background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23888'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") 50%/.75rem auto no-repeat;
 }
 
-html[data-bs-theme="dark"] .quiz-bank-container li,
-html[data-bs-theme="dark"] .answers-container li {
-    color: black;
-}
-
 html[data-bs-theme="dark"] .btn-info {
     --bs-btn-color: #eee;
     --bs-btn-bg: #5ea48b;
@@ -121,6 +116,22 @@ html[data-bs-theme="dark"] .btn-info {
 
 html[data-bs-theme="dark"] table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before {
     color: rgb(135, 135, 135);
+}
+
+html[data-bs-theme="dark"] .quiz-bank,
+html[data-bs-theme="dark"] ul.answers .answer-item {
+    background-color: #222;
+}
+
+html[data-bs-theme="dark"] ul.quiz-bank li.quiz-list-item,
+html[data-bs-theme="dark"] ul.answers li.answer-item,
+html[data-bs-theme="dark"] div.answer-item ul.answer-drop {
+    color: #eee;
+    background-color: #474747;
+}
+
+html[data-bs-theme="dark"] li.sortable-drop-placeholder {
+    background-color: #5d828f !important;
 }
 
 nav.navbar {
@@ -459,6 +470,7 @@ ul.answers li:not(:last-child) {
 
 ul.answer-drop {
     padding-left: 0;
+    margin-top: 0.25em;
 }
 
 div.answer-item {
@@ -518,7 +530,7 @@ li.sortable-drag {
 
 .matching-quiz-col-title {
     font-size: 24px;
-    margin-bottom: 0;
+    margin-bottom: 0.25em;
     margin-top: 0.5em;
 }
 
