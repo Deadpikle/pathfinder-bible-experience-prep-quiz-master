@@ -104,9 +104,30 @@
 	</div>
 </div>
 
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+
+{# bootstrap toaster doesn't work if document.body not initialized at time of include X_X #}
+{% include 'includes/scripts/bootstrap-toaster.twig' %}
 
 <script type="text/javascript">
     $('#question-set').select2({
@@ -115,6 +136,19 @@
         searchInputPlaceholder: 'Search conferences...',
         allowClear: false
     });
+
+    var theme = "{{ prefersDarkMode(app) ? 'dark' : 'light' }}";
+
+    function showToast(title, message, isWarning) {
+        Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+        Toast.setTheme(theme === 'light' ? TOAST_THEME.LIGHT : TOAST_THEME.DARK);
+        Toast.create({
+            title: title,
+            message: message,
+            status: isWarning ? TOAST_STATUS.WARNING: TOAST_STATUS.INFO,
+            timeout: 5000
+        });
+    }        
 
 	// https://stackoverflow.com/a/2450976/3938401
 	function shuffle(array) {
@@ -162,14 +196,14 @@
                     document.getElementById('matching-quiz-container').classList.remove('hidden');
                     
                 } else {
-                    alert('Error creating matching question quiz: ' + response.message);
+                    showToast('Error!', 'Error creating matching question quiz: ' + response.message, true);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 try {
-                    alert(xhr.responseJSON.message);
+                    showToast('Error!', xhr.responseJSON.message, true);
                 } catch (error) {
-                    alert('Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.');
+                    showToast('Error!', 'Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.', true);
                 }
             }
         });
