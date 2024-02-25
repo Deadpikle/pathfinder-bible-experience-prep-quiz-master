@@ -1,6 +1,7 @@
 {% extends "layouts/main.twig" %}
 
 {% block headers %}
+    
     {% if not app.isLocalHost %}
         {% if app.recaptchaType == 'google' %}
             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -9,6 +10,7 @@
         {% endif %}
     {% endif %}
     {{ include('includes/scripts/select2.twig') }}
+
 {% endblock %}
 
 {% block content %}
@@ -24,14 +26,6 @@
 <p>To have your conference or club added to the system, use this contact form or send an email to the person listed for your conference on the <a href="{{ app.yurl('/about') }}">About page</a>. You can also use this form to send questions, suggestions, or other info to website administrators!</p>
 
 <p>If you are requesting access to the website using this form, <strong>please include information on your Pathfinder Club and Conference so that you can be added to the right places and with the right permissions in the system</strong>. Thank you!</p>
-
-{% if not app.isLocalHost %}
-    <script type="text/javascript">
-       function onSubmit(token) {
-            document.getElementById('contact-form').submit();
-       }
-     </script>
-{% endif %}
 
 {% if _get['success'] is defined %}
     <div class="row">
@@ -71,11 +65,11 @@
     <div class="row mt-1">
         <div class="form-group col-12 col-md-4 mt-1">
             <label for="club">* Pathfinder Club</label>
-            <input type="text" class="form-control" id="club" name="club" placeholder="Dayton Area Eagles" maxlength="150" value="{{ submission.club }}">
+            <input type="text" class="form-control" id="club" name="club" placeholder="Dayton Area Eagles" maxlength="150" value="{{ submission.club }}" required>
         </div>
         <div class="form-group col-12 col-md-4 mt-1">
             <label for="conference">* SDA Conference</label>
-            <input type="text" class="form-control" id="conference" name="conference" placeholder="Upper Columbia Conference" maxlength="150" value="{{ submission.conference }}">
+            <input type="text" class="form-control" id="conference" name="conference" placeholder="Upper Columbia Conference" maxlength="150" value="{{ submission.conference }}" required>
         </div>
     </div>
     <div class="row mt-1">
@@ -132,7 +126,17 @@
     <p>If you're submitting information about your conference, please send the conference name, a link to the conference's website, and the name and email address of person who will administer website use for your conference.</p>
 </form>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
+    
+    // for google-type recaptcha
+    function onSubmit(token) {
+        document.getElementById('contact-form').submit();
+    }
+
     $(document).ready(function() {
         $('#type').select2({
             theme: 'bootstrap-5',
