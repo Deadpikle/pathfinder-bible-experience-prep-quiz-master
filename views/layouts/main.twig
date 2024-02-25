@@ -17,12 +17,16 @@
 {% set aboutHeaderActiveStatus = 'about' in currentRequest ? 'active' : '' %}
 {% set loginHeaderActiveStatus = 'login' in currentRequest ? 'active' : '' %}
 {% set adminHeaderActiveStatus = 'admin' in currentRequest ? 'active' : '' %}
-{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' and contactHeaderActiveStatus == '' and loginHeaderActiveStatus == '' %}
+{% set quizHeaderActiveStatus = 'quiz' in currentRequest ? 'active' : '' %}
+{% if aboutHeaderActiveStatus == '' and 
+    adminHeaderActiveStatus == '' and 
+    contactHeaderActiveStatus == '' and 
+    loginHeaderActiveStatus == '' %}
     {% set homeHeaderActiveStatus = 'active' %}
 {% endif %}
 
 <!doctype html>
-<html lang="en" {# data-bs-theme="dark" #}>
+<html lang="en" data-bs-theme="{{ prefersDarkMode(app) ? 'dark' : 'light' }}">
     <head>
         <meta charset="utf-8">
         <!--Let browser know website is optimized for mobile-->
@@ -73,17 +77,20 @@
                     <ul class="navbar-nav">
                         {% if app.loggedIn %}
                             <li class="nav-item"><a class="nav-link {{ homeHeaderActiveStatus }}" href="{{ homePath }}"><i class="fas fa-home"></i> Home</a></li>
+                            <li class="nav-item dropdown">
+                                {# <a class="nav-link {{ quizHeaderActiveStatus }}"><i class="fas fa-award"></i> Take Quiz</a> #}
+                            </li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link {{ loginHeaderActiveStatus }}" href="{{ app.yurl('/login') }}">Login</a></li>
                         {% endif %}
                     </ul>
                     <ul class="ms-auto navbar-nav">
-                        <li class="nav-item"><a class="nav-link {{ aboutHeaderActiveStatus }}" href="{{ app.yurl('/about') }}"><i class="fas fa-question-circle"></i> About</a></li>
+                        {% if app.loggedIn and app.isAdmin %}
+                            <li class="nav-item"><a class="nav-link {{ adminHeaderActiveStatus }}" href="{{ app.yurl('/admin') }}"><i class="fas fa-user-tie"></i> Admin Panel</a></li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link {{ contactHeaderActiveStatus }}" href="{{ app.yurl('/contact') }}"><i class="fas fa-paper-plane"></i> Contact Us</a></li>
+                        <li class="nav-item"><a class="nav-link {{ aboutHeaderActiveStatus }}" href="{{ app.yurl('/about') }}"><i class="fas fa-question-circle"></i> About</a></li>
                         {% if app.loggedIn %}
-                            {% if app.isAdmin %}
-                                <li class="nav-item"><a class="nav-link {{ adminHeaderActiveStatus }}" href="{{ app.yurl('/admin') }}"><i class="fas fa-user-tie"></i> Admin Panel</a></li>
-                            {% endif %}
                             <li class="nav-item"><a class="nav-link" href="{{ app.yurl('/logout') }}"><i class="fas fa-door-open"></i> Logout</a></li>
                         {% endif %}
                     </ul>

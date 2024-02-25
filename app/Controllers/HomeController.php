@@ -143,6 +143,8 @@ class HomeController
         $_SESSION['PreferredLanguageID'] = $languageIDToUse; // TODO: refactor to User somewhere
         
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+        $prefersDarkMode = Util::validateBoolean($request->post, 'prefers-dark-mode');
+        User::updateDarkModePreference(User::currentUserID(), $prefersDarkMode, $app->db);
 
         $didUpdate = true;
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');

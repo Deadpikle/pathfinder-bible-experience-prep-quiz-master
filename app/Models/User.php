@@ -17,6 +17,7 @@ class User
     public $clubID;
     public $createdByID;
     public $defaultLanguageID;
+    public $prefersDarkMode;
 
     public $wasDeleted;
 
@@ -25,6 +26,7 @@ class User
         $this->userID = $userID;
         $this->username = $username;
         $this->wasDeleted = false;
+        $this->prefersDarkMode = false;
     }
 
     public static function isLoggedIn(): bool
@@ -57,12 +59,22 @@ class User
         ]);
     }
 
+    public static function updateDarkModePreference(int $userID, bool $prefersDarkMode, PDO $db)
+    {
+        $query = 'UPDATE Users SET PrefersDarkMode = ? WHERE UserID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            (int)$prefersDarkMode,
+            $userID
+        ]);
+    }
+
     /** @return array<User> */
     private static function loadUsers(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT UserID, Username, EntryCode, ut.UserTypeID, ut.Type, ut.DisplayName AS UserTypeDisplayName, 
-                    u.ClubID, u.LastLoginDate
+                    u.ClubID, u.LastLoginDate, u.PrefersDarkMode
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
             ' . $whereClause . '
@@ -78,6 +90,7 @@ class User
             $user->type = new UserType($row['UserTypeID'], $row['Type']);
             $user->type->displayName = $row['UserTypeDisplayName'];
             $user->clubID = $row['ClubID'];
+            $user->prefersDarkMode = $row['PrefersDarkMode'];
             $output[] = $user;
         }
         return $output;
@@ -161,8 +174,8 @@ class User
     public function create(PDO $db)
     {
         $query = '
-            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate, WasDeleted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate, WasDeleted, PrefersDarkMode) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $this->entryCode = $this->generateEntryCode($db);
         $stmnt = $db->prepare($query);
         $stmnt->execute([
@@ -173,7 +186,8 @@ class User
             User::currentUserID(),
             '',
             '1989-12-25 00:00:00', // default, not-yet-logged-in date
-            (int)$this->wasDeleted
+            (int)$this->wasDeleted,
+            (int)$this->prefersDarkMode
         ]);
         $this->userID = $db->lastInsertId();
     }

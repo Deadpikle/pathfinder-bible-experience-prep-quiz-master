@@ -113,7 +113,7 @@
                 <label for="max-questions">Maximum Questions</label>
                 <input type="number" class="form-control" id="max-questions" name="max-questions" required value="30" max="{{ app.isGuest ? 100 : 500 }}" min="1"/>
             </div>
-            <div class="form-group col-sm-6 col-md-3">
+            <div class="form-group col-sm-6 col-md-4">
                 <label for="max-points">Maximum Points for Q&amp;A Questions</label>
                 <input type="number" class="form-control" id="max-points" name="max-points" required value="10" max="500" min="0"/>
             </div>
@@ -134,7 +134,7 @@
                     <label class="black-text" for="fill-in-only">Fill in the blank only</label>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
+            <div class="col-sm-12 col-md-6">
                 <p id="question-order" class="mb-0"><strong>Question selection and order</strong></p>
                 <div class="form-group mt-0">
                     <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />

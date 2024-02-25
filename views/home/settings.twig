@@ -37,6 +37,12 @@
             </select>
         </div>
     </div>
+    <div class="row mt-2">
+        <div class="form-group col-sm-12">
+            <input type="checkbox" id="prefers-dark-mode" name="prefers-dark-mode" {{ prefersDarkMode(app) ? 'checked' : '' }}>
+            <label for="prefers-dark-mode">Enable dark mode (light text on dark background)</label>
+        </div>
+    </div>
     <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
 </form>
 
