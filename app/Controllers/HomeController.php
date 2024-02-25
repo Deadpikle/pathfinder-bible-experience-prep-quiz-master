@@ -263,17 +263,14 @@ class HomeController
                 $submission->create($app->db);
                 return new Redirect('/contact?success');
             } else {
-                $didSucceedRecaptcha = false;
+                $didSucceedRecaptcha = true;
                 if ($app->recaptchaType === 'google') {
                     $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
-                    $errors = [];
                     $resp = $recaptcha
                         ->setExpectedHostname($app->recaptchaExpectedDomain)
                         ->verify($request->post['g-recaptcha-response'] ?? '');
                     /** @var \ReCaptcha\Response $resp */
-                    if ($resp->isSuccess()) {
-                        $didSucceedRecaptcha = true;
-                    } else {
+                    if (!$resp->isSuccess()) {
                         $errors = $resp->getErrorCodes();
                     }
                 } else {
@@ -294,9 +291,11 @@ class HomeController
                             $app->contactSubjectPrefix,
                             $submission->title,
                             $submission->message . "\n\n" .
+                            'From: ' . $submission->personName . "\n\n" .
+                            'Email: ' . $submission->email . "\n\n" .
                             'Club: ' . $submission->club . "\n\n" .
                             'Conference: ' . $submission->conference . "\n\n" .
-                            'Submission from: ' . ucfirst($submission->type) . "\n\n"
+                            'Submission from user type: ' . ucfirst($submission->type) . "\n\n"
                         );
                     }
                     return new Redirect('/contact?success');
