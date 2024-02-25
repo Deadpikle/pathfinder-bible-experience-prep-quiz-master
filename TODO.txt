@@ -13,6 +13,6 @@ Eventual:
     *-add honeypot to contact form
     *-dark mode setting/compat (and select2 CSS)
     *-Use Bootstrap 5 toast messages on matching quiz rather than `alert`
-    -swap to cloudflare stuff
+    *-swap to cloudflare stuff
 -the language translation definitely is in need of better code/upgrades
     -need to show copyright multi-language if there are multiple languages of questions showing up (e.g. user has site in spanish but loads english questions)

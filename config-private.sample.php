@@ -47,6 +47,8 @@ $app->headerForAnalytics = ''; // e.g. <script data-goatcounter="" async src="//
 $app->contactFromEmail = '';
 $app->contactToEmail = '';
 $app->contactSubjectPrefix = '';
+
+$app->recaptchaType = 'google';
 $app->recaptchaExpectedDomain = '';
 $app->recaptchaPrivateKey = '';
 $app->recaptchaPublicKey = '';

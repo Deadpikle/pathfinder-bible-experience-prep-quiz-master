@@ -5,7 +5,7 @@
         {% if app.recaptchaType == 'google' %}
             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         {% else %} {# cloudflare #}
-            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         {% endif %}
     {% endif %}
     {{ include('includes/scripts/select2.twig') }}
@@ -104,17 +104,22 @@
             <textarea class="form-control" id="message" name="message" placeholder="I would like an access code to...I belong to the Pathfinder club named..." rows="5" required maxlength="10000">{{ submission.message }}</textarea>
         </div>
     </div>
+    <div class="row mt-1">
+        <div class="form-group col-12 col-md-6 mt-1">
+            <div class="cf-turnstile" data-sitekey="{{ app.recaptchaPublicKey }}"></div>
+        </div>
+    </div>
     <div class="row mt-2">
         <div class="col">
-            {% if not app.isLocalHost %}
+            {% if not app.isLocalHost and app.recaptchaType == 'google' %}
                 <button type="submit" class="btn btn-sm btn-primary g-recaptcha" 
                     data-sitekey="{{ app.recaptchaPublicKey }}"
                     data-callback="onSubmit"><i class="fa fa-paper-plane"></i> Submit</button>
-                {# <p>
+                <p class="mt-2 mb-1">
                     <em>This site is protected by reCAPTCHA and the Google
                     <a href="https://policies.google.com/privacy">Privacy Policy</a> and
                     <a href="https://policies.google.com/terms">Terms of Service</a> apply.</em>
-                </p> #}
+                </p>
             {% else %}
                 <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-paper-plane"></i> Submit</button>
             {% endif %}

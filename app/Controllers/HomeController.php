@@ -256,19 +256,33 @@ class HomeController
         }
         $honeypotName = Util::validateString($request->post, 'fname');
         $isCaughtInHoneypot = $honeypotName !== '';
+        $didSucceedRecaptcha = $this->checkCloudflare($app, $request);
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
                 $submission->create($app->db);
                 return new Redirect('/contact?success');
             } else {
-                $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
-                $errors = [];
-                $resp = $recaptcha
-                    ->setExpectedHostname($app->recaptchaExpectedDomain)
-                    ->verify($request->post['g-recaptcha-response'] ?? '');
-                /** @var \ReCaptcha\Response $resp */
-                if ($resp->isSuccess()) {
+                $didSucceedRecaptcha = false;
+                if ($app->recaptchaType === 'google') {
+                    $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
+                    $errors = [];
+                    $resp = $recaptcha
+                        ->setExpectedHostname($app->recaptchaExpectedDomain)
+                        ->verify($request->post['g-recaptcha-response'] ?? '');
+                    /** @var \ReCaptcha\Response $resp */
+                    if ($resp->isSuccess()) {
+                        $didSucceedRecaptcha = true;
+                    } else {
+                        $errors = $resp->getErrorCodes();
+                    }
+                } else {
+                    $didSucceedRecaptcha = $this->checkCloudflare($app, $request);
+                    if (!$didSucceedRecaptcha) {
+                        $errors = ['Failed to verify recaptcha; please try again.'];
+                    }
+                }
+                if ($didSucceedRecaptcha) {
                     // Verified!
                     $submission->create($app->db);
                     // send email
@@ -286,13 +300,41 @@ class HomeController
                         );
                     }
                     return new Redirect('/contact?success');
-                } else {
-                    $errors = $resp->getErrorCodes();
                 }
             }
         } else {
             $errors = [$status->error];
         }
         return new TwigView('home/contact-us', compact('errors', 'submission'), 'Contact');
+    }
+
+    private function checkCloudflare(PBEAppConfig $app, Request $request): bool
+    {
+        // modified from: 
+        // https://community.cloudflare.com/t/is-there-a-turnstile-php-installation-example/425587/2
+        $captcha = Util::validateString($request->post, 'cf-turnstile-response');
+        if (!$captcha) {
+            return false; // CAPTCHA was entered incorrectly
+        }
+        $secretKey = $app->recaptchaPrivateKey;
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+        $data = [
+            'secret' => $secretKey,
+            'response' => $captcha,
+            'remoteip' => $ip
+        ];
+        $options = [
+            'http' => [
+                'method' => 'POST',
+                'content' => http_build_query($data),
+                'header' => 'Content-Type: application/x-www-form-urlencoded'
+            ]
+        ];
+        $stream = stream_context_create($options);
+        $result = file_get_contents($url_path, false, $stream);
+        $response =  $result;
+        $responseKeys = json_decode($response, true);
+        return intval($responseKeys['success']) === 1;
     }
 }

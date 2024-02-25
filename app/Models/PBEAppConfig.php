@@ -33,6 +33,7 @@ class PBEAppConfig extends AppConfig
     public string $contactToEmail;
     public string $contactSubjectPrefix;
 
+    public string $recaptchaType;
     public string $recaptchaExpectedDomain;
     public string $recaptchaPrivateKey;
 
@@ -60,6 +61,7 @@ class PBEAppConfig extends AppConfig
         $this->loggedIn = false;
         $this->contactToEmail = '';
         $this->contactSubjectPrefix = '';
+        $this->recaptchaType = '';
         $this->recaptchaExpectedDomain = '';
         $this->recaptchaPrivateKey = '';
     }
