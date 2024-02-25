@@ -166,7 +166,7 @@ class PowerPointGenerator
     public function outputPowerPoint(array $quizQuestionData, bool $viewFillInTheBlankAnswersInBold)
     {
         $presentation = new PhpPresentation();
-        $presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_CUSTOM, true)
+        $presentation->getLayout()->setDocumentLayout(['cx' => $this->slideWidth, 'cy' => $this->slideHeight], true)
             ->setCX($this->slideWidth, DocumentLayout::UNIT_PIXEL)
             ->setCY($this->slideHeight, DocumentLayout::UNIT_PIXEL);
         $this->setupSlideMaster($presentation);
