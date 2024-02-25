@@ -26,14 +26,12 @@
     <form method="post" enctype="multipart/form-data">
         <div class="row">
             <div class="form-group col-sm-12 col-md-4">
-                <label for="csv">Choose Study Guide File</label>
-                <input class="form-control" type="file" id="file-upload" name="file-upload" accept=".pdf,application/pdf">
-            </div>
-        </div>
-        <div class="row mt-1">
-            <div class="form-group col-sm-12 col-md-4">
-                <label for="display-name">Display Name</label>
+                <label for="display-name">* Display Name</label>
                 <input type="text" class="form-control" id="display-name" name="display-name" maxlength="300" required value="{{ displayName }}" placeholder="My Best Study Guide"/>
+            </div>
+            <div class="form-group col-sm-12 col-md-4">
+                <label for="csv">* Study Guide File</label>
+                <input class="form-control" type="file" id="file-upload" name="file-upload" accept=".pdf,application/pdf" required>
             </div>
         </div>
         <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-upload"></i> Upload</button>

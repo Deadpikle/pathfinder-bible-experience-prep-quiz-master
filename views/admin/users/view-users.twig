@@ -30,7 +30,7 @@
     </div>
 {% endif %}
 
-<p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
+<p class="mb-1">Please note that any 0 in entry codes are zeros, not the capital letter O</p>
 
 <div id="users-div">
     {% if app.isClubAdmin %}
@@ -82,7 +82,7 @@
                     {% if app.isWebAdmin %}
                         <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
                     {% endif %}
-                    <td data-sort="{{ user.lastLoginDate }}">{{ user.lastLoginDate | date('D, M d, Y, g:i a') }}</td>
+                    <td data-sort="{{ user.lastLoginDate }}">{{ user.lastLoginDate ? (user.lastLoginDate | date('D, M d, Y, g:i a')) : '' }}</td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
                             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit</a>

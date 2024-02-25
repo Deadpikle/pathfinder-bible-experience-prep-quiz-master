@@ -23,15 +23,15 @@
 <form method="post">
     <div class="row mb-0">
         <div class="form-group col-sm-6 col-md-4">
-            <label for="name">Name</label>
+            <label for="name">* Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ book.name }}" placeholder="2 Kings" required maxlength="150"/>
         </div>
         <div class="form-group col-sm-6 col-md-4">
-            <label for="number-chapters">Number of Chapters</label>
+            <label for="number-chapters">* Number of Chapters</label>
             <input type="number" class="form-control" id="number-chapters" name="number-chapters" placeholder="1" value="{{ book.numberChapters }}" required min="1" max="150"/>
         </div>
         <div class="form-group col-sm-6 col-md-4">
-            <label for="number-chapters">Bible Order</label>
+            <label for="number-chapters">* Bible Order</label>
             <input type="number" class="form-control" id="bible-order" name="bible-order" placeholder="1" value="{{ book.bibleOrder }}" required min="1" max="66"/>
             <small>Genesis = 1, Exodus = 2, Matthew = 40...</small>
         </div>

@@ -898,7 +898,7 @@
             $(flagQuestion).hide();
             $(nextQuestion).hide();
             var urlForSetup = '{{ app.yurl('/quiz/setup') }}';
-            var error = '<p>No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class="btn btn-sm btn-info" href="' + urlForSetup + '">Back to quiz setup</a></p>';
+            var error = '<p class="mb-2 mt-2">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class="btn btn-info" href="' + urlForSetup + '"><i class="fas fa-arrow-left"></i> Back to Quiz Setup</a></p>';
             showQuizError(error);
             $(endQuiz).show();
         }

@@ -19,21 +19,21 @@
     <form method="post">
         <div class="row">
             <div class="form-group col-sm-12 col-md-4">
-                <label for="name">Conference Name</label>
+                <label for="name">* Conference Name</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{ conference.name }}" placeholder="Upper Columbia Conference" required maxlength="150"/>
             </div>
             <div class="form-group col-sm-12 col-md-4">
-                <label for="name">Website URL</label>
+                <label for="name">* Website URL</label>
                 <input type="url" class="form-control" id="url" name="url" value="{{ conference.url }}" placeholder="https://uccsda.org" required maxlength="350"/>
             </div>
         </div>
         <div class="row mt-1">
             <div class="form-group col-sm-12 col-md-4">
-                <label for="contact-name">Contact Name</label>
+                <label for="contact-name">* Contact Name</label>
                 <input type="text" class="form-control" id="contact-name" name="contact-name" value="{{ conference.contactName }}" placeholder="First-Name Last-Name" required maxlength="150"/>
             </div>
             <div class="form-group col-sm-12 col-md-4">
-                <label for="contact-name">Contact Email</label>
+                <label for="contact-name">* Contact Email</label>
                 <input type="email" class="form-control" id="contact-email" name="contact-email" value="{{ conference.contactEmail }}" placeholder="person@somewhere.com" required maxlength="150"/>
             </div>
         </div>

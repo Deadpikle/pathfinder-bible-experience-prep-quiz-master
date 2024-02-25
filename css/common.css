@@ -117,8 +117,11 @@ html[data-bs-theme="dark"] .btn-info {
     --bs-btn-disabled-color: #eee;
     --bs-btn-disabled-bg: #5ea48b;
     --bs-btn-disabled-border-color: #5ea48b;
-  }
+}
 
+html[data-bs-theme="dark"] table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before {
+    color: rgb(135, 135, 135);
+}
 
 nav.navbar {
     background-color: #5ea48b !important;
