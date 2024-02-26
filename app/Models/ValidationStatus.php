@@ -4,9 +4,9 @@ namespace App\Models;
 
 class ValidationStatus
 {
-    public $didValidate;
+    public bool $didValidate;
     public $output;
-    public $error;
+    public string $error;
 
     public function __construct(bool $didValidate, $output, string $error = '')
     {
