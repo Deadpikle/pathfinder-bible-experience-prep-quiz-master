@@ -65,7 +65,7 @@
                         <td>{{ book.name }}</td>
                         <td>{{ book.numberChapters }}</td>
                         <td>{{ book.bibleOrder }}</td>
-                        <td>{{ book.year }}</td>
+                        <td>{{ yearsByID[book.yearID].year }}</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-info" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}"><i class="fas fa-eye"></i> Manage Chapters</a>
                         </td>

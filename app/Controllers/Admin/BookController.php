@@ -55,7 +55,12 @@ class BookController extends BaseAdminController implements IRequestValidator
     {
         $books = Book::loadAllBooks($app->db);
         $currentYear = Year::loadCurrentYear($app->db);
-        return new TwigView('admin/books/view-books', compact('books', 'currentYear'), 'View Books');
+        $years = Year::loadAllYears($app->db);
+        $yearsByID = [];
+        foreach ($years as $year) {
+            $yearsByID[$year->yearID] = $year;
+        }
+        return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'yearsByID'), 'View Books');
     }
 
     public function createBook(PBEAppConfig $app, Request $request) : Response
@@ -75,7 +80,12 @@ class BookController extends BaseAdminController implements IRequestValidator
             $error = 'Bible order should be between 1 and 66, inclusive';
         }
         if ($error !== '') {
-            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters', 'bibleOrder'), 'View Books');
+            $years = Year::loadAllYears($app->db);
+            $yearsByID = [];
+            foreach ($years as $year) {
+                $yearsByID[$year->yearID] = $year;
+            }
+            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters', 'bibleOrder', 'yearsByID'), 'View Books');
         }
 
         Book::createBook($bookName, $numberOfChapters, $currentYear->yearID, $bibleOrder, $app->db);
