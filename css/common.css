@@ -641,5 +641,10 @@ thead th {
 }
 
 .toast-header .status-icon {
-display: none;
+    display: none;
+}
+
+ul#question-type-choice li button:not(.active),
+ul#display-types li button:not(.active) {
+    color: #aaa;
 }
