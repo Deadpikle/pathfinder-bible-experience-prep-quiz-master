@@ -44,7 +44,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
         return $response;
     }
 
-    public function viewBibleQuestions(PBEAppConfig $app, Request $request)
+    public function viewBibleQuestions(PBEAppConfig $app, Request $request): Response
     {
         $qnaData = BibleQnAData::loadQnAData(Year::loadCurrentYear($app->db), $app->db);
         $totalQuestions = 0;
@@ -66,7 +66,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
         return new TwigView('admin/bible-qna-questions/view-bible-qna-questions', compact('qnaData', 'totalQuestions', 'totalsByLanguage', 'languages'), 'Bible Q&A Questions');
     }
 
-    public function verifyDeleteQnAQuestionsForChapter(PBEAppConfig $app, Request $request)
+    public function verifyDeleteQnAQuestionsForChapter(PBEAppConfig $app, Request $request): Response
     {
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
@@ -77,7 +77,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
         return new TwigView('admin/bible-qna-questions/verify-delete-chapter-qna', compact('chapter', 'language', 'book'), 'Delete Bible Q&A Questions');
     }
 
-    public function deleteQnAQuestionsForChapter(PBEAppConfig $app, Request $request)
+    public function deleteQnAQuestionsForChapter(PBEAppConfig $app, Request $request): Response
     {
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
@@ -94,7 +94,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
         }
     }
 
-    public function verifyDeleteQnAQuestionsForLanguage(PBEAppConfig $app, Request $request)
+    public function verifyDeleteQnAQuestionsForLanguage(PBEAppConfig $app, Request $request): Response
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
@@ -103,7 +103,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
         return new TwigView('admin/bible-qna-questions/verify-delete-language-qna', compact('language'), 'Delete Bible Q&A Questions');
     }
 
-    public function deleteQnAQuestionsForLanguage(PBEAppConfig $app, Request $request)
+    public function deleteQnAQuestionsForLanguage(PBEAppConfig $app, Request $request): Response
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
@@ -117,5 +117,4 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
             return new TwigView('admin/bible-qna-questions/verify-delete-language-qna', compact('language', 'error'), 'Delete Bible Q&A Questions');
         }
     }
-
 }

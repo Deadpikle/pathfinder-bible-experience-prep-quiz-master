@@ -40,7 +40,7 @@ class AppViewExtension extends AbstractExtension
         } elseif ($currentRequest !== "" && $pathNoSlashes != "" && strpos($currentRequest, $pathNoSlashes) !== false) {
             $isCurrent = true;
         }
-        $liClass = $isCurrent ? "active" : "";
+        $liClass = $isCurrent ? 'active' : '';
         return '<li class="' . $liClass . ' nav-item"><a class="nav-link" href="' . $basePath . $path . '">' . $name . '</a></li>';
     }
 

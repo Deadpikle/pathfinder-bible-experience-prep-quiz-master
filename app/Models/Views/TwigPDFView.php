@@ -13,16 +13,16 @@ use Mpdf\Mpdf;
 
 class TwigPDFView extends Response
 {
-    public $name;
-    public $data;
-    public $title; // (default: '')
-    public $filename;
+    public string $name;
+    public ?array $data;
+    public string $title; // (default: '')
+    public string $filename;
 
-    public function __construct($name, $data = [], $title = '', $filename = '')
+    public function __construct(string $name, ?array $data = [], string $title = '', string $filename = '')
     {
         parent::__construct();
         $this->name = $name;
-        $this->data = $data;
+        $this->data = $data ?? [];
         $this->title = $title;
         $this->filename = $filename;
     }
@@ -63,7 +63,7 @@ class TwigPDFView extends Response
             $mpdf = new Mpdf($options);
             $mpdf->SetTitle($this->title);
             $mpdf->SetHTMLFooter('<p class="center">Generated via the PBE Prep & Quiz Master Website — pbeprep.com — © 2017 - ' . date('Y') . '</p>');
-            $mpdf->SetAuthor('PBE Prep & Quiz Master');
+            $mpdf->SetAuthor('PBE Prep & Quiz Master'); // TODO: set to website name (and above footer)
             $mpdf->WriteHTML($pdfHTML);
             $mpdf->Output($this->filename, 'I');
         } catch (Exception $e) {

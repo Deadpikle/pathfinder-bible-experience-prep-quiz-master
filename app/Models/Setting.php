@@ -6,10 +6,10 @@ use PDO;
 
 class Setting
 {
-    public $settingID;
-    public $key;
-    public $value;
-    public $displayName;
+    public int $settingID;
+    public string $key;
+    public string $value;
+    public string $displayName;
 
     public function __construct(int $settingID, string $key, string $value, string $displayName = '')
     {
@@ -20,14 +20,13 @@ class Setting
     }
 
     /** @return array<Setting> */
-    private static function loadSettings(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadSettings(string $whereClause, array $whereParams, PDO $db): array
     {
-
         $query = '
-        SELECT SettingID, SettingKey, SettingValue, DisplayName
-        FROM Settings
-        ' . $whereClause . '
-        ORDER BY DisplayName';
+            SELECT SettingID, SettingKey, SettingValue, DisplayName
+            FROM Settings
+            ' . $whereClause . '
+            ORDER BY DisplayName';
         $stmt = $db->prepare($query);
         $stmt->execute($whereParams);
         $data = $stmt->fetchAll();
@@ -41,7 +40,7 @@ class Setting
     }
 
     /** @return array<Setting> */
-    public static function loadAllSettings(PDO $db) : array
+    public static function loadAllSettings(PDO $db): array
     {
         $settings = Setting::loadSettings('', [], $db);
         $defaults = self::getDefaultSettings();
@@ -61,7 +60,8 @@ class Setting
         return $settings;
     }
 
-    public static function loadAllSettingsAsKeyValueArray(PDO $db) : array
+    /** @return array<string,string> */
+    public static function loadAllSettingsAsKeyValueArray(PDO $db): array
     {
         $data = self::loadAllSettings($db);
         $output = [];
@@ -113,32 +113,32 @@ class Setting
         $app->currentFillInChapters = isset($app->settings[Setting::CurrentFillInChapters()]) ? $app->settings[Setting::CurrentFillInChapters()] : '';
     }
 
-    public static function AboutContactNameKey() : string
+    public static function AboutContactNameKey(): string
     {
         return 'AboutContactName';
     }
 
-    public static function AboutContactEmailKey() : string
+    public static function AboutContactEmailKey(): string
     {
         return 'AboutContactEmail';
     }
 
-    public static function WebsiteNameKey() : string
+    public static function WebsiteNameKey(): string
     {
         return 'WebsiteName';
     }
 
-    public static function WebsiteTabTitleKey() : string
+    public static function WebsiteTabTitleKey(): string
     {
         return 'WebsiteTabTitle';
     }
 
-    public static function FooterTextKey() : string
+    public static function FooterTextKey(): string
     {
         return 'FooterText';
     }
 
-    public static function CurrentFillInChapters() : string
+    public static function CurrentFillInChapters(): string
     {
         return 'CurrentFillInChapters';
     }

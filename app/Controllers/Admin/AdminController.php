@@ -11,13 +11,13 @@ use Yamf\Responses\Response;
 
 class AdminController extends BaseAdminController
 {
-    public function index(PBEAppConfig $app, Request $request)
+    public function index(PBEAppConfig $app, Request $request): Response
     {
         $conferenceID = User::currentConferenceID();
         return new TwigView('admin/index', compact('conferenceID'), 'Admin Home');
     }
 
-    public function help(PBEAppConfig $app, Request $request) : Response
+    public function help(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->isWebAdmin) {
             return new TwigNotFound();

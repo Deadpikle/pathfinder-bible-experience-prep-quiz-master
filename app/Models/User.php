@@ -6,27 +6,32 @@ use PDO;
 
 class User
 {
-    public $userID;
-    public $username;
-    public $entryCode;
-    public $password; // not used
-    public $lastLoginDate;
+    public int $userID;
+    public string $username;
+    public string $entryCode;
+    public string $lastLoginDate;
     
-    public $type; // of type UserType
+    public ?UserType $type; // of type UserType
 
-    public $clubID;
-    public $createdByID;
-    public $defaultLanguageID;
-    public $prefersDarkMode;
+    public int $clubID;
+    public int $createdByID;
+    public int $defaultLanguageID;
+    public bool $prefersDarkMode;
 
-    public $wasDeleted;
+    public int $wasDeleted;
 
     public function __construct(int $userID, string $username)
     {
         $this->userID = $userID;
         $this->username = $username;
-        $this->wasDeleted = false;
+        $this->entryCode = '_';
+        $this->lastLoginDate = '';
+        $this->type = null;
+        $this->clubID = -1;
+        $this->createdByID = -1;
+        $this->defaultLanguageID = -1;
         $this->prefersDarkMode = false;
+        $this->wasDeleted = false;
     }
 
     public static function isLoggedIn(): bool
@@ -119,12 +124,13 @@ class User
         return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" AND WasDeleted = 0 ', [ $clubID ], $db);
     }
 
-    public static function loadUsersInConference(int $conferenceID, PDO $db) : array
+    /** @return array<User> */
+    public static function loadUsersInConference(int $conferenceID, PDO $db): array
     {
         return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" AND WasDeleted = 0 ', [ $conferenceID ], $db);
     }
 
-    public static function loadUserByID(int $userID, PDO $db) : ?User
+    public static function loadUserByID(int $userID, PDO $db): ?User
     {
         $data = User::loadUsers(' WHERE UserID = ? AND WasDeleted = 0 ', [ $userID ], $db);
         return count($data) > 0 ? $data[0] : null;
@@ -133,6 +139,7 @@ class User
 
     // http://stackoverflow.com/a/31107425/3938401
     // Note: may want to upgrade to https://github.com/ircmaxell/RandomLib at some point
+    // Note: In php 8.3, this feature is natively supported
     /**
     * Generate a random string, using a cryptographically secure 
     * pseudorandom number generator (random_int)
@@ -155,7 +162,7 @@ class User
         return $str;
     }
 
-    private function generateEntryCode(PDO $db)
+    private function generateEntryCode(PDO $db): string
     {
         $didFindNewCode = false;
         // pre-create the sql statement for faster queries in the db
@@ -189,7 +196,7 @@ class User
             (int)$this->wasDeleted,
             (int)$this->prefersDarkMode
         ]);
-        $this->userID = $db->lastInsertId();
+        $this->userID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)
@@ -238,12 +245,12 @@ class User
         $statement->execute($params);
     }
 
-    public static function currentConferenceID() : int
+    public static function currentConferenceID(): int
     {
         return $_SESSION['ConferenceID'] ?? -1;
     }
 
-    public static function currentConferenceName() : string
+    public static function currentConferenceName(): string
     {
         return $_SESSION['ConferenceName'] ?? '';
     }

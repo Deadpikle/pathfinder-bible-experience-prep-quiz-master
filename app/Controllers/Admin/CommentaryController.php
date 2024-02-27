@@ -34,7 +34,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -47,14 +47,14 @@ class CommentaryController extends BaseAdminController implements IRequestValida
         return $response;
     }
 
-    public function viewCommentaries(PBEAppConfig $app, Request $request)
+    public function viewCommentaries(PBEAppConfig $app, Request $request): Response
     {
         $commentaries = Commentary::loadAllCommentaries($app->db);
         $currentYear = Year::loadCurrentYear($app->db);
         return new TwigView('admin/commentaries/view-commentaries', compact('commentaries', 'currentYear'), 'View Commentaries');
     }
 
-    public function createCommentary(PBEAppConfig $app, Request $request) : Response
+    public function createCommentary(PBEAppConfig $app, Request $request): Response
     {
         $topic = Util::validateString($request->post, 'topic');
         $commentaryNumber = intval($request->post['commentary'] ?? -1);
@@ -74,7 +74,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
         return new Redirect('/admin/commentaries');
     }
 
-    public function verifyDeleteCommentary(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteCommentary(PBEAppConfig $app, Request $request): Response
     {
         $commentary = Commentary::loadCommentaryByID($request->routeParams['commentaryID'], $app->db);
         if ($commentary === null) {
@@ -83,7 +83,7 @@ class CommentaryController extends BaseAdminController implements IRequestValida
         return new TwigView('admin/commentaries/verify-delete-commentary', compact('commentary'), 'Delete Commentary');
     }
 
-    public function deleteCommentary(PBEAppConfig $app, Request $request) : Response
+    public function deleteCommentary(PBEAppConfig $app, Request $request): Response
     {
         $commentary = Commentary::loadCommentaryByID($request->routeParams['commentaryID'], $app->db);
         if ($commentary === null) {

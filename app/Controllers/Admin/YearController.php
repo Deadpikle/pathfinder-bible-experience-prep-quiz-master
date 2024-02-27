@@ -24,7 +24,7 @@ class YearController extends BaseAdminController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -37,19 +37,19 @@ class YearController extends BaseAdminController implements IRequestValidator
         return $response;
     }
 
-    public function viewYears(AppConfig $app, Request $request) : Response
+    public function viewYears(AppConfig $app, Request $request): Response
     {
         $years = Year::loadAllYears($app->db);
         return new TwigView('/admin/years/view-years', compact('years'), 'Years');
     }
 
-    public function addYear(AppConfig $app, Request $request) : Response
+    public function addYear(AppConfig $app, Request $request): Response
     {
         Year::addYear(Util::validateInteger($request->post, 'year'), $app->db);
         return new Redirect('/admin/years');
     }
 
-    public function verifyMakeYearCurrent(AppConfig $app, Request $request) : Response
+    public function verifyMakeYearCurrent(AppConfig $app, Request $request): Response
     {
         $year = Year::loadYearByID($request->routeParams['yearID'], $app->db);
         if ($year === null) {
@@ -58,7 +58,7 @@ class YearController extends BaseAdminController implements IRequestValidator
         return new TwigView('/admin/years/verify-make-year-current', compact('year'), 'Change Current Year');
     }
 
-    public function makeYearCurrent(AppConfig $app, Request $request) : Response
+    public function makeYearCurrent(AppConfig $app, Request $request): Response
     {
         $year = Year::loadYearByID($request->routeParams['yearID'], $app->db);
         if ($year === null) {

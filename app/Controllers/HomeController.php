@@ -21,10 +21,11 @@ use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\StatsLoader;
 use ReCaptcha\ReCaptcha;
+use Yamf\Responses\Response;
 
 class HomeController
 {
-    public function index(PBEAppConfig $app, Request $request)
+    public function index(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -40,9 +41,9 @@ class HomeController
         return new TwigView('home/login', [], 'Login');
     }
 
-    public function attemptLogin(PBEAppConfig $app, Request $request)
+    public function attemptLogin(PBEAppConfig $app, Request $request): Response
     {
-        // TODO: refactor to models
+        // TODO: this code needs to be refactored to models
         $query = '
             SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
                 conf.ConferenceID, conf.Name AS ConferenceName, u.PreferredLanguageID
@@ -75,20 +76,20 @@ class HomeController
         }
     }
 
-    public function logout(PBEAppConfig $app, Request $request)
+    public function logout(PBEAppConfig $app, Request $request): Response
     {
         session_regenerate_id(false);
         session_destroy();
         return new Redirect('/login');
     }
 
-    public function about(PBEAppConfig $app, Request $request)
+    public function about(PBEAppConfig $app, Request $request): Response
     {
         $conferences = Conference::loadNonWebsiteConferences($app->db);
         return new TwigView('home/about', compact('conferences'), 'About');
     }
 
-    public function activeClubs(PBEAppConfig $app, Request $request)
+    public function activeClubs(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -109,7 +110,7 @@ class HomeController
         return new TwigView('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
     }
 
-    public function studyGuides(PBEAppConfig $app, Request $request)
+    public function studyGuides(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -119,7 +120,7 @@ class HomeController
         return new TwigView('home/study-guides', compact('guides'), 'Study Guides');
     }
 
-    public function viewSettings(PBEAppConfig $app, Request $request)
+    public function viewSettings(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -131,7 +132,7 @@ class HomeController
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 
-    public function updateSettings(PBEAppConfig $app, Request $request)
+    public function updateSettings(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -150,7 +151,7 @@ class HomeController
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 
-    public function currentYearStats(PBEAppConfig $app, Request $request)
+    public function currentYearStats(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -206,7 +207,7 @@ class HomeController
         return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'commentaryStats', 'totalQuestions', 'totalCommentaryQuestions', 'languagesByID', 'chapterStatsByLanguageID', 'verseStatsByLanguageID', 'commentaryStatsByLanguageID', 'totalQuestionsByLanguageID', 'totalCommentaryQuestionsByLanguageID'), 'Stats');
     }
 
-    public function showContactForm(PBEAppConfig $app, Request $request)
+    public function showContactForm(PBEAppConfig $app, Request $request): Response
     {
         return new TwigView('home/contact-us', [], 'Contact');
     }
@@ -245,7 +246,7 @@ class HomeController
         return new ValidationStatus(true, $submission);
     }
 
-    public function handleContactSubmission(PBEAppConfig $app, Request $request)
+    public function handleContactSubmission(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateContactSubmission($app, $request);
         $submission = $status->output;

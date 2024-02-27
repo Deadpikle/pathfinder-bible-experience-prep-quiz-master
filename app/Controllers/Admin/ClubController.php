@@ -26,7 +26,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -39,7 +39,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return $response;
     }
 
-    public function viewClubs(PBEAppConfig $app, Request $request)
+    public function viewClubs(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = User::currentConferenceID();
         if ($app->isConferenceAdmin) {
@@ -52,13 +52,13 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/clubs/view-clubs', compact('clubs', 'conferences', 'conferencesByID', 'currentConferenceID'), 'Clubs');
     }
 
-    private function showCreateOrEditClub(PBEAppConfig $app, Request $request, bool $isCreating, ?Club $club, string $error = '') : Response
+    private function showCreateOrEditClub(PBEAppConfig $app, Request $request, bool $isCreating, ?Club $club, string $error = ''): Response
     {
         $conferences = Conference::loadAllNonAdminConferences($app->db);
         return new TwigView('admin/clubs/create-edit-club', compact('isCreating', 'club', 'conferences', 'error'), $isCreating ? 'Create Club' : 'Edit Club');
     }
 
-    private function validateClub(PBEAppConfig $app, Request $request, ?Club $club) : ValidationStatus
+    private function validateClub(PBEAppConfig $app, Request $request, ?Club $club): ValidationStatus
     {
         $name = $request->post['club-name'] ?? '';
         $url = $request->post['club-url'] ?? '';
@@ -80,12 +80,12 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return new ValidationStatus(true, $club);
     }
 
-    public function createClub(PBEAppConfig $app, Request $request) : Response
+    public function createClub(PBEAppConfig $app, Request $request): Response
     {
         return $this->showCreateOrEditClub($app, $request, true, null);
     }
 
-    public function saveCreatedClub(PBEAppConfig $app, Request $request) : Response
+    public function saveCreatedClub(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateClub($app, $request, null);
         $club = $status->output;
@@ -96,7 +96,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return new Redirect('/admin/clubs');
     }
 
-    public function editClub(PBEAppConfig $app, Request $request) : Response
+    public function editClub(PBEAppConfig $app, Request $request): Response
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
@@ -105,7 +105,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return $this->showCreateOrEditClub($app, $request, false, $club);
     }
 
-    public function saveEditedClub(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedClub(PBEAppConfig $app, Request $request): Response
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
@@ -120,7 +120,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return new Redirect('/admin/clubs');
     }
 
-    public function verifyDeleteClub(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteClub(PBEAppConfig $app, Request $request): Response
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {
@@ -129,7 +129,7 @@ class ClubController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/clubs/verify-delete-club', compact('club'), 'Delete Club');
     }
 
-    public function deleteClub(PBEAppConfig $app, Request $request) : Response
+    public function deleteClub(PBEAppConfig $app, Request $request): Response
     {
         $club = Club::loadClubByID($request->routeParams['clubID'], $app->db);
         if ($club === null) {

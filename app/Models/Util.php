@@ -8,18 +8,18 @@ use Yamf\Util as YamfUtil;
 
 class Util
 {
-    public static function validateBoolean(array $array, string $key) : bool
+    public static function validateBoolean(array $array, string $key): bool
     {
         return isset($array[$key]) && $array[$key] !== null && filter_var($array[$key], FILTER_VALIDATE_BOOLEAN);
     }
     
-    public static function str_contains($needle, $haystack)
+    public static function str_contains($needle, $haystack): bool
     {
         return strpos($haystack, $needle) !== false;
     }
 
     // https://stackoverflow.com/a/19271434/3938401
-    public static function validateDate($date, $format = 'Y-m-d')
+    public static function validateDate($date, $format = 'Y-m-d'): bool
     {
         if ($date === null || $date === '') {
             return false;
@@ -30,7 +30,7 @@ class Util
     }
 
     // https://stackoverflow.com/a/19271434/3938401
-    public static function validateDateFromArray($array, $key, $format = 'Y-m-d') : ?string
+    public static function validateDateFromArray($array, $key, $format = 'Y-m-d'): ?string
     {
         $data = isset($array) && isset($array[$key]) ? $array[$key] : null;
         if (!Util::validateDate($data, $format)) {
@@ -39,27 +39,27 @@ class Util
         return $data;
     }
 
-    public static function validateString(array $array, string $key) : string
+    public static function validateString(array $array, string $key): string
     {
         return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key])) : '';
     }
 
-    public static function validateURL(array $array, string $key) : string
+    public static function validateURL(array $array, string $key): string
     {
         return isset($array[$key]) && $array[$key] !== null ? trim(filter_var($array[$key], FILTER_SANITIZE_URL)) : '';
     }
 
-    public static function validateInteger(array $array, string $key) : int
+    public static function validateInteger(array $array, string $key): int
     {
         return isset($array[$key]) && $array[$key] !== null ? intval(filter_var($array[$key], FILTER_SANITIZE_NUMBER_INT)) : 0;
     }
 
-    public static function validateEmail(array $array, string $key) : string
+    public static function validateEmail(array $array, string $key): string
     {
         return isset($array[$key]) && $array[$key] !== null ? filter_var($array[$key], FILTER_SANITIZE_EMAIL) : '';
     }
 
-    public static function generateUUID() : string
+    public static function generateUUID(): string
     {
         $bytes = random_bytes(16);
         $UUID = bin2hex($bytes);
@@ -72,7 +72,7 @@ class Util
         return $UUID;
     }
 
-    public static function getFullQuestionTextFromQuestion($question)
+    public static function getFullQuestionTextFromQuestion($question): string
     {
         $type = $question['type'];
         $output = trim($question['question']);
@@ -148,39 +148,40 @@ class Util
         return trim($output);
     }
 
-    public static function generateFillInDataFromQuestion($question) {
-        $data = $question["fillInData"];
-        $blankedOutput = "";
-        $boldedOutput = "";
+    public static function generateFillInDataFromQuestion($question): array
+    {
+        $data = $question['fillInData'];
+        $blankedOutput = '';
+        $boldedOutput = '';
         $i = 0;
         $blankedWords = [];
         foreach ($data as $questionWords) {
-            if ($questionWords["before"] !== "") {
-                $blankedOutput .= $questionWords["before"];
-                $boldedOutput .= $questionWords["before"];
+            if ($questionWords['before'] !== '') {
+                $blankedOutput .= $questionWords['before'];
+                $boldedOutput .= $questionWords['before'];
             }
-            if ($questionWords["word"] !== "") {
-                if ($questionWords["shouldBeBlanked"]) {
-                    $blankedWords[] = $questionWords["word"];
-                    $blankedOutput .= "________";
-                    $boldedOutput .= "<strong>" . $questionWords["word"] . "</strong>";
+            if ($questionWords['word'] !== '') {
+                if ($questionWords['shouldBeBlanked']) {
+                    $blankedWords[] = $questionWords['word'];
+                    $blankedOutput .= '________';
+                    $boldedOutput .= '<strong>' . $questionWords['word'] . '</strong>';
                 }
                 else {
-                    $blankedOutput .= $questionWords["word"];
-                    $boldedOutput .= $questionWords["word"];
+                    $blankedOutput .= $questionWords['word'];
+                    $boldedOutput .= $questionWords['word'];
                 }
             }
-            if ($questionWords["after"] !== "" && $questionWords["after"] !== "...") {
-                $blankedOutput .= $questionWords["after"];
-                $boldedOutput .= $questionWords["after"];
+            if ($questionWords['after'] !== '' && $questionWords['after'] !== '...' && $questionWords['after'] !== '…') {
+                $blankedOutput .= $questionWords['after'];
+                $boldedOutput .= $questionWords['after'];
             }
             if ($i != count($data) - 1) {
-                $blankedOutput .= " ";
-                $boldedOutput .= " ";
+                $blankedOutput .= ' ';
+                $boldedOutput .= ' ';
             }
             $i++;
         }
-        return ["question" => $blankedOutput, "answer" => $boldedOutput, "blanked-words" => $blankedWords];
+        return ['question' => $blankedOutput, 'answer' => $boldedOutput, 'blanked-words' => $blankedWords];
     }
 
     public static function getBibleNames(): array
@@ -216,15 +217,15 @@ class Util
     public static function fixQuestionMarkOnQuestion(string $input): string
     {
         if (mb_strlen($input) > 0) {
-            if (YamfUtil::strEndsWith(mb_strtolower($input), "specific.") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "specific") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "be specific") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "se específico") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "ser específico") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "específico") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "específico.") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "especfico") ||
-                YamfUtil::strEndsWith(mb_strtolower($input), "especfico.")) {
+            if (YamfUtil::strEndsWith(mb_strtolower($input), 'specific.') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'specific') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'be specific') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'se específico') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'ser específico') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'específico') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'específico.') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'especfico') ||
+                YamfUtil::strEndsWith(mb_strtolower($input), 'especfico.')) {
                 if (!YamfUtil::strEndsWith($input, '.')) {
                     $input .= '.';
                 }
@@ -233,7 +234,7 @@ class Util
                     YamfUtil::strEndsWith($input, '!') ||
                     YamfUtil::strEndsWith($input, ',')) {
                     $input = substr($input, 0, -1) . '?';
-                } else if (!YamfUtil::strEndsWith($input, "?")) {
+                } else if (!YamfUtil::strEndsWith($input, '?')) {
                     $input .= "?";
                 }
             }

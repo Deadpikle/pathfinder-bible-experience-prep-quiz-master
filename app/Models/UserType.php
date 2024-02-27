@@ -17,7 +17,8 @@ class UserType
         $this->displayName = '';
     }
 
-    private static function loadUserTypes(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<UserType> */
+    private static function loadUserTypes(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT UserTypeID, Type, DisplayName

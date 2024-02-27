@@ -12,11 +12,11 @@ use App\ViewExtensions\PHPFuncExtension;
 
 class TwigView extends Response
 {
-    public $name;
-    public $data;
-    public $title; // (default: '')
+    public string $name;
+    public ?array $data;
+    public string $title; // (default: '')
 
-    public function __construct($name, $data = [], $title = '')
+    public function __construct(string $name, ?array $data = [], string $title = '')
     {
         parent::__construct();
         $this->name = $name;

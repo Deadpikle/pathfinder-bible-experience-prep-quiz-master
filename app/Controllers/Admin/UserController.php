@@ -20,7 +20,7 @@ use Yamf\Responses\Response;
 
 class UserController extends BaseAdminController
 {
-    public function viewUsers(PBEAppConfig $app, Request $request)
+    public function viewUsers(PBEAppConfig $app, Request $request): Response
     {
         $displayConferenceName = true;
         if ($app->isClubAdmin) {
@@ -41,7 +41,7 @@ class UserController extends BaseAdminController
             'Users');
     }
 
-    private function createOrEditUser(PBEAppConfig $app, Request $request, bool $isCreating, ?User $user, string $error = '') : Response
+    private function createOrEditUser(PBEAppConfig $app, Request $request, bool $isCreating, ?User $user, string $error = ''): Response
     {
         $conferencesByID = Conference::loadAllConferencesByID($app->db);
         if ($app->isWebAdmin) {
@@ -59,7 +59,7 @@ class UserController extends BaseAdminController
         return new TwigView('admin/users/create-edit-user', compact('isCreating', 'user', 'userTypes', 'clubs', 'conferencesByID', 'error'), $isCreating ? 'Create User' : 'Edit User');
     }
 
-    private function validateUser(PBEAppConfig $app, Request $request, ?User $user) : ValidationStatus
+    private function validateUser(PBEAppConfig $app, Request $request, ?User $user): ValidationStatus
     {
         $username = $request->post['username'] ?? '';
         $userTypeID = (int)$request->post['user-type'] ?? -1;
@@ -90,12 +90,12 @@ class UserController extends BaseAdminController
         return new ValidationStatus(true, $user);
     }
 
-    public function createUser(PBEAppConfig $app, Request $request) : Response
+    public function createUser(PBEAppConfig $app, Request $request): Response
     {
         return $this->createOrEditUser($app, $request, true, null);
     }
 
-    public function saveCreatedUser(PBEAppConfig $app, Request $request) : Response
+    public function saveCreatedUser(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateUser($app, $request, null);
         $user = $status->output;
@@ -107,7 +107,7 @@ class UserController extends BaseAdminController
         return new Redirect('/admin/users?created=' . $user->entryCode);
     }
 
-    public function editUser(PBEAppConfig $app, Request $request) : Response
+    public function editUser(PBEAppConfig $app, Request $request): Response
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
@@ -116,7 +116,7 @@ class UserController extends BaseAdminController
         return $this->createOrEditUser($app, $request, false, $user);
     }
 
-    public function saveEditedUser(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedUser(PBEAppConfig $app, Request $request): Response
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
@@ -136,7 +136,7 @@ class UserController extends BaseAdminController
         return new Redirect('/admin/users');
     }
 
-    public function verifyDeleteUser(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteUser(PBEAppConfig $app, Request $request): Response
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {
@@ -145,7 +145,7 @@ class UserController extends BaseAdminController
         return new TwigView('admin/users/verify-delete-user', compact('user'), 'Delete User');
     }
 
-    public function deleteUser(PBEAppConfig $app, Request $request) : Response
+    public function deleteUser(PBEAppConfig $app, Request $request): Response
     {
         $user = User::loadUserByID($request->routeParams['userID'], $app->db);
         if ($user === null) {

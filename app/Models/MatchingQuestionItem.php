@@ -6,28 +6,34 @@ use PDO;
 
 class MatchingQuestionItem
 {
-    public $matchingQuestionItemID;
-    public $question;
-    public $answer;
-    public $dateCreated;
-    public $dateModified;
-    public $isDeleted;
-    public $startVerseID;
-    public $endVerseID;
-    public $creatorID;
-    public $lastEditedByID;
-    public $matchingQuestionSetID;
+    public int $matchingQuestionItemID;
+    public string $question;
+    public string $answer;
+    public string $dateCreated;
+    public string $dateModified;
+    public bool $isDeleted;
+    public int $startVerseID;
+    public int $endVerseID;
+    public int $creatorID;
+    public int $lastEditedByID;
+    public int $matchingQuestionSetID;
 
     public function __construct(int $matchingQuestionItemID, string $question, string $answer)
     {
         $this->matchingQuestionItemID = $matchingQuestionItemID;
         $this->question = $question;
         $this->answer = $answer;
+        $this->dateCreated = '';
+        $this->dateModified = '';
         $this->isDeleted = false;
         $this->startVerseID = null;
         $this->endVerseID = null;
+        $this->creatorID = -1;
+        $this->lastEditedByID = -1;
+        $this->matchingQuestionSetID = -1;
     }
 
+    /** @return array<MatchingQuestionItem> */
     private static function loadMatchingSets(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
@@ -55,6 +61,7 @@ class MatchingQuestionItem
         return $output;
     }
 
+    /** @return array<MatchingQuestionItem> */
     public static function loadAllQuestionsForSet(int $matchingQuestionSetID, PDO $db): array
     {
         return self::loadMatchingSets(' WHERE MatchingQuestionSetID = ? AND IsDeleted = 0 ', [ $matchingQuestionSetID ], $db);
@@ -66,6 +73,7 @@ class MatchingQuestionItem
         return count($data) > 0 ? $data[0] : null;
     }
 
+    /** @return array<MatchingQuestionItem> */
     public static function loadQuestionItemsInSets(array $matchingQuestionSetIDs, PDO $db): array
     {
         if (count($matchingQuestionSetIDs) === 0) {
@@ -97,7 +105,7 @@ class MatchingQuestionItem
             $this->lastEditedByID,
             $this->matchingQuestionSetID
         ]);
-        $this->matchingQuestionSetID = $db->lastInsertId();
+        $this->matchingQuestionSetID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)

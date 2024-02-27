@@ -32,7 +32,7 @@ class QuestionController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         if (!User::isLoggedIn()) {
             if ($request->function === 'loadQuestions') {
@@ -43,7 +43,7 @@ class QuestionController implements IRequestValidator
         return null;
     }
 
-    public function viewQuestions(PBEAppConfig $app, Request $request)
+    public function viewQuestions(PBEAppConfig $app, Request $request): Response
     {        
         $currentYear = Year::loadCurrentYear($app->db);
         $languages = Language::loadAllLanguages($app->db);
@@ -96,7 +96,7 @@ class QuestionController implements IRequestValidator
         return new TwigView('user/questions/create-edit-question', compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage', 'isCreating', 'question', 'error', 'isFlagged'), $isCreating ? 'Add Question' : 'Edit Question');
     }
 
-    public function createNewQuestion(PBEAppConfig $app, Request $request)
+    public function createNewQuestion(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
@@ -104,7 +104,7 @@ class QuestionController implements IRequestValidator
         return $this->showCreateOrEditQuestion($app, $request, true);
     }
 
-    private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating) : ValidationStatus
+    private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating): ValidationStatus
     {
         $totalBibleFillInQuestions = Question::getNumberOfFillInBibleQuestionsForCurrentYear($app->db);
 
@@ -175,7 +175,7 @@ class QuestionController implements IRequestValidator
         return new ValidationStatus(true, $question);
     }
     
-    public function saveNewQuestion(PBEAppConfig $app, Request $request)
+    public function saveNewQuestion(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
@@ -189,7 +189,7 @@ class QuestionController implements IRequestValidator
         return $this->showCreateOrEditQuestion($app, $request, true, $validation->output, $validation->error);
     }
     
-    public function editQuestion(PBEAppConfig $app, Request $request)
+    public function editQuestion(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
@@ -201,7 +201,7 @@ class QuestionController implements IRequestValidator
         return $this->showCreateOrEditQuestion($app, $request, false, $question);
     }
     
-    public function saveQuestionEdits(PBEAppConfig $app, Request $request)
+    public function saveQuestionEdits(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
@@ -228,7 +228,7 @@ class QuestionController implements IRequestValidator
         return $this->showCreateOrEditQuestion($app, $request, false, $validation->output, $validation->error);
     }
 
-    public function verifyDeleteQuestion(PBEAppConfig $app, Request $request)
+    public function verifyDeleteQuestion(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
@@ -242,7 +242,7 @@ class QuestionController implements IRequestValidator
         return new TwigView('user/questions/verify-delete-question', compact('question', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
     }
 
-    public function deleteQuestion(PBEAppConfig $app, Request $request)
+    public function deleteQuestion(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');

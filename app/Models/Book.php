@@ -13,7 +13,8 @@ class Book
     public int $numberChapters;
     public int $bibleOrder;
 
-    public array $chapters; // array of Chapter objects
+    /** @var array<Chapter> $chapters */
+    public array $chapters;
 
     public int $yearID;
 
@@ -27,7 +28,8 @@ class Book
         $this->yearID = -1;
     }
 
-    private static function loadBooks(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<Book> */
+    private static function loadBooks(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT BookID, Name, NumberChapters, Books.YearID, Years.Year, BibleOrder

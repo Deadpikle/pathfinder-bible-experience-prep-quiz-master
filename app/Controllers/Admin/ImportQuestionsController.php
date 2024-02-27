@@ -18,21 +18,23 @@ use App\Models\User;
 use App\Models\Util;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use Yamf\Responses\Response;
 
 class ImportQuestionsController extends BaseAdminController
 {
-    public function viewImportPage(PBEAppConfig $app, Request $request)
+    public function viewImportPage(PBEAppConfig $app, Request $request): Response
     {
         $defaultLanguage = Language::loadDefaultLanguage($app->db);
         return new TwigView('admin/upload-csv', compact('defaultLanguage'), 'Upload Questions');
     }
 
     // getHexChar from http://forums.devshed.com/php-development-5/comparing-hex-values-comprising-string-249095.html
-    private function getHexChar($hexCode) {
+    private function getHexChar($hexCode): string
+    {
         return chr(hexdec($hexCode));
     }
 
-    public function saveImportedQuestions(PBEAppConfig $app, Request $request)
+    public function saveImportedQuestions(PBEAppConfig $app, Request $request): Response
     {
         // TODO: refactor to a model or other class to handle this
         $questionsSuccessfullyAdded = 0;
@@ -95,10 +97,10 @@ class ImportQuestionsController extends BaseAdminController
         // put it in a nice format for easily querying later
         $rawBooks = [];
         foreach ($bookData as $bookRow) {
-            $bookName = $bookRow["BookName"];
-            $chapterNumber = $bookRow["ChapterNumber"];
-            $verseID = $bookRow["VerseID"];
-            $verseNumber = $bookRow["VerseNumber"];
+            $bookName = $bookRow['BookName'];
+            $chapterNumber = $bookRow['ChapterNumber'];
+            $verseID = $bookRow['VerseID'];
+            $verseNumber = $bookRow['VerseNumber'];
             if (!isset($rawBooks[$bookName])) {
                 $rawBooks[$bookName] = [];
             }
@@ -120,11 +122,11 @@ class ImportQuestionsController extends BaseAdminController
         ';
         $stmt = $app->db->prepare($query);
         foreach ($csv as $row) {
-            if (!isset($row["Question"]) || !isset($row["Start Book"]) || !isset($row["Fill in?"])
-                || !isset($row["Start Chapter"]) || !isset($row["Start Verse"]) || !isset($row["Type"])) {
+            if (!isset($row['Question']) || !isset($row['Start Book']) || !isset($row['Fill in?'])
+                || !isset($row['Start Chapter']) || !isset($row['Start Verse']) || !isset($row['Type'])) {
                 if (count($row) > 1) {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . ($row["Question"] ?? ("(question unavailable)") . " -- Invalid column data.<br>");
+                    $errors .= 'Unable to add question: ' . ($row['Question'] ?? '(question text not set)') . ' -- Invalid column data.<br>';
                 }
                 // else it was probably just a blank row!
                 continue; // get rid of blank rows.
@@ -144,19 +146,19 @@ class ImportQuestionsController extends BaseAdminController
             echo ($row["Type"]);
             die();*/
             try {
-                $questionType = "";
-                if (!isset($row["Fill in?"])) {
+                $questionType = '';
+                if (!isset($row['Fill in?'])) {
                     $questionsFailedToAdd++;
-                    $errors .= "Data does not have the Fill in? column.<br>";
+                    $errors .= 'Data does not have the Fill in? column.<br>';
                     continue;
                 }
-                $questionText = trim($row["Question"] ?? '');
-                $answerText = trim($row["Answer"] ?? '');
+                $questionText = trim($row['Question'] ?? '');
+                $answerText = trim($row['Answer'] ?? '');
                 if ($questionText === '' && $answerText === '') {
                     continue; // bail -- question was intentionally left blank
                 }
 
-                $language = trim($row["Language"] ?? 'English');
+                $language = trim($row['Language'] ?? 'English');
                 if ($language === '') {
                     $language = 'English';
                 }
@@ -171,40 +173,40 @@ class ImportQuestionsController extends BaseAdminController
                 }
                 if ($languageID == -1) {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . $row["Question"] . " -- Couldn't find language " . $language . ".<br>";
+                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Couldn\'t find language ' . $language . '.<br>';
                     continue;
                 }
-                $fillInDataFromUser = strtolower(trim($row["Fill in?"]));
-                $isFillInTheBlank = $fillInDataFromUser === "yes" || $fillInDataFromUser === "true" || $fillInDataFromUser === 1;
-                $row["Type"] = trim($row["Type"]);
+                $fillInDataFromUser = strtolower(trim($row['Fill in?']));
+                $isFillInTheBlank = 
+                    $fillInDataFromUser === 'yes' || 
+                    $fillInDataFromUser === 'true' || 
+                    $fillInDataFromUser === 1;
+                $row['Type'] = trim($row['Type']);
                 $needsToSubtractTotalBibleFillInIfFailed = false;
-                if ($row["Type"] === "Bible") {
+                if ($row['Type'] === 'Bible') {
                     if ($isFillInTheBlank) {
                         if ($bibleFillIns[$languageID] >= 500 && $app->ENABLE_NKJV_RESTRICTIONS) {
                             $questionsFailedToAdd++;
-                            $errors .= "Unable to add question: " . $row["Question"] . " -- Reached max number of Bible questions for " 
-                                . $languagesByID[$languageID]->getDisplayName() . ".<br>";
+                            $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Reached max number of Bible questions for '
+                                . $languagesByID[$languageID]->getDisplayName() . '.<br>';
                             continue;
                         }
                         $bibleFillIns[$languageID]++;
                         $needsToSubtractTotalBibleFillInIfFailed = true;
-                        $questionType = "bible-qna-fill";
+                        $questionType = Question::getBibleQnAFillType();
+                    } else {
+                        $questionType = Question::getBibleQnAType();
                     }
-                    else {
-                        $questionType = "bible-qna";
-                    }
-                }
-                else if ($row["Type"] === "Commentary") {
+                } else if ($row['Type'] === 'Commentary') {
                     if ($isFillInTheBlank) {
                         $questionType = Question::getCommentaryQnAFillType();
-                    }
-                    else {
+                    } else {
                         $questionType = Question::getCommentaryQnAType();
                     }
                 }
-                if ($questionType === "") {
+                if ($questionType === '') {
                     $questionsFailedToAdd++;
-                    $errors .= "Unable to add question: " . $row["Question"] . " -- Invalid question type.<br>";
+                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Invalid question type.<br>';
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
                         $bibleFillIns[$languageID]--;
                     }
@@ -214,7 +216,7 @@ class ImportQuestionsController extends BaseAdminController
 
                 if (Question::isTypeBibleQnA($questionType)) {
                     // find verse id for start
-                    $bookName = trim($row["Start Book"]);
+                    $bookName = trim($row['Start Book']);
                     if (!isset($rawBooks[$bookName])) {
                         // check translations
                         foreach ($translations as $translationList) {
@@ -225,8 +227,8 @@ class ImportQuestionsController extends BaseAdminController
                             }
                         }
                     }
-                    $chapterNumber = trim($row["Start Chapter"]);
-                    $verseNumber = trim($row["Start Verse"]);
+                    $chapterNumber = trim($row['Start Chapter']);
+                    $verseNumber = trim($row['Start Verse']);
                     if ($bookName !== ''
                         && $chapterNumber !== ''
                         && $verseNumber !== ''
@@ -237,15 +239,15 @@ class ImportQuestionsController extends BaseAdminController
                     }
                     else {
                         $questionsFailedToAdd++;
-                        $errors .= "Unable to add Bible question: " . $row["Question"] . " -- Invalid book name, chapter, and/or verse.<br>";
+                        $errors .= 'Unable to add Bible question: ' . $row['Question'] . ' -- Invalid book name, chapter, and/or verse.<br>';
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
                             $bibleFillIns[$languageID]--;
                         }
                         continue;
                     }
-                    $bookName = trim($row["End Book"] ?? '');
-                    $chapterNumber = trim($row["End Chapter"] ?? '');
-                    $verseNumber = trim($row["End Verse"] ?? '');
+                    $bookName = trim($row['End Book'] ?? '');
+                    $chapterNumber = trim($row['End Chapter'] ?? '');
+                    $verseNumber = trim($row['End Verse'] ?? '');
                     if ($bookName !== "") {
                         if ($bookName !== ''
                             && $chapterNumber !== ''
@@ -268,10 +270,10 @@ class ImportQuestionsController extends BaseAdminController
                     $commentaryEndPage = null;
                 }
                 else if (Question::isTypeCommentaryQnA($questionType)) {
-                    $commentaryNumber = trim($row["Commentary Number"]);
-                    $commentaryTopic = trim($row["Commentary Topic"]);
-                    $commentaryStartPage = $row["Start Page"];
-                    $commentaryEndPage = $row["End Page"];
+                    $commentaryNumber = trim($row['Commentary Number']);
+                    $commentaryTopic = trim($row['Commentary Topic']);
+                    $commentaryStartPage = $row['Start Page'];
+                    $commentaryEndPage = $row['End Page'];
                     if ($commentaryStartPage === '') {
                         $commentaryStartPage = null;
                     }
@@ -294,7 +296,7 @@ class ImportQuestionsController extends BaseAdminController
                         $commentaryID = $commentaryMap[$commentaryKey]->commentaryID;
                     } else {
                         $questionsFailedToAdd++;
-                        $errors .= "Unable to add commentary question: " . $row["Question"] . " -- Invalid number and/or topic.<br>";
+                        $errors .= 'Unable to add commentary question: ' . $row['Question'] . ' -- Invalid number and/or topic.<br>';
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
                             $bibleFillIns[$languageID]--;
                         }
@@ -305,8 +307,8 @@ class ImportQuestionsController extends BaseAdminController
                     $endVerseID = null;
                 }
 
-                $points = isset($row["Points"]) ? $row["Points"] : "";
-                if (trim($points) == "") {
+                $points = isset($row['Points']) ? $row['Points'] : "";
+                if (trim($points) == '') {
                     $points = '1';
                 }
 
@@ -338,13 +340,13 @@ class ImportQuestionsController extends BaseAdminController
                 $answerText = str_replace("\xD5", "'", $answerText);
 
                 if (!Util::doesTextPassWordFilter($questionText)) {
-                    $errors .= "Unable to add question: " . $row["Question"] . " -- The question text has invalid text<br>";
+                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- The question text has invalid text<br>';
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
                         $bibleFillIns[$languageID]--;
                     }
                 }
                 if (!Util::doesTextPassWordFilter($answerText)) {
-                    $errors .= "Unable to add question: " . $row["Question"] . " -- The answer text has invalid text<br>";
+                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- The answer text has invalid text<br>';
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
                         $bibleFillIns[$languageID]--;
                     }
@@ -371,7 +373,7 @@ class ImportQuestionsController extends BaseAdminController
                 $questionsSuccessfullyAdded++;
             }
             catch (\PDOException $e) {
-                $errors .= "Error inserting question " . $row["Question"] . ": " . $e->getMessage() . "<br>";
+                $errors .= 'Error inserting question ' . $row['Question'] . ': ' . $e->getMessage() . '<br>';
                 $questionsFailedToAdd++;
                 if (isset($needsToSubtractTotalBibleFillInIfFailed) && $needsToSubtractTotalBibleFillInIfFailed) {
                     $bibleFillIns[$languageID]--;

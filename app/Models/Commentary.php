@@ -6,19 +6,23 @@ use PDO;
 
 class Commentary
 {
-    public $commentaryID;
-    public $number;
-    public $topicName;
+    public int $commentaryID;
+    public int $number;
+    public string $topicName;
 
-    public $yearID;
-    public $year;
+    public int $yearID;
+    public int $year; // shortcut to year number via year ID
 
-    public $displayName; // set once on load for easier JS usage (this is not very clean but oh well; easier to fix after refactor)
+    public string $displayName; // set once on load for easier JS usage (TODO: use serializable PHP stuff to add this to serialized data)
 
     public function __construct(int $commentaryID, int $number)
     {
         $this->commentaryID = $commentaryID;
         $this->number = $number;
+        $this->topicName = '';
+        $this->yearID = -1;
+        $this->year = 0;
+        $this->displayName = '';
     }
 
     public function getName(): string
@@ -32,7 +36,7 @@ class Commentary
     }
 
     /** @return array<Commentary> */
-    private static function loadCommentaries(string $whereClause, array $whereParams, PDO $db) : array
+    private static function loadCommentaries(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT DISTINCT CommentaryID, Number, TopicName, Years.YearID, Years.Year
@@ -84,6 +88,7 @@ class Commentary
         return count($data) > 0 ? $data[0] : null;
     }
 
+    /** @return array<Commentary> */
     public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db): array
     {
         $query = '

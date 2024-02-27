@@ -17,8 +17,8 @@ use PhpOffice\PhpPresentation\Style\Shadow;
 
 class PowerPointGenerator
 {
-    private $slideWidth;
-    private $slideHeight;
+    private int $slideWidth;
+    private int $slideHeight;
     // TODO: footer for pbeprep.com (in slide master?) and footer for copyright
     // TODO: background image
 
@@ -182,7 +182,7 @@ class PowerPointGenerator
             $slide = $i === 0 ? $presentation->getActiveSlide() : $presentation->createSlide();
             $question = $questions[$i];
             $questionText = Util::getFullQuestionTextFromQuestion($question);
-            if (!Question::isTypeFillIn($question["type"])) {
+            if (!Question::isTypeFillIn($question['type'])) {
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
                 $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
@@ -193,7 +193,7 @@ class PowerPointGenerator
                 $this->addAnswerTextToSlide($slide, $question['answer']);
             } else {
                 $fillIn = Util::generateFillInDataFromQuestion($question);
-                $questionText .= "\n" . trim($fillIn["question"]);
+                $questionText .= "\n" . trim($fillIn['question']);
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
                 $this->addQuestionTextToSlide($slide, $questionText, $question['points']);

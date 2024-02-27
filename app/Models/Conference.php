@@ -6,19 +6,23 @@ use PDO;
 
 class Conference
 {
-    public $conferenceID;
-    public $name;
-    public $url;
-    public $contactName;
-    public $contactEmail;
+    public int $conferenceID;
+    public string $name;
+    public string $url;
+    public string $contactName;
+    public string $contactEmail;
 
     public function __construct(int $conferenceID, string $name)
     {
         $this->conferenceID = $conferenceID;
         $this->name = $name;
+        $this->url = '';
+        $this->contactName = '';
+        $this->contactEmail = '';
     }
 
-    private static function loadConferences(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<Conference> */
+    private static function loadConferences(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT ConferenceID, Name, URL, ContactName, ContactEmail
@@ -39,28 +43,31 @@ class Conference
         return $output;
     }
 
-    public static function loadAllConferences(PDO $db) : array
+    /** @return array<Conference> */
+    public static function loadAllConferences(PDO $db): array
     {
         return Conference::loadConferences('', [], $db);
     }
 
-    public static function loadAllNonAdminConferences(PDO $db) : array
+    /** @return array<Conference> */
+    public static function loadAllNonAdminConferences(PDO $db): array
     {
         return Conference::loadConferences(' WHERE Name <> "Website Administrators"', [], $db);
     }
 
-    public static function loadNonWebsiteConferences(PDO $db) : array
+    /** @return array<Conference> */
+    public static function loadNonWebsiteConferences(PDO $db): array
     {
         return Conference::loadConferences('WHERE Name NOT LIKE "%Website%"', [], $db);
     }
 
-    public static function loadConferenceWithID(int $conferenceID, PDO $db) : ?Conference
+    public static function loadConferenceWithID(int $conferenceID, PDO $db): ?Conference
     {
         $data = Conference::loadConferences('WHERE ConferenceID = ?', [ $conferenceID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadAdminConference(PDO $db) : ?Conference
+    public static function loadAdminConference(PDO $db): ?Conference
     {
         $data = Conference::loadConferences(' WHERE Name = "Website Administrators"', [], $db);
         return count($data) > 0 ? $data[0] : null;
@@ -68,8 +75,10 @@ class Conference
 
     /**
      * Returns array of conferences with keys being the ConferenceID and values being the Conference
+     * 
+     * @return array<int,Conference>
      */
-    public static function loadAllConferencesByID(PDO $db) : array
+    public static function loadAllConferencesByID(PDO $db): array
     {
         $conferences = Conference::loadConferences('', [], $db);
         $output = [];
@@ -91,7 +100,7 @@ class Conference
             $this->contactName,
             $this->contactEmail
         ]);
-        $this->conferenceID = $db->lastInsertId();
+        $this->conferenceID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)

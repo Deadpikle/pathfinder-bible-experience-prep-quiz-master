@@ -25,7 +25,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -38,18 +38,18 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return $response;
     }
 
-    public function viewConferences(PBEAppConfig $app, Request $request)
+    public function viewConferences(PBEAppConfig $app, Request $request): Response
     {
         $conferences = Conference::loadAllNonAdminConferences($app->db);
         return new TwigView('admin/conferences/view-conferences', compact('conferences'), 'Conferences');
     }
 
-    private function showCreateOrEditConference(PBEAppConfig $app, Request $request, bool $isCreating, ?Conference $conference, string $error = '') : Response
+    private function showCreateOrEditConference(PBEAppConfig $app, Request $request, bool $isCreating, ?Conference $conference, string $error = ''): Response
     {
         return new TwigView('admin/conferences/create-edit-conference', compact('isCreating', 'conference', 'error'), $isCreating ? 'Create Conference' : 'Edit Conference');
     }
 
-    private function validateConference(PBEAppConfig $app, Request $request, ?Conference $conference) : ValidationStatus
+    private function validateConference(PBEAppConfig $app, Request $request, ?Conference $conference): ValidationStatus
     {
         $name = $request->post['name'] ?? '';
         $url = $request->post['url'] ?? '';
@@ -77,12 +77,12 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return new ValidationStatus(true, $conference);
     }
 
-    public function createConference(PBEAppConfig $app, Request $request) : Response
+    public function createConference(PBEAppConfig $app, Request $request): Response
     {
         return $this->showCreateOrEditConference($app, $request, true, null);
     }
 
-    public function saveCreatedConference(PBEAppConfig $app, Request $request) : Response
+    public function saveCreatedConference(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateConference($app, $request, null);
         $conference = $status->output;
@@ -93,7 +93,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return new Redirect('/admin/conferences');
     }
 
-    public function editConference(PBEAppConfig $app, Request $request) : Response
+    public function editConference(PBEAppConfig $app, Request $request): Response
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
@@ -102,7 +102,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return $this->showCreateOrEditConference($app, $request, false, $conference);
     }
 
-    public function saveEditedConference(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedConference(PBEAppConfig $app, Request $request): Response
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
@@ -117,7 +117,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return new Redirect('/admin/conferences');
     }
 
-    public function verifyDeleteConference(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteConference(PBEAppConfig $app, Request $request): Response
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {
@@ -126,7 +126,7 @@ class ConferenceController extends BaseAdminController implements IRequestValida
         return new TwigView('admin/conferences/verify-delete-conference', compact('conference'), 'Delete Conference');
     }
 
-    public function deleteConference(PBEAppConfig $app, Request $request) : Response
+    public function deleteConference(PBEAppConfig $app, Request $request): Response
     {
         $conference = Conference::loadConferenceWithID($request->routeParams['conferenceID'], $app->db);
         if ($conference === null) {

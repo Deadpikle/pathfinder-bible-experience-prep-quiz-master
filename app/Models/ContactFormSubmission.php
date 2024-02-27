@@ -4,31 +4,34 @@ namespace App\Models;
 
 use PDO;
 
-use App\Models\Year;
-
 class ContactFormSubmission
 {
-    public $contactFormSubmissionID;
-    public $title;
-    public $personName;
-    public $email;
-    public $message;
-    public $dateTimeSubmitted;
+    public int $contactFormSubmissionID;
+    public string $title;
+    public string $personName;
+    public string $email;
+    public string $message;
+    public string $dateTimeSubmitted;
 
-    public $club;
-    public $conference;
-    public $type;
+    public string $club;
+    public string $conference;
+    public string $type;
 
     public function __construct(int $contactFormSubmissionID, string $title)
     {
         $this->contactFormSubmissionID = $contactFormSubmissionID;
         $this->title = $title;
+        $this->personName = '';
+        $this->email = '';
+        $this->message = '';
+        $this->dateTimeSubmitted = '';
         $this->club = '';
         $this->conference = '';
         $this->type = '';
     }
 
-    private static function loadSubmissions(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<ContactFormSubmission> */
+    private static function loadSubmissions(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT ContactFormSubmissionID, Title, PersonName, Email, Message, DateTimeSubmitted,
@@ -54,7 +57,8 @@ class ContactFormSubmission
         return $output;
     }
 
-    public static function loadAllSubmissions(PDO $db) : array
+    /** @return array<ContactFormSubmission> */
+    public static function loadAllSubmissions(PDO $db): array
     {
         return self::loadSubmissions('', [], $db);
     }

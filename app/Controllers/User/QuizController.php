@@ -43,7 +43,7 @@ class QuizController
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         if (!User::isLoggedIn()) {
             if ($request->function === 'saveQuizAnswers' ||
@@ -56,7 +56,7 @@ class QuizController
         return null;
     }
 
-    public function setupQuiz(PBEAppConfig $app, Request $request)
+    public function setupQuiz(PBEAppConfig $app, Request $request): Response
     {
         $currentYear = Year::loadCurrentYear($app->db);
         $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db); // TODO: need to only load ones with active questions!
@@ -89,12 +89,12 @@ class QuizController
         return new TwigView('user/quiz/quiz-setup', compact('currentYear', 'languages', 'userLanguage', 'chapters', 'commentaries', 'booksByBookID'), 'Quiz Setup');
     }
 
-    public function checkBeforeRemovingAnswers(PBEAppConfig $app, Request $request)
+    public function checkBeforeRemovingAnswers(PBEAppConfig $app, Request $request): Response
     {
         return new TwigView('user/quiz/verify-delete-user-answers', [], 'Delete Previously Saved Answers');
     }
 
-    public function removeAnswers(PBEAppConfig $app, Request $request)
+    public function removeAnswers(PBEAppConfig $app, Request $request): Response
     {
         if (CSRF::verifyToken('delete-previous-answers')) {
             UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
@@ -177,7 +177,7 @@ class QuizController
         return $quizQuestions;
     }
 
-    public function takeQuiz(PBEAppConfig $app, Request $request)
+    public function takeQuiz(PBEAppConfig $app, Request $request): Response
     {
         if (!isset($request->post["max-questions"])) {
             return new ErrorMessage("max-questions is required");
@@ -223,7 +223,7 @@ class QuizController
         $pdf->Output('', Translations::t('PBE Study Guide', $userLanguageAbbr), true);
     }
 
-    public function generatePresentation(PBEAppConfig $app, Request $request)
+    public function generatePresentation(PBEAppConfig $app, Request $request): Response
     {
         $quizQuestionData = $this->getQuizQuestions($app, $request, true, false);
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
@@ -233,14 +233,14 @@ class QuizController
         return new Response(200);
     }
 
-    public function saveQuizAnswers(PBEAppConfig $app, Request $request)
+    public function saveQuizAnswers(PBEAppConfig $app, Request $request): Response
     {
         $answers = $request->post['answers'] ?? [];
         $didSave = UserAnswer::saveUserAnswers($answers, $app->db);
         return new JsonResponse(['status' => $didSave ? 200 : 400]);
     }
 
-    public function flagQuestion(PBEAppConfig $app, Request $request)
+    public function flagQuestion(PBEAppConfig $app, Request $request): Response
     {
         $userID = User::currentUserID();
         $flagReason =FlagReason::validateReason(Util::validateString($request->post, 'reason'));

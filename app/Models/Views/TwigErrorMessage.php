@@ -6,10 +6,6 @@ use Yamf\AppConfig;
 
 class TwigErrorMessage extends TwigView
 {
-    public $name;
-    public $data;
-    public $title; // (default: '')
-
     public function __construct($msg, $name = null, $title = null)
     {
         $msg = $msg ?? 'Sorry, the server encountered an error while performing your request!';

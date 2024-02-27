@@ -8,22 +8,26 @@ use App\Models\Year;
 
 class Chapter
 {
-    public $chapterID;
-    public $number;
-    public $numberVerses;
+    public int $chapterID;
+    public int $number;
+    public int $numberVerses;
 
-    public $verses; // array of Verse objects
+    /** @var array<Verse> $verses */
+    public array $verses;
 
-    public $bookID;
+    public int $bookID;
 
     public function __construct(int $chapterID, int $number)
     {
         $this->chapterID = $chapterID;
         $this->number = $number;
+        $this->numberVerses = 0;
         $this->verses = [];
+        $this->bookID = -1;
     }
 
-    private static function loadChapters(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<Chapter> */
+    private static function loadChapters(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT ChapterID, Number, NumberVerses, BookID
@@ -43,23 +47,26 @@ class Chapter
         return $output;
     }
 
-    public static function loadAllChapters(PDO $db) : array
+    /** @return array<Chapter> */
+    public static function loadAllChapters(PDO $db): array
     {
         return Chapter::loadChapters('', [], $db);
     }
 
-    public static function loadChapterByID(int $chapterID, PDO $db) : ?Chapter
+    public static function loadChapterByID(int $chapterID, PDO $db): ?Chapter
     {
         $data = Chapter::loadChapters(' WHERE ChapterID = ? ', [ $chapterID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadChaptersByBookID(int $bookID, PDO $db) : array
+    /** @return array<Chapter> */
+    public static function loadChaptersByBookID(int $bookID, PDO $db): array
     {
         return Chapter::loadChapters(' WHERE BookID = ? ', [ $bookID ], $db);
     }
 
-    public static function loadChaptersWithActiveQuestions(Year $year, PDO $db) : array
+    /** @return array<Chapter> */
+    public static function loadChaptersWithActiveQuestions(Year $year, PDO $db): array
     {
         $query = '
             SELECT DISTINCT b.Name, c.BookID, c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
@@ -104,7 +111,7 @@ class Chapter
                 $bookID
             ]);
             // now insert verses into the db for that chapter based on the number of verses
-            $chapterID = $db->lastInsertId();
+            $chapterID = intval($db->lastInsertId());
             Verse::createAllVersesForChapter($chapterID, $numberVerses, $db);
         }
     }
