@@ -15,7 +15,7 @@ class TwigRouter extends Router
      * 
      * @param AppConfig $app
      */
-    public function showNotFound(AppConfig $app) : void
+    public function showNotFound(AppConfig $app): void
     {
         $notFound = new TwigNotFound();
         $notFound->output($app);
@@ -27,7 +27,7 @@ class TwigRouter extends Router
      * @param AppConfig $app
      * @param Exception $e
      */
-    public function showErrorOnException(AppConfig $app, \Exception $e) : void
+    public function showErrorOnException(AppConfig $app, \Exception $e): void
     {
         if (isset($app->shouldShowErrorOnExceptionThrown)) {
             if ($app->shouldShowErrorOnExceptionThrown) {

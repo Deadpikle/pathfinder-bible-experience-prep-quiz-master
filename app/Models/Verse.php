@@ -6,18 +6,21 @@ use PDO;
 
 class Verse
 {
-    public $verseID;
-    public $number;
-    public $text;
+    public int $verseID;
+    public int $number;
+    public string $text;
     
-    public $chapterID;
+    public int $chapterID;
 
     public function __construct(?int $verseID, ?int $number)
     {
         $this->verseID = $verseID;
         $this->number = $number;
+        $this->text = '';
+        $this->chapterID = -1;
     }
 
+    /** @return array<Verse> */
     private static function loadVerses(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
@@ -38,6 +41,7 @@ class Verse
         return $output;
     }
 
+    /** @return array<Verse> */
     public static function loadVersesForChapter(int $chapterID, PDO $db): array
     {
         return self::loadVerses(' WHERE ChapterID = ? ', [ $chapterID ], $db);

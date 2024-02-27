@@ -31,7 +31,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -44,7 +44,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return $response;
     }
 
-    public function viewStudyGuides(PBEAppConfig $app, Request $request)
+    public function viewStudyGuides(PBEAppConfig $app, Request $request): Response
     {
         if ($app->isWebAdmin) {
             $studyGuides = StudyGuide::loadAllStudyGuides($app->db);
@@ -54,18 +54,18 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return new TwigView('admin/study-guides/view-study-guides', compact('studyGuides'), 'Study Guides');
     }
 
-    private function showViewStudyGuideUpload(PBEAppConfig $app, Request $request, string $error = '', string $displayName = '') : Response
+    private function showViewStudyGuideUpload(PBEAppConfig $app, Request $request, string $error = '', string $displayName = ''): Response
     {
         $currentYear = Year::loadCurrentYear($app->db);
         return new TwigView('admin/study-guides/upload-study-guide', compact('currentYear', 'error', 'displayName'), 'Upload Study Guide');
     }
 
-    public function viewStudyGuideUpload(PBEAppConfig $app, Request $request) : Response
+    public function viewStudyGuideUpload(PBEAppConfig $app, Request $request): Response
     {
         return $this->showViewStudyGuideUpload($app, $request, '');
     }
 
-    public function uploadStudyGuide(PBEAppConfig $app, Request $request) : Response
+    public function uploadStudyGuide(PBEAppConfig $app, Request $request): Response
     {
         // TODO: refactor to a model or service or something
         // A bunch of code here is from http://php.net/manual/en/features.file-upload.php
@@ -145,7 +145,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return new Redirect('/admin/study-guides');
     }
 
-    public function editStudyGuide(PBEAppConfig $app, Request $request) : Response
+    public function editStudyGuide(PBEAppConfig $app, Request $request): Response
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
@@ -154,7 +154,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return new TwigView('admin/study-guides/rename-study-guide', compact('studyGuide'), 'Rename Study Guide');
     }
 
-    public function saveEditedStudyGuide(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedStudyGuide(PBEAppConfig $app, Request $request): Response
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
@@ -169,7 +169,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return new Redirect('/admin/study-guides');
     }
 
-    public function verifyDeleteStudyGuide(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteStudyGuide(PBEAppConfig $app, Request $request): Response
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {
@@ -178,7 +178,7 @@ class StudyGuideController extends BaseAdminController implements IRequestValida
         return new TwigView('admin/study-guides/verify-delete-study-guide', compact('studyGuide'), 'Delete Study Guide');
     }
 
-    public function deleteStudyGuide(PBEAppConfig $app, Request $request) : Response
+    public function deleteStudyGuide(PBEAppConfig $app, Request $request): Response
     {
         $studyGuide = StudyGuide::loadStudyGuideByID($request->routeParams['studyGuideID'], $app->db);
         if ($studyGuide === null) {

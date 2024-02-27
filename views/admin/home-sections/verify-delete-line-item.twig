@@ -13,7 +13,7 @@
     <h4>Are you sure you want to delete the line item {{ item.text }}?</h4>
     <form method="post">
         {{ csrf('delete-line-item') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Line Item</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Line Item</button>
     </form>
 </div>
 

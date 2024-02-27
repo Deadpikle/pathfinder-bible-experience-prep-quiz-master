@@ -2,152 +2,174 @@
 
 {% block headers %}
 
+{% include 'includes/scripts/autosize.twig' %}
 {% include 'includes/scripts/easytimer.twig' %}
+{% include 'includes/scripts/select2.twig' %}
 
 {% endblock %}
 
 {% block content %}
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/quiz/setup') }}">Quiz Setup</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Take Quiz</li>
+    </ol>
+</nav>
+
 <div id="quiz-taking">
-    <div id="loading-quiz">
-        <h4 class="center-align">Generating quiz...</h4>
-        <div id="loading-bar" class="preloader-wrapper active">
-            <div class="spinner-layer spinner-blue-only">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
+    <div id="loading-bar" class="preloader-wrapper active text-center">
+        <i class="fas fa-cog fa-spin fa-3x valign-middle me-2"></i> 
+        <span class="valign-middle loading-text">Generating quiz...</span>
     </div>
 
     <div class="hidden" id="take-quiz">
-        <div class="row" id="quiz-tabs">
-            <div class="col s12">
-                <ul class="tabs">
-                    <li class="tab"><a class="active teal-text" href="#current-question">Current</a></li>
-                    <li class="tab"><a class="teal-text" href="#history">Review</a></li>
-                    <li class="tab"><a class="teal-text" href="#stats">Statistics</a></li>
-                    <div class="indicator teal" style="z-index:1"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link active" id="tab-current-question" data-bs-toggle="tab" data-bs-target="#tab-data-current-question" role="tab" aria-controls="tab-data-current-question" aria-selected="true">Current</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link" id="tab-history" data-bs-toggle="tab" data-bs-target="#tab-data-history" role="tab" aria-controls="tab-data-history" aria-selected="false">Review</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link" id="tab-stats" data-bs-toggle="tab" data-bs-target="#tab-data-stats" role="tab" aria-controls="tab-data-stats" aria-selected="false">Statistics</button>
+                    </li>
                 </ul>
             </div>
-            <div class="col s12" id="current-question">
-                <h4 id="quiz-progress"></h4>
-                <h5 id="question-points"></h5>
-                <div id="countdown">
-                    <h5 id="countdown-text"></h5>
-                    <h5 id="question-pretimer"></h5>
-                    <i class="material-icons" id="timer-icon"></i>
-                    <h5 id="question-timer"></h5>
-                    <h5 id="seconds-text"></h5>
-                </div>
-                <h6 id="user-points-earned"></h6>
-                <div class="divider"></div>
-                <div id="qna-question" class="row">
-                    <h5 id="question-text"></h5>
-                    <div class="input-field col s12 m6">
-                        <input type="text" id="quiz-answer" name="quiz-answer" required/>
-                        <label for="quiz-answer">{{ translate('Answer', userLangAbbr) }}</label>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-data-current-question" role="tabpanel" aria-labelledby="tab-current-question">
+                    <div class="col-sm-12 mt-2" id="current-question">
+                        <h4 id="quiz-progress"></h4>
+                        <h5 id="question-points"></h5>
+                        <div id="countdown">
+                            <h5 id="countdown-text"></h5>
+                            <h5 id="question-pretimer"></h5>
+                            <i class="fas fa-stopwatch" id="timer-icon"></i>
+                            <h5 id="question-timer"></h5>
+                            <h5 id="seconds-text"></h5>
+                        </div>
+                        <h6 id="user-points-earned"></h6>
+                        <hr/>
+                        <div id="qna-question" class="row">
+                            <h5 id="question-text"></h5>
+                            <div class="form-group col-sm-12 col-md-6">
+                                <label for="quiz-answer">{{ translate('Answer', userLangAbbr) }}</label>
+                                <input type="text" class="form-control" id="quiz-answer" name="quiz-answer" required placeholder="Your answer here..."/>
+                            </div>
+                        </div>
+                        <div id="fill-in-question">
+                            <h5 id="fill-in-title"></h5>
+                            <div class="row">
+                                <div id="fill-in-data" class="col-sm-10"></div>
+                            </div>
+                        </div>
+                        <div id="show-answer-div" class="row">
+                            <div class="form-group col-sm-12 mt-2">
+                                <button id="show-answer" class="btn btn-sm btn-primary"><i class="fas fa-envelope-open"></i> {{ translate('Show Answer', userLangAbbr) }}</button>
+                            </div>
+                        </div>
+                        <div id="answer-divider" class="divider"></div>
+                        <div id="quiz-answer" class="row">
+                            <div class="col-sm-12">
+                                <p id="quiz-question-show-answer">{{ translate('The answer is:', userLangAbbr) }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="full-fill-in-div" class="form-group col-sm-12 mb-2">
+                                    <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
+                                    <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <strong>bold</strong></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="points-earned-row" class="row">
+                            <div class="col-auto d-flex">
+                                <div class="form-group align-center-flex">
+                                    <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
+                                    <label class="black-text" for="correct-answer">Mark Answer Correct</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-2">
+                                <label class="black-text" for="points-earned">Points earned</label>
+                                <input type="number" class="form-control" name="points-earned" id="points-earned" value="0" min="0" max="100"/>
+                            </div>
+                            <div class="form-group col-sm-12 col-md-4 d-flex">
+                                <button id="next-question" class="btn btn-sm btn-primary align-bottom-button mb-1">Next question <i class="fas fa-arrow-right"></i></button>
+                                <button id="tally-points" class="btn btn-sm btn-tertiary align-bottom-button mb-1"><i class="fas fa-clipboard-check"></i> Tally Points</button>
+                            </div>
+                        </div>
+                        <hr/>
+                        <p id="quiz-message"></p>
+                        <div class="row">
+                            <div class="col-sm-8 col-md-4">
+                                <div class="form-group">
+                                    <label for="flag-reason">Flag reason</label>
+                                    <select id="flag-reason" class="form-control">
+                                        <option value="">Select a reason for flagging this question...</option>
+                                        <option value="{{ getConst('FlagReason', 'CONFUSING') }}">Confusing question/answer</option>
+                                        <option value="{{ getConst('FlagReason', 'NEEDS_PRACTICE') }}">I need to practice this question</option>
+                                        <option value="{{ getConst('FlagReason', 'INCORRECT_POINTS') }}">Incorrect number of points</option>
+                                        <option value="{{ getConst('FlagReason', 'NEEDS_MORE_DETAILS') }}">Needs more details in answer or question</option>
+                                        <option value="{{ getConst('FlagReason', 'TOO_VAGUE') }}">Question is too vague</option>
+                                        <option value="{{ getConst('FlagReason', 'SAVE_FOR_LATER') }}">Save this question to look at later</option>
+                                        <option value="{{ getConst('FlagReason', 'SPELLING_TYPOS') }}">Typos (spelling, punctuation, etc.)</option>
+                                        <option value="{{ getConst('FlagReason', 'WRONG_REFERENCE') }}">Wrong book/chapter/verse reference</option>
+                                        <option value="{{ getConst('FlagReason', 'OTHER') }}">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 d-flex">
+                                <button id="flag-question" class="btn btn-sm btn-info align-bottom-button mb-1"><i class="fas fa-flag"></i> Flag question</button>
+                            </div>
+                        </div>
+                        <button id="save-data" class="btn btn-sm btn-primary">Save answers</button>
+                        <button id="end-quiz" class="btn btn-sm btn-info">End quiz</button>
                     </div>
                 </div>
-                <div id="fill-in-question">
-                    <h5 id="fill-in-title"></h5>
-                    <div class="row">
-                        <div id="fill-in-data" class="col s10"></div>
+                <div class="tab-pane fade" id="tab-data-history" role="tabpanel" aria-labelledby="tab-history">
+                    <div class="col-sm-12 mt-2" id="history">
+                        <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
+                        <div id="history-fill-in" class="mt-1 mb-1">
+                            <input type="checkbox" name="history-fill-in-bold" id="history-fill-in-bold" value="0"/>
+                            <label class="black-text" for="history-fill-in-bold">View fill in the blank as full text with answers in <strong>bold</strong></label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-10">
+                        <ol id="history-list">
+                        </ol>
                     </div>
                 </div>
-                <div id="show-answer-div" class="row">
-                    <div class="input-field col s12" id="">
-                        <button id="show-answer" class="btn btn-flat blue white-text waves-effect blue-waves">{{ translate('Show Answer', userLangAbbr) }}</button>
+                <div class="tab-pane fade" id="tab-data-stats" role="tabpanel" aria-labelledby="tab-stats">
+                    <div class="col-sm-12 mt-2" id="stats">
+                        <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
+                        <div id="stats-progress">
+                            <h5>Overall Statistics</h5>
+                            <p id="stats-quiz-progress"></p>
+                            <h5>Overall Bible Statistics</h5>
+                            <p id="bible-stats-quiz-progress"></p>
+                            <h5>Overall SDA Bible Commentary Statistics</h5>
+                            <p id="commentary-stats-quiz-progress"></p>
+                            <h5>Individual Bible Statistics</h5>
+                            <ul class="browser-default" id="individual-bible-stats"></ul>
+                            <h5>Individual SDA Bible Commentary Statistics</h5>
+                            <ul class="browser-default" id="individual-commentary-stats"></ul>
+                        </div>
                     </div>
                 </div>
-                <div id="answer-divider" class="divider"></div>
-                <div id="quiz-answer" class="row">
-                    <div class="col s12">
-                        <p id="quiz-question-show-answer">{{ translate('The answer is:', userLangAbbr) }}</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="full-fill-in-div" class="input-field col s12">
-                        <input type="checkbox" id="full-fill-in" name="full-fill-in"/>
-                        <label class="black-text" for="full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
-                    </div>
-                </div>
-                <div id="points-earned-row" class="row">
-                    <div id="correct-answer-div" class="input-field col s6 m3" id="">
-                        <input type="checkbox" name="correct-answer" id="correct-answer" value="0"/>
-                        <label class="black-text" for="correct-answer">Correct Answer</label>
-                    </div>
-                    <div class="input-field col s6 m2" id="points-earned-div">
-                        <input type="number" name="points-earned" id="points-earned" value="0" min="0" max="100"/>
-                        <label class="black-text" for="points-earned">Points earned</label>
-                    </div>
-                    <div class="input-field col s12 m4">
-                        <button id="next-question" class="btn btn-flat blue white-text waves-effect blue-waves">Next question</button>
-                        <button id="tally-points" class="btn btn-flat blue white-text waves-effect blue-waves">Tally Points</button>
-                    </div>
-                </div>
-                <div class="divider"></div>
-                <p id="quiz-message"></p>
-                <div class="row valign-wrapper">
-                    <div class="input-field col s12 m8">
-                        <select id="flag-reason">
-                            <option value="">Select a reason for flagging this question...</option>
-                            <option value="{{ getConst('FlagReason', 'CONFUSING') }}">Confusing question/answer</option>
-                            <option value="{{ getConst('FlagReason', 'NEEDS_PRACTICE') }}">I need to practice this question</option>
-                            <option value="{{ getConst('FlagReason', 'INCORRECT_POINTS') }}">Incorrect number of points</option>
-                            <option value="{{ getConst('FlagReason', 'NEEDS_MORE_DETAILS') }}">Needs more details in answer or question</option>
-                            <option value="{{ getConst('FlagReason', 'TOO_VAGUE') }}">Question is too vague</option>
-                            <option value="{{ getConst('FlagReason', 'SAVE_FOR_LATER') }}">Save this question to look at later</option>
-                            <option value="{{ getConst('FlagReason', 'SPELLING_TYPOS') }}">Typos (spelling, punctuation, etc.)</option>
-                            <option value="{{ getConst('FlagReason', 'WRONG_REFERENCE') }}">Wrong book/chapter/verse reference</option>
-                            <option value="{{ getConst('FlagReason', 'OTHER') }}">Other</option>
-                        </select>
-                        <label for="flag-reason">Flag reason</label>
-                    </div>
-                    <div class="col s12 m4">
-                        <button id="flag-question" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Flag question</button>
-                    </div>
-                </div>
-                <button id="save-data" class="btn btn-flat blue white-text waves-effect blue-waves right-margin">Save answers</button>
-                <button id="end-quiz" class="btn btn-flat blue white-text waves-effect blue-waves">End quiz</button>
-            </div>
-        </div>
-        <div class="col s12" id="history">
-            <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
-            <div id="history-fill-in">
-                <input type="checkbox" name="history-fill-in-bold" id="history-fill-in-bold" value="0"/>
-                <label class="black-text" for="history-fill-in-bold">View fill in the blank as full text with answers in <b>bold</b></label>
-            </div>
-            <ol id="history-list">
-            </ol>
-        </div>
-        <div class="col s12" id="stats">
-            <p class="no-questions-answered-yet"><em>No questions have been answered yet.</em></p>
-            <div id="stats-progress">
-                <h5>Overall Statistics</h5>
-                <p id="stats-quiz-progress"></p>
-                <h5>Overall Bible Statistics</h5>
-                <p id="bible-stats-quiz-progress"></p>
-                <h5>Overall SDA Bible Commentary Statistics</h5>
-                <p id="commentary-stats-quiz-progress"></p>
-                <h5>Individual Bible Statistics</h5>
-                <ul class="browser-default" id="individual-bible-stats"></ul>
-                <h5>Individual SDA Bible Commentary Statistics</h5>
-                <ul class="browser-default" id="individual-commentary-stats"></ul>
             </div>
         </div>
     </div>
     <p class="hidden" id="quiz-error"></p>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
-    // TODO: refactor this to its own file
     var translations = {{ json_encode(translations) | raw }};
     function translate(str) {
         if (str in translations && typeof translations[str] !== undefined && translations[str] !== 'undefined') {
@@ -178,7 +200,15 @@
         return this.earned + " " + earnedStr + " earned out of " + this.possible + " total " + possibleStr + " possible (" + this.percent + "%)";
     }
     $(document).ready(function() {
-        $('#flag-reason').material_select();
+        $('#flag-reason').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a reason...',
+            searchInputPlaceholder: 'Search reasons...',
+            allowClear: false
+        });
+
+        $('#timer-icon').hide();
+        // $('#flag-reason').material_select();
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
@@ -245,7 +275,7 @@
                     showAnswer.click();
                 }
                 else {
-                    $('#question-timer').html('<b>TIME\'S UP!</b>');
+                    $('#question-timer').html('<strong>TIME\'S UP!</strong>');
                 }
             });
             preTimer.start({countdown: true, precision: 'seconds', startValues: {seconds: 10}});
@@ -259,7 +289,7 @@
                 $('#countdown-text').html('');
                 $('#question-pretimer').html('');
                 $('#question-timer').html(timerLength);
-                $('#timer-icon').html('timer');
+                $('#timer-icon').show();
                 $('#seconds-text').html('');
                 timer.stop();
                 timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
@@ -297,7 +327,7 @@
                         // successfully flagged
                         flagQuestion.disabled = true;
                         document.getElementById('flag-reason').disabled = true;
-                        $('#flag-reason').material_select();
+                        // $('#flag-reason').material_select();
                         showQuizMessage('Question successfully flagged!');
                     } else {
                         alert('Error flagging question: ' + response);
@@ -394,7 +424,7 @@
                     else {
                         answerText = fillInAnswerString(history[i].fillInData);
                     }
-                    $('#history-' + i + ' .history-answer').html('<b>Answer:</b> ' + answerText);
+                    $('#history-' + i + ' .history-answer').html('<strong>Answer:</strong> ' + answerText);
                 }
             }
         });
@@ -402,8 +432,7 @@
         $(correctAnswerCheckbox).change(function() {
             if (this.checked) {
                 pointsEarnedInput.value = currentQuestion.points;
-            }
-            else {
+            } else {
                 pointsEarnedInput.value = 0;
             }
         });
@@ -416,7 +445,7 @@
             showAnswerToUser();
             $("#show-answer-div").hide();
             nextQuestion.disabled = false;
-            if (currentQuestionIndex == questions.length -1) {
+            if (currentQuestionIndex == questions.length - 1) {
                 $(flagQuestion).hide();
                 $(nextQuestion).hide();
                 $(tallyPoints).show();
@@ -426,12 +455,12 @@
         function stopTimer() {
             preTimer.stop();
             timer.stop();
-            $('#question-timer').css("color", "black");
+            $('#question-timer').css("color", "var(--bs-body-color)");
             $("#countdown-text").html("");
             $("#question-pretimer").html("");
             $("#question-timer").html("");
             $("#seconds-text").html("");
-            $("#timer-icon").html("");
+            $("#timer-icon").hide();
             $("#countdown").hide();
         }
 
@@ -454,7 +483,6 @@
         function saveQuestionResponse() {
             if (pointsEarnedInput.value === "") {
                 pointsEarnedInput.value = 0;
-                Materialize.updateTextFields(); // fixes issue where label covers the input amount
             }
             var pointsAchieved = Number(pointsEarnedInput.value);
             if (pointsAchieved > currentQuestion.points) {
@@ -527,7 +555,7 @@
             else {
                 questionText = $("#question-text").html();
             } 
-            addToHistory(currentQuestion.type, questionText, answerText, 
+            addToHistory(currentQuestion.verseText, currentQuestion.type, questionText, answerText, 
                          userAnswer, correctAnswerCheckbox.checked, pointsAchieved,
                          currentQuestion.fillInData);
         }
@@ -602,6 +630,7 @@
                         verseText += "-" + endVerse;
                     }
                 }
+                data.verseText = verseText; // for use later on stats
                 if (isFillInQuestion(data.type)) {
                     $('#fill-in-title').empty().html(translate('Fill in the blanks for') + ' ' + verseText);
                     $('#fill-in-data').empty().html(createFillInInput('#fill-in-data', data.fillInData));
@@ -689,6 +718,10 @@
             else {
                 $('#countdown').remove();
             }
+            
+            // reset flag selection
+            $('#flag-reason').val('');
+            updateSelect2('#flag-reason');
         }
 
         function showQuestionAtCurrentIndex() {
@@ -714,19 +747,23 @@
             // reset flag question selector
             var select = $('#flag-reason');
             select.find('option:first').prop('selected', true);
-            select.material_select();
+            // select.material_select();
             // display the question
             displayQuestion(currentQuestion);
         }
 
-        function addToHistory(questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData) {
+        function addToHistory(reference, questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData) {
             var html = '<li><ul id="history-' + history.length + '">';
-            html += '<li>' + questionText + '</li>';
-            html += '<li class="history-answer"><b>Answer:</b> ' + answer + '</li>';
-            html += '<li><b>Your answer:</b> ' + userAnswer + '</li>';
+            if (isFillInQuestion(questionType)) {
+                html += '<li><strong>Question:</strong> ' + translate('Fill in the blanks for') + ' ' + reference + ': ' + questionText + '</li>';
+            } else {
+                html += '<li><strong>Question:</strong> ' + questionText + '</li>';
+            }
+            html += '<li class="history-answer"><strong>Answer:</strong> ' + answer + '</li>';
+            html += '<li><strong>Your answer:</strong> ' + userAnswer + '</li>';
             var markedCorrectStr = markedCorrect ? 'Yes' : 'No';
-            html += '<li><b>Marked correct?</b> ' + markedCorrectStr + '</li>';
-            html += '<li><b>Points gained:</b> ' + pointsGained + '</li>';
+            html += '<li><strong>Marked correct?</strong> ' + markedCorrectStr + '</li>';
+            html += '<li><strong>Points gained:</strong> ' + pointsGained + '</li>';
             html += '</ul></li>';
             $(historyFillInDiv).show();
             $(".no-questions-answered-yet").hide();
@@ -829,7 +866,7 @@
                 for (var key in bibleStats) {
                     var item = bibleStats[key];
                     html += '<li>';
-                    html += '<b>' + translate(item.bookName) + ' ' + item.chapter + '</b>: ' + item.stats.toString();
+                    html += '<strong>' + translate(item.bookName) + ' ' + item.chapter + '</strong>: ' + item.stats.toString();
                     html += '</li>';
                 }
                 $('#individual-bible-stats').html(html);
@@ -842,7 +879,7 @@
                 for (var key in commentaryStats) {
                     var item = commentaryStats[key];
                     html += '<li>';
-                    html += '<b>' + translate('Volume') + ' ' + item.volume + ' (' + translate(item.topic) + ')</b>: ' + item.stats.toString();
+                    html += '<strong>' + translate('Volume') + ' ' + item.volume + ' (' + translate(item.topic) + ')</strong>: ' + item.stats.toString();
                     html += '</li>';
                 }
                 $('#individual-commentary-stats').html(html);
@@ -859,19 +896,16 @@
             currentQuestionIndex = 0;
             showQuestionAtCurrentIndex();
             $('#take-quiz').show();
-            // make sure the first tab is visibly selected. because it's hidden at first,
-            // materialize doesn't draw the little indicator line.
-            $('ul.tabs').tabs('select_tab', 'current-question');
         } else {
             // no questions! user is done with all questions and should probably reset their saved question answers
             $(flagQuestion).hide();
             $(nextQuestion).hide();
             var urlForSetup = '{{ app.yurl('/quiz/setup') }}';
-            var error = '<p>No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class="btn btn-small btn-flat blue white-text waves-effect blue-waves" href="' + urlForSetup + '">Back to quiz setup</a></p>';
+            var error = '<p class="mb-2 mt-2">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class="btn btn-info" href="' + urlForSetup + '"><i class="fas fa-arrow-left"></i> Back to Quiz Setup</a></p>';
             showQuizError(error);
             $(endQuiz).show();
         }
-        $('#loading-quiz').hide();
+        $('#loading-bar').hide();
         if (isFillInQuestion(currentQuestion.type)) {
             focusFirstFillInField();
         } else {

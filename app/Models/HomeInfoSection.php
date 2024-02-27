@@ -1,5 +1,7 @@
 <?php
 
+// TODO: this class queued up for deletion as it is no longer used
+
 namespace App\Models;
 
 use PDO;
@@ -108,7 +110,7 @@ class HomeInfoSection
             (int)$this->conferenceID,
             $this->subtitle ?? ''
         ]);
-        $this->homeInfoSectionID = $db->lastInsertId();
+        $this->homeInfoSectionID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)
@@ -251,7 +253,7 @@ class HomeInfoSection
                     $toConferenceID
                 ];
                 $insertSectionStmnt->execute($insertSectionParams);
-                $createdSectionID = $db->lastInsertId();
+                $createdSectionID = intval($db->lastInsertId());
             }
             $lineParams = [ $section['SectionID'] ];
             // load the max sort order for the lines for this home info section
@@ -271,7 +273,7 @@ class HomeInfoSection
                     $createdSectionID
                 ];
                 $insertLineStmnt->execute($insertLineParams);
-                $createdLineID = $db->lastInsertId();
+                $createdLineID = intval($db->lastInsertId());
                 // load all the items for this line
                 $itemParams = [ $line['HomeInfoLineID'] ];
                 $itemQueryStmnt->execute($itemParams);

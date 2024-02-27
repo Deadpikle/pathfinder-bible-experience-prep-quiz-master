@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/matching-question-sets') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/matching-question-sets') }}">Matching Question Sets</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Matching Question Set</li>
+    </ol>
+</nav>
 
 <h2>Delete Matching Question Set</h2>
 
@@ -12,7 +19,7 @@
     <h4> Are you sure you want to delete the matching question set {{ questionSet.name }}? </h4>
     <form method="post">
         {{ csrf('delete-matching-question-set') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Matching Question Set</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Matching Question Set</button>
     </form>
 </div>
 

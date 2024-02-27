@@ -1,21 +1,33 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
 {% block content %}
 
 {% set areAnyQuestionsAvailable = (chapters | length > 0) or (commentaries | length > 0) %}
 {% set lastBookSeen = '' %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Quiz Setup</li>
+    </ol>
+</nav>
 
 <h4>Quiz Setup</h4>
 {% if areAnyQuestionsAvailable %}
 <div id="start-quiz">
     <form id="quiz-setup-form" method="post">
-        <p><b>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On -- for Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse</b></p>
+        <p class="mb-0"><strong>Choose Bible Chapters &amp; Commentary Volumes to Be Quizzed On</strong></p>
+        <p class="mb-1">For Bible Q&amp;A questions, questions are loaded by chapter based on the question's start verse.</p>
         <div class="row">
-            <div class="input-field col s12 m6 l6">
-                <select multiple id="quiz-items" name="quiz-items[]">
-                    <option value="" disabled selected>All</option>
+            <div class="form-group col-sm-12 col-md-6 col-lg-6">
+                <label for="quiz-items">Filter Bible Chapters &amp; Bible Commentaries</label>
+                <select multiple class="form-control" id="quiz-items" name="quiz-items[]">
                     {% for chapter in chapters %}
                         {% if lastBookSeen != chapter.bookID %}
                             {% if lastBookSeen != '' and lastBookSeen != chapter.bookID %}
@@ -39,22 +51,22 @@
                         {% endfor %}
                     </optgroup>
                 </select>
-                <label>Bible Chapters &amp; Commentary Volumes with Created Questions</label>
+                <small>By default, all Bible and Commentary materials are used when generating a quiz.</small>
             </div>
-            <div class="input-field col s12 m3 l3" id="quiz-setup-language-select-container">
-                <select id="language-select" name="language-select">
+            <div class="form-group col-sm-12 col-md-3 col-lg-3" id="quiz-setup-language-select-container">
+                <label for="language-select">Filter by language</label>
+                <select id="language-select" class="form-control" name="language-select">
+                    <option value="-1">No language filter</option>
                     {% for language in languages %}
                         {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
                         <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
                     {% endfor %}
-                    <option value="-1">No language filter</option>
                 </select>
-                <label for="language-select">Filter by language</label>
             </div>
         </div>
-        <p class="negative-top-margin"><b>Weighted Question Distribution</b></p>
-        <div class="row negative-top-margin">
-            <div class="input-field col s12">
+        <p class="mt-2 mb-0"><strong>Weighted Question Distribution</strong></p>
+        <div class="row">
+            <div class="col-sm-12">
                 <input type="checkbox" id="enable-question-distribution" name="enable-question-distribution"/>
                 <label class="black-text" for="enable-question-distribution">Enable weighted question distribution</label>
             </div>
@@ -73,138 +85,170 @@
                     <tbody id="weighted-question-table-body">
                         {% for chapter in chapters %}
                             <tr id="table-chapter-{{ chapter.chapterID }}">
-                                <td>{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</td>
-                                <td><input name="table-input-chapter-{{ chapter.chapterID }}" class="table-input" 
-                                           type="number" value="" min="0" max="100"></input></td>
+                                <td>
+                                    <label for="table-input-chapter-{{ chapter.chapterID }}">{{ booksByBookID[chapter.bookID].name }}&nbsp;{{ chapter.number }}</label>
+                                </td>
+                                <td>
+                                    <input id="table-input-chapter-{{ chapter.chapterID }}" name="table-input-chapter-{{ chapter.chapterID }}" class="table-input form-control"  type="number" value="" min="0" max="100"></input>
+                                </td>
                             </tr>
                         {% endfor %}
                         {% for commentary in commentaries %}
                             <tr id="table-commentary-{{ commentary.commentaryID }}">
-                                <td>{{ commentary.getDisplayValue() }}</td>
-                                <td><input name="table-input-commentary-{{ commentary.commentaryID }}" class="table-input" 
-                                           type="number" value="" min="0" max="100"></input></td>
+                                <td>
+                                    <label for="table-input-commentary-{{ commentary.commentaryID }}">{{ commentary.getDisplayValue() }}</label>
+                                </td>
+                                <td>
+                                    <input id="table-input-commentary-{{ commentary.commentaryID }}" name="table-input-commentary-{{ commentary.commentaryID }}" class="table-input form-control" type="number" value="" min="0" max="100"></input>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>    
             </div>
         </div>
-        <p class=""><b>Maximum number of questions and maximum number of points per question</b></p>
+        <p class="mt-2 mb-0"><strong>Maximum number of questions and maximum number of points per question</strong></p>
         <div class="row mb-0">
-            <div class="input-field col s6 m3">
-                <input type="number" id="max-questions" name="max-questions" required value="30" max="{{ app.isGuest ? 100 : 500 }}" min="1"/>
+            <div class="form-group col-sm-6 col-md-3">
                 <label for="max-questions">Maximum Questions</label>
+                <input type="number" class="form-control" id="max-questions" name="max-questions" required value="30" max="{{ app.isGuest ? 100 : 500 }}" min="1"/>
             </div>
-            <div class="input-field col s6 m3">
-                <input type="number" id="max-points" name="max-points" required value="10" max="500" min="0"/>
+            <div class="form-group col-sm-6 col-md-4">
                 <label for="max-points">Maximum Points for Q&amp;A Questions</label>
+                <input type="number" class="form-control" id="max-points" name="max-points" required value="10" max="500" min="0"/>
             </div>
         </div>
-        <div class="row">
-            <div class="col s12 m5 negative-top-margin">
-                <p id="question-types" class="mb-0"><b>Question types</b></p>
-                <div class="input-field mt-0">
+        <div class="row mt-2">
+            <div class="col-sm-12 col-md-3">
+                <p id="question-types" class="mb-0"><strong>Question types</strong></p>
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap" name="question-types" id="both" value="both"/>
                     <label class="black-text" for="both">Both Q&amp;A and fill in the blank</label>
                 </div>
-                <div class="input-field mt-0">
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap" name="question-types" id="qa-only" value="qa-only" checked/>
                     <label class="black-text" for="qa-only">Q&amp;A only</label>
                 </div>
-                <div class="input-field mt-0">
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap" name="question-types" id="fill-in-only" value="fill-in-only"/>
                     <label class="black-text" for="fill-in-only">Fill in the blank only</label>
                 </div>
             </div>
-            <div class="col s12 m5 negative-top-margin">
-                <p id="question-order" class="mb-0"><b>Question selection and order</b></p>
-                <div class="input-field mt-0">
+            <div class="col-sm-12 col-md-6">
+                <p id="question-order" class="mb-0"><strong>Question selection and order</strong></p>
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap text-blue" name="order" id="sequential-sequential" value="sequential-sequential" />
                     <label class="black-text" for="sequential-sequential">Sequential</label>
                 </div>
-                <div class="input-field mt-0">
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap" name="order" id="random-sequential" value="random-sequential" checked/>
                     <label class="black-text" for="random-sequential">Random selection and sequential order</label>
                 </div>
-                <div class="input-field mt-0">
+                <div class="form-group mt-0">
                     <input type="radio" class="with-gap" name="order" id="random-random" value="random-random"  />
                     <label class="black-text" for="random-random">Random selection and random order</label>
                 </div>
             </div>
         </div>
-        <div class="row" id="fill-in-question-options">
-            <div class="input-field col s5" id="fill-in-percent-questions-div">
-                <input type="number" name="fill-in-percent-questions" id="fill-in-percent-questions" value="10" min="0" max="100"/>
-                <label class="" for="fill-in-percent-questions">Maximum Ratio of Fill in the Blank Questions to Q&amp;A Questions (0% - 100%)</label>
+        <div class="row mt-2" id="fill-in-question-options">
+            <div class="form-group col-sm-5" id="fill-in-percent-questions-div">
+                <label for="fill-in-percent-questions">Maximum Ratio of Fill in the Blank Questions to Q&amp;A Questions</label>
+                <input type="number" class="form-control" name="fill-in-percent-questions" id="fill-in-percent-questions" value="10" min="0" max="100" placeholder="10"/>
+                <small>Range: 0% - 100%</small>
             </div>
-            <div class="input-field col s5" id="fill-in-percent-div">
-                <input type="number" name="fill-in-percent" id="fill-in-percent" value="30" min="1" max="100"/>
-                <label class="" for="fill-in-percent">% Blanks in Fill in the Blank Questions (1% - 100%)</label>
+            <div class="form-group col-sm-5" id="fill-in-percent-div">
+                <label for="fill-in-percent">% Blanks in Fill in the Blank Questions</label>
+                <input type="number" class="form-control" name="fill-in-percent" id="fill-in-percent" value="30" min="1" max="100" placeholder="30"/>
+                <small>Range: 1% - 100%</small>
             </div>
         </div>
-        <p id="question-countdown"><b>Question timer</b></p>
+        <p class="mt-2 mb-0"><strong>Question timer</strong></p>
         <div class="row">
-            <div class="input-field col s12">
+            <div class="form-group col-sm-12">
                 <input type="checkbox" id="disable-question-timer" name="disable-question-timer">
                 <label class="black-text" for="disable-question-timer">Disable question timer</label>
             </div>
-            <div class="input-field col s12">
+            <div class="form-group col-sm-12">
                 <input type="checkbox" id="autoshow-answer" name="autoshow-answer">
                 <label class="black-text" for="autoshow-answer">Disable automatically showing the answer when the timer finishes</label>
             </div>
         </div>
-
-        <p id="question-filtering"><b>Question history</b></p>
+        <p class="mt-2 mb-0"><strong>Question history</strong></p>
         <div class="row">
-            <div class="input-field col s12">
+            <div class="form-group col-sm-12">
                 <input type="checkbox" id="no-questions-answered-correct" name="no-questions-answered-correct"/>
                 <label class="black-text" for="no-questions-answered-correct">Don't see questions answered correctly in the past</label>
             </div>
         </div>
-        <p id="question-filtering"><b>Flash card and PowerPoint options (<em>Only apply to flash cards and PowerPoint</em>)</b></p>
+        <p class="mt-2 mb-0"><strong>Flash card and PowerPoint options (<em>Only apply to flash cards and PowerPoint</em>)</strong></p>
         <div class="row">
-            <div class="input-field col s12">
+            <div class="form-group col-sm-12 mt-1">
                 <input type="checkbox" id="flash-show-recently-added" name="flash-show-recently-added"/>
                 <label class="black-text" for="flash-show-recently-added">Show recently added questions (overrides ALL above settings, including weighted question distribution!)</label>
             </div>
-            <div class="input-field col s12 m4" id="days-back-div">
-                <input type="number" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31"/>
-                <label class="" for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
+            <div class="form-group col-sm-12 col-md-6 mt-1">
+                <label for="flash-recently-added-days">Number of days to go back in time for recently added questions</label>
+                <input type="number" class="form-control" name="flash-recently-added-days" id="flash-recently-added-days" value="30" min="1" max="31" placeholder="31"/>
             </div>
         </div>
-        <div class="negative-top-margin row">
-            <div class="input-field col s12">
+        <div class="row mt-1">
+            <div class="form-group col-sm-12">
                 <input type="checkbox" id="flash-full-fill-in" name="flash-full-fill-in"/>
-                <label class="black-text" for="flash-full-fill-in">View fill in the blank as full text with answers in <b>bold</b></label>
+                <label class="black-text" for="flash-full-fill-in">View fill in the blank as full text with answers in <strong>bold</strong></label>
             </div>
         </div>
-        <div class="divider"></div>
-        <div class="row" id="quiz-setup-button-row">
-            <div class="input-field col s12 m10">
-                <button id="start-quiz-btn" class="btn waves-effect waves-light submit" type="button">Start Quiz</button>
+        <hr/>
+        <div class="row">
+            <div class="form-group col-sm-12 col-md-10">
+                <button id="start-quiz-btn" class="btn btn-primary submit" type="button"><i class="fas fa-award fa-lg"></i> Start Quiz</button>
                 <br/>
-                <button id="lr-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit indigo" type="button">Left/Right Flash Cards</button>
-                <button id="fb-flash-cards-btn" class="flash-cards-btn btn waves-effect waves-light submit blue" type="button">Front/Back Flash Cards</button>
-                <button id="presentation-btn" class="flash-cards-btn btn waves-effect waves-light submit purple" type="button">PowerPoint Presentation</button>
+                <button id="lr-flash-cards-btn" class="flash-cards-btn btn btn-sm btn-info indigo" type="button"><i class="fas fa-file-pdf"></i> Left/Right Flash Cards</button>
+                <button id="fb-flash-cards-btn" class="flash-cards-btn btn btn-sm btn-tertiary blue" type="button"><i class="fas fa-file-pdf"></i> Front/Back Flash Cards</button>
+                <button id="presentation-btn" class="flash-cards-btn btn btn-sm btn-primary purple" type="button"><i class="fas fa-file-powerpoint"></i> PowerPoint Presentation</button>
             </div>
         </div>
-        <div class="divider"></div>
-        <div class="input-field col s6">
-            <a id="save-data" class="btn btn-flat red white-text waves-effect red-waves right-margin" href="{{ app.yurl('/quiz/answers/remove') }}">Erase previously saved answers</a>
+        <hr/>
+        <div class="form-group col-sm-6">
+            <a id="save-data" class="btn btn-sm btn-danger" href="{{ app.yurl('/quiz/answers/remove') }}"><i class="fas fa-trash-alt"></i> Delete previously saved answers</a>
         </div>
     </form>
 </div>
 {% else %}
-<div id="start-quiz">
-    <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="{{ app.yurl('/questions/add') }}">create one</a>?</p>
-</div>
+    <div id="start-quiz">
+        <p>Sorry! No quiz questions have been created yet! Why don't you go <a href="{{ app.yurl('/questions/add') }}">create one</a>?</p>
+    </div>
 {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript">
     $(document).ready(function() {
+
+        $('#quiz-items').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select items to filter the question bank by...',
+            searchInputPlaceholder: 'Search items...',
+            allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
+        });
+        $('#language-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select language...',
+            searchInputPlaceholder: 'Search languages...',
+            allowClear: false
+        });
+
         var bibleQuestionType = document.getElementById('quiz-items');
-        $(bibleQuestionType).material_select();
-        fixRequiredSelectorCSS();
 
         var quizForm = document.getElementById('quiz-setup-form');
         var quizItemSelector = document.getElementById('quiz-items');
@@ -333,7 +377,6 @@
 
         $("#enable-question-distribution").trigger("change");
         $("#quiz-items").trigger("change");
-        $("#language-select").material_select();
 
         // 
         var bothQuestionTypesRadio = document.getElementById('both');

@@ -31,8 +31,9 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
+        /** @var PBEAppConfig $app */
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
             $currentConferenceID = $request->routeParams['conferenceID'];
@@ -47,7 +48,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return $response;
     }
 
-    public function viewHomeSections(PBEAppConfig $app, Request $request) : Response
+    public function viewHomeSections(PBEAppConfig $app, Request $request): Response
     {
         $years = Year::loadAllYears($app->db);
         $conferences = Conference::loadAllConferences($app->db);
@@ -61,7 +62,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new TwigView('admin/home-sections/view-home-sections', compact('years', 'conferences', 'conference', 'currentConferenceID', 'sections', 'currentYear'), 'Home Section Info');
     }
 
-    public function copyFromYear(PBEAppConfig $app, Request $request) : Response
+    public function copyFromYear(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -74,7 +75,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
     }
 
-    public function copyFromAdmin(PBEAppConfig $app, Request $request) : Response
+    public function copyFromAdmin(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -88,7 +89,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
     }
 
-    private function validateSection(PBEAppConfig $app, Request $request, Conference $conference, ?HomeInfoSection $existingSection) : ValidationStatus
+    private function validateSection(PBEAppConfig $app, Request $request, Conference $conference, ?HomeInfoSection $existingSection): ValidationStatus
     {
         $name = Util::validateString($request->post, 'section-name');
         $subtitle = Util::validateString($request->post, 'section-subtitle');
@@ -106,12 +107,12 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new ValidationStatus(true, $section);
     }
 
-    private function showCreateOrEditSection(PBEAppConfig $app, Request $request, bool $isCreating, Conference $conference, HomeInfoSection $section, string $error = '') : Response
+    private function showCreateOrEditSection(PBEAppConfig $app, Request $request, bool $isCreating, Conference $conference, HomeInfoSection $section, string $error = ''): Response
     {
         return new TwigView('admin/home-sections/create-edit-section', compact('isCreating', 'conference', 'section', 'error'), $isCreating ? 'Create Section' : 'Edit Section');
     }
 
-    public function createHomeSection(PBEAppConfig $app, Request $request) : Response
+    public function createHomeSection(PBEAppConfig $app, Request $request): Response
     {
         // POST request from main section listing for conference
         $currentConferenceID = $request->routeParams['conferenceID'];
@@ -128,7 +129,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
     }
 
-    public function changeHomeSectionConference(PBEAppConfig $app, Request $request) : Response
+    public function changeHomeSectionConference(PBEAppConfig $app, Request $request): Response
     {
         // validate current URL data
         echo '?';
@@ -145,7 +146,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $currentConferenceID . '/sections');
     }
 
-    public function saveSectionSorting(PBEAppConfig $app, Request $request) : Response
+    public function saveSectionSorting(PBEAppConfig $app, Request $request): Response
     {
         $data = json_decode($_POST['json'], true);
         if (HomeInfoSection::saveSortOrder($data, $app->db)) {
@@ -154,7 +155,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Response(400);
     }
 
-    public function editHomeSection(PBEAppConfig $app, Request $request) : Response
+    public function editHomeSection(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -165,7 +166,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return $this->showCreateOrEditSection($app, $request, false, $conference, $section);
     }
 
-    public function saveHomeSectionUpdates(PBEAppConfig $app, Request $request) : Response
+    public function saveHomeSectionUpdates(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -182,7 +183,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections');
     }
 
-    public function verifyDeleteHomeSection(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteHomeSection(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -193,7 +194,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new TwigView('admin/home-sections/verify-delete-section', compact('conference', 'section'), 'Delete Section');
     }
 
-    public function deleteHomeSection(PBEAppConfig $app, Request $request) : Response
+    public function deleteHomeSection(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -210,7 +211,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         }
     }
 
-    public function viewLines(PBEAppConfig $app, Request $request) : Response
+    public function viewLines(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -223,14 +224,14 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new TwigView('admin/home-sections/view-lines-for-section', compact('sectionID', 'conference', 'lines', 'section'), 'Home Section - Lines');
     }
 
-    public function saveLineSorting(PBEAppConfig $app, Request $request) : Response
+    public function saveLineSorting(PBEAppConfig $app, Request $request): Response
     {
         $data = json_decode($request->post['json'], true);
         $didSucceed = HomeInfoLine::saveSorting($data, $app->db);
         return new Response($didSucceed ? 200 : 400);
     }
 
-    public function createNewLine(PBEAppConfig $app, Request $request) : Response
+    public function createNewLine(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -246,7 +247,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections/' . $section->homeInfoSectionID . '/lines');
     }
 
-    public function verifyDeleteLine(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteLine(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -259,7 +260,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new TwigView('admin/home-sections/verify-delete-line', compact('conference', 'section', 'line'), 'Delete Line');
     }
 
-    public function deleteLine(PBEAppConfig $app, Request $request) : Response
+    public function deleteLine(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -278,7 +279,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         }
     }
 
-    private function validateLineItem(PBEAppConfig $app, Request $request, HomeInfoLine $line, ?HomeInfoItem $existingLineItem) : ValidationStatus
+    private function validateLineItem(PBEAppConfig $app, Request $request, HomeInfoLine $line, ?HomeInfoItem $existingLineItem): ValidationStatus
     {
         $lineText = Util::validateString($request->post, 'line-text');
         $isLink = Util::validateBoolean($request->post, 'line-is-link');
@@ -297,12 +298,12 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new ValidationStatus(true, $lineItem);
     }
 
-    private function showCreateOrEditLineItem(PBEAppConfig $app, Request $request, bool $isCreating, Conference $conference, HomeInfoSection $section, HomeInfoLine $line, ?HomeInfoItem $item, string $error = '') : Response
+    private function showCreateOrEditLineItem(PBEAppConfig $app, Request $request, bool $isCreating, Conference $conference, HomeInfoSection $section, HomeInfoLine $line, ?HomeInfoItem $item, string $error = ''): Response
     {
         return new TwigView('admin/home-sections/create-edit-line-item', compact('isCreating', 'conference', 'item', 'error', 'section', 'line'), $isCreating ? 'Create Line Item' : 'Edit Line Item');
     }
 
-    public function createLineItem(PBEAppConfig $app, Request $request) : ?Response
+    public function createLineItem(PBEAppConfig $app, Request $request): ?Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -315,7 +316,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return $this->showCreateOrEditLineItem($app, $request, true, $conference, $section, $line, null);
     }
 
-    public function saveNewLineItem(PBEAppConfig $app, Request $request) : Response
+    public function saveNewLineItem(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -334,7 +335,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections/' . $section->homeInfoSectionID . '/lines');
     }
 
-    public function editLineItem(PBEAppConfig $app, Request $request) : Response
+    public function editLineItem(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -349,7 +350,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return $this->showCreateOrEditLineItem($app, $request, false, $conference, $section, $line, $item);
     }
 
-    public function saveLineItemUpdates(PBEAppConfig $app, Request $request) : Response
+    public function saveLineItemUpdates(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -370,7 +371,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new Redirect('/admin/home-sections/' . $conference->conferenceID . '/sections/' . $section->homeInfoSectionID . '/lines');
     }
 
-    public function verifyDeleteLineItem(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteLineItem(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);
@@ -385,7 +386,7 @@ class HomeSectionController extends BaseAdminController implements IRequestValid
         return new TwigView('admin/home-sections/verify-delete-line-item', compact('conference', 'section', 'line', 'item'), 'Delete Line Item');
     }
 
-    public function deleteLineItem(PBEAppConfig $app, Request $request) : Response
+    public function deleteLineItem(PBEAppConfig $app, Request $request): Response
     {
         $currentConferenceID = $request->routeParams['conferenceID'];
         $conference = Conference::loadConferenceWithID($currentConferenceID, $app->db);

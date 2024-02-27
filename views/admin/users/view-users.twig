@@ -8,17 +8,29 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Users</li>
+    </ol>
+</nav>
 
-<h4>Website Users</h4>
+<h4>Users</h4>
 
 {% if _get['created'] %}
-    <div class="green white-text p-1 rounded-border">
-        <span class="ml-1">User successfully created! Their access code is: {{ _get['created'] }}</span>
+    <div class="alert alert-success" role="alert">
+        <span class="ml-1">User successfully created! Their access code is: <strong>{{ _get['created'] }}</strong>.</span>
     </div>
 {% endif %}
 
-<p>Please note that any 0 in entry codes are zeros, not the capital letter O</p>
+{% if _get['updated'] %}
+    <div class="alert alert-success" role="alert">
+        <span class="ml-1">Successfully updated access code! The updated access code is: <strong>{{ _get['updated'] }}</strong>.</span>
+    </div>
+{% endif %}
+
+<p class="mb-1">Please note that any 0 in entry codes are zeros, not the capital letter O</p>
 
 <div id="users-div">
     {% if app.isClubAdmin %}
@@ -28,9 +40,9 @@
     {% endif %}
         
     <div id="create">
-        <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/create') }}">Add User</a>
+        <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/users/create') }}"><i class="fas fa-plus"></i> Add User</a>
     </div>
-    <table class="striped tablesorter-materialize" id="users-table">
+    <table class="table table-sm table-striped table-bordered" id="users-table">
         <thead>
             <tr>
                 <th data-placeholder="Username">Username</th>
@@ -70,15 +82,15 @@
                     {% if app.isWebAdmin %}
                         <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
                     {% endif %}
-                    <td data-sort="{{ user.lastLoginDate }}">{{ user.lastLoginDate | date('D, M d, Y, g:i a') }}</td>
+                    <td data-sort="{{ user.lastLoginDate }}">{{ user.lastLoginDate ? (user.lastLoginDate | date('D, M d, Y, g:i a')) : '' }}</td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
-                            <a class="waves-effect waves-light btn" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}">Edit</a>
+                            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit</a>
                         {% endif %}
                     </td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
-                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/delete') }}">Delete</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -87,13 +99,17 @@
     </table>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search users..."
+            searchPlaceholder: 'Search users...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#users-table').DataTable(datatablesProps);

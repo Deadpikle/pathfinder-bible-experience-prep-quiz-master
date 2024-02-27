@@ -10,24 +10,17 @@ use Twig\TwigFunction;
 class PHPFuncExtension extends AbstractExtension
 {
     private $functions = array(
-        'uniqid',
         'floor',
         'ceil',
         'addslashes',
         'chr',
-        'chunk_​split',
-        'convert_​uudecode',
-        'crc32',
-        'crypt',
+        'chunk_split',
         'explode',
         'implode',
-        'hex2bin',
-        'md5',
         'sha1',
         'strpos',
         'strrpos',
         'ucwords',
-        'wordwrap',
         'gettype',
         'filemtime',
         'mb_split',
@@ -42,7 +35,7 @@ class PHPFuncExtension extends AbstractExtension
         'substr'
     );
 
-    public function __construct(array $functions = array())
+    public function __construct(array $functions = [])
     {
         if ($functions) {
             $this->allowFunctions($functions);
@@ -51,7 +44,7 @@ class PHPFuncExtension extends AbstractExtension
 
     public function getFunctions()
     {
-        $twigFunctions = array();
+        $twigFunctions = [];
         foreach ($this->functions as $function) {
             $twigFunctions[] = new TwigFunction($function, $function);
         }

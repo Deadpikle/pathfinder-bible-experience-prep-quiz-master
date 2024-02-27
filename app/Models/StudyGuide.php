@@ -8,20 +8,24 @@ use App\Models\Year;
 
 class StudyGuide
 {
-    public $studyGuideID;
-    public $displayName;
-    public $fileName;
+    public int $studyGuideID;
+    public string $displayName;
+    public string $fileName;
     
-    public $yearID;
-    public $year;
+    public int $yearID;
+    public int $year; // shortcut to year # via year ID
 
     public function __construct(int $studyGuideID, string $displayName)
     {
         $this->studyGuideID = $studyGuideID;
         $this->displayName = $displayName;
+        $this->fileName = '';
+        $this->yearID = -1;
+        $this->year = 0;
     }
 
-    private static function loadStudyGuides(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<StudyGuide> */
+    private static function loadStudyGuides(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT StudyGuideID, DisplayName, FileName, StudyGuides.YearID, Years.Year
@@ -43,17 +47,19 @@ class StudyGuide
         return $output;
     }
 
-    public static function loadCurrentStudyGuides(Year $year, PDO $db) : array
+    /** @return array<StudyGuide> */
+    public static function loadCurrentStudyGuides(Year $year, PDO $db): array
     {
         return StudyGuide::loadStudyGuides(' WHERE StudyGuides.YearID = ? ', [ $year->yearID ], $db);
     }
 
-    public static function loadAllStudyGuides(PDO $db) : array
+    /** @return array<StudyGuide> */
+    public static function loadAllStudyGuides(PDO $db): array
     {
         return StudyGuide::loadStudyGuides('', [ ], $db);
     }
 
-    public static function loadStudyGuideByID(int $studyGuideID, PDO $db) : ?StudyGuide
+    public static function loadStudyGuideByID(int $studyGuideID, PDO $db): ?StudyGuide
     {
         $data = StudyGuide::loadStudyGuides(' WHERE StudyGuideID = ? ', [ $studyGuideID ], $db);
         return count($data) > 0 ? $data[0] : null;

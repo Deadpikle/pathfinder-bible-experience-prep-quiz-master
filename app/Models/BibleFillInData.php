@@ -6,14 +6,24 @@ use PDO;
 
 class BibleFillInData
 {
-    public $chapterID;
-    public $chapterNumber;
-    public $bookName;
+    public int $chapterID;
+    public int $chapterNumber;
+    public string $bookName;
     
-    public $language;
-    public $numberOfQuestions;
+    public ?Language $language;
+    public int $numberOfQuestions;
 
-    public static function loadFillInData(Year $year, PDO $db) : array
+    public function __construct()
+    {
+        $this->chapterID = -1;
+        $this->chapterNumber = 0;
+        $this->bookName = '';
+        $this->language = null;
+        $this->numberOfQuestions = 0;
+    }
+
+    /** @return array<BibleFillInData> */
+    public static function loadFillInData(Year $year, PDO $db): array
     {
         $query = '
             SELECT c.ChapterID, c.Number, b.Name, COUNT(q.QuestionID) AS QuestionCount, q.LanguageID

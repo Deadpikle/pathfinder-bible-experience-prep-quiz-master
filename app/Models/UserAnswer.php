@@ -7,18 +7,22 @@ use PDOException;
 
 class UserAnswer
 {
-    public $userAnswerID;
-    public $answer;
-    public $dateAnswered;
-    public $wasCorrect;
+    public int $userAnswerID;
+    public string $answer;
+    public string $dateAnswered;
+    public bool $wasCorrect;
     
-    public $questionID;
-    public $userID;
+    public int $questionID;
+    public int $userID;
 
     public function __construct(int $userAnswerID, string $answer)
     {
         $this->userAnswerID = $userAnswerID;
         $this->answer = $answer;
+        $this->dateAnswered = '';
+        $this->wasCorrect = false;
+        $this->questionID = -1;
+        $this->userID = -1;
     }
 
     public static function deleteUserAnswers(int $userID, PDO $db)
@@ -36,7 +40,7 @@ class UserAnswer
      *      'dateAnswered' -- when they answered
      *      'correct' -- whether or not they answered correctly
      */
-    public static function saveUserAnswers(array $answers, PDO $db) : bool
+    public static function saveUserAnswers(array $answers, PDO $db): bool
     {
         // prepare everything
         // we don't want to add duplicate rows for a question

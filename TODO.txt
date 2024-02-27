@@ -6,10 +6,15 @@ TODO:
 -Refactor more things to PBEAppConfig
 
 Eventual:
--Revamp UI everywhere
-    -Switch to Bootstrap 5!!!
-    -Use select2 for searchable dropdowns
-    -Use breadcrumbs
+*-Revamp UI everywhere/tweaks to website
+    *-Switch to Bootstrap 5
+    *-Use select2 for searchable dropdowns
+    *-Use breadcrumbs
+    *-add honeypot to contact form
+    *-dark mode setting/compat (and select2 CSS)
+    *-Use Bootstrap 5 toast messages on matching quiz rather than `alert`
+    *-swap to cloudflare stuff
+*-types for models
+    *-going reverse order; pick up again at UserAnswer
 -the language translation definitely is in need of better code/upgrades
     -need to show copyright multi-language if there are multiple languages of questions showing up (e.g. user has site in spanish but loads english questions)
--page # on question entry for commentary not reqd

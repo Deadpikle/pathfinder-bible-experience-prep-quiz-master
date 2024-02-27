@@ -17,8 +17,8 @@ use PhpOffice\PhpPresentation\Style\Shadow;
 
 class PowerPointGenerator
 {
-    private $slideWidth;
-    private $slideHeight;
+    private int $slideWidth;
+    private int $slideHeight;
     // TODO: footer for pbeprep.com (in slide master?) and footer for copyright
     // TODO: background image
 
@@ -107,10 +107,10 @@ class PowerPointGenerator
         $shape->createTextRun('Answer')
             ->getFont()->setSize(34)->setBold(true);
         $shape->createBreak();
-        if (Util::str_contains('<b>', $answerText)) {
+        if (Util::str_contains('<strong>', $answerText)) {
             while (strlen($answerText) > 0) {
-                $startTagPos = strpos($answerText, '<b>');
-                $endTagPos = strpos($answerText, '</b>');
+                $startTagPos = strpos($answerText, '<strong>');
+                $endTagPos = strpos($answerText, '</strong>');
                 if ($startTagPos !== false && $endTagPos !== false) {
                     $before = substr($answerText, 0, $startTagPos);
                     $inside = substr($answerText, $startTagPos + 3, $endTagPos - $startTagPos - 3);
@@ -166,7 +166,7 @@ class PowerPointGenerator
     public function outputPowerPoint(array $quizQuestionData, bool $viewFillInTheBlankAnswersInBold)
     {
         $presentation = new PhpPresentation();
-        $presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_CUSTOM, true)
+        $presentation->getLayout()->setDocumentLayout(['cx' => $this->slideWidth, 'cy' => $this->slideHeight], true)
             ->setCX($this->slideWidth, DocumentLayout::UNIT_PIXEL)
             ->setCY($this->slideHeight, DocumentLayout::UNIT_PIXEL);
         $this->setupSlideMaster($presentation);
@@ -182,7 +182,7 @@ class PowerPointGenerator
             $slide = $i === 0 ? $presentation->getActiveSlide() : $presentation->createSlide();
             $question = $questions[$i];
             $questionText = Util::getFullQuestionTextFromQuestion($question);
-            if (!Question::isTypeFillIn($question["type"])) {
+            if (!Question::isTypeFillIn($question['type'])) {
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
                 $this->addQuestionTextToSlide($slide, $questionText, $question['points']);
@@ -193,7 +193,7 @@ class PowerPointGenerator
                 $this->addAnswerTextToSlide($slide, $question['answer']);
             } else {
                 $fillIn = Util::generateFillInDataFromQuestion($question);
-                $questionText .= "\n" . trim($fillIn["question"]);
+                $questionText .= "\n" . trim($fillIn['question']);
                 // make question slide
                 $this->addQuestionNumber($slide, $i + 1);
                 $this->addQuestionTextToSlide($slide, $questionText, $question['points']);

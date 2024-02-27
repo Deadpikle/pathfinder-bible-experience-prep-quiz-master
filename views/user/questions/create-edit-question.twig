@@ -1,8 +1,20 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/questions') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/questions') }}">Questions</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Add Question' : 'Edit Question' }}</li>
+    </ol>
+</nav>
 
 <h4>{{ isCreating ? 'Add Question' : 'Edit Question' }}</h4>
 
@@ -10,51 +22,53 @@
 
 <div id="edit-question">
     <form method="post">
-        <input type="hidden" name="question-id" value="{{ question.questionID | default(-1) }}"/>
-        <p id="question-type-paragraph">Question Type</p>
-        <div id="question-type" class="row">
-            <div class="input-field col s12">
+        <p class="m-0">Question Type</p>
+        <div class="row">
+            <div class="form-group col-auto">
                 {% set checked = question.isBibleQnA() or question is not defined or question is null ? 'checked' : '' %}
-                <input type="radio" class="with-gap" name="question-type" id="bible-qna" value="bible-qna" {{ checked }}/>
-                <label class="black-text" for="bible-qna">Bible</label>
+                <input type="radio" name="question-type" id="bible-qna" value="bible-qna" {{ checked }}/>
+                <label for="bible-qna">Bible</label>
             </div>
-            <div class="input-field col s12">
+            <div class="form-group col-auto">
                 {% set checked = question.isCommentaryQnA() ? 'checked' : '' %}
-                <input type="radio" class="with-gap" name="question-type" id="commentary-qna" value="commentary-qna" {{ checked }}/>
-                <label class="black-text" for="commentary-qna">SDA Bible Commentary</label>
+                <input type="radio" name="question-type" id="commentary-qna" value="commentary-qna" {{ checked }}/>
+                <label for="commentary-qna">SDA Bible Commentary</label>
             </div>
         </div>
-        <div id="question-fill-in" class="row">
-            <div class="input-field col s12 m4">
+        <div class="row mt-2">
+            <div class="form-group col-sm-12 col-md-4">
                 {% set checked = question.isFillIn() ? 'checked' : '' %}
                 <input type="checkbox" id="question-is-fill-in-blank" name="question-is-fill-in-blank" {{ checked }} />
-                <label class="black-text" for="question-is-fill-in-blank">Fill in the blank</label>
+                <label for="question-is-fill-in-blank">Question is a Fill in the Blank question</label>
             </div>
         </div>
         <div class="row">
-            <p class="section-info" id="according-to-info">When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</p>
-            <p class="section-info" id="fill-in-info">For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</p>
-            <div class="input-field col s12 m6">
-                <textarea id="question-text" name="question-text" class="materialize-textarea" 
-                        required placeholder="What is the name of Esther's uncle?" 
-                        data-length="10000">{{ question.question }}</textarea>
-                <label for="question-text">Question</label>
-            </div>
-            <div id="question-answer-div" class="input-field col s12 m6">
-                <textarea id="question-answer" name="question-answer" class="materialize-textarea" 
-                        required placeholder="Mordecai" data-length="3000">{{ question.answer }}</textarea>
-                <label for="question-answer">Answer</label>
+            <div class="col-sm-12 col-md-10">
+                <p id="fill-in-info" class="mb-1 mt-1"><em>For fill in the blank questions, type the text into the question field as you would read it in the Bible/SDA Bible Commentary. Blanks will be added for you when taking a quiz. The answer field is not needed for fill in the blank questions.</em></p>
             </div>
         </div>
-        <div class="row" id="language-select-add-edit-question-container">
-            <div id="number-of-points-div" class="negative-top-margin">
-                <div class="input-field col s12 m3">
-                    <input type="number" min="0" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required/>
-                    <label for="number-of-points">Number of Points</label>
-                </div>
+        <hr/>
+        <div class="row">
+            <div class="form-group col-sm-12 col-md-6">
+                <label for="question-text">Question</label>
+                <textarea id="question-text" name="question-text" class="form-control" 
+                        required placeholder="What was the name of Esther's uncle?" 
+                        maxlength="10000" rows="4">{{ question.question }}</textarea>
+                <small>When adding a question, you don't need to add the "According to Daniel 3:4" portion at the beginning of the question. This will be added for you when taking a quiz based upon the start/end verses that you choose below.</small>
             </div>
-            <div class="input-field col s12 m2">
-                <select class="" id="language-select" name="language-select" required>
+            <div id="question-answer-div" class="form-group col-sm-12 col-md-6">
+                <label for="question-answer">Answer</label>
+                <textarea id="question-answer" name="question-answer" class="form-control" required placeholder="Mordecai" maxlength="3000" rows="4">{{ question.answer }}</textarea>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="form-group col-sm-6 col-md-3 col-lg-2">
+                <label for="number-of-points">Number of Points</label>
+                <input type="number" class="form-control" min="0" max="100" id="number-of-points" name="number-of-points" value="{{ question.numberPoints != 0 ? question.numberOfPoints : 1 }}" required placeholder="1"/>
+            </div>
+            <div class="form-group col-sm-12 col-md-4 col-lg-2">
+                <label for="language-select">Language</label>
+                <select class="form-control" id="language-select" name="language-select" required>
                     {% for language in languages %}
                         {% set selected = question.languageID is defined and question.languageID > 0 
                             ? (language.languageID == question.languageID ? 'selected' : '')
@@ -62,81 +76,174 @@
                         <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
                     {% endfor %}
                 </select>
-                <label for="language-select">Language</label>
             </div>
         </div>
-        <div class="row" id="start-verse-div">
-            <p class="section-info">Start Reference</p>
-            <div class="input-field">
-                <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
-                <select class="col s4 m4" id="start-book-select" name="start-book" required>
+        <div class="row mt-2" id="start-verse-div">
+            <p class="mb-0">Start Reference</p>
+            <input type="hidden" id="start-verse-id" name="start-verse-id" value="-1"/>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="start-book-select" name="start-book" required>
                     <option id="book-no-selection-option" value="">Select a book...</option>
                 </select>
-                <select class="col s4 m4" id="start-chapter-select" name="start-chapter" required>
+                <small>Book</small>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="start-chapter-select" name="start-chapter" required>
                     <option id="chapter-no-selection-option" value="">Select a chapter...</option>
                 </select>
-                <select class="col s4 m4" id="start-verse-select" name="start-verse" required>
+                <small>Chapter</small>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="start-verse-select" name="start-verse" required>
                     <option id="verse-no-selection-option" value="">Select a verse...</option>
                 </select>
+                <small>Verse</small>
             </div>
         </div>
-        <div class="row" id="end-verse-div">
-            <p class="section-info">End Reference (if question covers more than 1 verse)</p>
-            <div class="input-field">
-                <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
-                <select class="col s4 m4" id="end-book-select" name="end-book">
+        <div class="row mt-2" id="end-verse-div">
+            <p class="m-0">End Reference (if question covers more than 1 verse)</p>
+            <input type="hidden" id="end-verse-id" name="end-verse-id" value="-1"/>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="end-book-select" name="end-book">
                     <option id="book-no-selection-option" value="-1">Select a book...</option>
                 </select>
-                <select class="col s4 m4" id="end-chapter-select" name="chapter">
+                <small>Book</small>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="end-chapter-select" name="chapter">
                     <option id="chapter-no-selection-option" value="-1">Select a chapter...</option>
                 </select>
-                <select class="col s4 m4" id="end-verse-select" name="verse">
+                <small>Chapter</small>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-2">
+                <select class="form-control" id="end-verse-select" name="verse">
                     <option id="verse-no-selection-option" value="-1">Select a verse...</option>
                 </select>
+                <small>Verse</small>
             </div>
         </div>
-        <div class="row commentary-inputs">
-            <p class="section-info">Commentary Info</p>
-            <select class="col s12 m4" id="commentary-volume" name="commentary-volume" required>
+        <div class="row commentary-inputs mt-2">
+            <p class="mb-0">Commentary Info</p>
+            <select class="col-sm-12 col-md-4" id="commentary-volume" name="commentary-volume" required>
                 <option id="commentary-no-selection-option" value="">Select commentary...</option>
                 {% for commentary in commentaries %}
-                    <option id="" value="{{ commentary.commentaryID }}">{{ commentary.getDisplayValue() }}</option>
+                    <option value="{{ commentary.commentaryID }}">{{ commentary.getDisplayValue() }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="row commentary-inputs negative-top-margin">
-            <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-start" name="commentary-start" value="{{ question.commentaryStartPage != 0 ? question.commentaryStartPage : '' }}" required placeholder="12"/>
+        <div class="row commentary-inputs mt-2">
+            <div class="form-group col-sm-6 col-md-2">
                 <label for="commentary-start">Start Page</label>
+                <input type="number" class="form-control" min="0" id="commentary-start" name="commentary-start" value="{{ question.commentaryStartPage != 0 ? question.commentaryStartPage : '' }}" placeholder="12"/>
             </div>
-            <div class="input-field col s12 m3">
-                <input type="number" min="0" id="commentary-end" name="commentary-end" value="{{ question.commentaryEndPage != 0 ? question.commentaryEndPage : '' }}" placeholder="15"/>
+            <div class="form-group col-sm-6 col-md-3 col-lg-2">
                 <label for="commentary-end">End Page</label>
+                <input type="number" class="form-control" min="0" id="commentary-end" name="commentary-end" value="{{ question.commentaryEndPage != 0 ? question.commentaryEndPage : '' }}" placeholder="15"/>
             </div>
         </div>
         {% if isFlagged %}
             <div class="row" id="unflag-question">
-                <div class="input-field col s12">
+                <div class="form-group col-sm-12">
                     <input type="checkbox" id="remove-question-flag" name="remove-question-flag"/>
                     <label class="black-text" for="remove-question-flag">Delete flag for this question</label>
                 </div>
             </div>
         {% endif %}
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> {{ isCreating ? 'Add Question' : 'Save Changes' }}</button>
     </form>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
     var selectedVerse = null;
     var books = {{ json_encode(bookData) | raw }};
     var commentaries = {{ json_encode(commentaries) | raw }};
-    var questionType = '{{ question.type | default('bible-qna') }}';
+    var questionType = "{{ question.type | default('bible-qna') }}";
     var isFillInInitially = {{ question.isFillIn() ? 'true' : 'false' }};
     var startVerseID = {{ question.startVerseID | default(-1) }};
     var endVerseID = {{ question.endVerseID | default(-1) }};
     var commentaryID = {{ question.commentaryID | default(-1) }};
+
     $(document).ready(function() {
+        $('#language-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a language...',
+            searchInputPlaceholder: 'Search languages...',
+            allowClear: false
+        });
+        $('#start-book-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a book...',
+            searchInputPlaceholder: 'Search books...',
+            allowClear: false
+        });
+        $('#end-book-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a book...',
+            searchInputPlaceholder: 'Search books...',
+            allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
+        });
+        $('#start-chapter-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a chapter...',
+            searchInputPlaceholder: 'Search chapters...',
+            allowClear: false
+        });
+        $('#end-chapter-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a chapter...',
+            searchInputPlaceholder: 'Search chapters...',
+            allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
+        });
+        $('#start-verse-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a verse...',
+            searchInputPlaceholder: 'Search verses...',
+            allowClear: false
+        });
+        $('#end-verse-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a verse...',
+            searchInputPlaceholder: 'Search verses...',
+            allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
+        });
+        $('#commentary-volume').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a commentary...',
+            searchInputPlaceholder: 'Search commentaries...',
+            allowClear: false
+        });
 
         var bibleQuestionType = document.getElementById('bible-qna');
         var commentaryType = document.getElementById('commentary-qna');
@@ -145,6 +252,9 @@
         var startBook = document.getElementById('start-book-select');
         var startChapter = document.getElementById('start-chapter-select');
         var startVerse = document.getElementById('start-verse-select');
+        var endBook = document.getElementById('end-book-select');
+        var endChapter = document.getElementById('end-chapter-select');
+        var endVerse = document.getElementById('end-verse-select');
 
         var commentaryVolume = document.getElementById('commentary-volume');
         var commentaryStartPage = document.getElementById('commentary-start');
@@ -156,7 +266,6 @@
         function hideCommentaryDiv() {
             $('.commentary-inputs').hide();
             commentaryVolume.required = false;
-            commentaryStartPage.required = false;
         }
 
         function hideBibleDiv() {
@@ -169,8 +278,7 @@
 
         if (questionType == 'bible-qna' || questionType == 'bible-qna-fill') {
             hideCommentaryDiv(); // on page load, default is Bible question [bible-qna]
-        }
-        else {
+        } else {
             hideBibleDiv();
         }
 
@@ -183,7 +291,7 @@
             startBook.required = true;
             startChapter.required = true;
             startVerse.required = true;
-            fixRequiredSelectorCSS();
+            hideShowBibleVerseSelectorsAsNeeded();
         }, false);
         commentaryType.addEventListener('click', function() {
             // hide Bible question data and set fields as not required
@@ -191,8 +299,7 @@
             // show commentary data and set fields as required
             $('.commentary-inputs').show();
             commentaryVolume.required = true;
-            commentaryStartPage.required = true;
-            fixRequiredSelectorCSS();
+            hideShowBibleVerseSelectorsAsNeeded();
         }, false);
 
 
@@ -205,12 +312,11 @@
                     $('#' + prefix + 'chapter-select').append("<option value='" + i + "'>" + chapters[i].number + "</option>");
                 }
             }
-            $('#' + prefix + 'chapter-select').material_select();
+            updateSelect2('#' + prefix + 'chapter-select');
             if ($('#' + prefix + 'verse-id').val() != -1) {
-                $('#' + prefix + 'verse-select').material_select();
+                updateSelect2('#' + prefix + 'verse-select');
             }
             $('#' + prefix + 'verse-id').val(-1);
-            fixRequiredSelectorCSS();
         }
 
         function setupVerseSelectForChapter(chapter, prefix) {
@@ -221,9 +327,8 @@
                     $('#' + prefix + 'verse-select').append("<option value='" + i + "'>" + verses[i].number + "</option>");
                 }
             }
-            $('#' + prefix + 'verse-select').material_select();
+            updateSelect2('#' + prefix + 'verse-select');
             $('#' + prefix + 'verse-id').val(-1);
-            fixRequiredSelectorCSS();
         }
 
         function setupBookSelector(prefix) {
@@ -234,6 +339,7 @@
                     setupChapterSelectForBook(book, prefix);
                     $('#' + prefix + 'verse-id').val(-1);
                 }
+                hideShowBibleVerseSelectorsAsNeeded();
             }); 
         }
 
@@ -246,6 +352,7 @@
                     setupVerseSelectForChapter(chapter, prefix);
                     $('#' + prefix + 'verse-id').val(-1);
                 }
+                hideShowBibleVerseSelectorsAsNeeded();
             });
         }
 
@@ -258,21 +365,21 @@
                     selectedVerse = books[bookArrayIndex].chapters[chapterArrayIndex].verses[verseArrayIndex];
                     $('#' + prefix + 'verse-id').val(selectedVerse.verseID);
                 }
+                hideShowBibleVerseSelectorsAsNeeded();
             });
         }
 
         function setupInitialValue(prefix, i, j, k, book, chapter, verseID) {
             // :eq looks by index, so +1 since index 0 is the 'Select a book...' etc.
             $('#' + prefix + 'book-select option:eq(' + (i+1) + ')').prop('selected', true);
-            $('#' + prefix + 'book-select').material_select();
+            updateSelect2('#' + prefix + 'book-select');
             setupChapterSelectForBook(book, prefix);
             $('#' + prefix + 'chapter-select option:eq(' + (j+1) + ')').prop('selected', true);
-            $('#' + prefix + 'chapter-select').material_select();
+            updateSelect2('#' + prefix + 'chapter-select');
             setupVerseSelectForChapter(chapter, prefix);
             $('#' + prefix + 'verse-select option:eq(' + (k+1) + ')').prop('selected', true);
-            $('#' + prefix + 'verse-select').material_select();
+            updateSelect2('#' + prefix + 'verse-select');
             $('#' + prefix + 'verse-id').val(verseID);
-            fixRequiredSelectorCSS();
         }
 
         setupBookSelector('start-');
@@ -289,9 +396,9 @@
             $('#start-book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
             $('#end-book-select').append("<option value='" + i + "'>" + books[i].name + "</option>");
         }
-        $('#start-book-select').material_select();
-        $('#end-book-select').material_select();
-        $('#language-select').material_select();
+        updateSelect2('#start-book-select');
+        updateSelect2('#end-book-select');
+        updateSelect2('#language-select');
 
         if (startVerseID != -1 || endVerseID != -1) {
             var didFindStart = false;
@@ -323,40 +430,68 @@
                 }
             }
         }
-        fixRequiredSelectorCSS();
+        function hideShowBibleVerseSelectorsAsNeeded() {
+            var isBibleQuestion = bibleQuestionType.checked;
+            if (isBibleQuestion) {
+                // show all initially
+                var startBookSelection = startBook.value;
+                var startChapterSelection = startChapter.value;
+                var endBookSelection = endBook.value;
+                var endChapterSelection = endChapter.value;
+                if (startBookSelection === '-1' || startBookSelection === '' || startBookSelection === null) {
+                    hideElement(startChapter.parentElement);
+                    hideElement(startVerse.parentElement);
+                } else if (startChapterSelection === '-1' || startChapterSelection === '' || startChapterSelection === null) {
+                    showElement(startChapter.parentElement);
+                    hideElement(startVerse.parentElement);
+                } else {
+                    showElement(startChapter.parentElement);
+                    showElement(startVerse.parentElement);
+                }
+                if (endBookSelection === '-1' || endBookSelection === '' || endBookSelection === null) {
+                    hideElement(endChapter.parentElement);
+                    hideElement(endVerse.parentElement);
+                } else if (endChapterSelection === '-1' || endChapterSelection === '' || endChapterSelection === null) {
+                    showElement(endChapter.parentElement);
+                    hideElement(endVerse.parentElement);
+                } else {
+                    showElement(endChapter.parentElement);
+                    showElement(endVerse.parentElement);
+                }
+            }
+        }
+
         // setup initial selection for commentary volume
         if ((questionType == 'commentary-qna' || questionType == 'commentary-qna-fill') && commentaryID != "" && commentaryID != -1) {
-            //document.getElementById('commentary-volume').value = 'Seven';
             $('#commentary-volume option[value="' + commentaryID + '"]').prop('selected', true);
         }
-        $('#commentary-volume').material_select();
+        updateSelect2('#commentary-volume');
 
         // events for fill in the blank checkbox (fillInBlankCheckbox)
         var previousNumPointsValue = "1";
         function modifyAnswerField(isFillInChecked) {
-            // readOnly looks/acts quirky with Materialize, so we're just going to use disabled :\
             if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
-                $("#question-answer-div").hide();
-                previousNumPointsValue = $("#number-of-points").val();
-                $("#number-of-points").val("1");
-                $("#number-of-points-div").hide();
+                $('#question-answer-div').hide();
+                previousNumPointsValue = $('#number-of-points').val();
+                $('#number-of-points').val('1');
+                $('#number-of-points-div').hide();
             }     
             else {
                 answerField.disabled = false;
                 answerField.required = true;
-                $("#number-of-points").val(previousNumPointsValue);
-                $("#question-answer-div").show();
-                $("#number-of-points-div").show();
+                $('#number-of-points').val(previousNumPointsValue);
+                $('#question-answer-div').show();
+                $('#number-of-points-div').show();
             }
         }
 
         function hideShowFillInInfoText(isFillInChecked) {
             if (isFillInChecked) {
-                document.getElementById('fill-in-info').classList.remove('hide');
+                document.getElementById('fill-in-info').classList.remove('d-none');
             } else {
-                document.getElementById('fill-in-info').classList.add('hide');
+                document.getElementById('fill-in-info').classList.add('d-none');
             }
         }
 
@@ -367,6 +502,7 @@
 
         modifyAnswerField(isFillInInitially);
         hideShowFillInInfoText(isFillInInitially);
+        hideShowBibleVerseSelectorsAsNeeded();
     }); 
 </script>
 

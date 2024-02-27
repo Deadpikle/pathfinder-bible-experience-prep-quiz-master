@@ -2,17 +2,28 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books') }}">Bible Books</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ book.name }}</li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters') }}">Chapters</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ chapter.number }}</li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/' ~ chapter.chapterID ~ '/verses') }}">Verses</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Verse</li>
+    </ol>
+</nav>
 
 <h2>Delete Verse</h2>
 
 {% include 'includes/error-message.twig' %}
 
-<div id="delete-user">
+<div id="delete-verse">
     <h4> Are you sure you want to delete verse {{ verse.number }} from {{ book.name }} {{ chapter.number }}? This will also delete any associated questions for this verse, and you cannot undo this action!</h4>
     <form method="post">
         {{ csrf('delete-verse') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Verse</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Verse</button>
     </form>
 </div>
 

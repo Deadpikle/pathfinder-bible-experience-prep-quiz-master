@@ -8,7 +8,13 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">SDA Bible Commentaries</li>
+    </ol>
+</nav>
 
 <h4>SDA Bible Commentaries</h4>
 
@@ -18,23 +24,21 @@
         {% include 'includes/error-message.twig' %}
         <form action="{{ app.yurl('/admin/commentaries/create') }}" method="post">
             <div class="row">
-                <div class="input-field col s6 m4">
-                    <input type="number" id="commentary" name="commentary" value="{{ commentaryNumber }}" placeholder="4" required min="1" max="12"/>
-                    <label for="commentary">Commentary Number</label>
+                <div class="form-group col-sm-6 col-md-4">
+                    <label for="commentary">* Commentary Number</label>
+                    <input type="number" class="form-control" id="commentary" name="commentary" value="{{ commentaryNumber }}" placeholder="4" required min="1" max="12"/>
                 </div>
-                <div class="input-field col s6 m4">
-                    <input type="text" id="topic" name="topic" value="{{ topic }}" placeholder="Daniel" required data-length="150"/>
-                    <label for="topic">Commentary Topic</label>
-                </div>
-                <div class="input-field col s6 m4">
-                    <button class="inline btn waves-effect waves-light submit" type="submit" name="action">Add Commentary</button>
+                <div class="form-group col-sm-6 col-md-4">
+                    <label for="topic">* Commentary Topic</label>
+                    <input type="text" class="form-control" id="topic" name="topic" value="{{ topic }}" placeholder="Daniel" required maxlength="150"/>
                 </div>
             </div>
+            <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Add Commentary</button>
         </form>
     </div>
-    <div class="divider"></div>
+    <hr/>
     <div class="">
-        <table class="striped responsive-table" id="commentaries-table">
+        <table class="table table-striped table-bordered table-responsive" id="commentaries-table">
             <thead>
                 <tr>
                     <th>Commentary Volume</th>
@@ -50,7 +54,7 @@
                         <td>{{ commentary.topicName }}</td>
                         <td>{{ commentary.year }}</td>
                         <td>
-                            <a class="waves-effect waves-light btn red white-text" href="{{ app.yurl('/admin/commentaries/' ~ commentary.commentaryID ~ '/delete') }}">Remove</a>
+                            <a class="btn btn-sm btn-danger" href="{{ app.yurl('/admin/commentaries/' ~ commentary.commentaryID ~ '/delete') }}"><i class="fas fa-trash-alt"></i> Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -59,13 +63,17 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search commentaries..."
+            searchPlaceholder: 'Search commentaries...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#commentaries-table').DataTable(datatablesProps);

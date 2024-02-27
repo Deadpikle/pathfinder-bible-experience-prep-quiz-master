@@ -20,10 +20,11 @@ class ContactSubmissionController extends BaseAdminController implements IReques
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }
@@ -32,7 +33,7 @@ class ContactSubmissionController extends BaseAdminController implements IReques
         return $response;
     }
 
-    public function viewContactSubmissions(PBEAppConfig $app, Request $request)
+    public function viewContactSubmissions(PBEAppConfig $app, Request $request): Response
     {
         $submissions = ContactFormSubmission::loadAllSubmissions($app->db);
         return new TwigView('admin/contact-submissions/view-contact-submissions', compact('submissions'), 'Contact Submissions');

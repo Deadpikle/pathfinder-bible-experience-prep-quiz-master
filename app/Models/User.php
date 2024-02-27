@@ -6,24 +6,31 @@ use PDO;
 
 class User
 {
-    public $userID;
-    public $username;
-    public $entryCode;
-    public $password; // not used
-    public $lastLoginDate;
+    public int $userID;
+    public string $username;
+    public string $entryCode;
+    public string $lastLoginDate;
     
-    public $type; // of type UserType
+    public ?UserType $type; // of type UserType
 
-    public $clubID;
-    public $createdByID;
-    public $defaultLanguageID;
+    public int $clubID;
+    public int $createdByID;
+    public int $defaultLanguageID;
+    public bool $prefersDarkMode;
 
-    public $wasDeleted;
+    public int $wasDeleted;
 
     public function __construct(int $userID, string $username)
     {
         $this->userID = $userID;
         $this->username = $username;
+        $this->entryCode = '_';
+        $this->lastLoginDate = '';
+        $this->type = null;
+        $this->clubID = -1;
+        $this->createdByID = -1;
+        $this->defaultLanguageID = -1;
+        $this->prefersDarkMode = false;
         $this->wasDeleted = false;
     }
 
@@ -57,12 +64,22 @@ class User
         ]);
     }
 
+    public static function updateDarkModePreference(int $userID, bool $prefersDarkMode, PDO $db)
+    {
+        $query = 'UPDATE Users SET PrefersDarkMode = ? WHERE UserID = ?';
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            (int)$prefersDarkMode,
+            $userID
+        ]);
+    }
+
     /** @return array<User> */
     private static function loadUsers(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT UserID, Username, EntryCode, ut.UserTypeID, ut.Type, ut.DisplayName AS UserTypeDisplayName, 
-                    u.ClubID, u.LastLoginDate
+                    u.ClubID, u.LastLoginDate, u.PrefersDarkMode
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
             ' . $whereClause . '
@@ -78,6 +95,7 @@ class User
             $user->type = new UserType($row['UserTypeID'], $row['Type']);
             $user->type->displayName = $row['UserTypeDisplayName'];
             $user->clubID = $row['ClubID'];
+            $user->prefersDarkMode = $row['PrefersDarkMode'];
             $output[] = $user;
         }
         return $output;
@@ -106,12 +124,13 @@ class User
         return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" AND WasDeleted = 0 ', [ $clubID ], $db);
     }
 
-    public static function loadUsersInConference(int $conferenceID, PDO $db) : array
+    /** @return array<User> */
+    public static function loadUsersInConference(int $conferenceID, PDO $db): array
     {
         return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" AND WasDeleted = 0 ', [ $conferenceID ], $db);
     }
 
-    public static function loadUserByID(int $userID, PDO $db) : ?User
+    public static function loadUserByID(int $userID, PDO $db): ?User
     {
         $data = User::loadUsers(' WHERE UserID = ? AND WasDeleted = 0 ', [ $userID ], $db);
         return count($data) > 0 ? $data[0] : null;
@@ -120,6 +139,7 @@ class User
 
     // http://stackoverflow.com/a/31107425/3938401
     // Note: may want to upgrade to https://github.com/ircmaxell/RandomLib at some point
+    // Note: In php 8.3, this feature is natively supported
     /**
     * Generate a random string, using a cryptographically secure 
     * pseudorandom number generator (random_int)
@@ -132,7 +152,8 @@ class User
     *                         to select from
     * @return string
     */
-    private function random_str($length, $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ') {
+    private function random_str($length, $keyspace = '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ')
+    {
         $str = '';
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < $length; ++$i) {
@@ -141,7 +162,8 @@ class User
         return $str;
     }
 
-    private function generateEntryCode(PDO $db) {
+    private function generateEntryCode(PDO $db): string
+    {
         $didFindNewCode = false;
         // pre-create the sql statement for faster queries in the db
         $entryCodeQuery = 'SELECT 1 FROM Users WHERE EntryCode = ?';
@@ -159,8 +181,8 @@ class User
     public function create(PDO $db)
     {
         $query = '
-            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate, WasDeleted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            INSERT INTO Users (Username, UserTypeID, ClubID, EntryCode, CreatedByID, Password, LastLoginDate, WasDeleted, PrefersDarkMode) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $this->entryCode = $this->generateEntryCode($db);
         $stmnt = $db->prepare($query);
         $stmnt->execute([
@@ -171,9 +193,10 @@ class User
             User::currentUserID(),
             '',
             '1989-12-25 00:00:00', // default, not-yet-logged-in date
-            (int)$this->wasDeleted
+            (int)$this->wasDeleted,
+            (int)$this->prefersDarkMode
         ]);
-        $this->userID = $db->lastInsertId();
+        $this->userID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)
@@ -186,6 +209,20 @@ class User
             $this->username,
             $this->type->userTypeID,
             $this->clubID,
+            $this->userID
+        ]);
+    }
+
+    public function resetAccessCode(PDO $db)
+    {
+        $this->entryCode = $this->generateEntryCode($db);
+        $query = '
+            UPDATE Users 
+            SET EntryCode = ? 
+            WHERE UserID = ?';
+        $stmnt = $db->prepare($query);
+        $stmnt->execute([
+            $this->entryCode,
             $this->userID
         ]);
     }
@@ -208,12 +245,12 @@ class User
         $statement->execute($params);
     }
 
-    public static function currentConferenceID() : int
+    public static function currentConferenceID(): int
     {
         return $_SESSION['ConferenceID'] ?? -1;
     }
 
-    public static function currentConferenceName() : string
+    public static function currentConferenceName(): string
     {
         return $_SESSION['ConferenceName'] ?? '';
     }

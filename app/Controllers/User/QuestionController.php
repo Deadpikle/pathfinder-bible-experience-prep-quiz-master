@@ -9,6 +9,7 @@ use Yamf\Responses\View;
 
 use App\Models\Book;
 use App\Models\Commentary;
+use App\Models\CSRF;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
@@ -19,16 +20,31 @@ use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use Yamf\AppConfig;
+use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\Response;
 
-class QuestionController
+class QuestionController implements IRequestValidator
 {
-    public function viewQuestions(PBEAppConfig $app, Request $request)
+    /**
+     * Validate a request before the normal controller method is called.
+     *
+     * Return null if the request is valid. Otherwise, return a response
+     * that will be output to the user rather than the normal controller method.
+     */
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         if (!User::isLoggedIn()) {
-            return new Redirect('/login');
+            if ($request->function === 'loadQuestions') {
+                return new Response(401);
+            }
+            return new Redirect('/');
         }
-        
+        return null;
+    }
+
+    public function viewQuestions(PBEAppConfig $app, Request $request): Response
+    {        
         $currentYear = Year::loadCurrentYear($app->db);
         $languages = Language::loadAllLanguages($app->db);
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
@@ -43,7 +59,7 @@ class QuestionController
     public function loadQuestions(PBEAppConfig $app, Request $request)
     {
         if (!User::isLoggedIn()) {
-            die();
+            return new Response(401);
         }
 
         $questionData = Question::loadQuestionsWithFilters(
@@ -80,15 +96,15 @@ class QuestionController
         return new TwigView('user/questions/create-edit-question', compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage', 'isCreating', 'question', 'error', 'isFlagged'), $isCreating ? 'Add Question' : 'Edit Question');
     }
 
-    public function createNewQuestion(PBEAppConfig $app, Request $request)
+    public function createNewQuestion(PBEAppConfig $app, Request $request): Response
     {
-        if ($app->isGuest) {
+        if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
         }
         return $this->showCreateOrEditQuestion($app, $request, true);
     }
 
-    private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating) : ValidationStatus
+    private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating): ValidationStatus
     {
         $totalBibleFillInQuestions = Question::getNumberOfFillInBibleQuestionsForCurrentYear($app->db);
 
@@ -122,7 +138,7 @@ class QuestionController
             }
         }
 
-        $question = new Question($request->post['question-id'] ?? -1);
+        $question = new Question($request->routeParams['questionID'] ?? -1);
         $question->question = trim($request->post['question-text']);
         $question->answer = isset($request->post['question-answer']) ? $request->post['question-answer'] : '';
         $question->type = $questionType;
@@ -138,7 +154,7 @@ class QuestionController
         if ($isCreating) {
             $question->creatorID = User::currentUserID();
         } else {
-            $dbQuestion = Question::loadQuestionWithID($request->post['question-id'], $app->db);
+            $dbQuestion = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
             $question->questionID = $dbQuestion->questionID;
             $question->creatorID = $dbQuestion->creatorID;
         }
@@ -159,9 +175,9 @@ class QuestionController
         return new ValidationStatus(true, $question);
     }
     
-    public function saveNewQuestion(PBEAppConfig $app, Request $request)
+    public function saveNewQuestion(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
         }
         $validation = $this->validateQuestionForm($app, $request, true);
@@ -173,9 +189,9 @@ class QuestionController
         return $this->showCreateOrEditQuestion($app, $request, true, $validation->output, $validation->error);
     }
     
-    public function editQuestion(PBEAppConfig $app, Request $request)
+    public function editQuestion(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
@@ -185,9 +201,9 @@ class QuestionController
         return $this->showCreateOrEditQuestion($app, $request, false, $question);
     }
     
-    public function saveQuestionEdits(PBEAppConfig $app, Request $request)
+    public function saveQuestionEdits(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID(Util::validateInteger($request->routeParams, 'questionID'), $app->db);
@@ -212,28 +228,37 @@ class QuestionController
         return $this->showCreateOrEditQuestion($app, $request, false, $validation->output, $validation->error);
     }
 
-    public function verifyDeleteQuestion(PBEAppConfig $app, Request $request)
+    public function verifyDeleteQuestion(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null) {
             return new TwigNotFound();
         }
-        return new TwigView('user/questions/verify-delete-question', compact('question'), 'Delete Question');
+        $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);
+        $commentariesByID = Commentary::loadAllCommentariesKeyedByID($app->db);
+        return new TwigView('user/questions/verify-delete-question', compact('question', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
     }
 
-    public function deleteQuestion(PBEAppConfig $app, Request $request)
+    public function deleteQuestion(PBEAppConfig $app, Request $request): Response
     {
-        if (!User::isLoggedIn() || $app->isGuest) {
+        if ($app->isGuest || !$app->isAdmin) {
             return new Redirect('/');
         }
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
-        if ($question === null || $question->questionID != $request->post['question-id']) {
+        if ($question === null) {
             return new TwigNotFound();
         }
-        $question->updateDeletedFlag(true, $app->db);
-        return new Redirect('/questions');
+        if (CSRF::verifyToken('delete-question')) {
+            $question->updateDeletedFlag(true, $app->db);
+            return new Redirect('/questions');
+        } else {
+            $error = 'Unable to validate request. Please try again.';
+            $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);
+            $commentariesByID = Commentary::loadAllCommentariesKeyedByID($app->db);
+            return new TwigView('user/questions/verify-delete-question', compact('question', 'error', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
+        }
     }
 }

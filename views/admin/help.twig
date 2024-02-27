@@ -2,15 +2,21 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Web Administrator Help</li>
+    </ol>
+</nav>
 
 <h4>Web Administrator Help</h4>
 
 <div id="admin-help">
     <div class="row">
-        <div class="col s12 m8">
+        <div class="col-sm-12 col-md-8">
             
-        <h5>Adding new website administrators</h5>
+            <h5>Adding new website administrators</h5>
             <p>There is no limit to the number of website administrators that can be used in this system. However, make sure you trust any website administrators that you add to the system, as they will have full access to everything you have access to.</p>
             <p>To add a new website administrator, go to the <a href="{{ app.yurl('/admin/users/create') }}">create users page</a> and add a user as you normally would. Make sure to add them to the "Website Administrators (Website Administrators)" club/conference, and set their user type to "Website Administrator". Once you click save, that user will be added to the system and will have full access.</p>
             <p>You can also edit a current user and change them to or from a website administrator via that user's user edit page.</p>

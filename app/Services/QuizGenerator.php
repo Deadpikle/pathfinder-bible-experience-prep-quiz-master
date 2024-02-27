@@ -14,9 +14,6 @@ use App\Models\Year;
 class QuizGenerator
 {
     // TODO: generate objects instead of key/value arrays...
-    // TODO: " vs ' fixing
-
-
     public static function generateQuiz(
         Year $year,
         bool $shouldAvoidPastCorrectAnswers,
@@ -70,10 +67,10 @@ class QuizGenerator
             $shouldAvoidPastCorrectAnswers = false;
             $recentDayAmount = date('Y-m-d 00:00:00', strtotime('-' . $recentlyAddedAmount . ' days'));
         }
-        $userWantsNormalQuestions = $questionTypes === "qa-only" || $questionTypes === "both";
-        $userWantsFillIn = $questionTypes === "fill-in-only" || $questionTypes === "both";
-        $areRandomQuestionsPulled = $questionOrder == "random-sequential" || $questionOrder == "random-random";
-        $isOutputSequential = $questionOrder == "random-sequential" || $questionOrder == "sequential-sequential";
+        $userWantsNormalQuestions = $questionTypes === 'qa-only' || $questionTypes === 'both';
+        $userWantsFillIn = $questionTypes === 'fill-in-only' || $questionTypes === 'both';
+        $areRandomQuestionsPulled = $questionOrder == 'random-sequential' || $questionOrder == 'random-random';
+        $isOutputSequential = $questionOrder == 'random-sequential' || $questionOrder == 'sequential-sequential';
         if ($questionTypes === 'fill-in-only') {
             $floatPercentOfFIBQuestionsInOutput = 1;
         } else if ($questionTypes === 'qa-only') {
@@ -153,7 +150,7 @@ class QuizGenerator
         $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
 
         if ($languageID != -1) {
-            $whereClause .= " AND l.LanguageID = " . $languageID;
+            $whereClause .= ' AND l.LanguageID = ' . $languageID;
         }
 
         $orderByPortion = '';
@@ -333,11 +330,11 @@ class QuizGenerator
             $data = array (
                 'type' => $question['Type'],
                 'number' => $number,
-                'id' => $question["QuestionID"],
-                'isFlagged' => $question["IsFlagged"],
-                'points' => $question["NumberPoints"],
-                'question' => trim($question["Question"]),
-                'answer' => trim($question["Answer"]),
+                'id' => $question['QuestionID'],
+                'isFlagged' => $question['IsFlagged'],
+                'points' => $question['NumberPoints'],
+                'question' => trim($question['Question']),
+                'answer' => trim($question['Answer']),
                 //
                 'volume' => -1, // probably not right; used for sequential sorting at the end
                 'topic' => '',
@@ -349,23 +346,23 @@ class QuizGenerator
             );
             if (Question::isTypeBibleQnA($question['Type'])) {
                 // Bible Q&A
-                $data['startBook'] = $question["StartBook"] ?? "";
-                $data['startBibleOrder'] = $question["StartBibleOrder"] ?? "";
-                $data['startChapter'] = $question["StartChapter"] ?? "";
-                $data['startVerse'] = $question["StartVerse"] ?? "";
-                $data['endBibleOrder'] = $question["EndBibleOrder"] ?? "";
-                $data['endBook'] = $question["EndBook"] ?? "";
-                $data['endChapter'] = $question["EndChapter"] ?? "";
-                $data['endVerse'] = $question["EndVerse"] ?? "";
+                $data['startBook'] = $question['StartBook'] ?? '';
+                $data['startBibleOrder'] = $question['StartBibleOrder'] ?? '';
+                $data['startChapter'] = $question['StartChapter'] ?? '';
+                $data['startVerse'] = $question['StartVerse'] ?? '';
+                $data['endBibleOrder'] = $question['EndBibleOrder'] ?? '';
+                $data['endBook'] = $question['EndBook'] ?? '';
+                $data['endChapter'] = $question['EndChapter'] ?? '';
+                $data['endVerse'] = $question['EndVerse'] ?? '';
             } else if (Question::isTypeCommentaryQnA($question['Type'])) {
                 // commentary Q&A
-                $data['volume'] = $question["CommentaryNumber"];
-                $data['topic'] = $question["CommentaryTopic"];
-                $data['startPage'] = $question["CommentaryStartPage"];
-                $data['endPage'] = $question["CommentaryEndPage"];
+                $data['volume'] = $question['CommentaryNumber'];
+                $data['topic'] = $question['CommentaryTopic'];
+                $data['startPage'] = $question['CommentaryStartPage'];
+                $data['endPage'] = $question['CommentaryEndPage'];
             }
             if (Question::isTypeFillIn($question['Type'])) {
-                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question["Question"]), $percentBlanksInFillIn, $words);
+                $fillInData = NonBlankableWord::generateFillInQuestion(trim($question['Question']), $percentBlanksInFillIn, $words);
                 $data['fillInData'] = $fillInData['data'];
                 $data['points'] = $fillInData['blank-count'];
             }

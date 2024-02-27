@@ -6,19 +6,22 @@ use PDO;
 
 class Club
 {
-    public $clubID;
-    public $name;
-    public $url;
+    public int $clubID;
+    public string $name;
+    public string $url;
     
-    public $conferenceID;
+    public int $conferenceID;
 
     public function __construct(int $clubID, string $name)
     {
         $this->clubID = $clubID;
         $this->name = $name;
+        $this->url = '';
+        $this->conferenceID = -1;
     }
 
-    private static function loadClubs(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<Club> */
+    private static function loadClubs(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT ClubID, Name, URL, ConferenceID 
@@ -38,22 +41,25 @@ class Club
         return $output;
     }
 
-    public static function loadAllClubs(PDO $db) : array
+    /** @return array<Club> */
+    public static function loadAllClubs(PDO $db): array
     {
         return Club::loadClubs('', [], $db);
     }
 
-    public static function loadClubByID(int $clubID, PDO $db) : ?Club
+    public static function loadClubByID(int $clubID, PDO $db): ?Club
     {
         $data = Club::loadClubs(' WHERE ClubID = ? ', [$clubID], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadClubsInConference(int $conferenceID, PDO $db) : array
+    /** @return array<Club> */
+    public static function loadClubsInConference(int $conferenceID, PDO $db): array
     {
         return Club::loadClubs(' WHERE ConferenceID = ? ', [ $conferenceID ], $db);
     }
 
+    /** @return array<int,Club> */
     public static function loadAllClubsKeyedByID(PDO $db) : array
     {
         $clubs = Club::loadAllClubs($db);
@@ -64,7 +70,8 @@ class Club
         return $clubsByID;
     }
 
-    public static function loadRecentlyActiveClubs(PDO $db) : array
+    /** @return array<Club> */
+    public static function loadRecentlyActiveClubs(PDO $db): array
     {
         // https://stackoverflow.com/a/26044915/3938401 -- 30 days ago
         $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
@@ -98,7 +105,7 @@ class Club
             $this->url,
             $this->conferenceID
         ]);
-        $this->clubID = $db->lastInsertId();
+        $this->clubID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)

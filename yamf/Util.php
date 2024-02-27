@@ -10,7 +10,7 @@ class Util
      * @param string $needle
      * @return bool
      */
-    public static function strEndsWith(string $haystack, string $needle) : bool
+    public static function strEndsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
         return $length === 0 || (substr($haystack, -$length) === $needle);
@@ -22,38 +22,38 @@ class Util
      * @param string $needle
      * @return bool
      */
-    public static function strStartsWith(string $haystack, string $needle) : bool
+    public static function strStartsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
         return strlen($haystack) >= $length && substr($haystack, 0, $length) === $needle;
     }
 
-    public static function getRequestMethod() : string
+    public static function getRequestMethod(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    public static function isGetRequest() : bool
+    public static function isGetRequest(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'GET';
     }
 
-    public static function isPostRequest() : bool
+    public static function isPostRequest(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
-    public static function isPutRequest() : bool
+    public static function isPutRequest(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'PUT';
     }
 
-    public static function isPatchRequest() : bool
+    public static function isPatchRequest(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'PATCH';
     }
 
-    public static function isDeleteRequest() : bool
+    public static function isDeleteRequest(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'DELETE';
     }

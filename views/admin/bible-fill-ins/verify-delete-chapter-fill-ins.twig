@@ -2,17 +2,24 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/bible-fill-ins') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/bible-fill-ins') }}">Bible Fill in the Blank Questions</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete Bible Fill in Questions - {{ book.name }} Chapter {{ chapter.number }}</li>
+    </ol>
+</nav>
 
-<h2>Delete Bible Fill In Questions</h2>
+<h2>Delete Bible Fill In Questions - {{ book.name }} Chapter {{ chapter.number }}</h2>
 
 {% include 'includes/error-message.twig' %}
 
 <div id="delete-bible-fill-ins">
-    <h4> Are you sure you want to delete all of the {{ language.getDisplayName() }} Bible fill in questions for {{ book.name }} chapter {{ chapter.number }}? </h4>
+    <h4>Are you sure you want to delete all of the {{ language.getDisplayName() }} Bible fill in questions for {{ book.name }} chapter {{ chapter.number }}? </h4>
     <form method="post">
         {{ csrf('delete-chapter-bible-fill-ins') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Questions</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Questions</button>
     </form>
 </div>
 

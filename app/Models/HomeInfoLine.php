@@ -1,5 +1,7 @@
 <?php
 
+// TODO: this class queued up for deletion as it is no longer used
+
 namespace App\Models;
 
 use PDO;
@@ -83,7 +85,7 @@ class HomeInfoLine
             (int)$this->sortOrder,
             (int)$this->homeInfoSectionID
         ]);
-        $this->homeInfoLineID = $db->lastInsertId();
+        $this->homeInfoLineID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)

@@ -7,7 +7,7 @@ use Yamf\Responses\JsonResponse;
 
 class JsonStatusCodeResponse extends JsonResponse
 {
-    public $statusCode;
+    public int $statusCode;
     
     public function __construct($data, int $statusCode = 200, $jsonEncodeOptions = 0)
     {

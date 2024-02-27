@@ -6,9 +6,9 @@ use PDO;
 
 class Year
 {
-    public $yearID;
-    public $year;
-    public $isCurrent;
+    public int $yearID;
+    public int $year;
+    public bool $isCurrent;
 
     public function __construct(int $yearID, int $year)
     {
@@ -17,6 +17,7 @@ class Year
         $this->isCurrent = false;
     }
 
+    /** @return array<Year> */
     private static function loadYears(string $whereClause, array $whereParams, PDO $db) : array
     {
         $query = '
@@ -36,24 +37,25 @@ class Year
         return $output;
     }
 
-    public static function loadAllYears(PDO $db) : array
+    /** @return array<Year> */
+    public static function loadAllYears(PDO $db): array
     {
         return Year::loadYears('', [], $db);
     }
 
-    public static function loadYearByID(int $yearID, PDO $db) : ?Year
+    public static function loadYearByID(int $yearID, PDO $db): ?Year
     {
         $data = Year::loadYears(' WHERE YearID = ? ', [ $yearID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadCurrentYear(PDO $db) : ?Year
+    public static function loadCurrentYear(PDO $db): ?Year
     {
         $years = Year::loadYears('WHERE IsCurrent = 1', [], $db);
         return count($years) > 0 ? $years[0] : null;
     }
 
-    public static function addYear(int $yearNumber, PDO $db) : bool
+    public static function addYear(int $yearNumber, PDO $db): bool
     {
         $query = 'SELECT 1 FROM Years WHERE Year = ?';
         $stmt = $db->prepare($query);

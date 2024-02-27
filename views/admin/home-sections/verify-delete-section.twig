@@ -12,7 +12,7 @@
     <h4>Are you sure you want to delete the section {{ section.name }}?</h4>
     <form method="post">
         {{ csrf('delete-section') | raw }}
-        <button class="btn waves-effect waves-light submit red white-text" type="submit" name="action">Delete Section</button>
+        <button class="btn btn-danger btn-sm" type="submit" name="action"><i class="fas fa-trash-alt"></i> Delete Section</button>
     </form>
 </div>
 

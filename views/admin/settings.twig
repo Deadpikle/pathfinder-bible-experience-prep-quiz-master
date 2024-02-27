@@ -2,13 +2,32 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Website Settings</li>
+    </ol>
+</nav>
 
 {% if didJustSave %}
-    <h6 class="teal-text text-darken-2">Settings saved!</h6>
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-success" role="alert">
+                Settings saved!
+            </div>
+        </div>
+    </div>
 {% endif %}
+
 {% if didError %}
-    <h6 class="red-text text-darken-2">Error saving settings. Please try again.</h6>
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-danger" role="alert">
+                Error saving settings. Please try again.
+            </div>
+        </div>
+    </div>
 {% endif %}
 
 <h4>Edit Website Settings</h4>
@@ -18,17 +37,17 @@
         {{ csrf('change-settings') | raw }}
         {% for setting in settings %}
             {% if setting.displayName != 'Analytics URL' and setting.displayName != 'Analytics Site ID' %}
-                <div class="row">
-                    <div class="input-field col s12 m6">
-                        <input type="text" id="{{ setting.key }}" name="{{ setting.key }}" 
-                            placeholder="{{ setting.displayName }}" 
-                            value="{{ setting.value }}" required data-length="150"/>
+                <div class="row mt-2">
+                    <div class="form-group col-sm-12 col-md-6">
                         <label for="{{ setting.key }}">{{ setting.displayName }}</label>
+                        <input type="text" class="form-control" id="{{ setting.key }}" name="{{ setting.key }}" 
+                            placeholder="{{ setting.displayName }}" 
+                            value="{{ setting.value }}" required maxlength="150"/>
                     </div>
                 </div>
             {% endif %}
         {% endfor %}
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
     </form>
 </div>
 

@@ -2,43 +2,50 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Active Clubs</li>
+    </ol>
+</nav>
 
-<h3>Active Pathfinder Clubs</h3>
-
-<p>Here is {{ clubCount == 1 ? '' : 'a list of' }} the {{ clubCount }} Pathfinder {{ clubCount == 1 ? 'club' : 'clubs' }} that {{ clubCount == 1 ? 'has' : 'have' }} been active on this website within the last 30 days:</p>
-
-<div id="active-clubs">
-    <ul class="browser-default">
-        {% for club in clubs %}
-            {% if club.url is null %}
-                <li>{{ club.name }} ({{ conferences[club.conferenceID].name }})</li>
-            {% else %}
-                <li><a href="{{ club.url }}">{{ club.name }}</a> ({{ conferences[club.conferenceID].name }})</li>
-            {% endif %}
-            
-        {% endfor %}
-    </ul>
-    <h4>Active Conferences</h4>
-    {% set confCount = 0 %}
-    {% for conference in conferences %}
-        {% if conferenceCounts[conference.conferenceID] is defined %}
-            {% set confCount = confCount + 1 %}
-        {% endif %}
-    {% endfor %}
-    <p>There have been {{ confCount }} conference{{ confCount == 1 ? '' : 's' }} active on the website within the last 30 days.
-    <ul class="browser-default">
+<div id="active-clubs" class="row">
+    <div class="col-sm-12 col-md-6">
+        <h3>Active Pathfinder Clubs</h3>
+        <p class="m-0">Here is {{ clubCount == 1 ? '' : 'a list of' }} the {{ clubCount }} Pathfinder {{ clubCount == 1 ? 'club' : 'clubs' }} that {{ clubCount == 1 ? 'has' : 'have' }} been active on this website within the last 30 days:</p>
+        <ul class="browser-default">
+            {% for club in clubs %}
+                {% if club.url is null %}
+                    <li>{{ club.name }} ({{ conferences[club.conferenceID].name }})</li>
+                {% else %}
+                    <li><a href="{{ club.url }}">{{ club.name }}</a> ({{ conferences[club.conferenceID].name }})</li>
+                {% endif %}
+                
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <h4>Active Conferences</h4>
+        {% set confCount = 0 %}
         {% for conference in conferences %}
             {% if conferenceCounts[conference.conferenceID] is defined %}
-                {% set count = conferenceCounts[conference.conferenceID] %}
-                {% if conference.url is not null and conference.url != '' %}
-                    <li><a href="{{ conference.url }}">{{ conference.name }}</a> ({{ count }} Pathfinder {{ count == 1 ? 'club' : 'clubs' }})</li>
-                {% else %}
-                    <li>{{ conference.name }} ({{ count }} Pathfinder {{ count == 1 ? 'club' : 'clubs' }})</li>
-                {% endif %}
+                {% set confCount = confCount + 1 %}
             {% endif %}
         {% endfor %}
-    </ul>
+        <p class="mb-0">There {{ confCount == 1 ? 'has' : 'have' }} been {{ confCount }} conference{{ confCount == 1 ? '' : 's' }} active on the website within the last 30 days.
+        <ul class="browser-default">
+            {% for conference in conferences %}
+                {% if conferenceCounts[conference.conferenceID] is defined %}
+                    {% set count = conferenceCounts[conference.conferenceID] %}
+                    {% if conference.url is not null and conference.url != '' %}
+                        <li><a href="{{ conference.url }}">{{ conference.name }}</a> ({{ count }} Pathfinder {{ count == 1 ? 'club' : 'clubs' }})</li>
+                    {% else %}
+                        <li>{{ conference.name }} ({{ count }} Pathfinder {{ count == 1 ? 'club' : 'clubs' }})</li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 {% endblock %}

@@ -6,24 +6,28 @@ use PDO;
 
 class MatchingQuestionSet
 {
-    public $matchingQuestionSetID;
-    public $name;
-    public $description;
-    public $isDeleted;
-    public $languageID;
-    public $yearID;
+    public int $matchingQuestionSetID;
+    public string $name;
+    public string $description;
+    public bool $isDeleted;
+    public ?int $languageID;
+    public int $yearID;
 
     /** @var array<MatchingQuestionItem> $questions */
-    public $questions;
+    public array $questions;
 
     public function __construct(int $matchingQuestionSetID, string $name)
     {
         $this->matchingQuestionSetID = $matchingQuestionSetID;
         $this->name = $name;
+        $this->description = '';
         $this->isDeleted = false;
+        $this->languageID = null;
+        $this->yearID = -1;
         $this->questions = [];
     }
 
+    /** @return array<MatchingQuestionSet> */
     private static function loadMatchingSets(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
@@ -57,11 +61,13 @@ class MatchingQuestionSet
         return $output;
     }
 
+    /** @return array<MatchingQuestionSet> */
     public static function loadAllMatchingSets(PDO $db): array
     {
         return self::loadMatchingSets(' WHERE IsDeleted = 0 ', [], $db);
     }
 
+    /** @return array<MatchingQuestionSet> */
     public static function loadAllMatchingSetsForYear(int $yearID, PDO $db): array
     {
         return self::loadMatchingSets(' WHERE IsDeleted = 0 AND YearID = ? ', [ $yearID ], $db);
@@ -86,7 +92,7 @@ class MatchingQuestionSet
             $this->yearID,
             (int)$this->isDeleted,
         ]);
-        $this->matchingQuestionSetID = $db->lastInsertId();
+        $this->matchingQuestionSetID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)

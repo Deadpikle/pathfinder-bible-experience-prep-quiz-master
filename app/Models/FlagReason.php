@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// this should be changed into an enum, but we are still PHP 7.4 compatible
+// this should be changed into an enum
 class FlagReason
 {
     public const UNKNOWN = 'unknown';

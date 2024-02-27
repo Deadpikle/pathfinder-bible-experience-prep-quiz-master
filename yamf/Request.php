@@ -4,14 +4,14 @@ namespace Yamf;
 
 class Request
 {
-    public $route; // raw route string for this request
-    public $controller; // string name of controller
-    public $function; // string name of controller function to call
-    public $routeParams; // any params in the route such as {id}. Format: ['id' => value]
-    public $get; // any GET params found in the URL -- same format as $_GET (no extra processing performed)
-    public $post; // any POST params -- same format as $_POST (no extra processing performed)
-    public $files; // any $_FILES params
-    public $anchor; // If used, the # portion of the url (without the #). Router is smart enough to not match on URLs like `/blah/#/foo`.
+    public string $route; // raw route string for this request
+    public string $controller; // string name of controller
+    public string $function; // string name of controller function to call
+    public array $routeParams; // any params in the route such as {id}. Format: ['id' => value]
+    public array $get; // any GET params found in the URL -- same format as $_GET (no extra processing performed)
+    public array $post; // any POST params -- same format as $_POST (no extra processing performed)
+    public array $files; // any $_FILES params
+    public ?string $anchor; // If used, the # portion of the url (without the #). Router is smart enough to not match on URLs like `/blah/#/foo`.
 
     public function __construct()
     {

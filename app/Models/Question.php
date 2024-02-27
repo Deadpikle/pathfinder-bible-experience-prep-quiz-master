@@ -12,32 +12,48 @@ use Throwable;
 
 class Question
 {
-    public $questionID;
-    public $question;
-    public $answer;
-    public $numberPoints;
-    public $dateCreated;
-    public $dateModified;
-    public $isFlagged; // TODO: fix flagging questions to be per-user (isn't this already done...? Check if db field still there and remove code)
-    public $type;
-    public $isDeleted;
+    public int $questionID;
+    public string $question;
+    public string $answer;
+    public int $numberPoints;
+    public string $dateCreated;
+    public string $dateModified;
+    public string $type;
+    public bool $isDeleted;
     
-    public $creatorID;
-    public $lastEditedByID;
-    public $startVerseID;
-    public $endVerseID;
-    public $commentaryID;
-    public $commentaryStartPage;
-    public $commentaryEndPage;
-    public $languageID;
+    public int $creatorID;
+    public int $lastEditedByID;
+    public int $startVerseID;
+    public int $endVerseID;
+    public int $commentaryID;
+    public int $commentaryStartPage;
+    public int $commentaryEndPage;
+    public int $languageID;
     public ?Language $language;
 
     public function __construct(int $questionID)
     {
         $this->questionID = $questionID;
+        $this->question = '';
+        $this->answer = '';
+        $this->numberPoints = 0;
+        $this->dateCreated = '';
+        $this->dateModified = '';
+        $this->type = self::getBibleQnAType();
+        $this->isDeleted = false;
+        
+        $this->creatorID = -1;
+        $this->lastEditedByID = -1;
+        $this->startVerseID = -1;
+        $this->endVerseID = -1;
+        $this->commentaryID = -1;
+        $this->commentaryStartPage = 0;
+        $this->commentaryEndPage = 0;
+        $this->languageID = -1;
         $this->language = null;
     }
 
+    /** @return array<Language> */
     private static function loadQuestions(string $whereClause, array $whereParams, PDO $db): array
     {
         // IFnull(uf.UserFlaggedID, 0) AS IsFlagged
@@ -51,7 +67,6 @@ class Question
         $stmt = $db->prepare($query);
         $stmt->execute($whereParams);
         $data = $stmt->fetchAll();
-
         $output = [];
         $questionIDToLanguageID = [];
         $questionsByQuestionID = [];
@@ -62,7 +77,6 @@ class Question
             $question->numberPoints = $row['NumberPoints'];
             $question->dateCreated = $row['DateCreated'];
             $question->dateModified = $row['DateModified'];
-            $question->isFlagged = false;
             $question->type = $row['Type'];
             $question->isDeleted = $row['IsDeleted'];
             
@@ -98,52 +112,52 @@ class Question
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function isTypeBibleQnA(string $type) : bool
+    public static function isTypeBibleQnA(string $type): bool
     {
         return $type === Question::getBibleQnAType() || $type == Question::getBibleQnAFillType();
     }
 
-    public static function getBibleQnAType() : string
+    public static function getBibleQnAType(): string
     {
         return 'bible-qna';
     }
 
-    public static function getBibleQnAFillType() : string
+    public static function getBibleQnAFillType(): string
     {
         return 'bible-qna-fill';
     }
 
-    public static function getCommentaryQnAType() : string
+    public static function getCommentaryQnAType(): string
     {
         return 'commentary-qna';
     }
 
-    public static function getCommentaryQnAFillType() : string
+    public static function getCommentaryQnAFillType(): string
     {
         return 'commentary-qna-fill';
     }
 
-    public function isBibleQnA() : bool
+    public function isBibleQnA(): bool
     {
         return Question::isTypeBibleQnA($this->type);
     }
 
-    public static function isTypeCommentaryQnA(string $type) : bool
+    public static function isTypeCommentaryQnA(string $type): bool
     {
         return $type === Question::getCommentaryQnAType() || $type == Question::getCommentaryQnAFillType();
     }
 
-    public function isCommentaryQnA() : bool
+    public function isCommentaryQnA(): bool
     {
         return Question::isTypeCommentaryQnA($this->type);
     }
 
-    public static function isTypeFillIn(string $type) : bool
+    public static function isTypeFillIn(string $type): bool
     {
         return $type === Question::getBibleQnAFillType() || $type === Question::getCommentaryQnAFillType();
     }
 
-    public function isFillIn() : bool
+    public function isFillIn(): bool
     {
         return Question::isTypeFillIn($this->type);
     }
@@ -178,7 +192,7 @@ class Question
         ];
         $stmt = $db->prepare($query);
         $stmt->execute($params);
-        $this->questionID = $db->lastInsertId();
+        $this->questionID = intval($db->lastInsertId());
     }
 
     public function update(PDO $db)
@@ -205,13 +219,13 @@ class Question
         $stmt->execute($params);
     }
 
-    public static function getNumberOfFillInBibleQuestionsForCurrentYear(PDO $db) : int
+    public static function getNumberOfFillInBibleQuestionsForCurrentYear(PDO $db): int
     {
         $currentYear = Year::loadCurrentYear($db);
         return Question::getNumberOfFillInBibleQuestions($currentYear, $db);
     }
 
-    public static function getNumberOfFillInBibleQuestions(Year $year, PDO $db) : int
+    public static function getNumberOfFillInBibleQuestions(Year $year, PDO $db): int
     {
         $query = '
             SELECT COUNT(q.QuestionID) AS QuestionCount
@@ -223,14 +237,13 @@ class Question
         $stmt = $db->prepare($query);
         $stmt->execute([ $year->yearID, Question::getBibleQnAFillType() ]);
         $bookQuestionData = $stmt->fetch();
-        if ($bookQuestionData != null) {
-            return $bookQuestionData['QuestionCount'];
-        }
-        return 0;
+        return $bookQuestionData !== null ? $bookQuestionData['QuestionCount'] : 0;
     }
 
-    public static function getNumberOfFillInBibleQuestionsPerLanguage(Year $year, PDO $db) : array
+    /** @return array<int,int> */
+    public static function getNumberOfFillInBibleQuestionsPerLanguage(Year $year, PDO $db): array
     {
+        // this could probably be improved to be a single query with a GROUP BY
         $languages = Language::loadAllLanguages($db);
         $fillIns = [];
         $query = '
@@ -250,8 +263,7 @@ class Question
             $bookQuestionData = $stmt->fetch();
             if ($bookQuestionData != null) {
                 $fillIns[$language->languageID] = $bookQuestionData['QuestionCount'];
-            }
-            else {
+            } else {
                 $fillIns[$language->languageID] = 0;
             }
         }
@@ -306,7 +318,6 @@ class Question
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?';
-
         $stmt = $db->prepare($query);
         $stmt->execute([
             $chapterID,

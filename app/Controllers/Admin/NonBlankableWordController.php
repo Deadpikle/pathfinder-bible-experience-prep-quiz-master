@@ -25,10 +25,11 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }
@@ -37,18 +38,18 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return $response;
     }
 
-    public function viewNonBlankableWords(PBEAppConfig $app, Request $request)
+    public function viewNonBlankableWords(PBEAppConfig $app, Request $request): Response
     {
         $nonBlankableWords = NonBlankableWord::loadAllBlankableWords($app->db);
         return new TwigView('admin/non-blankable-words/view-non-blankable-words', compact('nonBlankableWords'), 'Words');
     }
 
-    private function showCreateOrEditNonBlankableWord(PBEAppConfig $app, Request $request, bool $isCreating, ?NonBlankableWord $nonBlankableWord, string $error = '') : Response
+    private function showCreateOrEditNonBlankableWord(PBEAppConfig $app, Request $request, bool $isCreating, ?NonBlankableWord $nonBlankableWord, string $error = ''): Response
     {
         return new TwigView('admin/non-blankable-words/create-edit-non-blankable-word', compact('isCreating', 'nonBlankableWord', 'error'), $isCreating ? 'Create Non-blankable Word' : 'Edit Non-blankable Word');
     }
 
-    private function validateNonBlankableWord(PBEAppConfig $app, Request $request, ?NonBlankableWord $existingNonBlankableWord) : ValidationStatus
+    private function validateNonBlankableWord(PBEAppConfig $app, Request $request, ?NonBlankableWord $existingNonBlankableWord): ValidationStatus
     {
         $word = Util::validateString($request->post, 'blankable-word');
 
@@ -66,7 +67,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return new ValidationStatus(true, $nonBlankableWord);
     }
 
-    public function saveNewNonBlankableWord(PBEAppConfig $app, Request $request) : Response
+    public function saveNewNonBlankableWord(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateNonBlankableWord($app, $request, null);
         $nonBlankableWord = $status->output;
@@ -77,7 +78,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return new Redirect('/admin/non-blankable-words');
     }
 
-    public function editNonBlankableWord(PBEAppConfig $app, Request $request) : Response
+    public function editNonBlankableWord(PBEAppConfig $app, Request $request): Response
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
@@ -86,7 +87,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return $this->showCreateOrEditNonBlankableWord($app, $request, false, $nonBlankableWord);
     }
 
-    public function saveEditedNonBlankableWord(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedNonBlankableWord(PBEAppConfig $app, Request $request): Response
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
@@ -101,7 +102,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return new Redirect('/admin/non-blankable-words');
     }
 
-    public function verifyDeleteNonBlankableWord(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteNonBlankableWord(PBEAppConfig $app, Request $request): Response
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
@@ -110,7 +111,7 @@ class NonBlankableWordController extends BaseAdminController implements IRequest
         return new TwigView('admin/non-blankable-words/verify-delete-non-blankable-word', compact('nonBlankableWord'), 'Delete Non-blankable Word');
     }
 
-    public function deleteNonBlankableWord(PBEAppConfig $app, Request $request) : Response
+    public function deleteNonBlankableWord(PBEAppConfig $app, Request $request): Response
     {
         $nonBlankableWord = NonBlankableWord::loadNonBlankableWordByID($request->routeParams['nonBlankableWordID'], $app->db);
         if ($nonBlankableWord === null) {
