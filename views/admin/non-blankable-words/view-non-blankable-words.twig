@@ -57,13 +57,17 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search words..."
+            searchPlaceholder: 'Search words...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#words-table').DataTable(datatablesProps);

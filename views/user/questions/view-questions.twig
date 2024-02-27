@@ -78,6 +78,10 @@
     <span class="valign-middle loading-text">Loading questions...</span>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     var books = {{ json_encode(bookData) | raw }};
     var volumes = {{ json_encode(volumes) | raw }};

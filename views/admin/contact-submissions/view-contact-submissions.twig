@@ -47,6 +47,10 @@
     </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
@@ -54,7 +58,7 @@
             { className: 'dtr-control', 'targets': [0] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search submissions..."
+            searchPlaceholder: 'Search submissions...'
         };
         datatablesProps.responsive = true;
         datatablesProps.order = [[ 0, 'desc' ]];

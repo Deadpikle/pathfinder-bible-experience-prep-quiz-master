@@ -165,8 +165,11 @@
     <p class="hidden" id="quiz-error"></p>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
-    // TODO: refactor this to its own file
     var translations = {{ json_encode(translations) | raw }};
     function translate(str) {
         if (str in translations && typeof translations[str] !== undefined && translations[str] !== 'undefined') {
@@ -452,7 +455,7 @@
         function stopTimer() {
             preTimer.stop();
             timer.stop();
-            $('#question-timer').css("color", "black");
+            $('#question-timer').css("color", "var(--bs-body-color)");
             $("#countdown-text").html("");
             $("#question-pretimer").html("");
             $("#question-timer").html("");

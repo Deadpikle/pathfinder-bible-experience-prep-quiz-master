@@ -59,13 +59,17 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search years..."
+            searchPlaceholder: 'Search years...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#years-table').DataTable(datatablesProps);

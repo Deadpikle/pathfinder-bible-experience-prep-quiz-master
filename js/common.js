@@ -18,38 +18,15 @@ function commentaryVolumeString(volume, startPage, endPage) {
 }
 
 function isBibleQuestion(type) {
-    return type === "bible-qna" || type === "bible-qna-fill";
+    return type === 'bible-qna' || type === 'bible-qna-fill';
 }
 
 function isCommentaryQuestion(type) {
-    return type === "commentary-qna" || type === "commentary-qna-fill";
+    return type === 'commentary-qna' || type === 'commentary-qna-fill';
 }
 
 function isFillInQuestion(type) {
-    return type.indexOf("-fill") !== -1;
-}
-
-function fixRequiredSelectorCSS() {
-    $('select[required]').css({
-        display: 'inline',
-        position: 'absolute',
-        float: 'left',
-        padding: 0,
-        margin: 0,
-        border: '1px solid rgba(255,255,255,0)',
-        height: 0, 
-        width: 0,
-        top: '2em',
-        left: '3em',
-        pointerEvents: 'none'
-    });
-    $('select').each(function( index ) {
-        $(this).on('mousedown', function(e) {
-            e.preventDefault();
-            this.blur();
-            window.focus();
-        });
-    });
+    return type.indexOf('-fill') !== -1;
 }
 
 // https://stackoverflow.com/a/2548133/3938401
@@ -72,10 +49,10 @@ function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = fal
     var output = '';
     for (var i = 0; i < questionWords.length; i++) {
         var wordData = questionWords[i];
-        if (wordData.before !== "") {
+        if (wordData.before !== '') {
             output += wordData.before;
         }
-        if (wordData.word !== "") {
+        if (wordData.word !== '') {
             if (wordData.shouldBeBlanked) {
                 if (shouldBoldWords) {
                     var html = '<strong>' + wordData.word + '</strong>';
@@ -93,10 +70,10 @@ function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = fal
                 output += wordData.word;
             }
         }
-        if (wordData.after !== "") {
+        if (wordData.after !== '') {
             output += wordData.after;
         }
-        if (i != questionWords.length - 1 && wordData.after !== '...') {
+        if (i != questionWords.length - 1 && wordData.after !== '...'  && wordData.after !== '…') {
             output += ' ';
         }
     }
@@ -125,14 +102,14 @@ function fillInAnswerString(questionWords, separator) {
 // https://stackoverflow.com/a/1026087/3938401
 function lowercaseFirstLetter(string) {
     if (string.length == 0) {
-        return "";
+        return '';
     }
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
 function uppercaseFirstLetter(string) {
     if (string.length == 0) {
-        return "";
+        return '';
     }
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -143,7 +120,7 @@ function removeSpaces(str) {
 
 // https://stackoverflow.com/a/2998822/3938401
 function padZeros(num, size) {
-    var s = "000000000" + num;
+    var s = '000000000' + num;
     return s.substr(s.length-size);
 }
 
@@ -158,7 +135,8 @@ function shouldLowercaseOutput(output, names) {
     return !strStartsWith(output, 'T or') && 
            !(strStartsWith(output, 'God') && !strStartsWith(output, 'Gods') && !strStartsWith(output, 'gods')) &&
            !strStartsWith(output, 'Christ') && 
-           !strStartsWith(output, 'Jesus') &&
+           !strStartsWith(output, 'Jesus') && 
+           !strStartsWith(output, 'Jehová') && 
            !names.includes(firstWord);
 }
 

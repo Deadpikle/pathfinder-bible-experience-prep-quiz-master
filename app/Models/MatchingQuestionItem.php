@@ -12,8 +12,8 @@ class MatchingQuestionItem
     public string $dateCreated;
     public string $dateModified;
     public bool $isDeleted;
-    public int $startVerseID;
-    public int $endVerseID;
+    public ?int $startVerseID;
+    public ?int $endVerseID;
     public int $creatorID;
     public int $lastEditedByID;
     public int $matchingQuestionSetID;

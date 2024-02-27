@@ -47,13 +47,17 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search study guides..."
+            searchPlaceholder: 'Search study guides...'
         };
         datatablesProps.order = [[ 1, 'desc' ], [0, 'asc']];
         $('#study-guides-table').DataTable(datatablesProps);

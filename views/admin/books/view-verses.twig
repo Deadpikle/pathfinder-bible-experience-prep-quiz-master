@@ -61,13 +61,17 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search verses..."
+            searchPlaceholder: 'Search verses...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#verses-table').DataTable(datatablesProps);

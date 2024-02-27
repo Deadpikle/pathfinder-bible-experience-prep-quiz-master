@@ -63,13 +63,17 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search commentaries..."
+            searchPlaceholder: 'Search commentaries...'
         };
         datatablesProps.order = [[ 0, 'asc' ]];
         $('#commentaries-table').DataTable(datatablesProps);

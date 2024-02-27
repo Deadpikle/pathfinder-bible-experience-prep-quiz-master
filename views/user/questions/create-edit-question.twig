@@ -473,17 +473,17 @@
             if (isFillInChecked) {
                 answerField.disabled = true;
                 answerField.required = false;
-                $("#question-answer-div").hide();
-                previousNumPointsValue = $("#number-of-points").val();
-                $("#number-of-points").val("1");
-                $("#number-of-points-div").hide();
+                $('#question-answer-div').hide();
+                previousNumPointsValue = $('#number-of-points').val();
+                $('#number-of-points').val('1');
+                $('#number-of-points-div').hide();
             }     
             else {
                 answerField.disabled = false;
                 answerField.required = true;
-                $("#number-of-points").val(previousNumPointsValue);
-                $("#question-answer-div").show();
-                $("#number-of-points-div").show();
+                $('#number-of-points').val(previousNumPointsValue);
+                $('#question-answer-div').show();
+                $('#number-of-points-div').show();
             }
         }
 

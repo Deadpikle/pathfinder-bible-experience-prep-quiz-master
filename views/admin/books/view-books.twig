@@ -82,13 +82,17 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
         datatablesProps.columnDefs = [
             { orderable: false, targets: [-1, -2, -3] }
         ];
         datatablesProps.language = {
-            searchPlaceholder: "Search books..."
+            searchPlaceholder: 'Search books...'
         };
         datatablesProps.order = [[ 2, 'asc' ]];
         $('#books-table').DataTable(datatablesProps);

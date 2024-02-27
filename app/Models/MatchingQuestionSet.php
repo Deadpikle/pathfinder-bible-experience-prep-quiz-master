@@ -10,7 +10,7 @@ class MatchingQuestionSet
     public string $name;
     public string $description;
     public bool $isDeleted;
-    public int $languageID;
+    public ?int $languageID;
     public int $yearID;
 
     /** @var array<MatchingQuestionItem> $questions */
@@ -22,7 +22,7 @@ class MatchingQuestionSet
         $this->name = $name;
         $this->description = '';
         $this->isDeleted = false;
-        $this->languageID = -1;
+        $this->languageID = null;
         $this->yearID = -1;
         $this->questions = [];
     }
