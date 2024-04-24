@@ -71,10 +71,10 @@ class Club
     }
 
     /** @return array<Club> */
-    public static function loadRecentlyActiveClubs(PDO $db): array
+    public static function loadRecentlyActiveClubs(PDO $db, int $numDays = 30): array
     {
         // https://stackoverflow.com/a/26044915/3938401 -- 30 days ago
-        $thirtyDaysAgo = date('Y-m-d 00:00:00', strtotime('-31 days'));
+        $daysAgo = date('Y-m-d 00:00:00', strtotime('-' . (abs($numDays) + 1) . ' days'));
         $query = '
             SELECT c.ClubID, Name, URL, ConferenceID
             FROM Clubs c JOIN Users u ON c.ClubID = u.ClubID
@@ -82,7 +82,7 @@ class Club
             GROUP BY c.ClubID
             ORDER BY c.Name';
         $stmt = $db->prepare($query);
-        $stmt->execute([$thirtyDaysAgo]);
+        $stmt->execute([$daysAgo]);
         $data = $stmt->fetchAll();
         $output = [];
         foreach ($data as $row) {

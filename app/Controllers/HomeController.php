@@ -94,20 +94,31 @@ class HomeController
         if (!$app->loggedIn) {
             return new Redirect('/login');
         }
-        $clubs = Club::loadRecentlyActiveClubs($app->db);
         $conferences = Conference::loadAllConferencesByID($app->db);
-
-        $conferenceCounts = [];
-        foreach ($clubs as $club) {
+        
+        $thirtyDayClubs = Club::loadRecentlyActiveClubs($app->db, 30);
+        $thirtyDayConferenceCounts = [];
+        foreach ($thirtyDayClubs as $club) {
             if (!isset($conferenceCounts[$club->conferenceID])) {
-                $conferenceCounts[$club->conferenceID] = 1;
+                $thirtyDayConferenceCounts[$club->conferenceID] = 1;
             } else {
-                $conferenceCounts[$club->conferenceID] += 1;
+                $thirtyDayConferenceCounts[$club->conferenceID] += 1;
             }
         }
-        $clubCount = count($clubs);
+        $thirtyDayClubCount = count($thirtyDayClubs);
 
-        return new TwigView('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
+        $yearClubs = Club::loadRecentlyActiveClubs($app->db, 365);
+        $yearConferenceCounts = [];
+        foreach ($yearClubs as $club) {
+            if (!isset($conferenceCounts[$club->conferenceID])) {
+                $yearConferenceCounts[$club->conferenceID] = 1;
+            } else {
+                $yearConferenceCounts[$club->conferenceID] += 1;
+            }
+        }
+        $yearClubCount = count($yearClubs);
+
+        return new TwigView('home/active-clubs', compact('thirtyDayClubs', 'conferences', 'thirtyDayConferenceCounts', 'thirtyDayClubCount', 'yearClubs', 'yearConferenceCounts', 'yearClubCount'), 'Active Clubs');
     }
 
     public function studyGuides(PBEAppConfig $app, Request $request): Response
