@@ -27,7 +27,7 @@ The [Pathfinder Bible Experience](http://www.pathfindersonline.org/pathfinder-bi
 
 ## Demo
 
-You can view a read-only demo of the website at [https://pbeprep.com](https://pbeprep.com) with the password '4guest'.
+You can view a read-only demo of the website at [https://pbeprep.com](https://pbeprep.com) by using the access code `4guest`.
 
 ## Contributing
 
@@ -35,7 +35,7 @@ Please contribute as much as you like! Any improvements and suggestions are welc
 
 ## Setup
 
-Minimum requirements: PHP 7.1+ and a MariaDB database.
+Minimum requirements: PHP 8.1+ and a MariaDB database.
 
 1. `curl -s https://getcomposer.org/installer | php`
 2. `php composer.phar install --no-dev`

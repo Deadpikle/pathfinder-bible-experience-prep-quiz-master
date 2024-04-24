@@ -6,11 +6,7 @@ use Yamf\AppConfig;
 
 class TwigNotFound extends TwigView
 {
-    public $name;
-    public $data;
-    public $title; // (default: '')
-
-    public function __construct($name = null, $title = null)
+    public function __construct(string $name = null, string $title = null)
     {
         $msg = $msg ?? 'Sorry, but the page you are looking for does not exist!';
         $pageTitle = $title !== null ? $title : 'Not Found';;

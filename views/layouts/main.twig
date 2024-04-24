@@ -1,4 +1,3 @@
-
 {% set homePath = app.basePath == '' ? '/' : app.basePath %}
 {% set htmlTitle = '' %}
 {% if title is defined %} 
@@ -18,53 +17,40 @@
 {% set aboutHeaderActiveStatus = 'about' in currentRequest ? 'active' : '' %}
 {% set loginHeaderActiveStatus = 'login' in currentRequest ? 'active' : '' %}
 {% set adminHeaderActiveStatus = 'admin' in currentRequest ? 'active' : '' %}
-{% if aboutHeaderActiveStatus == '' and adminHeaderActiveStatus == '' and contactHeaderActiveStatus == '' and loginHeaderActiveStatus == '' %}
+{% set quizHeaderActiveStatus = 'quiz' in currentRequest ? 'active' : '' %}
+{% if aboutHeaderActiveStatus == '' and 
+    adminHeaderActiveStatus == '' and 
+    contactHeaderActiveStatus == '' and 
+    loginHeaderActiveStatus == '' %}
     {% set homeHeaderActiveStatus = 'active' %}
 {% endif %}
 
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en" data-bs-theme="{{ prefersDarkMode(app) ? 'dark' : 'light' }}">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
         <meta name="description" content="Pathfinder Bible Experience (PBE) prep and quiz master website used to generate study materials for yearly PBE events">
         <meta name="keywords" content="Pathfinder, Bible, SDA, quiz, master, experience">
         <meta name="author" content="PBEPrep.com">
 
         <title>{{ htmlTitle }}</title>
-        <link rel="stylesheet" href="{{ app.yurl('/css/normalize.css') }}" />
 
-        <!-- Import timer icon -->
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-        {# <!-- Favicon Items -->
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ app.yurl('/files/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ app.yurl('/files/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ app.yurl('/files/favicon-16x16.png') }}">
-        <link rel="manifest" href="{{ app.yurl('/files/site.webmanifest') }}">
-        <link rel="mask-icon" href="{{ app.yurl('/files/safari-pinned-tab.svg') }}" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#00aba9">
-        <meta name="theme-color" content="#ffffff"> #}
+        {# favicon #}
         <link rel="icon" type="image/x-icon" href="{{ app.yurl('favicon.png') }}">
 
-        <!--Import Google Icon Font-->
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="{{ app.yurl('/lib/materialize/css/materialize.min.css?v=20171204a') }}" media="screen,projection"/>
-        <!-- Import Font Awesome 5-->
-        <link href="{{ app.yurl('/lib/fontawesome5/css/all.min.css') }}" rel="stylesheet">
-        <!--Let browser know website is optimized for mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="{{ app.yurl('/lib/fontawesome6/css/all.min.css') }}" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="{{ app.yurl('/lib/bootstrap/bootstrap-zephyr.min.css') }}?{{ filemtime("lib/bootstrap/bootstrap-zephyr.min.css") }}"/>
+        <script src="{{ app.yurl('/lib/bootstrap/bootstrap.bundle.min.js') }}?{{ filemtime("lib/bootstrap/bootstrap.bundle.min.js") }}"></script>
 
         <link rel="stylesheet" href="{{ app.yurl('/css/common.css') }}?{{ filemtime("css/common.css") }}" />
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+
+        {% if not app.isLocalHost and app.showCookieConsent %}
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+        {% endif %}
         <script src="{{ app.yurl('/lib/jquery-3.7.1.min.js') }}"></script>
-        <script type="text/javascript" src="{{ app.yurl('/lib/materialize/js/materialize.min.js') }}"></script>
-
-        <script type="text/javascript" src="{{ app.yurl('/lib/autosize.min.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
-        <!-- For admin pages -->
-        <script type="text/javascript" src="{{ app.yurl('/lib/html.sortable.min.js') }}"></script> <!-- https://github.com/lukasoppermann/html5sortable -->
 
         {% block headers %}
         {% endblock %}
@@ -81,59 +67,53 @@
     </head>
     <body>
         <header>
-            <nav>
-                <div class="nav-wrapper teal lighten-2">
-                    <div class="container">
-                        <a href="{{ homePath }}" class="brand-logo">{{ app.websiteName }}</a>
-                        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                        <ul class="right hide-on-med-and-down">
-                            {% if app.loggedIn %}
-                                <li class="{{ homeHeaderActiveStatus }}"><a href="{{ homePath }}">Home</a></li>
-                            {% else %}
-                                <li class="{{ loginHeaderActiveStatus }}"><a href="{{ app.yurl('/login') }}">Login</a></li>
-                            {% endif %}
-                            <li class="{{ contactHeaderActiveStatus }}"><a href="{{ app.yurl('/contact') }}">Contact Us</a></li>
-                            <li class="{{ aboutHeaderActiveStatus }}"><a href="{{ app.yurl('/about') }}">About</a></li>
-                            {% if app.loggedIn %}
-                                {% if app.isAdmin %}
-                                    <li class="{{ adminHeaderActiveStatus }}"><a href="{{ app.yurl('/admin') }}">Admin Panel</a></li>
-                                {% endif %}
-                                <li><a href="{{ app.yurl('/logout') }}">Logout</a></li>
-                            {% endif %}
-                        </ul>
-                        <ul class="side-nav teal darken-1" id="mobile-demo">
-                            <li><a class="center-align white-text" id="side-nav-title" href="{{ homePath}}">{{ app.websiteName }}</a></li>
-                            {% if app.loggedIn %}
-                                <li class="{{ homeHeaderActiveStatus }}"><a class="white-text" href="{{ homePath }}">Home</a></li>
-                            {% else %}
-                                <li class="{{ loginHeaderActiveStatus }}"><a href="{{ app.yurl('/login') }}">Login</a></li>
-                            {% endif %}
-                            <li class="{{ contactHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/contact') }}">Contact</a></li>
-                            <li class="{{ aboutHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/about') }}">About</a></li>
-                            {% if app.loggedIn %}
-                                {% if app.isAdmin %}
-                                    <li class="{{ adminHeaderActiveStatus }}"><a class="white-text" href="{{ app.yurl('/admin') }}">Admin Panel</a></li>
-                                {% endif %}
-                                <li><a class="white-text" href="{{ app.yurl('/logout') }}">Logout</a></li>
-                            {% endif %}
-                        </ul>
+            <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+                <div class="container">
+                    <a href="{{ homePath }}" class="navbar-brand">{{ app.websiteName }}</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        {% if app.loggedIn %}
+                            <li class="nav-item"><a class="nav-link {{ homeHeaderActiveStatus }}" href="{{ homePath }}"><i class="fas fa-home"></i> Home</a></li>
+                            <li class="nav-item dropdown">
+                                {# <a class="nav-link {{ quizHeaderActiveStatus }}"><i class="fas fa-award"></i> Take Quiz</a> #}
+                            </li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link {{ loginHeaderActiveStatus }}" href="{{ app.yurl('/login') }}">Login</a></li>
+                        {% endif %}
+                    </ul>
+                    <ul class="ms-auto navbar-nav">
+                        {% if app.loggedIn and app.isAdmin %}
+                            <li class="nav-item"><a class="nav-link {{ adminHeaderActiveStatus }}" href="{{ app.yurl('/admin') }}"><i class="fas fa-user-tie"></i> Admin Panel</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link {{ contactHeaderActiveStatus }}" href="{{ app.yurl('/contact') }}"><i class="fas fa-paper-plane"></i> Contact Us</a></li>
+                        <li class="nav-item"><a class="nav-link {{ aboutHeaderActiveStatus }}" href="{{ app.yurl('/about') }}"><i class="fas fa-question-circle"></i> About</a></li>
+                        {% if app.loggedIn %}
+                            <li class="nav-item"><a class="nav-link" href="{{ app.yurl('/logout') }}"><i class="fas fa-door-open"></i> Logout</a></li>
+                        {% endif %}
+                    </ul>
                     </div>
                 </div>
             </nav>
         </header>
         <main>
-            <div id="main" class="container">
+            <div id="main" class="container mt-3">
                 {% block content %}
                 {% endblock %}
             </div>
         </main>
-        <footer class="container">
-            <p><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
+        <footer class="site-footer">
+            <div class="container">
+                <p class="mt-2 mb-2"><a class="" href="{{ app.yurl('/about') }}">{{ app.websiteName }}</a> © 2017 - {{ 'now' | date('Y') }} pbeprep.com.<br/>This website is not an official resource of the Pathfinder Bible Experience or the North American Division of Seventh-day Adventists.<br>{{ translate(app.footerText, getUserLanguageAbbr(app.db)) }}</p>
+            </div>
         </footer>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $(".button-collapse").sideNav();
-                {% if not app.isLocalHost and app.showCookieConsent %}
+        {% block scripts %}
+        {% endblock %}
+        {% if not app.isLocalHost and app.showCookieConsent %}
+            <script type="text/javascript">
+                $(document).ready(function() {
                     window.cookieconsent.initialise({
                         "palette": {
                             "popup": {
@@ -158,8 +138,8 @@
                             "secure": true
                         }
                     });
-                {% endif %}
-            });
-        </script>
+                });
+            </script>
+        {% endif %}
     </body>
 </html>

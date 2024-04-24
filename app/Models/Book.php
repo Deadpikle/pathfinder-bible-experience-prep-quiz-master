@@ -8,23 +8,28 @@ use App\Models\Year;
 
 class Book
 {
-    public $bookID;
-    public $name;
-    public $numberChapters;
-    public $bibleOrder;
+    public int $bookID;
+    public string $name;
+    public int $numberChapters;
+    public int $bibleOrder;
 
-    public $chapters; // array of Chapter objects
+    /** @var array<Chapter> $chapters */
+    public array $chapters;
 
-    public $yearID;
-    public $year;
+    public int $yearID;
 
     public function __construct(int $bookID, string $name)
     {
         $this->bookID = $bookID;
         $this->name = $name;
+        $this->numberChapters = 0;
+        $this->bibleOrder = 0;
+        $this->chapters = [];
+        $this->yearID = -1;
     }
 
-    private static function loadBooks(string $whereClause, array $whereParams, PDO $db) : array
+    /** @return array<Book> */
+    private static function loadBooks(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT BookID, Name, NumberChapters, Books.YearID, Years.Year, BibleOrder
@@ -40,32 +45,31 @@ class Book
             $book->bibleOrder = $row['BibleOrder'];
             $book->numberChapters = $row['NumberChapters'];
             $book->yearID = $row['YearID'];
-            $book->year = $row['Year'];
             $output[] = $book;
         }
         return $output;
     }
 
-    /**
-     * @return array<Book>
-     */
+    /** @return array<Book> */
     public static function loadAllBooks(PDO $db): array
     {
         return Book::loadBooks('', [], $db);
     }
 
-    public static function loadBooksForYear(Year $year, PDO $db) : array
+    /** @return array<Book> */
+    public static function loadBooksForYear(Year $year, PDO $db): array
     {
         return Book::loadBooks(' WHERE Books.YearID = ? ', [ $year->yearID ], $db);
     }
 
-    public static function loadBookByID(int $bookID, PDO $db) : ?Book
+    public static function loadBookByID(int $bookID, PDO $db): ?Book
     {
         $data = Book::loadBooks(' WHERE Books.BookID = ? ', [ $bookID ], $db);
         return count($data) > 0 ? $data[0] : null;
     }
 
-    public static function loadAllBookChapterVerseDataForYear(Year $year, PDO $db) : array
+    /** @return array<Book> */
+    public static function loadAllBookChapterVerseDataForYear(?Year $year, PDO $db): array
     {
         $query = '
             SELECT b.BookID, b.Name, b.NumberChapters, b.BibleOrder,
@@ -74,7 +78,7 @@ class Book
             FROM Books b 
                 JOIN Chapters c ON b.BookID = c.BookID
                 LEFT JOIN Verses v ON c.ChapterID = v.ChapterID
-            WHERE b.YearID = ' . $year->yearID . '
+            WHERE b.YearID = ' . ($year->yearID ?? 0) . '
             ORDER BY b.Name, ChapterNumber, VerseNumber';
         $stmt = $db->prepare($query);
         $stmt->execute([]);
@@ -82,7 +86,7 @@ class Book
 
         $lastBookID = -1;
         $lastChapterID = -1;
-        $books = array();
+        $books = [];
         $book = null;
         $chapter = null;
         foreach ($data as $row) {
@@ -100,7 +104,6 @@ class Book
                 $book->numberChapters = $row['NumberChapters'];
                 $book->chapters = [];
                 $book->yearID = $year->yearID;
-                $book->year = $year->year;
                 $chapter = null;
             }
             if ($row['ChapterID'] != $lastChapterID) {
@@ -125,6 +128,24 @@ class Book
             $books[] = $book;
         }
         return $books;
+    }
+
+    public static function getBookDataIndexedByVerse(?Year $year, PDO $db): array
+    {
+        $data = self::loadAllBookChapterVerseDataForYear($year, $db);
+        $output = [];
+        foreach ($data as $book) {
+            foreach ($book->chapters as $chapter) {
+                foreach ($chapter->verses as $verse) {
+                    $output[$verse->verseID] = [
+                        'book' => $book,
+                        'chapter' => $chapter,
+                        'verse' => $verse
+                    ];
+                }
+            }
+        }
+        return $output;
     }
 
     public static function createBook(string $name, int $numberOfChapters, int $yearID, int $bibleOrder, PDO $db)

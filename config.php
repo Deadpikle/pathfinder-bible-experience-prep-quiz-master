@@ -65,7 +65,7 @@ date_default_timezone_set('America/New_York');
 $app->loggedIn = false;
 $app->isOnLoginPage = strpos($_SERVER['REQUEST_URI'], 'login.php') !== false;
 $app->isOnOtherNonLoginPage = strpos($_SERVER['REQUEST_URI'], 'about.php') !== false;
-$app->isUserIDSessionSet = isset($_SESSION["UserID"]);
+$app->isUserIDSessionSet = isset($_SESSION['UserID']);
 
 if ($app->isUserIDSessionSet) {
     $app->loggedIn = true;
@@ -73,10 +73,10 @@ if ($app->isUserIDSessionSet) {
 
 //$isPostRequest = $_SERVER['REQUEST_METHOD'] === 'POST';
 
-$app->isGuest = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "Guest";
-$app->isClubAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ClubAdmin";
-$app->isConferenceAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "ConferenceAdmin";
-$app->isWebAdmin = isset($_SESSION["UserType"]) && $_SESSION["UserType"] === "WebAdmin";
+$app->isGuest = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'Guest';
+$app->isClubAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'ClubAdmin';
+$app->isConferenceAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'ConferenceAdmin';
+$app->isWebAdmin = isset($_SESSION['UserType']) && $_SESSION['UserType'] === 'WebAdmin';
 $app->isAdmin = $app->isClubAdmin || $app->isWebAdmin || $app->isConferenceAdmin;
 $app->isPathfinder = !($app->isAdmin);
 

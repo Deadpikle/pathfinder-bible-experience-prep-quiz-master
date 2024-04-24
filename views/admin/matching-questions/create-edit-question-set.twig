@@ -1,71 +1,85 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/matching-question-sets') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/matching-question-sets') }}">Matching Question Sets</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create Matching Question Set' : 'Edit Matching Question Set' }}</li>
+    </ol>
+</nav>
 
-<h4>{{ isCreating ? 'Create' : 'Edit' }} Matching Question Set</h4>
+<h4>{{ isCreating ? 'Create Matching Question Set' : 'Edit Matching Question Set' }}</h4>
 
 {% include 'includes/error-message.twig' %}
 
 <div>
     <form method="post" enctype="multipart/form-data">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="name" name="name" value="{{ questionSet.name }}" required data-length="100"/>
+            <div class="form-group col-sm-12 col-md-4">
                 <label for="name">* Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ questionSet.name }}" required maxlength="100" placeholder="Who's Who in Joshua 2"/>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s12 m4">
-                <textarea id="description" name="description" class="materialize-textarea" 
-                        placeholder="Matching questions for 1 Kings names and length of reigns"
-                        data-length="1000">{{ questionSet.description }}</textarea>
+        <div class="row mt-1">
+            <div class="form-group col-sm-12 col-md-5">
                 <label for="description">Description</label>
+                <textarea id="description" class="form-control" name="description" 
+                        placeholder="Matching questions for 1 Kings names and length of reigns"
+                        maxlength="1000">{{ questionSet.description }}</textarea>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s6 m4">
-                <select id="year" name="year" required autocomplete="off">
+        <div class="row mt-1">
+            <div class="form-group col-sm-6 col-md-4">
+                <label for="year">* PBE Year</label>
+                <select id="year" class="form-control" name="year" required autocomplete="off">
                     {% for year in years %}
                         <option value="{{ year.yearID }}">{{ year.year }}</option>
                     {% endfor %}
                 </select>
-                <label>* Year</label>
             </div>
-            <div class="input-field col s6 m4">
-                <select id="language" name="language" autocomplete="off">
-                    <option id="language-no-selection-option" value="-1">Select a language...</option>
+            <div class="form-group col-sm-6 col-md-4">
+                <label for="language">Language</label>
+                <select id="language" class="form-control" name="language" autocomplete="off">
+                    <option id="language-no-selection-option" value="">Select a language...</option>
                     {% for language in languages %}
                         <option value="{{ language.languageID }}">{{ language.name }}</option>
                     {% endfor %}
                 </select>
-                <label>Language</label>
             </div>
         </div>
         {% if isCreating %}
-            <p>If you want to automatically create matching questions when creating this matching question set, upload a CSV file with those questions here. The first column must be the question, and the second column must be the answer. The CSV must not be UTF8-encoded. The importer will stop at the first blank row.</p>
-            <div class="row">
-                <div class="col s12 m6">
-                    <div class="file-field input-field">
-                        <div class="btn">
-                            <span>Choose CSV File</span>
-                            <input type="file" id="csv" name="csv" accept=".csv,text/csv">
-                        </div>
-                        <div class="file-path-wrapper">
-                            <input class="file-path validate" type="text">
-                        </div>
-                    </div>
+            <div class="row mt-2">
+                <div class="col-sm-12 col-md-6">
+                    <p class="mb-0">If you want to automatically create matching questions when creating this matching question set, upload a CSV file with those questions here. The first column must be the question, and the second column must be the answer. The CSV can be UTF8-encoded. The importer will stop at the first blank row.</p>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-12 col-md-4">
+                    <label for="csv"><em>Choose CSV File...</em></label>
+                    <input class="form-control" type="file" id="csv" name="csv" accept=".csv,text/csv" required>
                 </div>
             </div>
         {% endif %}
-        <div class="row">
-            <div class="col s12 m4">
-                <button class="btn waves-effect waves-light submit blue" type="submit" name="action">{{ isCreating ? 'Create Matching Question Set' : 'Save Changes' }}</button>
+        <div class="row mt-4">
+            <div class="col-sm-12 col-md-4">
+                <button class="btn btn-primary btn-sm" type="submit" name="action"><i class="fas fa-save"></i> {{ isCreating ? 'Create Matching Question Set' : 'Save Changes' }}</button>
             </div>
         </div>
     </form>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -78,8 +92,27 @@
             $('#language').val(questionSet.languageID > 0 ? questionSet.languageID : -1);
             $('#year').val(questionSet.yearID > 0 ? questionSet.yearID : currentYear.yearID);
         }
-        $('select').material_select();
-        fixRequiredSelectorCSS();
+        $('#year').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a year...',
+            searchInputPlaceholder: 'Search years...',
+            allowClear: false
+        });
+        $('#language').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a language...',
+            searchInputPlaceholder: 'Search languages...',
+            allowClear: true
+        }).on('select2:unselecting', function() {
+            // prevent opening when clearing:
+            // https://github.com/select2/select2/issues/3320#issuecomment-780660819
+            $(this).data('unselecting', true);
+        }).on('select2:opening', function(e) {
+            if ($(this).data('unselecting')) {
+                $(this).removeData('unselecting');
+                e.preventDefault();
+            }
+        });
     });
 </script>
 

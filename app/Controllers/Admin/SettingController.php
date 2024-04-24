@@ -24,7 +24,7 @@ class SettingController extends BaseAdminController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         /** @var PBEAppConfig $app */
         $response = parent::validateRequest($app, $request);
@@ -37,13 +37,13 @@ class SettingController extends BaseAdminController implements IRequestValidator
         return $response;
     }
 
-    public function viewSettings(AppConfig $app, Request $request) : Response
+    public function viewSettings(AppConfig $app, Request $request): Response
     {
         $settings = Setting::loadAllSettings($app->db);
         return new TwigView('/admin/settings', compact('settings'), 'Settings');
     }
 
-    public function saveSettings(AppConfig $app, Request $request) : Response
+    public function saveSettings(AppConfig $app, Request $request): Response
     {
         $didError = false;
         if (CSRF::verifyToken('change-settings')) {

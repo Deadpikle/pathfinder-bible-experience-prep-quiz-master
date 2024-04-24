@@ -37,6 +37,10 @@ catch (Exception $e) {
 // shouldShowErrorOnExceptionThrown: whether or not to show the error page on an exception 
 // being thrown from a controller. You probably want this set to true while developing,
 // and you probably want this set to false on a production server.
+
+use App\Models\PBEAppConfig;
+
+/** @var PBEAppConfig $app */
 $app->shouldShowErrorOnExceptionThrown = false;
 $app->ENABLE_NKJV_RESTRICTIONS = true; // DO NOT DISABLE THIS UNLESS YOU HAVE THE LEGAL RIGHT TO DO SO. YOU HAVE BEEN WARNED.
 $app->sessionName = 'pbe';
@@ -47,6 +51,8 @@ $app->headerForAnalytics = ''; // e.g. <script data-goatcounter="" async src="//
 $app->contactFromEmail = '';
 $app->contactToEmail = '';
 $app->contactSubjectPrefix = '';
+
+$app->recaptchaType = 'google'; // 'google' or 'cloudflare' (no option for 'none')
 $app->recaptchaExpectedDomain = '';
 $app->recaptchaPrivateKey = '';
 $app->recaptchaPublicKey = '';

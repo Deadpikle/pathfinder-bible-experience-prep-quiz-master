@@ -18,9 +18,9 @@ class BaseAdminController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
-        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== "Pathfinder" && $_SESSION['UserType'] !== "Guest";
+        $canViewAdminPanel = isset($_SESSION['UserType']) && $_SESSION['UserType'] !== 'Pathfinder' && $_SESSION['UserType'] !== 'Guest';
         if (!$canViewAdminPanel) {
             return new Redirect('/');
         }

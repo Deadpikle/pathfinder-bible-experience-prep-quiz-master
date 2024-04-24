@@ -30,7 +30,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
@@ -59,7 +59,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new TwigView('admin/matching-questions/view-question-sets', compact('questionSets', 'years', 'yearsByID', 'languages', 'languagesByID'), 'Matching Question Sets');
     }
 
-    private function showCreateOrEditMatchingQuestionSet(PBEAppConfig $app, Request $request, bool $isCreating, ?MatchingQuestionSet $questionSet, string $error = '') : Response
+    private function showCreateOrEditMatchingQuestionSet(PBEAppConfig $app, Request $request, bool $isCreating, ?MatchingQuestionSet $questionSet, string $error = ''): Response
     {
         $years = Year::loadAllYears($app->db);
         $languages = Language::loadAllLanguages($app->db);
@@ -67,7 +67,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new TwigView('admin/matching-questions/create-edit-question-set', compact('isCreating', 'questionSet', 'years', 'currentYear', 'languages', 'error'), $isCreating ? 'Create Matching Question Set' : 'Edit Matching Question Set');
     }
 
-    private function validateMatchingQuestionSet(PBEAppConfig $app, Request $request, ?MatchingQuestionSet $questionSet) : ValidationStatus
+    private function validateMatchingQuestionSet(PBEAppConfig $app, Request $request, ?MatchingQuestionSet $questionSet): ValidationStatus
     {
         $name = Util::validateString($request->post, 'name');
         $description = Util::validateString($request->post, 'description');
@@ -94,7 +94,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new ValidationStatus(true, $questionSet);
     }
 
-    public function createMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function createMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         return $this->showCreateOrEditMatchingQuestionSet($app, $request, true, null);
     }
@@ -105,7 +105,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return chr(hexdec($hexCode));
     }
 
-    public function saveCreatedMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function saveCreatedMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateMatchingQuestionSet($app, $request, null);
         $questionSet = $status->output;
@@ -156,7 +156,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new Redirect('/admin/matching-question-sets' . ($numCreated > 0 ? '?created=' . $numCreated : ''));
     }
 
-    public function editMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function editMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         if ($questionSet === null) {
@@ -165,7 +165,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return $this->showCreateOrEditMatchingQuestionSet($app, $request, false, $questionSet);
     }
 
-    public function saveEditedMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function saveEditedMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         if ($questionSet === null) {
@@ -180,7 +180,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new Redirect('/admin/matching-question-sets');
     }
 
-    public function verifyDeleteMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         if ($questionSet === null) {
@@ -189,7 +189,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new TwigView('admin/matching-questions/verify-delete-question-set', compact('questionSet'), 'Delete Matching Question Set');
     }
 
-    public function deleteMatchingQuestionSet(PBEAppConfig $app, Request $request) : Response
+    public function deleteMatchingQuestionSet(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         if ($questionSet === null) {
@@ -216,7 +216,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new TwigView('admin/matching-questions/view-questions-in-set', compact('questionSet', 'years', 'languages'), 'View Questions in Set');
     }
 
-    public function verifyDeleteMatchingQuestion(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteMatchingQuestion(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         $question = MatchingQuestionItem::loadQuestionItemByID(Util::validateInteger($request->routeParams, 'matchingQuestionItemID'), $app->db);
@@ -226,7 +226,7 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
         return new TwigView('admin/matching-questions/verify-delete-question', compact('questionSet', 'question'), 'Delete Matching Question');
     }
 
-    public function deleteMatchingQuestion(PBEAppConfig $app, Request $request) : Response
+    public function deleteMatchingQuestion(PBEAppConfig $app, Request $request): Response
     {
         $questionSet = MatchingQuestionSet::loadMatchingSetByID(Util::validateInteger($request->routeParams, 'matchingQuestionSetID'), $app->db);
         $question = MatchingQuestionItem::loadQuestionItemByID(Util::validateInteger($request->routeParams, 'matchingQuestionItemID'), $app->db);

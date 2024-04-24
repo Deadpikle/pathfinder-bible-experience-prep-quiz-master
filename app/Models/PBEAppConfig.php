@@ -8,6 +8,12 @@ class PBEAppConfig extends AppConfig
 {
     public bool $isWebAdmin;
     public bool $isConferenceAdmin;
+    public bool $isClubAdmin;
+    /**
+     * isWebAdmin || isConferenceAdmin || isClubAdmin
+     */
+    public bool $isAdmin;
+    public bool $isPathfinder;
     public bool $isGuest;
 
     public array $settings;
@@ -25,16 +31,27 @@ class PBEAppConfig extends AppConfig
     public bool $ENABLE_NKJV_RESTRICTIONS;
 
     public string $contactToEmail;
+    public string $contactFromEmail;
     public string $contactSubjectPrefix;
 
+    public string $recaptchaType;
     public string $recaptchaExpectedDomain;
     public string $recaptchaPrivateKey;
+    public string $recaptchaPublicKey;
+
+    public string $sessionName;
+    public bool $showCookieConsent;
+    public string $cookieDomain;
+    public string $headerForAnalytics;
 
     public function __construct(bool $isLocalHost, string $basePath)
     {
         parent::__construct($isLocalHost, $basePath);
         $this->isWebAdmin = false;
         $this->isConferenceAdmin = false;
+        $this->isClubAdmin = false;
+        $this->isAdmin = false;
+        $this->isPathfinder = false;
         $this->isGuest = false;
         
         $this->settings = [];
@@ -50,8 +67,16 @@ class PBEAppConfig extends AppConfig
         $this->isGuest = true;
         $this->loggedIn = false;
         $this->contactToEmail = '';
+        $this->contactFromEmail = '';
         $this->contactSubjectPrefix = '';
+        $this->recaptchaType = '';
         $this->recaptchaExpectedDomain = '';
         $this->recaptchaPrivateKey = '';
+        $this->recaptchaPublicKey = '';
+
+        $this->sessionName = '';
+        $this->showCookieConsent = true;
+        $this->cookieDomain = '';
+        $this->headerForAnalytics = '';
     }
 }

@@ -21,16 +21,15 @@ use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\StatsLoader;
 use ReCaptcha\ReCaptcha;
+use Yamf\Responses\Response;
 
 class HomeController
 {
-    public function index(PBEAppConfig $app, Request $request)
+    public function index(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
         }
-        $title = 'Home';
-        
         $conference = Conference::loadAdminConference($app->db);
         $conferenceID = $conference->conferenceID ?? $_SESSION['ConferenceID'];
         $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $conferenceID, $app->db);
@@ -39,12 +38,12 @@ class HomeController
 
     public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
-        return new TwigView('home/login', null, 'Login');
+        return new TwigView('home/login', [], 'Login');
     }
 
-    public function attemptLogin(PBEAppConfig $app, Request $request)
+    public function attemptLogin(PBEAppConfig $app, Request $request): Response
     {
-        // TODO: refactor to models
+        // TODO: this code needs to be refactored to models
         $query = '
             SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
                 conf.ConferenceID, conf.Name AS ConferenceName, u.PreferredLanguageID
@@ -77,20 +76,20 @@ class HomeController
         }
     }
 
-    public function logout(PBEAppConfig $app, Request $request)
+    public function logout(PBEAppConfig $app, Request $request): Response
     {
         session_regenerate_id(false);
         session_destroy();
         return new Redirect('/login');
     }
 
-    public function about(PBEAppConfig $app, Request $request)
+    public function about(PBEAppConfig $app, Request $request): Response
     {
         $conferences = Conference::loadNonWebsiteConferences($app->db);
         return new TwigView('home/about', compact('conferences'), 'About');
     }
 
-    public function activeClubs(PBEAppConfig $app, Request $request)
+    public function activeClubs(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -111,7 +110,7 @@ class HomeController
         return new TwigView('home/active-clubs', compact('clubs', 'conferences', 'conferenceCounts', 'clubCount'), 'Active Clubs');
     }
 
-    public function studyGuides(PBEAppConfig $app, Request $request)
+    public function studyGuides(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -121,7 +120,7 @@ class HomeController
         return new TwigView('home/study-guides', compact('guides'), 'Study Guides');
     }
 
-    public function viewSettings(PBEAppConfig $app, Request $request)
+    public function viewSettings(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -133,7 +132,7 @@ class HomeController
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 
-    public function updateSettings(PBEAppConfig $app, Request $request)
+    public function updateSettings(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -145,12 +144,14 @@ class HomeController
         $_SESSION['PreferredLanguageID'] = $languageIDToUse; // TODO: refactor to User somewhere
         
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+        $prefersDarkMode = Util::validateBoolean($request->post, 'prefers-dark-mode');
+        User::updateDarkModePreference(User::currentUserID(), $prefersDarkMode, $app->db);
 
         $didUpdate = true;
         return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
     }
 
-    public function currentYearStats(PBEAppConfig $app, Request $request)
+    public function currentYearStats(PBEAppConfig $app, Request $request): Response
     {
         if (!$app->loggedIn) {
             return new Redirect('/login');
@@ -206,7 +207,7 @@ class HomeController
         return new TwigView('home/stats', compact('year', 'chapterStats', 'verseStats', 'commentaryStats', 'totalQuestions', 'totalCommentaryQuestions', 'languagesByID', 'chapterStatsByLanguageID', 'verseStatsByLanguageID', 'commentaryStatsByLanguageID', 'totalQuestionsByLanguageID', 'totalCommentaryQuestionsByLanguageID'), 'Stats');
     }
 
-    public function showContactForm(PBEAppConfig $app, Request $request)
+    public function showContactForm(PBEAppConfig $app, Request $request): Response
     {
         return new TwigView('home/contact-us', [], 'Contact');
     }
@@ -245,7 +246,7 @@ class HomeController
         return new ValidationStatus(true, $submission);
     }
 
-    public function handleContactSubmission(PBEAppConfig $app, Request $request)
+    public function handleContactSubmission(PBEAppConfig $app, Request $request): Response
     {
         $status = $this->validateContactSubmission($app, $request);
         $submission = $status->output;
@@ -254,41 +255,86 @@ class HomeController
         if ($submission->email === 'ericjonesmyemail@gmail.com') {
             return new TwigErrorMessage('No spam, thanks.'); // we get so much spam from this email....
         }
+        $honeypotName = Util::validateString($request->post, 'fname');
+        $isCaughtInHoneypot = $honeypotName !== '';
+        $didSucceedRecaptcha = $this->checkCloudflare($app, $request);
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
                 $submission->create($app->db);
                 return new Redirect('/contact?success');
             } else {
-                $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
-                $errors = [];
-                $resp = $recaptcha
-                    ->setExpectedHostname($app->recaptchaExpectedDomain)
-                    ->verify($request->post['g-recaptcha-response'] ?? '');
-                /** @var \ReCaptcha\Response $resp */
-                if ($resp->isSuccess()) {
+                $didSucceedRecaptcha = true;
+                if ($app->recaptchaType === 'google') {
+                    $recaptcha = new ReCaptcha($app->recaptchaPrivateKey);
+                    $resp = $recaptcha
+                        ->setExpectedHostname($app->recaptchaExpectedDomain)
+                        ->verify($request->post['g-recaptcha-response'] ?? '');
+                    /** @var \ReCaptcha\Response $resp */
+                    if (!$resp->isSuccess()) {
+                        $errors = $resp->getErrorCodes();
+                    }
+                } else {
+                    $didSucceedRecaptcha = $this->checkCloudflare($app, $request);
+                    if (!$didSucceedRecaptcha) {
+                        $errors = ['Failed to verify recaptcha; please try again.'];
+                    }
+                }
+                if ($didSucceedRecaptcha) {
                     // Verified!
                     $submission->create($app->db);
                     // send email
-                    Util::sendContactFormEmail(
-                        $app->contactToEmail,
-                        $submission->email, 
-                        $submission->personName,
-                        $app->contactSubjectPrefix,
-                        $submission->title,
-                        $submission->message . "\n\n" .
+                    if (!$isCaughtInHoneypot) {
+                        Util::sendContactFormEmail(
+                            $app->contactToEmail,
+                            $submission->email, 
+                            $submission->personName,
+                            $app->contactSubjectPrefix,
+                            $submission->title,
+                            $submission->message . "\n\n" .
+                            'From: ' . $submission->personName . "\n\n" .
+                            'Email: ' . $submission->email . "\n\n" .
                             'Club: ' . $submission->club . "\n\n" .
                             'Conference: ' . $submission->conference . "\n\n" .
-                            'Submission from: ' . ucfirst($submission->type) . "\n\n"
-                    );
+                            'Submission from user type: ' . ucfirst($submission->type) . "\n\n"
+                        );
+                    }
                     return new Redirect('/contact?success');
-                } else {
-                    $errors = $resp->getErrorCodes();
                 }
             }
         } else {
             $errors = [$status->error];
         }
         return new TwigView('home/contact-us', compact('errors', 'submission'), 'Contact');
+    }
+
+    private function checkCloudflare(PBEAppConfig $app, Request $request): bool
+    {
+        // modified from: 
+        // https://community.cloudflare.com/t/is-there-a-turnstile-php-installation-example/425587/2
+        $captcha = Util::validateString($request->post, 'cf-turnstile-response');
+        if (!$captcha) {
+            return false; // CAPTCHA was entered incorrectly
+        }
+        $secretKey = $app->recaptchaPrivateKey;
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+        $data = [
+            'secret' => $secretKey,
+            'response' => $captcha,
+            'remoteip' => $ip
+        ];
+        $options = [
+            'http' => [
+                'method' => 'POST',
+                'content' => http_build_query($data),
+                'header' => 'Content-Type: application/x-www-form-urlencoded'
+            ]
+        ];
+        $stream = stream_context_create($options);
+        $result = file_get_contents($url_path, false, $stream);
+        $response =  $result;
+        $responseKeys = json_decode($response, true);
+        return intval($responseKeys['success']) === 1;
     }
 }

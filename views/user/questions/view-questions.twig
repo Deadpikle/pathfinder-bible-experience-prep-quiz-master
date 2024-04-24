@@ -2,61 +2,68 @@
 
 {% block headers %}
 
-<!-- https://github.com/Dogfalo/materialize/issues/1376 -->
-<style type="text/css">
-    [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
-        position: static;
-        left: 0px; 
-        opacity: 1; 
-    }
-</style>
-
 {% include 'includes/scripts/datatables.twig' %}
+{% include 'includes/scripts/select2.twig' %}
 
 {% endblock %}
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Questions</li>
+    </ol>
+</nav>
 
 <h3>Questions</h3>
 
 {% if not app.isGuest and not app.isPathfinder %}
-    <div id="create" class="row">
+    <div id="create" class="row mb-2">
         <div class="col s12"> 
-            <a class="waves-effect waves-light btn" href="{{ app.yurl('/questions/add') }}">Add Question</a>
+            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/questions/add') }}"><i class="fas fa-plus"></i> Add Question</a>
         </div>
     </div>
 {% endif %}
 
-<div id="question-type-choice">
-    <a id="bible-qna" class="btn-flat blue white-text">Bible Q&amp;A</a>
-    <a id="commentary-qna" class="btn-flat waves-effect waves-blue">Commentary Q&amp;A</a>
-</div>
+<ul id="question-type-choice" class="nav nav-pills mb-0">
+    <li class="nav-item badge-info">
+        <button type="button" id="bible-qna" class="nav-link nav-link-info active" aria-current="page">Bible Q&amp;A</button>
+    </li>
+    <li class="nav-item">
+        <button type="button" id="commentary-qna" class="nav-link">Commentary Q&amp;A</button>
+    </li>
+</ul>
 
-<div id="display-types">
-    <a id="all-questions" class="btn-flat blue white-text">All</a>
-    <a id="recently-added-questions" class="btn-flat waves-effect waves-blue">Recently Added</a>
-    <a id="flagged-questions" class="btn-flat waves-effect waves-blue">Flagged</a>
-</div>
+<ul id="display-types" class="nav nav-pills mt-1 mb-0">
+    <li class="nav-item badge-info">
+        <button type="button" id="all-questions" class="nav-link nav-link-info active" aria-current="page">All</button>
+    </li>
+    <li class="nav-item badge-info">
+        <button type="button" id="recently-added-questions" class="nav-link" aria-current="page">Recently Added</button>
+    </li>
+    <li class="nav-item badge-info">
+        <button type="button" id="flagged-questions" class="nav-link" aria-current="page">Flagged</button>
+    </li>
+</ul>
 
-<div class="row" id="language-select-container">
-    <div class="input-field col s12 m4">
-        <select id="language-select">
+<div class="row pt-1" id="language-select-container">
+    <div class="form-group col-sm-6 col-md-3">
+        <label for="language-select">Filter by language</label>
+        <select id="language-select" class="form-control">
             {% for language in languages %}
                 {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
                 <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
             {% endfor %}
-            <option value="-1">No language filter</option>
+            {# <option value="-1">No language filter</option> #}
         </select>
-        <label for="language-select">Filter by language</label>
     </div>
 </div>
 
-<div class="divider"></div>
+<hr/>
 
 <div id="questions-table">
-    <table id="questions" class="striped responsive-table">
+    <table id="questions" class="table table-sm table-striped table-bordered responsive-table">
         <thead>
             <tr id="table-header-row">
             </tr>
@@ -66,19 +73,14 @@
     </table>
 </div>
 
-<div id="loading-bar" class="preloader-wrapper active">
-    <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-            <div class="circle"></div>
-        </div>
-        <div class="gap-patch">
-            <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-            <div class="circle"></div>
-        </div>
-    </div>
+<div id="loading-bar" class="preloader-wrapper active text-center">
+    <i class="fas fa-cog fa-spin fa-3x valign-middle me-2"></i> 
+    <span class="valign-middle loading-text">Loading questions...</span>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript">
     var books = {{ json_encode(bookData) | raw }};
@@ -88,6 +90,13 @@
     var isGuestMode = {{ app.isGuest ? 'true' : 'false' }};
     var questionURLBase = '{{ app.yurl('/questions/') }}';
     $(document).ready(function() {
+
+        $('#language-select').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a language...',
+            searchInputPlaceholder: 'Search languages...',
+            allowClear: false
+        });
 
         var questionType = 'bible-qna';
         var questionFilter = 'all';
@@ -285,8 +294,8 @@
                     html += '<td>' + languageName + '</td>';
                 }
                 if (isAdmin && !isGuestMode) {
-                    html += '<td><a class="waves-effect waves-light btn" href="' + questionURLBase + id + '/edit">Edit</a></td>';
-                    html += '<td><a class="waves-effect waves-light btn red" href="' + questionURLBase + id + '/delete">Delete</a></td>';
+                    html += '<td><a class="btn btn-sm btn-primary" href="' + questionURLBase + id + '/edit"><i class="fas fa-pencil"></i> Edit</a></td>';
+                    html += '<td><a class="btn btn-sm btn-danger" href="' + questionURLBase + id + '/delete"><i class="fas fa-trash-alt"></i> Delete</a></td>';
                 }
                 html += '</tr>';
                 $questionsBody.append(html);
@@ -296,18 +305,18 @@
         }
 
         function setQuestionSelectorSelected(element) {
-            $(element).attr("class", "btn-flat blue white-text");
+            $(element).attr('class', 'nav-link nav-link-info active');
         }
 
         function resetQuestionTypeSelectorClasses() {
-            $(bibleQnA).attr("class", "btn-flat waves-effect waves-blue");
-            $(commentaryQnA).attr("class", "btn-flat waves-effect waves-blue");
+            $(bibleQnA).attr(     'class', 'nav-link');
+            $(commentaryQnA).attr('class', 'nav-link');
         }
 
         function resetQuestionFilterSelectorClasses() {
-            $(all).attr("class", "btn-flat waves-effect waves-blue");
-            $(recent).attr("class", "btn-flat waves-effect waves-blue");
-            $(flagged).attr("class", "btn-flat waves-effect waves-blue");
+            $(all).attr(    'class', 'nav-link');
+            $(recent).attr( 'class', 'nav-link');
+            $(flagged).attr('class', 'nav-link');
         }
 
         function questionTypeSelectorClicked(questionTypeSelected, element) {
@@ -350,18 +359,18 @@
         var flagged = document.getElementById('flagged-questions');
 
         all.addEventListener('click', function() {
-            questionFilterSelectorClicked("all", all);
+            questionFilterSelectorClicked('all', all);
         }, false);
         
         recent.addEventListener('click', function() {
-            questionFilterSelectorClicked("recent", recent);
+            questionFilterSelectorClicked('recent', recent);
         }, false);
 
         flagged.addEventListener('click', function() {
-            questionFilterSelectorClicked("flagged", flagged);
+            questionFilterSelectorClicked('flagged', flagged);
         }, false);
 
-        $("#questions").hide();
+        $('#questions').hide();
         setupTableHeader(questionType);
 
         // language selector
@@ -369,8 +378,6 @@
             resetTable();
             loadQuestions();
         });
-        
-        $('#language-select').material_select();
 
         // load questions
         loadQuestions();

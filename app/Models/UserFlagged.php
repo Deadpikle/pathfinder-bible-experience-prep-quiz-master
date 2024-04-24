@@ -7,12 +7,12 @@ use PDOException;
 
 class UserFlagged
 {
-    public $userFlaggedID;
-    public $userID;
-    public $questionID;
-    public $reason;
+    public int $userFlaggedID;
+    public int $userID;
+    public int $questionID;
+    public FlagReason $reason;
 
-    public $dateTimeFlagged;
+    public string $dateTimeFlagged;
 
     public function __construct(int $userFlaggedID, int $userID, int $questionID)
     {
@@ -44,7 +44,7 @@ class UserFlagged
         $stmt->execute($params);
     }
 
-    public static function addFlagIfNecessary(int $questionID, int $userID, string $flagReason, PDO $db) : bool
+    public static function addFlagIfNecessary(int $questionID, int $userID, string $flagReason, PDO $db): bool
     {
         try {
             // Make sure it's not in the table already before inserting!
@@ -74,7 +74,7 @@ class UserFlagged
         }
     }
 
-    public static function isFlagged(int $questionID, int $userID, PDO $db) : bool
+    public static function isFlagged(int $questionID, int $userID, PDO $db): bool
     {
         $query = ' SELECT UserFlaggedID FROM UserFlagged WHERE QuestionID = ? AND UserID = ? ';
         $stmt = $db->prepare($query);
@@ -86,7 +86,7 @@ class UserFlagged
         return count($data) > 0;
     }
 
-    public static function isFlaggedByAnyUser(int $questionID, PDO $db) : bool
+    public static function isFlaggedByAnyUser(int $questionID, PDO $db): bool
     {
         $query = ' SELECT UserFlaggedID FROM UserFlagged WHERE QuestionID = ? ';
         $stmt = $db->prepare($query);

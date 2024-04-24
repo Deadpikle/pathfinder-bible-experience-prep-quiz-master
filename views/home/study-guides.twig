@@ -2,7 +2,12 @@
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Study Guides</li>
+    </ol>
+</nav>
 
 <h2>Study Guides</h2>
 
@@ -14,8 +19,7 @@
             {% for guide in guides %}
                 <li>
                     <td>
-                        <a target="_blank" class="btn-flat blue-text waves-effect waves-blue no-uppercase" 
-                            href="{{ app.yurl('/' ~  guide.fileName) }}">
+                        <a target="_blank" href="{{ app.yurl('/' ~ guide.fileName) }}">
                             {{ guide.displayName }}
                         </a>
                     </td> 

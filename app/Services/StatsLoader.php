@@ -9,7 +9,7 @@ class StatsLoader
 {
     // this should really return a nicer object, but we are in rush mode while we get
     // the site ready for usage again
-    public static function loadQnAQuestionsByChapterInYear(int $yearID, PDO $db) : array
+    public static function loadQnAQuestionsByChapterInYear(int $yearID, PDO $db): array
     {
         $query = '
             SELECT q.LanguageID, b.Name, c.Number, COUNT(*) AS Count
@@ -38,7 +38,7 @@ class StatsLoader
         return $output;
     }
 
-    public static function loadCommentaryQuestionsByYear(int $yearID, PDO $db) : array
+    public static function loadCommentaryQuestionsByYear(int $yearID, PDO $db): array
     {
         $query = '
             SELECT q.LanguageID, c.TopicName, c.Number, COUNT(*) AS Count
@@ -65,7 +65,7 @@ class StatsLoader
         return $output;
     }
 
-    public static function loadQnAQuestionsByChapterAndVerseInYear(int $yearID, PDO $db) : array
+    public static function loadQnAQuestionsByChapterAndVerseInYear(int $yearID, PDO $db): array
     {
         $query = '
             SELECT q.LanguageID, b.Name, c.Number AS Chapter, v.Number AS Verse, COUNT(*) AS Count

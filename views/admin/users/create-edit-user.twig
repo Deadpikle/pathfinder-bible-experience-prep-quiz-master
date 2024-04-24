@@ -1,26 +1,40 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/users') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/users') }}">Users</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create User' : 'Edit User' }}</li>
+    </ol>
+</nav>
 
-<h4>{{ isCreating ? 'Create' : 'Edit' }} User</h4>
+<h4>{{ isCreating ? 'Create User' : 'Edit User' }}</h4>
 
 {% include 'includes/error-message.twig' %}
 
 <div id="edit-user">
     <form method="post">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="username" name="username" value="{{ user.username }}" required data-length="150"/>
-                <label for="first-name">Username</label>
+            <div class="input-field col-sm-12 col-md-4">
+                <label for="username">* Username</label>
+                <input class="form-control" type="text" id="username" name="username" value="{{ user.username }}" required maxlength="150" placeholder="My Pathfinder #32"/>
             </div>
         </div>
-        <p>Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
+        <p class="mt-1">Usernames are not used for logging into the website; however, it is used as an easy way to distinguish between different Pathfinders in your club. Users are greeted by their username on the home page of this website. In order to help follow the <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a> for children younger than 13, please do not use real names when choosing a username for your Pathfinder. We don't collect any personal data on users for our website (e.g. birthday, phone number, etc.), but let's all play it safe and avoid real names! Suggested names: 'Pathfinder #37', 'Secret Agent #08', etc.</p>
         {% if app.isWebAdmin or app.isConferenceAdmin %}
             <div class="row">
-                <div class="input-field col s12 m5">
-                    <select id="club" name="club" required>
+                <div class="form-group col-sm-12 col-md-5">
+                    <label for="club">* Club</label>
+                    <select id="club" name="club" class="form-control" required>
                         <option id="club-no-selection-option" value="">Select a club...</option>
                         {% for club in clubs %}
                             {% set clubName = club.name %}
@@ -31,28 +45,47 @@
                             <option value="{{ club.clubID }}" {{ selected }}>{{ clubName }}</option>
                         {% endfor %}
                     </select>
-                    <label>Club</label>
                 </div>
-                <div class="input-field col s12 m5">
-                    <select id="user-type" name="user-type" required>
+                <div class="form-group col-sm-12 col-md-5">
+                    <label for="user-type">* User Type</label>
+                    <select id="user-type" name="user-type" class="form-control" required>
                         <option id="user-type-no-selection-option" value="">Select a user type...</option>
                         {% for userType in userTypes %}
                             {% set selected = userType.userTypeID == user.type.userTypeID ? 'selected' : '' %}
                             <option value="{{ userType.userTypeID }}" {{ selected }}>{{ userType.displayName }}</option>
                         {% endfor %}
                     </select>
-                    <label>User Type</label>
                 </div>
             </div>
         {% endif %}
-        <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
+        {% if app.isWebAdmin and not isCreating %}
+            <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="regenerate-access-code" name="regenerate-access-code">
+                <label class="custom-control-label" for="regenerate-access-code">Regenerate user access code</label>
+            </div>
+        {% endif %}
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
     </form>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
-        $('select').material_select();
-        fixRequiredSelectorCSS();
+        $('#club').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a Pathfinder club...',
+            searchInputPlaceholder: 'Search clubs...',
+            allowClear: false
+        });
+        $('#user-type').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a user type...',
+            searchInputPlaceholder: 'Search types...',
+            allowClear: false
+        });
     });
 </script>
 

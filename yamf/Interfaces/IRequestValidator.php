@@ -17,5 +17,5 @@ interface IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response;
+    public function validateRequest(AppConfig $app, Request $request): ?Response;
 }

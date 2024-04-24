@@ -1,7 +1,12 @@
 {% extends "layouts/main.twig" %}
 
-{% block content %}
+{% block headers %}
 
+{% include 'includes/scripts/HTMLsortable.twig' %}
+
+{% endblock %}
+
+{% block content %}
 
 <p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/home-sections/' ~ conference.conferenceID ~ '/sections') }}">Back</a></p>
 

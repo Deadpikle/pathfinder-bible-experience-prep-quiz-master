@@ -1,49 +1,69 @@
 {% extends "layouts/main.twig" %}
 
+{% block headers %}
+
+{{ include('includes/scripts/select2.twig') }}
+
+{% endblock %}
+
+
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/admin/clubs') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/clubs') }}">Pathfinder Clubs</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ isCreating ? 'Create Pathfinder Club' : 'Edit Pathfinder Club' }}</li>
+    </ol>
+</nav>
 
-<h4>{{ isCreating ? 'Create' : 'Edit' }} Pathfinder Club</h4>
+<h4>{{ isCreating ? 'Create Pathfinder Club' : 'Edit Pathfinder Club' }}</h4>
 
 {% include 'includes/error-message.twig' %}
 
 <div id="edit-club">
     <form method="post">
         <div class="row">
-            <div class="input-field col s12 m4">
-                <input type="text" id="club-name" name="club-name" value="{{ club.name }}" required data-length="150"/>
-                <label for="club-name">Club Name</label>
+            <div class="form-group col-sm-12 col-md-4">
+                <label for="club-name">* Club Name</label>
+                <input class="form-control" type="text" id="club-name" name="club-name" value="{{ club.name }}" required maxlength="150" placeholder="Super Pathfinders of My State"/>
             </div>
-            <div class="input-field col s12 m4">
-                <input type="url" id="club-url" name="club-url" value="{{ club.url }}" data-length="300"/>
-                <label for="club-url">Website or Facebook URL</label>
+            <div class="form-group col-sm-12 col-md-4">
+                <label for="club-url">* Website or Facebook URL</label>
+                <input class="form-control" type="url" id="club-url" name="club-url" value="{{ club.url }}" maxlength="300" placeholder="www.mychurchwebsite.com/pathfinders" required/>
             </div>
         </div>
-        <div class="row">
-            {% if app.isWebAdmin %}
-                <div class="input-field col s12 m4">
-                    <select id="conference" name="conference" required>
+        {% if app.isWebAdmin %}
+            <div class="row">
+                <div class="form-group col-sm-12 col-md-4 mt-1">
+                    <label for="conference">* Conference</label>
+                    <select class="form-control" id="conference" name="conference" required>
                         <option id="conference-no-selection-option" value="">Select a conference...</option>
                         {% for conference in conferences %}
                             {% set selected = conference.conferenceID == club.conferenceID ? 'selected' : '' %}
                             <option value="{{ conference.conferenceID }}" {{ selected }}>{{ conference.name }}</option>
                         {% endfor %}
                     </select>
-                    <label>Conference</label>
                 </div>
-            {% endif %}
-            <div class="input-field col s12 m4">
-                <button class="btn waves-effect waves-light submit" type="submit" name="action">Save</button>
             </div>
-        </div>
+        {% endif %}
+        <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
     </form>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
 <script type="text/javascript">
     $(document).ready(function() {
-        $('select').material_select();
-        fixRequiredSelectorCSS();
+        $('#conference').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select a conference...',
+            searchInputPlaceholder: 'Search conferences...',
+            allowClear: false
+        });
     });
 </script>
 

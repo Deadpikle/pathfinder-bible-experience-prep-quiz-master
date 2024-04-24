@@ -40,7 +40,7 @@ class AppViewExtension extends AbstractExtension
         } elseif ($currentRequest !== "" && $pathNoSlashes != "" && strpos($currentRequest, $pathNoSlashes) !== false) {
             $isCurrent = true;
         }
-        $liClass = $isCurrent ? "active" : "";
+        $liClass = $isCurrent ? 'active' : '';
         return '<li class="' . $liClass . ' nav-item"><a class="nav-link" href="' . $basePath . $path . '">' . $name . '</a></li>';
     }
 
@@ -129,6 +129,15 @@ class AppViewExtension extends AbstractExtension
         return User::getPreferredLanguage($db)->abbreviation ?? 'en';
     }
 
+    function prefersDarkMode(PBEAppConfig $app): bool
+    {
+        $user = User::loadUserByID(User::currentUserID(), $app->db);
+        if ($user !== null) {
+            return $user->prefersDarkMode;
+        }
+        return false;
+    }
+
     // // // settings
     // // //
 
@@ -151,6 +160,7 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('getConst', [$this, 'getConst']),
             new TwigFunction('translate', [$this, 'translate']),
             new TwigFunction('getUserLanguageAbbr', [$this, 'getUserLanguageAbbr']),
+            new TwigFunction('prefersDarkMode', [$this, 'prefersDarkMode']),
         ];
         return $twigFunctions;
     }

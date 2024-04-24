@@ -2,21 +2,29 @@
 
 {% block headers %}
 
+{% include 'includes/scripts/select2.twig' %}
+{% include 'includes/scripts/sortable.twig' %}
 {% include 'includes/scripts/tinysort.twig' %}
 
 {% endblock %}
 
 {% block content %}
 
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Matching Quiz</li>
+    </ol>
+</nav>
 
 <h1 class="matching-quiz-page-title">Matching Quiz</h1>
-<p>Drag items from the question bank on the left to the corresponding matches/answers on the right. Then, to check your answers, click the "Check Answers" button at the bottom. If a match is correct, you will see that item turn green and a <i class="fas fa-check-circle"></i> icon. If the match is not correct, you will see that item turn red and a <i class="fas fa-exclamation-triangle"></i> icon. When you've finished one quiz and you're ready to do a new quiz, just click the "Generate Matching Quiz" button again!</p>
-<p><em>There are {{ (questionSets | length) + (fillInData | length) }} question set{{ (questionSets | length) + (fillInData | length) == 1 ? '' : 's' }} available for matching quizzes.</em></p>
+<p class="mb-1">Drag items from the question bank on the left to the corresponding matches/answers on the right. Then, to check your answers, click the "Check Answers" button at the bottom. If a match is correct, you will see that item turn green and a <i class="fas fa-check-circle"></i> icon. If the match is not correct, you will see that item turn red and a <i class="fas fa-exclamation-triangle"></i> icon. When you've finished one quiz and you're ready to do a new quiz, just click the "Generate Matching Quiz" button again!</p>
+<p class="mb-1"><em>There are {{ (questionSets | length) + (fillInData | length) }} question set{{ (questionSets | length) + (fillInData | length) == 1 ? '' : 's' }} available for matching quizzes.</em></p>
 
 <div class="row mb-0">
-    <div class="input-field col s6 m4">
-        <select id="question-set" name="question-set" autocomplete="off">
+    <div class="form-group col-sm-6 col-md-4">
+        <label>* Question Set</label>
+        <select id="question-set" class="form-control" name="question-set" autocomplete="off">
             <optgroup label="Matches by Topic">
                 {% for questionSet in questionSets %}
                     <option value="set|{{ questionSet.matchingQuestionSetID }}">{{ questionSet.name }} ({{ questionSet.questions | length }} possible matches)</option>
@@ -30,24 +38,23 @@
                 {% endfor %}
             </optgroup>
         </select>
-        <label>* Question Set</label>
     </div>
-    <div class="col s3 m4">
-        <div class="input-field">
-            <input type="number" id="number" name="number" value="5" min="1" max="999" autocomplete="off" required>
-            <label for="number">* Number of Matches/Questions</label>
+    <div class="col-sm-3 col-md-4">
+        <div class="form-group">
+            <label for="sets">* Max Number of Matching Sets</label>
+            <input type="number" class="form-control" id="sets" name="sets" value="5" min="1" max="50" placeholder="5" autocomplete="off" required>
         </div>
     </div>
-    <div class="col s3 m4">
-        <div class="input-field">
-            <input type="number" id="sets" name="sets" value="5" min="1" max="50" autocomplete="off" required>
-            <label for="sets">* Number of Matching Sets</label>
+    <div class="col-sm-3 col-md-4">
+        <div class="form-group">
+            <label for="number">* Max Number of Matches per Matching Set</label>
+            <input type="number" class="form-control" id="number" name="number" value="5" min="1" max="999" placeholder="5" autocomplete="off" required>
         </div>
     </div>
 </div>
-<div class="row mt-0">
-    <div class="col s6">
-        <button id="generate-quiz-button" class="btn waves-effect blue">Generate Matching Quiz</button>
+<div class="row mt-1">
+    <div class="col-sm-6">
+        <button id="generate-quiz-button" class="btn btn-sm btn-primary"><i class="fas fa-tasks"></i> Generate Matching Quiz</button>
     </div>
 </div>
 
@@ -60,18 +67,17 @@
     <div> {# wrapper div for easier copying since we use the first element child #}
         <h2 class="matching-quiz-set-title">Set <span class="set-title"></span></h2>
         <div class="row">
-            <div class="col s6 m4 l4 quiz-bank-container">
+            <div class="col-sm-6 col-md-4 col-lg-4 quiz-bank-container">
                 <h3 class="matching-quiz-col-title">Quiz Bank</h3>
                 <ul class="browser-default quiz-bank">
-
                 </ul>
-                <button class="btn waves-effect waves-light check-answer-button">Check Answers</button>
+                <button class="btn btn-sm btn-info check-answer-button"><i class="fas fa-clipboard-check"></i> Check Answers</button>
             </div>
-            <div class="col s6 m8 l6 answers-container">
+            <div class="col-sm-6 col-md-8 col-lg-6 answers-container">
                 <h3 class="matching-quiz-col-title">Answers</h3>
                 <ul class="answers">
                 </ul>
-                <button class="btn waves-effect waves-light red right reset-answers-button">Reset Answers</button>
+                <button class="btn btn-sm btn-warning reset-answers-button"><i class="fas fa-exclamation-triangle"></i> Reset Answers</button>
             </div>
         </div>
     </div>
@@ -98,9 +104,52 @@
 	</div>
 </div>
 
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{# bootstrap toaster doesn't work if document.body not initialized at time of include X_X #}
+{% include 'includes/scripts/bootstrap-toaster.twig' %}
+
 <script type="text/javascript">
-    $('select').material_select();
-    fixRequiredSelectorCSS();
+    $('#question-set').select2({
+        theme: 'bootstrap-5',
+        placeholder: 'Select a conference...',
+        searchInputPlaceholder: 'Search conferences...',
+        allowClear: false
+    });
+
+    var theme = "{{ prefersDarkMode(app) ? 'dark' : 'light' }}";
+
+    function showToast(title, message, isWarning) {
+        Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+        Toast.setTheme(theme === 'light' ? TOAST_THEME.LIGHT : TOAST_THEME.DARK);
+        Toast.create({
+            title: title,
+            message: message,
+            status: isWarning ? TOAST_STATUS.WARNING: TOAST_STATUS.INFO,
+            timeout: 5000
+        });
+    }        
+
 	// https://stackoverflow.com/a/2450976/3938401
 	function shuffle(array) {
 		let currentIndex = array.length,  randomIndex;
@@ -147,14 +196,15 @@
                     document.getElementById('matching-quiz-container').classList.remove('hidden');
                     
                 } else {
-                    Materialize.toast('Error creating matching question quiz: ' + response.message, 5000);
+                    console.log(response);
+                    showToast('Error!', 'Error creating matching question quiz: ' + response.message, true);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 try {
-                    Materialize.toast(xhr.responseJSON.message, 4000);
+                    showToast('Error!', xhr.responseJSON.message, true);
                 } catch (error) {
-                    Materialize.toast('Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.', 4000);
+                    showToast('Error!', 'Unknown error generating matching quiz. Please make sure you are connected to the internet or try again later.', true);
                 }
             }
         });

@@ -7,8 +7,13 @@
 {% endblock %}
 
 {% block content %}
-
-<p><a class="btn-flat blue-text waves-effect waves-blue no-uppercase" href="{{ app.yurl('/') }}">Back</a></p>
+   
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Statistics</li>
+    </ol>
+</nav>
 
 <h3>Statistics</h3>
 
@@ -20,89 +25,105 @@
         There {{ totalCommentaryQuestions == 1 ? 'is' : 'are' }} also {{ totalCommentaryQuestions }} SDA Bible Commentary {{ totalCommentaryQuestions == 1 ? 'question' : 'questions' }} in the system for this PBE year.
     </p>
 {% endif %}
-<p>Here are the statistics on a per-language basis. Click the language names to switch between language statistics.</p>
 
-<div class="row" id="quiz-tabs">
-    <div class="col s12">
-        <ul class="tabs">
+<p class="mb-0">Here are the statistics on a per-language basis. Click the language names to switch between language statistics.</p>
+
+<div class="row mt-0" id="quiz-tabs">
+    <div class="col">
+        <ul class="nav nav-tabs" role="tablist">
             {% for language in languagesByID %}            
-                <li class="tab"><a class="active teal-text" href="#{{ language.languageID }}">{{ language.name }}</a></li>
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link {{ loop.first ? 'active' : '' }}" id="tab-{{ language.languageID }}" data-bs-toggle="tab" data-bs-target="#tab-data-{{ language.languageID }}" role="tab" aria-controls="tab-data-{{ language.languageID }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ language.name }}</button>
+                </li>
             {% endfor %}
-            <div class="indicator teal" style="z-index:1"></div>
         </ul>
     </div>
-    {% for language in languagesByID %}  
-        <div class="col s12" id="{{ language.languageID }}">
-            <p>
-                Q&amp;A questions: {{ totalQuestionsByLanguageID[language.languageID] | default(0) }}
-                </br>
-                Commentary questions: {{ totalCommentaryQuestionsByLanguageID[language.languageID] | default(0) }}
-            </p>
-            <h4>Questions by Chapter</h4>
-            <table class="striped responsive-table">
-                <thead>
-                    <tr>
-                        <th>Chapter</th>
-                        <th>Question Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in chapterStatsByLanguageID[language.languageID] %}
-                        <tr>
-                            <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
-                            <td>{{ item.count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="tab-content" id="language-stat-tabs">
+        {% for language in languagesByID %}
+            <div class="tab-pane fade {{ loop.first ? 'show active' : '' }}" id="tab-data-{{ language.languageID }}" role="tabpanel" aria-labelledby="tab-{{ language.languageID }}">
+                <div class="col" id="{{ language.languageID }}-{{ language.name }}">
+                    <p class="mt-2 mb-1">
+                        Q&amp;A questions: {{ totalQuestionsByLanguageID[language.languageID] | default(0) }}
+                    </p>
+                    <p class="mb-1">
+                        Commentary questions: {{ totalCommentaryQuestionsByLanguageID[language.languageID] | default(0) }}
+                    </p>
+                    <h4>Questions by Chapter</h4>
+                    <table class="table table-striped table-responsive table-bordered responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Chapter</th>
+                                <th>Question Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in chapterStatsByLanguageID[language.languageID] %}
+                                <tr>
+                                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}">{{ item.book }} {{ item.chapter }}</td>
+                                    <td>{{ item.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-            <hr/>
+                    <hr/>
 
-            <h4>Questions by Commentary</h4>
-            <table class="striped responsive-table">
-                <thead>
-                    <tr>
-                        <th>Commentary</th>
-                        <th>Question Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in commentaryStatsByLanguageID[language.languageID] %}
-                        <tr>
-                            <td>{{ item.topic }}</td>
-                            <td>{{ item.count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    <h4>Questions by Commentary</h4>
+                    <table class="table table-striped table-responsive table-bordered responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Commentary</th>
+                                <th>Question Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in commentaryStatsByLanguageID[language.languageID] %}
+                                <tr>
+                                    <td>{{ item.topic }}</td>
+                                    <td>{{ item.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-            <hr/>
+                    <hr/>
 
-            <h4>Questions by Verse</h4>
-            <table class="striped responsive-table">
-                <thead>
-                    <tr>
-                        <th>Verse</th>
-                        <th>Question Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in verseStatsByLanguageID[language.languageID] %}
-                        <tr>
-                            <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}-{{ '%03d' | format(item.verse) }}">
-                                {{ item.book }} {{ item.chapter }}:{{ item.verse }}
-                            </td>
-                            <td>{{ item.count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endfor %}
+                    <h4>Questions by Verse</h4>
+                    <table class="table table-striped table-responsive table-bordered responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Verse</th>
+                                <th>Question Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in verseStatsByLanguageID[language.languageID] %}
+                                <tr>
+                                    <td data-sort="{{ item.book }}-{{ '%03d' | format(item.chapter) }}-{{ '%03d' | format(item.verse) }}">
+                                        {{ item.book }} {{ item.chapter }}:{{ item.verse }}
+                                    </td>
+                                    <td>{{ item.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript">
     $(document).ready(function() {
+        // $('.nav-tabs a').on('click', function (e) {
+        //     e.preventDefault()
+        //     $(this).tab('show')
+        // });
+
         datatablesProps.columnDefs = [
             { orderable: false, targets: [] }
         ];

@@ -19,13 +19,33 @@ use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigPDFView;
 use App\Models\Views\TwigView;
 use App\Models\Year;
-use Yamf\Responses\NotFound;
+use Yamf\AppConfig;
+use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\Response;
 
-class BibleFillInController extends BaseAdminController
+class BibleFillInController extends BaseAdminController implements IRequestValidator
 {
-    public function viewBibleFillIns(PBEAppConfig $app, Request $request)
+    /**
+     * Validate a request before the normal controller method is called.
+     * 
+     * Return null if the request is valid. Otherwise, return a response
+     * that will be output to the user rather than the normal controller method.
+     */
+    public function validateRequest(AppConfig $app, Request $request): ?Response
+    {
+        $response = parent::validateRequest($app, $request);
+        if ($response === null) {
+            /** @var PBEAppConfig $app */
+            if ($app->isWebAdmin) {
+                return null;
+            }
+            return new Redirect('/admin');
+        }
+        return $response;
+    }
+
+    public function viewBibleFillIns(PBEAppConfig $app, Request $request): Response
     {
         $fillInData = BibleFillInData::loadFillInData(Year::loadCurrentYear($app->db), $app->db);
         $totalQuestions = 0;
@@ -47,7 +67,7 @@ class BibleFillInController extends BaseAdminController
         return new TwigView('admin/bible-fill-ins/view-bible-fill-ins', compact('fillInData', 'totalQuestions', 'totalsByLanguage', 'languages'), 'Bible Fill In Questions');
     }
 
-    public function verifyDeleteFillInsForChapter(PBEAppConfig $app, Request $request)
+    public function verifyDeleteFillInsForChapter(PBEAppConfig $app, Request $request): Response
     {
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
@@ -58,7 +78,7 @@ class BibleFillInController extends BaseAdminController
         return new TwigView('admin/bible-fill-ins/verify-delete-chapter-fill-ins', compact('chapter', 'language', 'book'), 'Delete Bible Fill In Questions');
     }
 
-    public function deleteFillInsForChapter(PBEAppConfig $app, Request $request)
+    public function deleteFillInsForChapter(PBEAppConfig $app, Request $request): Response
     {
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
@@ -75,7 +95,7 @@ class BibleFillInController extends BaseAdminController
         }
     }
 
-    public function verifyDeleteFillInsForLanguage(PBEAppConfig $app, Request $request)
+    public function verifyDeleteFillInsForLanguage(PBEAppConfig $app, Request $request): Response
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
@@ -84,7 +104,7 @@ class BibleFillInController extends BaseAdminController
         return new TwigView('admin/bible-fill-ins/verify-delete-language-fill-ins', compact('language'), 'Delete Bible Fill In Questions');
     }
 
-    public function deleteFillInsForLanguage(PBEAppConfig $app, Request $request)
+    public function deleteFillInsForLanguage(PBEAppConfig $app, Request $request): Response
     {
         $language = Language::loadLanguageWithID($request->routeParams['languageID'], $app->db);
         if ($language === null) {
@@ -99,7 +119,7 @@ class BibleFillInController extends BaseAdminController
         }
     }
 
-    public function createLetterPDF(PBEAppConfig $app, Request $request)
+    public function createLetterPDF(PBEAppConfig $app, Request $request): Response
     {
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'] ?? 0, $app->db);
         $language = Language::loadLanguageWithID($request->routeParams['languageID'] ?? 0, $app->db);

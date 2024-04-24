@@ -38,10 +38,11 @@ class BookController extends BaseAdminController implements IRequestValidator
      * Return null if the request is valid. Otherwise, return a response
      * that will be output to the user rather than the normal controller method.
      */
-    public function validateRequest(AppConfig $app, Request $request) : ?Response
+    public function validateRequest(AppConfig $app, Request $request): ?Response
     {
         $response = parent::validateRequest($app, $request);
         if ($response === null) {
+            /** @var PBEAppConfig $app */
             if ($app->isWebAdmin) {
                 return null;
             }
@@ -50,14 +51,19 @@ class BookController extends BaseAdminController implements IRequestValidator
         return $response;
     }
 
-    public function viewBooks(PBEAppConfig $app, Request $request)
+    public function viewBooks(PBEAppConfig $app, Request $request): Response
     {
         $books = Book::loadAllBooks($app->db);
         $currentYear = Year::loadCurrentYear($app->db);
-        return new TwigView('admin/books/view-books', compact('books', 'currentYear'), 'View Books');
+        $years = Year::loadAllYears($app->db);
+        $yearsByID = [];
+        foreach ($years as $year) {
+            $yearsByID[$year->yearID] = $year;
+        }
+        return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'yearsByID'), 'View Books');
     }
 
-    public function createBook(PBEAppConfig $app, Request $request) : Response
+    public function createBook(PBEAppConfig $app, Request $request): Response
     {
         $bookName = Util::validateString($request->post, 'name');
         $numberOfChapters = Util::validateInteger($request->post, 'number-chapters');
@@ -74,7 +80,12 @@ class BookController extends BaseAdminController implements IRequestValidator
             $error = 'Bible order should be between 1 and 66, inclusive';
         }
         if ($error !== '') {
-            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters', 'bibleOrder'), 'View Books');
+            $years = Year::loadAllYears($app->db);
+            $yearsByID = [];
+            foreach ($years as $year) {
+                $yearsByID[$year->yearID] = $year;
+            }
+            return new TwigView('admin/books/view-books', compact('books', 'currentYear', 'error', 'bookName', 'numberOfChapters', 'bibleOrder', 'yearsByID'), 'View Books');
         }
 
         Book::createBook($bookName, $numberOfChapters, $currentYear->yearID, $bibleOrder, $app->db);
@@ -126,7 +137,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new Redirect('admin/books');
     }
 
-    public function verifyDeleteBook(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteBook(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
@@ -135,7 +146,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/books/verify-delete-book', compact('book'), 'Delete Book');
     }
 
-    public function deleteBook(PBEAppConfig $app, Request $request) : Response
+    public function deleteBook(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
@@ -150,7 +161,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         }
     }
 
-    public function viewBookChapters(PBEAppConfig $app, Request $request) : Response
+    public function viewBookChapters(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
@@ -160,7 +171,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/books/view-chapters', compact('book', 'chapters'), 'Book Chapters');
     }
 
-    public function createChapter(PBEAppConfig $app, Request $request) : Response
+    public function createChapter(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         if ($book === null) {
@@ -182,7 +193,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new Redirect('/admin/books/' . $book->bookID . '/chapters');
     }
 
-    public function verifyDeleteChapter(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteChapter(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
@@ -192,7 +203,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/books/verify-delete-chapter', compact('book', 'chapter'), 'Delete Chapter');
     }
 
-    public function deleteChapter(PBEAppConfig $app, Request $request) : Response
+    public function deleteChapter(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
@@ -293,7 +304,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/books/view-verses', compact('book', 'chapter', 'verses'), 'View Verses');
     }
 
-    public function addVerseToChapter(PBEAppConfig $app, Request $request) : Response
+    public function addVerseToChapter(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
@@ -314,7 +325,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new Redirect('/admin/books/' . $book->bookID . '/chapters/' . $chapter->chapterID . '/verses');
     }
 
-    public function verifyDeleteVerse(PBEAppConfig $app, Request $request) : Response
+    public function verifyDeleteVerse(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
@@ -326,7 +337,7 @@ class BookController extends BaseAdminController implements IRequestValidator
         return new TwigView('admin/books/verify-delete-verse', compact('book', 'chapter', 'verse'), 'Delete Verse');
     }
 
-    public function deleteVerse(PBEAppConfig $app, Request $request) : Response
+    public function deleteVerse(PBEAppConfig $app, Request $request): Response
     {
         $book = Book::loadBookByID($request->routeParams['bookID'], $app->db);
         $chapter = Chapter::loadChapterByID($request->routeParams['chapterID'], $app->db);
