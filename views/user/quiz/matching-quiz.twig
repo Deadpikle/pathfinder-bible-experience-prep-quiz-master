@@ -196,6 +196,7 @@
                     document.getElementById('matching-quiz-container').classList.remove('hidden');
                     
                 } else {
+                    console.log(response);
                     showToast('Error!', 'Error creating matching question quiz: ' + response.message, true);
                 }
             },
