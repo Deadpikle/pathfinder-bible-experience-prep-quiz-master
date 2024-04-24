@@ -26,8 +26,8 @@ class Question
     public int $startVerseID;
     public int $endVerseID;
     public int $commentaryID;
-    public int $commentaryStartPage;
-    public int $commentaryEndPage;
+    public ?int $commentaryStartPage;
+    public ?int $commentaryEndPage;
     public int $languageID;
     public ?Language $language;
 
