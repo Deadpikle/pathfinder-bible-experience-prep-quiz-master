@@ -257,7 +257,6 @@ class HomeController
         }
         $honeypotName = Util::validateString($request->post, 'fname');
         $isCaughtInHoneypot = $honeypotName !== '';
-        $didSucceedRecaptcha = $this->checkCloudflare($app, $request);
         if ($status->didValidate) {
             if ($app->isLocalHost) {
                 // create contact form submission record
@@ -335,6 +334,7 @@ class HomeController
         $result = file_get_contents($url_path, false, $stream);
         $response =  $result;
         $responseKeys = json_decode($response, true);
+        // var_dump($responseKeys);die();
         return intval($responseKeys['success']) === 1;
     }
 }
