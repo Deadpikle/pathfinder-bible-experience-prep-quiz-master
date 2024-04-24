@@ -9,11 +9,6 @@ use tFPDF\PDF;
 // a bunch of code modified from http://www.fpdf.org/en/script/script3.php
 // and from http://www.fpdf.org/en/tutorial/tuto6.htm (html writing with Write())
 
-// may want to switch to tPDF at https://github.com/DocnetUK/tfpdf
-// eventually but it will require substantial changes to our subclass
-// as they have changed var names, etc. 
-// (May be needed for PHP 8 compatibility; unknown if this will be the case.)
-
 require_once('lib/tfpdf/tfpdf.php');
 class PBEPDF extends tFPDF {
 
