@@ -281,6 +281,9 @@ class HomeController
                 }
                 if ($didSucceedRecaptcha) {
                     // Verified!
+                    if ($isCaughtInHoneypot) {
+                        $submission->personName = '[HONEYPOT] ' . $submission->personName;
+                    }
                     $submission->create($app->db);
                     // send email
                     if (!$isCaughtInHoneypot) {
