@@ -99,7 +99,7 @@ class HomeController
         $thirtyDayClubs = Club::loadRecentlyActiveClubs($app->db, 30);
         $thirtyDayConferenceCounts = [];
         foreach ($thirtyDayClubs as $club) {
-            if (!isset($conferenceCounts[$club->conferenceID])) {
+            if (!isset($thirtyDayConferenceCounts[$club->conferenceID])) {
                 $thirtyDayConferenceCounts[$club->conferenceID] = 1;
             } else {
                 $thirtyDayConferenceCounts[$club->conferenceID] += 1;
@@ -110,7 +110,7 @@ class HomeController
         $yearClubs = Club::loadRecentlyActiveClubs($app->db, 365);
         $yearConferenceCounts = [];
         foreach ($yearClubs as $club) {
-            if (!isset($conferenceCounts[$club->conferenceID])) {
+            if (!isset($yearConferenceCounts[$club->conferenceID])) {
                 $yearConferenceCounts[$club->conferenceID] = 1;
             } else {
                 $yearConferenceCounts[$club->conferenceID] += 1;
