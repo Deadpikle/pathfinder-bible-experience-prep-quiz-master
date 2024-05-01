@@ -98,11 +98,13 @@
             <textarea class="form-control" id="message" name="message" placeholder="I would like an access code to...I belong to the Pathfinder club named..." rows="5" required maxlength="10000">{{ submission.message }}</textarea>
         </div>
     </div>
-    <div class="row mt-1">
-        <div class="form-group col-12 col-md-6 mt-1">
-            <div class="cf-turnstile" data-sitekey="{{ app.recaptchaPublicKey }}"></div>
+    {% if not app.isLocalHost and app.recaptchaType == 'cloudflare' %}
+        <div class="row mt-1">
+            <div class="form-group col-12 col-md-6 mt-1">
+                <div class="cf-turnstile" data-sitekey="{{ app.recaptchaPublicKey }}"></div>
+            </div>
         </div>
-    </div>
+    {% endif %}
     <div class="row mt-2">
         <div class="col">
             {% if not app.isLocalHost and app.recaptchaType == 'google' %}
