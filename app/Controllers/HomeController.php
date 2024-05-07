@@ -38,6 +38,9 @@ class HomeController
 
     public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
+        if ($app->loggedIn) {
+            return new Redirect('/');
+        }
         return new TwigView('home/login', [], 'Login');
     }
 
