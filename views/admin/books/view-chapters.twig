@@ -16,7 +16,7 @@
 
 <div  id="books-div">
     <div id="create">
-        <h5>Add Chapter for {{ book.name }} ({{ book.year }})</h5>
+        <h5>Add Chapter for {{ book.name }} ({{ year.year }})</h5>
         {% include 'includes/error-message.twig' %}
         <form action="{{ app.yurl('/admin/books/' ~ book.bookID ~ '/chapters/create') }}" method="post">
             <div class="row">

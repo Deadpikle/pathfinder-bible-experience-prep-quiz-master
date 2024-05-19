@@ -168,7 +168,8 @@ class BookController extends BaseAdminController implements IRequestValidator
             return new TwigNotFound();
         }
         $chapters = Chapter::loadChaptersByBookID($book->bookID, $app->db);
-        return new TwigView('admin/books/view-chapters', compact('book', 'chapters'), 'Book Chapters');
+        $year = Year::loadYearByID($book->yearID, $app->db);
+        return new TwigView('admin/books/view-chapters', compact('book', 'chapters', 'year'), 'Book Chapters');
     }
 
     public function createChapter(PBEAppConfig $app, Request $request): Response
@@ -187,7 +188,8 @@ class BookController extends BaseAdminController implements IRequestValidator
             $error = 'Number of chapters must be greater than 0';
         }
         if ($error !== '') {
-            return new TwigView('admin/books/view-chapters', compact('book', 'chapters', 'error', 'chapterNumber', 'numberOfVerses'), 'Book Chapters');
+            $year = Year::loadYearByID($book->yearID, $app->db);
+            return new TwigView('admin/books/view-chapters', compact('book', 'chapters', 'error', 'chapterNumber', 'numberOfVerses', 'year'), 'Book Chapters');
         }
         Chapter::createChapterForBook($chapterNumber, $numberOfVerses, $book->bookID, $app->db);
         return new Redirect('/admin/books/' . $book->bookID . '/chapters');

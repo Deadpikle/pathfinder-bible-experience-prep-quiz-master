@@ -46,6 +46,9 @@ class HomeController
 
     public function attemptLogin(PBEAppConfig $app, Request $request): Response
     {
+        if ($app->loggedIn) {
+            return new Redirect('/');
+        }
         // TODO: this code needs to be refactored to models
         $query = '
             SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
