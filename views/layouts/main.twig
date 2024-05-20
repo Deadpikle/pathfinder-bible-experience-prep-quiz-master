@@ -46,7 +46,15 @@
         <script src="{{ app.yurl('/lib/bootstrap/bootstrap.bundle.min.js') }}?{{ filemtime("lib/bootstrap/bootstrap.bundle.min.js") }}"></script>
 
         <link rel="stylesheet" href="{{ app.yurl('/css/common.css') }}?{{ filemtime("css/common.css") }}" />
-
+        {% if app.isLocalHost %}
+            <style>
+                nav.navbar, footer,
+                html[data-bs-theme="dark"] nav.navbar,
+                html[data-bs-theme="dark"] footer {
+                    background-color: #444444 !important;
+                }
+            </style>
+        {% endif %}
         {% if not app.isLocalHost and app.showCookieConsent %}
             <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
         {% endif %}
@@ -69,7 +77,9 @@
         <header>
             <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
                 <div class="container">
-                    <a href="{{ homePath }}" class="navbar-brand">{{ app.websiteName }}</a>
+                    <a href="{{ homePath }}" class="navbar-brand">
+                        {{ app.isLocalHost ? app.websiteName ~ ' | Local' : app.websiteName }}
+                    </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
