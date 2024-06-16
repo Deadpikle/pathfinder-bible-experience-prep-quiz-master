@@ -109,7 +109,15 @@
             </nav>
         </header>
         <main>
-            <div id="main" class="container mt-3">
+            {% set showBanner = app.bannerIsShown and app.bannerMessage and not adminHeaderActiveStatus and not quizHeaderActiveStatus %}
+            {% if showBanner %}
+                <div class="alert alert-info m-2" role="alert">
+                    <div class="container">
+                        {{ app.bannerMessage }}
+                    </div>
+                </div>
+            {% endif %}
+            <div id="main" class="container {{ showBanner ? '' : 'mt-3' }}">
                 {% block content %}
                 {% endblock %}
             </div>

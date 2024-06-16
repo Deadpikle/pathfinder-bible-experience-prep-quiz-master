@@ -44,6 +44,9 @@ class PBEAppConfig extends AppConfig
     public string $cookieDomain;
     public string $headerForAnalytics;
 
+    public string $bannerMessage;
+    public bool $bannerIsShown;
+
     public function __construct(bool $isLocalHost, string $basePath)
     {
         parent::__construct($isLocalHost, $basePath);
@@ -78,5 +81,8 @@ class PBEAppConfig extends AppConfig
         $this->showCookieConsent = true;
         $this->cookieDomain = '';
         $this->headerForAnalytics = '';
+
+        $this->bannerMessage = '';
+        $this->bannerIsShown = false;
     }
 }

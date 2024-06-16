@@ -110,6 +110,8 @@ class Setting
         $app->analyticsURL = '';
         $app->analyticsSiteID = '1';
         $app->footerText = isset($app->settings[Setting::FooterTextKey()]) ? $app->settings[Setting::FooterTextKey()] : '';
+        $app->bannerMessage = isset($app->settings[Setting::BannerMessage]) ? $app->settings[Setting::BannerMessage] : '';
+        $app->bannerIsShown = isset($app->settings[Setting::BannerIsShown]) ? $app->settings[Setting::BannerIsShown] : false;
         $app->currentFillInChapters = isset($app->settings[Setting::CurrentFillInChapters()]) ? $app->settings[Setting::CurrentFillInChapters()] : '';
     }
 
@@ -143,6 +145,9 @@ class Setting
         return 'CurrentFillInChapters';
     }
 
+    public const BannerMessage = 'BannerMessage';
+    public const BannerIsShown = 'BannerIsShown';
+
     public static function getDefaultSettings(): array
     {
         return [
@@ -152,6 +157,8 @@ class Setting
             self::WebsiteTabTitleKey() => 'PBE Prep',
             self::FooterTextKey() => 'Scripture taken from the New King James Version®. Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved.',
             self::CurrentFillInChapters() => '',
+            self::BannerMessage => '',
+            self::BannerIsShown => false,
         ];
     }
 
@@ -164,6 +171,8 @@ class Setting
             self::WebsiteTabTitleKey() => 'Website Title (Browser Tab)',
             self::FooterTextKey() => 'Footer Text',
             self::CurrentFillInChapters() => 'Current Chapter Availability for Fill In Questions',
+            self::BannerMessage => 'Banner Message',
+            self::BannerIsShown => 'Banner shown?',
         ];
     }
 }

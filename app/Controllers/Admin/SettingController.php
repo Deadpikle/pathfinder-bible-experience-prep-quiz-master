@@ -60,6 +60,9 @@ class SettingController extends BaseAdminController implements IRequestValidator
                                  Util::validateString($request->post, Setting::FooterTextKey()), $app->db);
             Setting::saveSetting(Setting::CurrentFillInChapters(), 
                                 Util::validateString($request->post, Setting::CurrentFillInChapters()), $app->db);
+            Setting::saveSetting(Setting::BannerMessage, 
+                                Util::validateString($request->post, Setting::BannerMessage), $app->db);
+            Setting::saveSetting(Setting::BannerIsShown, Util::validateBoolean($request->post, Setting::BannerIsShown), $app->db);
             // re-init settings
             Setting::initAppWithSettings($app);
         } else {
