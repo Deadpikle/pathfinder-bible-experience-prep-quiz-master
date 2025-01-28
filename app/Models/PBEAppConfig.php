@@ -47,6 +47,14 @@ class PBEAppConfig extends AppConfig
     public string $bannerMessage;
     public bool $bannerIsShown;
 
+    public bool $isOnLoginPage;
+    public bool $isOnOtherNonLoginPage;
+    public bool $isUserIDSessionSet;
+    public ?Year $yearData;
+    public int $activeYearID;
+    public int $activeYearNumber;
+
+
     public function __construct(bool $isLocalHost, string $basePath)
     {
         parent::__construct($isLocalHost, $basePath);
@@ -84,5 +92,12 @@ class PBEAppConfig extends AppConfig
 
         $this->bannerMessage = '';
         $this->bannerIsShown = false;
+
+        $this->isOnLoginPage = false;
+        $this->isOnOtherNonLoginPage = false;
+        $this->isUserIDSessionSet = false;
+        $this->yearData = null;
+        $this->activeYearID = -1;
+        $this->activeYearNumber = -1;
     }
 }
