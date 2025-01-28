@@ -2,7 +2,6 @@
 
 namespace App\Models\Views;
 
-use App\ViewExtensions\AFMAppViewExtension;
 use App\ViewExtensions\AppViewExtension;
 use Exception;
 use Yamf\AppConfig;
