@@ -27,7 +27,7 @@ class AppConfig
     public $viewExtension; // change this value if you want to use a different file extension for your views
     public $staticViewExtension; // change this value if you want to use a different file extension for your static views
 
-    public $routerClass; // override this value to use your own custom Router child class
+    public $router;
     
     /* Setup in config-private */
     public $db; // set up in config-private.php
