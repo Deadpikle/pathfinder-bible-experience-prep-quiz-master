@@ -262,11 +262,11 @@ class BookController extends BaseAdminController implements IRequestValidator
         $sheet->fromArray($vals, null, 'A1');
         $sheet->getStyle('A1:L1')->getFont()->setBold(true);
         for ($i = 2; $i <= $lastRowNumber; $i += 4) {
-            $sheet->getStyle("A${i}:L$${i}")->getFont()->setBold(true);
-            $sheet->getStyle("A${i}:L$${i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
+            $sheet->getStyle("A{$i}:L{$i}")->getFont()->setBold(true);
+            $sheet->getStyle("A{$i}:L{$i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
         }
         // add border to final row
-        $sheet->getStyle("A${i}:L$${i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
+        $sheet->getStyle("A{$i}:L{$i}")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN)->setColor(new Color(Color::COLOR_BLACK));
         // hide first three columns as user doesn't need to change those in this case
         $sheet->getColumnDimension('A')->setVisible(false);
         $sheet->getColumnDimension('B')->setVisible(false);
