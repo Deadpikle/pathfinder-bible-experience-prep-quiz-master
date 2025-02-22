@@ -13,6 +13,10 @@
 // $app->recaptchaPublicKey = "[key here]";
 // $app->mapsAPIKey = "[key here]";
 
+if (!isset($app)) {
+    $app = new stdClass;
+}
+
 /* 
 // Uncomment these lines if you want there to be a database connection available through $app->db
 try {
