@@ -24,7 +24,7 @@ jobs:
       - name: Install Composer dependencies
         uses: php-actions/composer@v6
         with:
-          php_version: 8.1
+          php_version: 8.2
           dev: yes
           php_extensions: gd zip
 
@@ -33,7 +33,7 @@ jobs:
         # env:
         #   TEST_NAME: Scarlett
         with:
-          php_version: 8.1
+          php_version: 8.2
           php_extensions: gd zip
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
