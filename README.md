@@ -39,7 +39,7 @@ Minimum requirements: PHP 8.1+ and a MariaDB database.
 
 1. `curl -s https://getcomposer.org/installer | php`
 2. `php composer.phar install --no-dev`
-3. Copy the `config-private.sample.php` to `config-private.php`. In `config-private.php`, you'll need to do a few things. Uncomment the /* */ for the database connection details and setup your database connection details (set values for `$db`, `$user`, and `$pass`). Make sure `$app` is initialized via code such as `if (!isset($app)) { $app = new stdClass; }` (old versions of `config-private.sample.php` did not have this code).
+3. Copy the `config-private.sample.php` to `config-private.php`. In `config-private.php`, you'll need to do a few things. Uncomment the /* */ for the database connection details and setup your database connection details (set values for `$db`, `$user`, and `$pass`). Make sure `$app` is optionally initialized at the beginning of `config-private.php` via code such as `if (!isset($app)) { $app = new stdClass; }` (old versions of `config-private.sample.php` did not have this code).
 4. `vendor/bin/phinx migrate -e development` (or other environment name) -- phinx manages the database migrations and seeding, and it will read in the database connection details from `config-private.php`.
 5. Seed database using `vendor/bin/phinx seed:run`
 6. The site should now be running. If you are not seeing anything, turn on all errors by adding the code in this StackOverflow post to the top of `init.php` after the `<?php` opening tag: https://stackoverflow.com/a/5438125/3938401
