@@ -21,11 +21,11 @@ class Question
     public string $type;
     public bool $isDeleted;
     
-    public int $creatorID;
-    public int $lastEditedByID;
-    public int $startVerseID;
-    public int $endVerseID;
-    public int $commentaryID;
+    public ?int $creatorID;
+    public ?int $lastEditedByID;
+    public ?int $startVerseID;
+    public ?int $endVerseID;
+    public ?int $commentaryID;
     public ?int $commentaryStartPage;
     public ?int $commentaryEndPage;
     public int $languageID;
@@ -42,11 +42,11 @@ class Question
         $this->type = self::getBibleQnAType();
         $this->isDeleted = false;
         
-        $this->creatorID = -1;
-        $this->lastEditedByID = -1;
-        $this->startVerseID = -1;
-        $this->endVerseID = -1;
-        $this->commentaryID = -1;
+        $this->creatorID = null;
+        $this->lastEditedByID = null;
+        $this->startVerseID = null;
+        $this->endVerseID = null;
+        $this->commentaryID = null;
         $this->commentaryStartPage = 0;
         $this->commentaryEndPage = 0;
         $this->languageID = -1;
