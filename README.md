@@ -45,7 +45,9 @@ Minimum requirements: PHP 8.1+ and a MariaDB database.
 6. The site should now be running. If you are not seeing anything, turn on all errors by adding the code in this StackOverflow post to the top of `init.php` after the `<?php` opening tag: https://stackoverflow.com/a/5438125/3938401
 7. There are a few more optional settings you could set in `config-private.php` for the contact form, etc., but those are not absolutely necessary to make the site run locally.
 
-If you have issues with the database migrations, https://stackoverflow.com/a/25782795/3938401 might be helpful, and you might want to use 127.0.0.1 instead of `localhost`
+If you have issues with the database migrations, https://stackoverflow.com/a/25782795/3938401 might be helpful, and you might want to use 127.0.0.1 instead of `localhost`.
+
+Your Apache (or other web server) also needs to be set up to read `.htaccess` files so that all requests are routed through `init.php`, which handles all requests and routes them to the right controllers, etc.
 
 You should now be able to login via `pbedb7`. I highly suggest changing that password via your preferred database modification method.
 
