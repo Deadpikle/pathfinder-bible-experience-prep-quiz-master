@@ -31,7 +31,7 @@ You can view a read-only demo of the website at [https://pbeprep.com](https://pb
 
 ## Contributing
 
-Please contribute as much as you like! Any improvements and suggestions are welcome.
+Please contribute as much as you like! Any improvements and suggestions are welcome. This is an older codebase with a lot of room for improvement in terms of validation, code cleanup, etc., so if you want to get your hands dirty, please send in a PR!
 
 ## Setup
 
