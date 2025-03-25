@@ -108,17 +108,18 @@ class QuestionController implements IRequestValidator
     {
         $totalBibleFillInQuestions = Question::getNumberOfFillInBibleQuestionsForCurrentYear($app->db);
 
-        $questionType = $request->post['question-type'];
+        $questionType = Util::validateString($request->post, 'question-type');
         $isFillInTheBlank = Util::validateBoolean($request->post, 'question-is-fill-in-blank');
-        $languageID = $request->post['language-select'];
+        $languageID = Util::validateInteger($request->post, 'language-select');
 
+        $isInvalidType = false;
         if ($questionType == Question::getBibleQnAType()) {
-            $startVerseID = $request->post['start-verse-id'] ?? null;
-            if ($startVerseID == -1) {
+            $startVerseID = Util::validateInteger($request->post, 'start-verse-id');
+            if ($startVerseID <= 0) {
                 $startVerseID = null;
             }
-            $endVerseID = $request->post['end-verse-id'] ?? null;
-            if ($endVerseID == -1) {
+            $endVerseID = Util::validateInteger($request->post, 'end-verse-id');
+            if ($endVerseID <= 0) {
                 $endVerseID = null;
             }
             $commentaryID = null;
@@ -128,35 +129,41 @@ class QuestionController implements IRequestValidator
                 $questionType = Question::getBibleQnAFillType();
             }
         } else if ($questionType == Question::getCommentaryQnAType()) {
-            $commentaryID = $request->post['commentary-volume'];
-            $commentaryStartPage = $request->post['commentary-start'];
-            $commentaryEndPage = $request->post['commentary-end'];
+            $commentaryID = Util::validateInteger($request->post, 'commentary-volume');
+            $commentaryStartPage = Util::validateInteger($request->post, 'commentary-start');
+            $commentaryEndPage = Util::validateInteger($request->post, 'commentary-end');
             $startVerseID = null;
             $endVerseID = null;
             if ($isFillInTheBlank) {
                 $questionType = Question::getCommentaryQnAFillType();
             }
+        } else {
+            $isInvalidType = true;
         }
 
-        $question = new Question($request->routeParams['questionID'] ?? -1);
-        $question->question = trim($request->post['question-text']);
-        $question->answer = isset($request->post['question-answer']) ? $request->post['question-answer'] : '';
+        $question = new Question(Util::validateInteger($request->routeParams, 'questionID'));
+        $question->question = Util::validateString($request->post, 'question-text');
+        $question->answer = Util::validateString($request->post, 'question-answer');
         $question->type = $questionType;
         $question->lastEditedByID = User::currentUserID();
-        $question->numberPoints = $request->post['number-of-points'];
+        $question->numberPoints = Util::validateInteger($request->post, 'number-of-points');
         $question->startVerseID = $startVerseID;
         $question->endVerseID = $endVerseID;
 
         $question->commentaryID = $commentaryID;
-        $question->commentaryStartPage = $commentaryStartPage;
-        $question->commentaryEndPage = $commentaryEndPage;
+        $question->commentaryStartPage = $commentaryStartPage !== 0 ? $commentaryStartPage : null;
+        $question->commentaryEndPage = $commentaryEndPage !== 0 ? $commentaryEndPage : null;
         $question->languageID = $languageID;
         if ($isCreating) {
             $question->creatorID = User::currentUserID();
         } else {
-            $dbQuestion = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
+            $questionID = Util::validateInteger($request->routeParams, 'questionID');
+            $dbQuestion = Question::loadQuestionWithID($questionID, $app->db);
             $question->questionID = $dbQuestion->questionID;
             $question->creatorID = $dbQuestion->creatorID;
+        }
+        if ($isInvalidType) {
+            return new ValidationStatus(false, $question, 'Invalid question type');
         }
         // validate Bible fill in
         if ($questionType == Question::getBibleQnAFillType() && $totalBibleFillInQuestions >= 500 && $app->ENABLE_NKJV_RESTRICTIONS) {
