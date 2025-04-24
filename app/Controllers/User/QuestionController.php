@@ -190,8 +190,9 @@ class QuestionController implements IRequestValidator
         $validation = $this->validateQuestionForm($app, $request, true);
         if ($validation->didValidate) {
             $question = $validation->output;
+            /** @var Question $question */
             $question->create($app->db);
-            return new Redirect('/questions');
+            return new Redirect('/questions' . ($question->isCommentaryQnA() ? '?loadCommentaryFirst=1' : ''));
         }
         return $this->showCreateOrEditQuestion($app, $request, true, $validation->output, $validation->error);
     }
@@ -220,6 +221,7 @@ class QuestionController implements IRequestValidator
         $validation = $this->validateQuestionForm($app, $request, false);
         if ($validation->didValidate) {
             $question = $validation->output;
+            /** @var Question $question */
             $question->update($app->db);
             // check if validated before removing flag!
             $shouldRemoveFlag = Util::validateBoolean($request->post, 'remove-question-flag');
@@ -230,7 +232,7 @@ class QuestionController implements IRequestValidator
                     UserFlagged::deleteFlag($question->questionID, User::currentUserID(), $app->db);
                 }
             }
-            return new Redirect('/questions');
+            return new Redirect('/questions' . ($question->isCommentaryQnA() ? '?loadCommentaryFirst=1' : ''));
         }
         return $this->showCreateOrEditQuestion($app, $request, false, $validation->output, $validation->error);
     }
@@ -260,7 +262,7 @@ class QuestionController implements IRequestValidator
         }
         if (CSRF::verifyToken('delete-question')) {
             $question->updateDeletedFlag(true, $app->db);
-            return new Redirect('/questions');
+            return new Redirect('/questions' . ($question->isCommentaryQnA() ? '?loadCommentaryFirst=1' : ''));
         } else {
             $error = 'Unable to validate request. Please try again.';
             $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);

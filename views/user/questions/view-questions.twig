@@ -1,5 +1,7 @@
 {% extends "layouts/main.twig" %}
 
+{% set loadCommentaryFirst = _get['loadCommentaryFirst'] %}
+
 {% block headers %}
 
 {% include 'includes/scripts/datatables.twig' %}
@@ -28,10 +30,10 @@
 
 <ul id="question-type-choice" class="nav nav-pills mb-0">
     <li class="nav-item badge-info me-1">
-        <button type="button" id="bible-qna" class="nav-link nav-link-info active" aria-current="page">Bible Q&amp;A</button>
+        <button type="button" id="bible-qna" class="nav-link {{ loadCommentaryFirst ? '' : 'nav-link-info active' }}" aria-current="page">Bible Q&amp;A</button>
     </li>
     <li class="nav-item">
-        <button type="button" id="commentary-qna" class="nav-link">Commentary Q&amp;A</button>
+        <button type="button" id="commentary-qna" class="nav-link {{ loadCommentaryFirst ? 'nav-link-info active' : '' }}">Commentary Q&amp;A</button>
     </li>
 </ul>
 
@@ -380,7 +382,11 @@
         });
 
         // load questions
-        loadQuestions();
+        {% if loadCommentaryFirst %}
+            questionTypeSelectorClicked('commentary-qna', document.getElementById('commentary-qna'));
+        {% else %}
+            loadQuestions();
+        {% endif %}
     });
 </script>
 
