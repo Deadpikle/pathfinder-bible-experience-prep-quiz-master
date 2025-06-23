@@ -125,8 +125,10 @@ class MatchingQuestionsController extends BaseAdminController implements IReques
             }
             // split file by items
             $rows = explode("\r", $contents);
-            // get csv data
-            $csv = array_map('str_getcsv', $rows);
+            $csv = [];
+            foreach ($rows as $row) {
+                $csv[] = str_getcsv($row, ',', '"', "\\");
+            }
             // import data
             foreach ($csv as $row) {
                 /** @var array $row */

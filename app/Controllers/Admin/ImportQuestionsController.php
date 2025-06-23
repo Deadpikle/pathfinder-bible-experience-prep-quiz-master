@@ -61,8 +61,10 @@ class ImportQuestionsController extends BaseAdminController
         // split file by items
         $rows = explode("\r", $contents);
         // get csv data
-        $csv = array_map('str_getcsv', $rows);
-        /** @var array $csv */
+        $csv = [];
+        foreach ($rows as $row) {
+            $csv[] = str_getcsv($row, ',', '"', "\\");
+        }
         // make it an associate array with csv keys => values
         array_walk($csv, function(&$a) use ($csv) {
             if (count($a) == count($csv[0])) {
