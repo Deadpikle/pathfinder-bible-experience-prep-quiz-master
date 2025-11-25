@@ -59,7 +59,13 @@ class ImportQuestionsController extends BaseAdminController
             $isUTF8 = true;
         }
         // split file by items
-        $rows = explode("\r", $contents);
+        $rows = explode("\r\n", $contents);
+        if (count($rows) === 1) {
+            $rows = explode("\r", $contents);
+        }
+        if (count($rows) === 1) {
+            $rows = explode("\n", $contents);
+        }
         // get csv data
         $csv = [];
         foreach ($rows as $row) {
