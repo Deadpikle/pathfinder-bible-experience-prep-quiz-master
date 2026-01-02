@@ -51,6 +51,9 @@ class UserController extends BaseAdminController
             $userTypes = UserType::loadConferenceAdminEditableUserTypes($app->db);
             // load only those clubs in conference
             $clubs = Club::loadClubsInConference(User::currentConferenceID(), $app->db);
+        } else if ($app->isClubAdmin) {
+            $userTypes = UserType::loadClubAdminEditableUserTypes($app->db);
+            $clubs = [];
         } else {
             $userTypes = [];
             $clubs = [];
@@ -67,7 +70,9 @@ class UserController extends BaseAdminController
 
         if ($app->isClubAdmin) {
             $clubID = User::currentClubID();
-            $userType = UserType::loadUserTypeByName('Pathfinder', $app->db);
+            if ($userType->type === 'WebAdmin' || $userType->type === 'ConferenceAdmin') {
+                $userType = UserType::loadUserTypeByName('Pathfinder', $app->db);
+            }
         } else {
             $clubID = $request->post['club'] ?? -1;
         }

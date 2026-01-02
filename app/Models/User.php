@@ -121,13 +121,13 @@ class User
     /** @return array<User> */
     public static function loadUsersInClub(int $clubID, PDO $db): array
     {
-        return User::loadUsers(' WHERE u.ClubID = ? AND Type = "Pathfinder" AND WasDeleted = 0 ', [ $clubID ], $db);
+        return User::loadUsers(' WHERE u.ClubID = ? AND (Type = "Pathfinder" OR Type = "ClubAdmin") AND WasDeleted = 0 ', [ $clubID ], $db);
     }
 
     /** @return array<User> */
     public static function loadUsersInConference(int $conferenceID, PDO $db): array
     {
-        return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" AND WasDeleted = 0 ', [ $conferenceID ], $db);
+        return User::loadUsers(' WHERE c.ConferenceID = ? AND Type <> "ConferenceAdmin" AND Type <> "WebAdmin" AND Type <> "Guest" AND WasDeleted = 0 ', [ $conferenceID ], $db);
     }
 
     public static function loadUserByID(int $userID, PDO $db): ?User

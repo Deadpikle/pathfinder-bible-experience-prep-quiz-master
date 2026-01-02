@@ -46,7 +46,13 @@ class UserType
     /** @return array<UserType> */
     public static function loadConferenceAdminEditableUserTypes(PDO $db): array
     {
-        return UserType::loadUserTypes('WHERE Type <> "WebAdmin" AND Type <> "ConferenceAdmin" ', [], $db);
+        return UserType::loadUserTypes('WHERE Type <> "WebAdmin" AND Type <> "ConferenceAdmin" AND Type <> "Guest" ', [], $db);
+    }
+
+    /** @return array<UserType> */
+    public static function loadClubAdminEditableUserTypes(PDO $db): array
+    {
+        return UserType::loadUserTypes('WHERE Type <> "WebAdmin" AND Type <> "ConferenceAdmin" AND Type <> "Guest" ', [], $db);
     }
 
     public static function loadUserTypeByID(int $userTypeID, PDO $db): ?UserType

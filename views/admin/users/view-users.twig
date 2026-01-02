@@ -47,8 +47,8 @@
             <tr>
                 <th data-placeholder="Username">Username</th>
                 <th data-placeholder="Entry Code">Entry Code</th>
+                <th data-placeholder="User Type">User Type</th>
                 {% if app.isWebAdmin or app.isConferenceAdmin %}
-                    <th data-placeholder="User Type">User Type</th>
                     <th data-placeholder="Club">Club</th>
                 {% endif %}
                 {% if app.isWebAdmin %}
@@ -62,7 +62,7 @@
         <tbody>
             {% for user in users %}
                 {% set canEdit = true %}
-                {% if app.isClubAdmin and (user.type.type == 'ClubAdmin' or user.type.type == 'ConferenceAdmin' or user.type.type == 'WebAdmin') %}
+                {% if app.isClubAdmin and (user.type.type == 'ConferenceAdmin' or user.type.type == 'WebAdmin') %}
                     {% set canEdit = false %}
                 {% endif %}
                 {% if app.isConferenceAdmin and (user.type.type == 'ConferenceAdmin' or user.type.type == 'WebAdmin') %}
@@ -75,8 +75,8 @@
                 <tr>
                     <td>{{ user.username }}</td>
                     <td>{{ entryCode }}</td>
+                    <td>{{ user.type.displayName }}</td>
                     {% if app.isWebAdmin or app.isConferenceAdmin %}
-                        <td>{{ user.type.displayName }}</td>
                         <td>{{ clubsByID[user.clubID].name }}</td>
                     {% endif %}
                     {% if app.isWebAdmin %}
