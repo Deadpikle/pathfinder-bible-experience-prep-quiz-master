@@ -139,7 +139,7 @@ class QuizController
             }
             $quizQuestions = QuizGenerator::generateWeightedQuiz(
                 $year,
-                $request->post['no-questions-answered-correct'] ?? false,
+                Util::validateBoolean($request->post, 'no-questions-answered-correct'),
                 $app->isGuest ? min($request->post['max-questions'], 100) : $request->post['max-questions'] ?? 30,
                 $request->post['max-points'] ?? 10,
                 $request->post['fill-in-percent'] ?? 30, // defaults to 30
@@ -159,7 +159,7 @@ class QuizController
         } else {
             $quizQuestions = QuizGenerator::generateQuiz(
                 $year,
-                $request->post['no-questions-answered-correct'] ?? false,
+                Util::validateBoolean($request->post, 'no-questions-answered-correct'),
                 $request->post['max-questions'],
                 $request->post['max-points'] ?? 10,
                 $request->post['fill-in-percent'] ?? 30, // defaults to 30
