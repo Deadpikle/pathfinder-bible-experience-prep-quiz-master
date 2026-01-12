@@ -82,7 +82,14 @@
                     {% if app.isWebAdmin %}
                         <td>{{ conferencesByID[clubsByID[user.clubID].conferenceID].name }}</td>
                     {% endif %}
-                    <td data-sort="{{ user.lastLoginDate }}">{{ user.lastLoginDate ? (user.lastLoginDate | date('D, M d, Y, g:i a')) : '' }}</td>
+                    <td data-sort="{{ user.lastLoginDate }}">
+                            {# Hardcoded no-login-yet date -- should have used null or empty str but legacy code is fun! #}
+                        {% if user.lastLoginDate != '1989-12-25 00:00:00' %}
+                            {{ user.lastLoginDate ? (user.lastLoginDate | date('D, M d, Y, g:i a')) : '' }}
+                        {% else %}
+                            <em>N/A</em>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if currentUserID != user.userID and canEdit %}
                             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/users/' ~ user.userID ~ '/edit') }}"><i class="fas fa-pencil"></i> Edit</a>
