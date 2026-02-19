@@ -28,30 +28,34 @@
             <p class="mb-2 pe-5">As you use this site, please remember that some Bible questions that only cover one or two isolated verses might sound a little weird in question or answer. This website is a memorization tool to help you remember key points of verses, and we can't always bring in all the context into a question. For better overall Scriptural knowledge and theological understanding, always remember to study the surrounding verses and context for more understanding! And if you have any questions, ask your PBE leader, pastor, or someone else who can help.</p>
             <hr/>
             {% if conferences | length > 0 %}
-                <p>If you have questions, concerns, or need to have your Pathfinder club added to this system, please use the <a href="{{ app.yurl('/contact') }}">contact form</a> to get in touch with us, contact the website adminstrator (<a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>), or contact the administrator for your conference (see below).</p>
-                <p><em>If you are a Pathfinder leader at a conference or would be willing to take on the responsibility of adding new clubs to the system for your conference, please let {{ app.contactName }} know at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a> -- this would alleviate the website admins from having to add all the clubs themselves!</em></p>
+                <p>If you have questions, concerns, or need to have your Pathfinder club added to this system, please use the <a href="{{ app.yurl('/contact') }}">contact form</a> to get in touch with us, contact the website adminstrator {{ app.contactName }} directly via <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a>, or contact the administrator for your conference (see below).</p>
+                <p><em>If you are involved with Pathfinders or a Pathfinder/youth leader at a denominational entity, or you'd otherwise be willing to take on the responsibility of adding new clubs to the system for your conference, please let {{ app.contactName }} know at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a> -- this would alleviate the work of website admins from having to add all the clubs themselves!</em></p>
+                {% set numAdded = 0 %}
                 {% for conference in conferences %}
-                    {% if loop.first %}
-                        <div class="row">
-                    {% elseif loop.index0 % 4 == 0 %}
+                    {% if conference.contactEmail != app.contactEmail %}
+                        {% if numAdded == 0 %}
+                            <div class="row">
+                        {% elseif numAdded % 4 == 0 %}
+                            </div>
+                            <div class="row">
+                        {% endif %}
+                        <div class="col-sm-6 col-md-3">
+                            <p><a href="{{ conference.url }}" target="_blank"><strong>{{ conference.name }}</strong></a><br>{{ conference.contactName }}<br><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></p>
                         </div>
-                        <div class="row">
+                        {% set numAdded = numAdded + 1 %}
                     {% endif %}
-                    <div class="col-sm-6 col-md-3">
-                        <p><a href="{{ conference.url }}" target="_blank"><strong>{{ conference.name }}</strong></a><br>{{ conference.contactName }}<br><a href="mailto:{{ conference.contactEmail }}">{{ conference.contactEmail }}</a></p>
-                    </div>
-                    {% if loop.last %}
+                    {% if loop.last and numAdded > 0 %}
                         </div>
                     {% endif %}
                 {% endfor %}
-                <p>For all other questions, or to have your conference added to this system, please use the <a href="{{ app.yurl('/contact') }}">contact form</a> or contact:</p>
+                <p>For all other questions please use the <a href="{{ app.yurl('/contact') }}">contact form</a> or contact:</p>
             {% else %}
-                <p>For any questions you may have or to have your conference added to this system, please use the <a href="{{ app.yurl('/contact') }}">contact form</a> or contact:</p>
+                <p>For any questions you may have, please use the <a href="{{ app.yurl('/contact') }}">contact form</a> or contact:</p>
             {% endif %}
             <p>{{ app.contactName }}<br><a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a></p>
             <p>If you're submitting information about your Pathfinder club, please send the club name, a link to the club's website or Facebook page (if available), and the name and email address of one or more club leaders who are in charge of the club.</p>
             <p>If you're submitting information about your conference, please send the conference name, a link to the conference's website, and the name and email address of person who will administer website use for your conference.</p>
-            <p><em>If you are a Pathfinder leader at a conference or would be willing to take on the responsibility of adding new clubs to the system for your conference, please let {{ app.contactName }} know at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a> -- this would alleviate the website admins from having to add all the clubs themselves!</em></p>
+            {# <p><em>If you are a Pathfinder leader at a conference or would be willing to take on the responsibility of adding new clubs to the system for your conference, please let {{ app.contactName }} know at <a href="mailto:{{ app.contactEmail }}">{{ app.contactEmail }}</a> -- this would alleviate the website admins from having to add all the clubs themselves!</em></p> #}
             {# <hr/>
             <p>This website costs the creator approximately $50/year to host, not including time to maintain and update features. If you and your Pathfinder club are willing to donate a few dollars towards the cost of hosting this website, please email Michael Babienco, website creator, at <a href="mailto:admin@pbeprep.com">admin@pbeprep.com</a>. He'll send you a PayPal link or similar. <strong>This message will be removed when hosting costs have been covered for the current PBE year. Thank you for your help!</strong>
                 <ul class="browser-default">
