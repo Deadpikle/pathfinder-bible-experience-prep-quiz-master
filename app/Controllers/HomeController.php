@@ -36,6 +36,11 @@ class HomeController
         return new TwigView('home/index', compact('sections'), 'Home');
     }
 
+    public function message(PBEAppConfig $app, Request $request)
+    {
+        return new TwigView('home/message', [], 'Message to Parents/Club Leaders');
+    }
+
     public function showLoginScreen(PBEAppConfig $app, Request $request)
     {
         if ($app->loggedIn) {

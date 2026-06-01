@@ -56,6 +56,7 @@
     $routes = [
         '/' => ['HomeController', 'index'],
         '/index' => ['HomeController', 'index'],
+        '/message' => ['HomeController', 'message'],
         '/login' => [['GET', 'HomeController', 'showLoginScreen'],
                      ['POST', 'HomeController', 'attemptLogin']],
         '/logout' => ['HomeController', 'logout'],
