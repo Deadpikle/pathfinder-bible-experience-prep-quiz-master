@@ -20,6 +20,8 @@ class Question
     public string $dateModified;
     public string $type;
     public bool $isDeleted;
+    public bool $isActive;
+    public int $questionBankID;
     
     public ?int $creatorID;
     public ?int $lastEditedByID;
@@ -41,6 +43,8 @@ class Question
         $this->dateModified = '';
         $this->type = self::getBibleQnAType();
         $this->isDeleted = false;
+        $this->isActive = true;
+        $this->questionBankID = 1;
         
         $this->creatorID = null;
         $this->lastEditedByID = null;
@@ -53,14 +57,14 @@ class Question
         $this->language = null;
     }
 
-    /** @return array<Language> */
+    /** @return array<Question> */
     private static function loadQuestions(string $whereClause, array $whereParams, PDO $db): array
     {
         // IFnull(uf.UserFlaggedID, 0) AS IsFlagged
         $query = '
-            SELECT q.QuestionID, Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID,
+            SELECT q.QuestionID, q.QuestionBankID, Type, q.Question, Answer, NumberPoints, StartVerseID, EndVerseID,
                 q.CommentaryID, CommentaryStartPage, CommentaryEndPage, q.LanguageID, DateCreated, DateModified,
-                IsDeleted, LanguageID, CreatorID, LastEditedByID
+                IsDeleted, IsActive, LanguageID, CreatorID, LastEditedByID
             FROM Questions q '
             . $whereClause;
         
@@ -79,6 +83,8 @@ class Question
             $question->dateModified = $row['DateModified'];
             $question->type = $row['Type'];
             $question->isDeleted = $row['IsDeleted'];
+            $question->isActive = (bool)$row['IsActive'];
+            $question->questionBankID = (int)$row['QuestionBankID'];
             
             $question->creatorID = $row['CreatorID'];
             $question->lastEditedByID = $row['LastEditedByID'];
@@ -103,7 +109,7 @@ class Question
     /** @return array<Question> */
     public static function loadAllNonDeletedQuestions(PDO $db): array
     {
-        return Question::loadQuestions('WHERE IsDeleted = 0', [], $db);
+        return Question::loadQuestions('WHERE IsDeleted = 0 AND IsActive = 1', [], $db);
     }
 
     public static function loadQuestionWithID(int $questionID, PDO $db): ?Question
@@ -173,8 +179,9 @@ class Question
     {
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, LanguageID, CreatorID) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, LanguageID, CreatorID,
+            QuestionBankID)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
         $params = [
             $this->type,
@@ -188,7 +195,8 @@ class Question
             $this->commentaryStartPage,
             $this->commentaryEndPage,
             $this->languageID,
-            $this->creatorID
+            $this->creatorID,
+            $this->questionBankID
         ];
         $stmt = $db->prepare($query);
         $stmt->execute($params);
@@ -199,7 +207,7 @@ class Question
     {
         $query = '
             UPDATE Questions SET Type = ?, Question = ?, Answer = ?, NumberPoints = ?, LastEditedByID = ?, StartVerseID = ?, EndVerseID = ?,
-            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ?, DateModified = ? WHERE QuestionID = ?';
+            CommentaryID = ?, CommentaryStartPage = ?, CommentaryEndPage = ?, LanguageID = ?, QuestionBankID = ?, DateModified = ? WHERE QuestionID = ?';
         $params = [
             $this->type,
             trim($this->question),
@@ -212,6 +220,7 @@ class Question
             $this->commentaryStartPage,
             $this->commentaryEndPage,
             $this->languageID,
+            $this->questionBankID,
             date('Y-m-d H:i:s'),
             $this->questionID
         ];
@@ -229,11 +238,15 @@ class Question
     {
         $query = '
             SELECT COUNT(q.QuestionID) AS QuestionCount
-            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+            FROM Questions q
+                JOIN QuestionBanks qb ON qb.QuestionBankID = q.QuestionBankID AND qb.IsGlobal = 1
+                JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ? 
-                AND q.Type = ?';
+                AND q.Type = ?
+                AND q.IsDeleted = 0
+                AND q.IsActive = 1';
         $stmt = $db->prepare($query);
         $stmt->execute([ $year->yearID, Question::getBibleQnAFillType() ]);
         $bookQuestionData = $stmt->fetch();
@@ -248,12 +261,16 @@ class Question
         $fillIns = [];
         $query = '
             SELECT COUNT(q.QuestionID) AS QuestionCount
-            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+            FROM Questions q
+                JOIN QuestionBanks qb ON qb.QuestionBankID = q.QuestionBankID AND qb.IsGlobal = 1
+                JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ? 
                 AND q.LanguageID = ?
-                AND q.Type = "bible-qna-fill"';
+                AND q.Type = "bible-qna-fill"
+                AND q.IsDeleted = 0
+                AND q.IsActive = 1';
         $stmt = $db->prepare($query);
         foreach ($languages as $language) {
             $stmt->execute([
@@ -284,10 +301,12 @@ class Question
         $query = '
             SELECT q.Question, v.VerseID, v.Number AS VerseNumber, b.Name, c.Number AS ChapterNumber
             FROM Questions q 
+                JOIN QuestionBanks qb ON qb.QuestionBankID = q.QuestionBankID AND qb.IsGlobal = 1
                 JOIN Verses v ON q.StartVerseID = v.VerseID 
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
-            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?';
+            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?
+                AND q.IsDeleted = 0 AND q.IsActive = 1';
 
         $stmt = $db->prepare($query);
         $stmt->execute([
@@ -314,10 +333,12 @@ class Question
         $query = '
             SELECT q.Question, v.VerseID, v.Number AS VerseNumber, b.Name, c.Number AS ChapterNumber
             FROM Questions q 
+                JOIN QuestionBanks qb ON qb.QuestionBankID = q.QuestionBankID AND qb.IsGlobal = 1
                 JOIN Verses v ON q.StartVerseID = v.VerseID 
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
-            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?';
+            WHERE c.ChapterID = ? AND q.LanguageID = ? AND q.Type = ?
+                AND q.IsDeleted = 0 AND q.IsActive = 1';
         $stmt = $db->prepare($query);
         $stmt->execute([
             $chapterID,
@@ -391,10 +412,10 @@ class Question
     
             if ($questionType == Question::getBibleQnAType() || $questionType == Question::getBibleQnAFillType()) {
                 $orderByClause = ' ORDER BY bStart.Name, cStart.Number, vStart.Number, bEnd.Name, cEnd.Number, vEnd.Number, q.QuestionID ';
-                $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
+                $whereClause .= ' AND q.IsDeleted = 0 AND q.IsActive = 1 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
             } else if ($questionType == Question::getCommentaryQnAType() || $questionType == Question::getCommentaryQnAFillType()) {
                 $orderByClause = ' ORDER BY comm.Number, CommentaryStartPage, CommentaryEndPage, q.QuestionID ';
-                $whereClause .= ' AND IsDeleted = 0 AND comm.YearID = ' . $currentYear;
+                $whereClause .= ' AND q.IsDeleted = 0 AND q.IsActive = 1 AND comm.YearID = ' . $currentYear;
             } else {
                 $orderByClause = '';
             }

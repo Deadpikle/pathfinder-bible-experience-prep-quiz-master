@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\QuestionScope;
 use PDO;
 
 class Commentary
@@ -89,17 +90,19 @@ class Commentary
     }
 
     /** @return array<Commentary> */
-    public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db): array
+    public static function loadCommentariesWithActiveQuestions(int $yearID, PDO $db, ?QuestionScope $scope = null): array
     {
+        $bankPredicate = $scope?->readPredicate('q') ?? ['sql' => '1 = 1', 'params' => []];
         $query = '
             SELECT DISTINCT c.CommentaryID, Number, TopicName, Years.Year
             FROM Commentaries c 
                 JOIN Questions q ON c.CommentaryID = q.CommentaryID
-                JOIN Years ON Commentaries.YearID = Years.YearID
-            WHERE Years.YearID = ? AND q.IsDeleted = 0
+                JOIN Years ON c.YearID = Years.YearID
+            WHERE Years.YearID = ? AND q.IsDeleted = 0 AND q.IsActive = 1
+                AND ' . $bankPredicate['sql'] . '
             ORDER BY Number';
         $stmt = $db->prepare($query);
-        $stmt->execute([ $yearID ]);
+        $stmt->execute(array_merge([ $yearID ], $bankPredicate['params']));
         $data = $stmt->fetchAll();
 
         $output = [];

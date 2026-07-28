@@ -5,6 +5,7 @@ namespace App\Models;
 use PDO;
 
 use App\Models\Year;
+use App\Services\QuestionScope;
 
 class Chapter
 {
@@ -66,18 +67,20 @@ class Chapter
     }
 
     /** @return array<Chapter> */
-    public static function loadChaptersWithActiveQuestions(Year $year, PDO $db): array
+    public static function loadChaptersWithActiveQuestions(Year $year, PDO $db, ?QuestionScope $scope = null): array
     {
+        $bankPredicate = $scope?->readPredicate('q') ?? ['sql' => '1 = 1', 'params' => []];
         $query = '
             SELECT DISTINCT b.Name, c.BookID, c.ChapterID, c.Number AS ChapterNumber, c.NumberVerses
             FROM Chapters c
                 JOIN Books b ON b.BookID = c.BookID
                 JOIN Verses v ON c.ChapterID = v.ChapterID
                 JOIN Questions q ON v.VerseID = q.StartVerseID
-            WHERE b.YearID = ? AND q.IsDeleted = 0
+            WHERE b.YearID = ? AND q.IsDeleted = 0 AND q.IsActive = 1
+                AND ' . $bankPredicate['sql'] . '
             ORDER BY b.Name, ChapterNumber';
         $stmt = $db->prepare($query);
-        $stmt->execute([ $year->yearID ]);
+        $stmt->execute(array_merge([ $year->yearID ], $bankPredicate['params']));
         $data = $stmt->fetchAll();
         $output = [];
         foreach ($data as $row) {

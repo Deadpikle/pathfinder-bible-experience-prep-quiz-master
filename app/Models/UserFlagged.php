@@ -46,32 +46,37 @@ class UserFlagged
 
     public static function addFlagIfNecessary(int $questionID, int $userID, string $flagReason, PDO $db): bool
     {
-        try {
-            // Make sure it's not in the table already before inserting!
-            $params = [
-                $questionID,
-                $userID
-            ];
-    
-            $query = 'SELECT 1 FROM UserFlagged WHERE QuestionID = ? AND UserID = ?';
-            $stmt = $db->prepare($query);
-            $stmt->execute($params);
-            $didFind = count($stmt->fetchAll()) >= 1 ? true : false;
-            if (!$didFind) {
-                $query = ' INSERT INTO UserFlagged (QuestionID, UserID, Reason) VALUES (?, ?, ?) ';
-                $stmt = $db->prepare($query);
-                $stmt->execute([
-                    $questionID,
-                    $userID,
-                    $flagReason
-                ]);
-            }
-    
-            return true;
-        }
-        catch (PDOException $e) {
+        if ($questionID <= 0 || $userID <= 0) {
             return false;
         }
+
+        try {
+            // The unique (UserID, QuestionID) key makes this atomic under
+            // concurrent requests; the no-op update preserves the first reason.
+            $query = '
+                INSERT INTO UserFlagged (QuestionID, UserID, Reason)
+                VALUES (?, ?, ?)
+                ON DUPLICATE KEY UPDATE UserFlaggedID = UserFlaggedID
+            ';
+            $stmt = $db->prepare($query);
+            $stmt->execute([$questionID, $userID, $flagReason]);
+            return true;
+        } catch (PDOException $exception) {
+            return false;
+        }
+    }
+
+    public static function addFlagForCurrentUser(
+        int $questionID,
+        string $flagReason,
+        PDO $db
+    ): bool {
+        return self::addFlagIfNecessary(
+            $questionID,
+            User::currentUserID(),
+            $flagReason,
+            $db
+        );
     }
 
     public static function isFlagged(int $questionID, int $userID, PDO $db): bool

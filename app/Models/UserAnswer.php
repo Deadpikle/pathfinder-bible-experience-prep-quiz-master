@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use PDO;
 use PDOException;
+use Throwable;
 
 class UserAnswer
 {
@@ -33,53 +36,94 @@ class UserAnswer
     }
 
     /**
-     * $answers -> array -- each value has the following keys:
-     *      'questionID' -- PK ID of question
-     *      'userID'  -- PK ID of user
-     *      'userAnswer' -- raw user answer in text form 
-     *      'dateAnswered' -- when they answered
-     *      'correct' -- whether or not they answered correctly
+     * Save current mastery state for the authenticated user.
+     *
+     * Client-provided user IDs and timestamps are intentionally ignored. Full
+     * attempt history is stored separately; this table remains one row per
+     * user/question for fast quiz generation.
      */
     public static function saveUserAnswers(array $answers, PDO $db): bool
     {
-        // prepare everything
-        // we don't want to add duplicate rows for a question
-        // so that generate-quiz has a bit easier of a time.
-        // I couldn't figure out an easy/quick way to have multiple rows for an answered question 
-        // where some of them had correct = false and one had correct = true. Probably need a GROUP BY and HAVING. 
-        // Keeping only one row in the db for this info makes it easier to generate a quiz. :effort:
-        // I'm sure there's a better way.
-        $query = 'SELECT 1 FROM UserAnswers WHERE QuestionID = ? AND UserID = ?';
-        $searchStmt = $db->prepare($query);
-        $insertQuery = 'INSERT INTO UserAnswers (Answer, DateAnswered, WasCorrect, QuestionID, UserID) VALUES (?, ?, ?, ?, ?)';
-        $insertStmnt = $db->prepare($insertQuery);
-        $updateQuery = 'UPDATE UserAnswers SET Answer = ?, DateAnswered = ?, WasCorrect = ? WHERE QuestionID = ? AND UserID = ?';
-        $updateStmnt = $db->prepare($updateQuery);
-        try {
-            foreach ($answers as $answer) {
-                $searchParams = [
-                    $answer['questionID'],
-                    $answer['userID']
-                ];
-                $searchStmt->execute($searchParams);
-                $didFind = count($searchStmt->fetchAll()) >= 1 ? true : false;
-                $insertUpdateParams = [
-                    $answer['userAnswer'],
-                    $answer['dateAnswered'],
-                    $answer['correct'],
-                    $answer['questionID'],
-                    $answer['userID']
-                ];
-                if (!$didFind) {
-                    $insertStmnt->execute($insertUpdateParams);
-                }
-                else {
-                    $updateStmnt->execute($insertUpdateParams);
-                }
-            }   
-            return true;
+        return self::saveUserAnswersForUser(
+            $answers,
+            User::currentUserID(),
+            $db
+        );
+    }
+
+    /**
+     * Server-side entry point for controllers, workers, and attempt completion.
+     *
+     * @param array<array{questionID: mixed, userAnswer?: mixed, correct?: mixed}> $answers
+     */
+    public static function saveUserAnswersForUser(
+        array $answers,
+        int $userID,
+        PDO $db,
+        ?DateTimeInterface $answeredAt = null
+    ): bool {
+        if ($userID <= 0) {
+            return false;
         }
-        catch (PDOException $e) {
+
+        $answeredAt ??= new DateTimeImmutable();
+        $dateAnswered = $answeredAt->format('Y-m-d H:i:s');
+        $ownsTransaction = !$db->inTransaction();
+
+        try {
+            $upsert = $db->prepare('
+                INSERT INTO UserAnswers
+                    (Answer, DateAnswered, WasCorrect, QuestionID, UserID)
+                VALUES (?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    Answer = VALUES(Answer),
+                    DateAnswered = VALUES(DateAnswered),
+                    WasCorrect = VALUES(WasCorrect)
+            ');
+            if ($ownsTransaction) {
+                $db->beginTransaction();
+            }
+
+            foreach ($answers as $answer) {
+                if (!is_array($answer)) {
+                    throw new PDOException('Each answer must be an object.');
+                }
+                $questionID = filter_var(
+                    $answer['questionID'] ?? null,
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['min_range' => 1]]
+                );
+                if ($questionID === false) {
+                    throw new PDOException('A valid question ID is required.');
+                }
+
+                $rawAnswer = $answer['userAnswer'] ?? '';
+                if (!is_scalar($rawAnswer) && $rawAnswer !== null) {
+                    throw new PDOException('The answer must be text.');
+                }
+
+                $wasCorrect = filter_var(
+                    $answer['correct'] ?? false,
+                    FILTER_VALIDATE_BOOLEAN
+                );
+
+                $upsert->execute([
+                    (string)($rawAnswer ?? ''),
+                    $dateAnswered,
+                    (int)$wasCorrect,
+                    (int)$questionID,
+                    $userID,
+                ]);
+            }
+
+            if ($ownsTransaction) {
+                $db->commit();
+            }
+            return true;
+        } catch (Throwable $exception) {
+            if ($ownsTransaction && $db->inTransaction()) {
+                $db->rollBack();
+            }
             return false;
         }
     }

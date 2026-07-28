@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use PDO;
+use Throwable;
 
 class Conference
 {
@@ -90,38 +91,102 @@ class Conference
 
     public function create(PDO $db)
     {
-        $query = '
-            INSERT INTO Conferences (Name, URL, ContactName, ContactEmail) 
-            VALUES (?, ?, ?, ?)';
-        $stmnt = $db->prepare($query);
-        $stmnt->execute([
-            $this->name,
-            $this->url,
-            $this->contactName,
-            $this->contactEmail
-        ]);
-        $this->conferenceID = intval($db->lastInsertId());
+        $ownsTransaction = !$db->inTransaction();
+        if ($ownsTransaction) {
+            $db->beginTransaction();
+        }
+
+        try {
+            $query = '
+                INSERT INTO Conferences (Name, URL, ContactName, ContactEmail)
+                VALUES (?, ?, ?, ?)';
+            $stmnt = $db->prepare($query);
+            $stmnt->execute([
+                $this->name,
+                $this->url,
+                $this->contactName,
+                $this->contactEmail
+            ]);
+            $this->conferenceID = intval($db->lastInsertId());
+            QuestionBank::ensureConferenceBanks(
+                $this->conferenceID,
+                $this->name,
+                $db
+            );
+
+            if ($ownsTransaction) {
+                $db->commit();
+            }
+        } catch (Throwable $exception) {
+            if ($ownsTransaction && $db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
     }
 
     public function update(PDO $db)
     {
-        $query = '
-            UPDATE Conferences SET Name = ?, URL = ?, ContactName = ?, ContactEmail = ?
-            WHERE ConferenceID = ?';
-        $stmnt = $db->prepare($query);
-        $stmnt->execute([
-            $this->name,
-            $this->url,
-            $this->contactName,
-            $this->contactEmail,
-            $this->conferenceID,
-        ]);
+        $ownsTransaction = !$db->inTransaction();
+        if ($ownsTransaction) {
+            $db->beginTransaction();
+        }
+        try {
+            $query = '
+                UPDATE Conferences SET Name = ?, URL = ?, ContactName = ?, ContactEmail = ?
+                WHERE ConferenceID = ?';
+            $stmnt = $db->prepare($query);
+            $stmnt->execute([
+                $this->name,
+                $this->url,
+                $this->contactName,
+                $this->contactEmail,
+                $this->conferenceID,
+            ]);
+            $db->prepare('
+                UPDATE QuestionBanks qb
+                INNER JOIN ConferenceQuestionBanks cqb
+                    ON cqb.QuestionBankID = qb.QuestionBankID AND cqb.IsOverlay = 1
+                SET qb.Name = ?, qb.DateModified = CURRENT_TIMESTAMP
+                WHERE cqb.ConferenceID = ?
+            ')->execute([trim($this->name) . ' Private', $this->conferenceID]);
+            if ($ownsTransaction) {
+                $db->commit();
+            }
+        } catch (Throwable $exception) {
+            if ($ownsTransaction && $db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
     }
 
     public function delete(PDO $db)
     {
-        $query = 'DELETE FROM Conferences WHERE ConferenceID = ?';
-        $stmnt = $db->prepare($query);
-        $stmnt->execute([ $this->conferenceID ]);
+        $ownsTransaction = !$db->inTransaction();
+        if ($ownsTransaction) {
+            $db->beginTransaction();
+        }
+        try {
+            $overlay = QuestionBank::loadConferenceOverlay($this->conferenceID, $db);
+            $query = 'DELETE FROM Conferences WHERE ConferenceID = ?';
+            $stmnt = $db->prepare($query);
+            $stmnt->execute([ $this->conferenceID ]);
+            if ($overlay !== null) {
+                $db->prepare('
+                    UPDATE QuestionBanks
+                    SET IsDeleted = 1, DateModified = CURRENT_TIMESTAMP
+                    WHERE QuestionBankID = ? AND IsGlobal = 0
+                ')->execute([$overlay->questionBankID]);
+            }
+            if ($ownsTransaction) {
+                $db->commit();
+            }
+        } catch (Throwable $exception) {
+            if ($ownsTransaction && $db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $exception;
+        }
     }
 }

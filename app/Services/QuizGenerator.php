@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Language;
 use App\Models\NonBlankableWord;
 use App\Models\Question;
+use App\Models\User;
 use App\Models\Util;
 use PDO;
 
@@ -55,6 +56,12 @@ class QuizGenerator
         ))) : 30;
 
         $languagesByID = Language::loadAllLanguagesByID($db);
+        $questionScope = QuestionScope::forUser(
+            $userID,
+            $db,
+            User::currentConferenceID()
+        );
+        $bankScopePredicate = $questionScope->readPredicateLiteral('q');
 
         // question type values:
         // both
@@ -130,9 +137,11 @@ class QuizGenerator
                 LEFT JOIN Verses vEnd ON q.EndVerseID = vEnd.VerseID 
                 LEFT JOIN Chapters cEnd on vEnd.ChapterID = cEnd.ChapterID 
                 LEFT JOIN Books bEnd ON bEnd.BookID = cEnd.BookID 
-                LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID';
+                LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
+                    AND uf.UserID = ' . (int)$userID;
         if ($shouldAvoidPastCorrectAnswers) {
-            $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
+            $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID
+                AND ua.UserID = ' . (int)$userID . ' ';
         }
         $whereClause = ' 
             WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "bible-qna"';
@@ -140,14 +149,15 @@ class QuizGenerator
             $whereClause .= ' AND cStart.ChapterID IN (' . implode(',', $chapterIDs) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
-            $whereClause .= '  AND (ua.UserAnswerID IS null 
-                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0 AND ua.UserID = ' . $userID . '))'; 
+            $whereClause .= '  AND (ua.UserAnswerID IS null
+                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0))';
         }
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "bible-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
 
-        $whereClause .= ' AND IsDeleted = 0 AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
+        $whereClause .= ' AND q.IsDeleted = 0 AND q.IsActive = 1 AND ' . $bankScopePredicate
+            . ' AND bStart.YearID = ' . $currentYear . ' AND (q.EndVerseID IS null OR bEnd.YearID = ' . $currentYear . ')';
 
         if ($languageID != -1) {
             $whereClause .= ' AND l.LanguageID = ' . $languageID;
@@ -189,10 +199,12 @@ class QuizGenerator
         $fromPortion = '
             FROM Questions q 
                 LEFT JOIN UserFlagged uf ON uf.QuestionID = q.QuestionID
+                    AND uf.UserID = ' . (int)$userID . '
                 JOIN Commentaries comm ON q.CommentaryID = comm.CommentaryID
                 JOIN Languages l ON q.LanguageID = l.LanguageID';
         if ($shouldAvoidPastCorrectAnswers) {
-            $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID '; 
+            $fromPortion .= ' LEFT JOIN UserAnswers ua ON ua.QuestionID = q.QuestionID
+                AND ua.UserID = ' . (int)$userID . ' ';
         }
         $whereClause = ' 
             WHERE NumberPoints <= ' . $maxPoints . ' AND q.Type = "commentary-qna"';
@@ -200,13 +212,14 @@ class QuizGenerator
             $whereClause .= ' AND comm.CommentaryID IN (' . implode(',', $commentaryIDs) . ') ';
         }
         if ($shouldAvoidPastCorrectAnswers) {
-            $whereClause .= '  AND (ua.UserAnswerID IS null 
-                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0 AND ua.UserID = ' . $userID . '))'; 
+            $whereClause .= '  AND (ua.UserAnswerID IS null
+                OR (ua.UserAnswerID IS NOT null AND ua.WasCorrect = 0))';
         }
         if ($shouldShowOnlyRecentlyAdded) {
             $whereClause = ' WHERE q.Type = "commentary-qna" AND DateCreated >= "' . $recentDayAmount . '" ';
         }
-        $whereClause .= ' AND IsDeleted = 0 AND comm.YearID = ' . $currentYear;
+        $whereClause .= ' AND q.IsDeleted = 0 AND q.IsActive = 1 AND ' . $bankScopePredicate
+            . ' AND comm.YearID = ' . $currentYear;
 
         if ($languageID != -1) {
             $whereClause .= " AND l.LanguageID = " . $languageID;
