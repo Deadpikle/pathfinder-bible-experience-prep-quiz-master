@@ -19,6 +19,8 @@
 </nav>
 
 <div id="quiz-taking">
+    <div id="complete-attempt-token" class="hidden">{{ csrf('complete-quiz-attempt') | raw }}</div>
+    <div id="flag-question-token" class="hidden">{{ csrf('flag-quiz-question') | raw }}</div>
     <div id="loading-bar" class="preloader-wrapper active text-center">
         <i class="fas fa-cog fa-spin fa-3x valign-middle me-2"></i> 
         <span class="valign-middle loading-text">Generating quiz...</span>
@@ -100,13 +102,15 @@
                                 <button id="next-question" class="btn btn-sm btn-primary align-bottom-button mb-1">Next question <i class="fas fa-arrow-right"></i></button>
                                 <button id="tally-points" class="btn btn-sm btn-tertiary align-bottom-button mb-1"><i class="fas fa-clipboard-check"></i> Tally Points</button>
                             </div>
-                            <p class="mb-0 mt-1">
-                                <small>Make sure to save your correct answers after finishing the quiz! They will not be saved automatically.</small>
-                            </p>
+                            {% if not app.isGuest %}
+                                <p class="mb-0 mt-1">
+                                    <small>Make sure to save your correct answers after finishing the quiz! They will not be saved automatically.</small>
+                                </p>
+                            {% endif %}
                         </div>
                         <hr/>
                         <p id="quiz-message"></p>
-                        <div class="row">
+                        <div class="row{{ app.isGuest ? ' hidden' : '' }}">
                             <div class="col-sm-8 col-md-4">
                                 <div class="form-group">
                                     <label for="flag-reason">Flag reason</label>
@@ -128,7 +132,7 @@
                                 <button id="flag-question" class="btn btn-sm btn-info align-bottom-button mb-1"><i class="fas fa-flag"></i> Flag question</button>
                             </div>
                         </div>
-                        <button id="save-data" class="btn btn-sm btn-primary mt-2">Save answers</button>
+                        <button id="save-data" class="btn btn-sm btn-primary mt-2{{ attemptID > 0 ? '' : ' hidden' }}"{{ attemptID > 0 ? '' : ' disabled' }}>Save answers</button>
                         <button id="end-quiz" class="btn btn-sm btn-info mt-2">End quiz</button>
                     </div>
                 </div>
@@ -173,7 +177,7 @@
 {% block scripts %}
 
 <script type="text/javascript">
-    var translations = {{ json_encode(translations) | raw }};
+    var translations = {{ safeJson(translations) | raw }};
     function translate(str) {
         if (str in translations && typeof translations[str] !== undefined && translations[str] !== 'undefined') {
             return translations[str];
@@ -215,8 +219,8 @@
         var viewFillInTheBlankAnswersInBoldByDefault = {{ viewFillInTheBlankAnswersInBold ? 'true' : 'false' }};
         var disableQuestionTimer = {{ disableQuestionTimer ? 'true' : 'false' }};
         var disableAutoShowAnswer = {{ disableAutoShowAnswer ? 'true' : 'false' }};
-        var userID = {{ userID }};
-        var bibleNames = {{ json_encode(bibleNames) | raw }};
+        var attemptID = {{ attemptID }};
+        var bibleNames = {{ safeJson(bibleNames) | raw }};
         var userLangAbbr = "{{ userLangAbbr }}";
         var currentQuestionIndex = 0;
         var overallStats = new Stats();
@@ -263,10 +267,49 @@
         var timer = new easytimer.Timer();
 
         var answerIsPrefix = translate('The answer is:');
+
+        function renderAnswer(answer, containsSafeFillInMarkup) {
+            $questionAnswerText.empty();
+            $questionAnswerText.append(document.createTextNode(answerIsPrefix + ' '));
+            if (containsSafeFillInMarkup) {
+                // fillInText() escapes every database-authored fragment and
+                // returns only the fixed <strong>/<input> markup it creates.
+                $questionAnswerText.append(answer);
+            }
+            else {
+                $questionAnswerText.append(document.createTextNode(String(answer == null ? '' : answer)));
+            }
+        }
+
+        function appendHistoryValue($list, label, value, containsSafeFillInMarkup) {
+            var $item = $('<li>');
+            $item.append($('<strong>').text(label + ':'));
+            $item.append(document.createTextNode(' '));
+            if (containsSafeFillInMarkup) {
+                $item.append(value);
+            }
+            else {
+                $item.append(document.createTextNode(String(value == null ? '' : value)));
+            }
+            $list.append($item);
+            return $item;
+        }
+
+        function renderHistoryFillInAnswer(index, fillInData, shouldBold) {
+            var $answer = $('#history-' + index + ' .history-answer').empty();
+            $answer.append($('<strong>').text('Answer:'));
+            $answer.append(document.createTextNode(' '));
+            if (shouldBold) {
+                $answer.append(fillInText(fillInData, true));
+            }
+            else {
+                $answer.append(document.createTextNode(fillInAnswerString(fillInData)));
+            }
+        }
         
         function countdownTimer(timerLength) {
             timer.addEventListener('secondsUpdated', function (e) {
-                $('#question-timer').html(timer.getTotalTimeValues().seconds);
+                $('#question-timer').text(timer.getTotalTimeValues().seconds);
                 if (timer.getTotalTimeValues().seconds === 10) {
                     $('#question-timer').css('color', 'red');
                 }   
@@ -278,33 +321,48 @@
                     showAnswer.click();
                 }
                 else {
-                    $('#question-timer').html('<strong>TIME\'S UP!</strong>');
+                    $('#question-timer').empty().append($('<strong>').text('TIME\'S UP!'));
                 }
             });
             preTimer.start({countdown: true, precision: 'seconds', startValues: {seconds: 10}});
             preTimer.addEventListener('secondsUpdated', function (e) {
-                $('#question-pretimer').html(preTimer.getTotalTimeValues().seconds);
+                $('#question-pretimer').text(preTimer.getTotalTimeValues().seconds);
                 if (preTimer.getTotalTimeValues().seconds === 1) {
-                    $('#seconds-text').html('second...');
+                    $('#seconds-text').text('second...');
                 }
             });
             preTimer.addEventListener('targetAchieved', function (e) {
-                $('#countdown-text').html('');
-                $('#question-pretimer').html('');
-                $('#question-timer').html(timerLength);
+                $('#countdown-text').text('');
+                $('#question-pretimer').text('');
+                $('#question-timer').text(timerLength);
                 $('#timer-icon').show();
-                $('#seconds-text').html('');
+                $('#seconds-text').text('');
                 timer.stop();
                 timer.start({countdown: true, precision: 'seconds', startValues: {seconds: timerLength}}); 
             });            
         }
 
         function showQuizError(message) {
-            $('#quiz-error').html(message).show();
+            $('#quiz-error').text(message).show();
+        }
+
+        function showEmptyQuizError(setupURL) {
+            var $error = $('#quiz-error').empty();
+            $error.append(
+                $('<p>')
+                    .addClass('mb-2 mt-2')
+                    .text('No questions available! Please try selecting different Bible chapters, commentaries, and/or resetting your saved answers.')
+            );
+            var $backLink = $('<a>')
+                .addClass('btn btn-info')
+                .attr('href', setupURL)
+                .append($('<i>').addClass('fas fa-arrow-left'))
+                .append(document.createTextNode(' Back to Quiz Setup'));
+            $error.append($('<p>').append($backLink)).show();
         }
 
         function showQuizMessage(message) {
-            $(quizMessageLabel).html(message).show();
+            $(quizMessageLabel).text(message).show();
         }
 
         function hideQuizMessage() {
@@ -324,6 +382,7 @@
                 data: {
                     questionID: currentQuestion.id,
                     reason: reason,
+                    token: $('#flag-question-token input[name="token"]').val(),
                 },
                 success: function(response) {
                     if (response.status == 200) {
@@ -346,9 +405,10 @@
             showQuizMessage('Saving answers...');
             $.ajax({
                 type: 'POST',
-                url: '{{ app.yurl('/quiz/answers/save') }}',
+                url: '{{ app.yurl('/quiz/attempts') }}/' + attemptID + '/complete',
                 data: {
-                    answers: userAnswers
+                    answers: userAnswers,
+                    token: $('#complete-attempt-token input[name="token"]').val()
                 },
                 success: function(response) {
                     if (response.status == 200) {
@@ -394,10 +454,10 @@
                 else {
                     outputAnswer = fillInAnswerString(currentQuestion.fillInData);
                 }
-                $questionAnswerText.html(answerIsPrefix + ' ' + outputAnswer);
+                renderAnswer(outputAnswer, fullFillInCheckbox.checked);
             }
             else {
-                $questionAnswerText.html(answerIsPrefix + ' ' + currentQuestion.answer);
+                renderAnswer(currentQuestion.answer, false);
             }
             $questionAnswerText.show();
         }
@@ -410,7 +470,7 @@
             else {
                 outputAnswer = fillInAnswerString(currentQuestion.fillInData);
             }
-            $questionAnswerText.html(answerIsPrefix + ' ' + outputAnswer);
+            renderAnswer(outputAnswer, this.checked);
         });
         if (viewFillInTheBlankAnswersInBoldByDefault) {
             fullFillInCheckbox.checked = true;
@@ -420,14 +480,7 @@
             for (var i = 0; i < history.length; i++) {
                 var isFillIn = isFillInQuestion(history[i].type);
                 if (isFillIn) {
-                    var answerText = '';
-                    if (this.checked) {
-                        answerText = fillInText(history[i].fillInData, true);
-                    }
-                    else {
-                        answerText = fillInAnswerString(history[i].fillInData);
-                    }
-                    $('#history-' + i + ' .history-answer').html('<strong>Answer:</strong> ' + answerText);
+                    renderHistoryFillInAnswer(i, history[i].fillInData, this.checked);
                 }
             }
         });
@@ -459,10 +512,10 @@
             preTimer.stop();
             timer.stop();
             $('#question-timer').css("color", "var(--bs-body-color)");
-            $("#countdown-text").html("");
-            $("#question-pretimer").html("");
-            $("#question-timer").html("");
-            $("#seconds-text").html("");
+            $("#countdown-text").text("");
+            $("#question-pretimer").text("");
+            $("#question-timer").text("");
+            $("#seconds-text").text("");
             $("#timer-icon").hide();
             $("#countdown").hide();
         }
@@ -517,15 +570,15 @@
             }
             var answerData = {
                 userAnswer: userAnswer,
-                dateAnswered: (new Date()).toISOString().replace('T', ' ').replace('Z', ''),
+                attemptItemID: currentQuestion.attemptItemID,
                 questionID: currentQuestion.id,
-                userID: userID,
+                pointsEarned: pointsAchieved,
                 correct: wasCorrect // TODO: should this change to didGetAllPossible?
             };
             userAnswers.push(answerData);
             // update points earned & points possible
             overallStats.add(pointsAchieved, currentQuestion.points)
-            $("#user-points-earned").html(overallStats.toString());
+            $("#user-points-earned").text(overallStats.toString());
             // Now update individual stats
             var key = statsKeyForQuestion(currentQuestion);
             // https://stackoverflow.com/a/1098955/3938401 -- checking for key in object
@@ -543,24 +596,25 @@
             item.stats.add(pointsAchieved, currentQuestion.points);
             updateStatsTab(item);
             // add to user's question history
-            var answerText = $questionAnswerText.html();
-            answerText = answerText.replace(answerIsPrefix, '');
+            var answerText = currentQuestion.answer;
             var questionText = "";
+            var answerContainsSafeFillInMarkup = false;
             if (isFillIn) {
                 questionText = fillInText(currentQuestion.fillInData, false, true);
                 if (historyFillInCheckbox.checked) {
                     answerText = fillInText(currentQuestion.fillInData, true);
+                    answerContainsSafeFillInMarkup = true;
                 }
                 else {
                     answerText = fillInAnswerString(currentQuestion.fillInData);
                 }
             }
             else {
-                questionText = $("#question-text").html();
+                questionText = $("#question-text").text();
             } 
             addToHistory(currentQuestion.verseText, currentQuestion.type, questionText, answerText, 
                          userAnswer, correctAnswerCheckbox.checked, pointsAchieved,
-                         currentQuestion.fillInData);
+                         currentQuestion.fillInData, answerContainsSafeFillInMarkup);
         }
 
         nextQuestion.addEventListener('click', function() {
@@ -568,9 +622,9 @@
             moveToNextQuestion();
             $('#countdown').show();
             if (!disableQuestionTimer) {
-                $('#question-pretimer').html("10");
+                $('#question-pretimer').text("10");
             }
-            $("#question-timer").html("");
+            $("#question-timer").text("");
         }, false);
 
         tallyPoints.addEventListener('click', function() {
@@ -635,8 +689,9 @@
                 }
                 data.verseText = verseText; // for use later on stats
                 if (isFillInQuestion(data.type)) {
-                    $('#fill-in-title').empty().html(translate('Fill in the blanks for') + ' ' + verseText);
-                    $('#fill-in-data').empty().html(createFillInInput('#fill-in-data', data.fillInData));
+                    $('#fill-in-title').text(translate('Fill in the blanks for') + ' ' + verseText);
+                    $('#fill-in-data').empty();
+                    createFillInInput('#fill-in-data', data.fillInData);
                     $(qnaDiv).hide();
                     $(fillInDiv).show();
                 }
@@ -651,7 +706,7 @@
                         dataQuestion = '¿' + uppercaseFirstLetter(dataQuestion);
                     }
                     questionText += dataQuestion;
-                    $("#question-text").html(questionText);
+                    $("#question-text").text(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();
                 }
@@ -662,8 +717,9 @@
                     var questionTitleText = 
                         translate('Fill in the blanks for the SDA Bible Commentary for') + ' ' +
                         translate(data.topic) + ', ' + pageStr;
-                    $("#fill-in-title").empty().html(questionTitleText);
-                    $("#fill-in-data").empty().html(createFillInInput("#fill-in-data", data.fillInData));
+                    $("#fill-in-title").text(questionTitleText);
+                    $("#fill-in-data").empty();
+                    createFillInInput("#fill-in-data", data.fillInData);
                     $(qnaDiv).hide();
                     $(fillInDiv).show();
                 }
@@ -681,7 +737,7 @@
                         dataQuestion = '¿' + uppercaseFirstLetter(dataQuestion);
                     }
                     questionText += dataQuestion;
-                    $('#question-text').html(questionText);
+                    $('#question-text').text(questionText);
                     $(qnaDiv).show();
                     $(fillInDiv).hide();
                 }
@@ -691,10 +747,10 @@
             var pointsLabel = data.points == 1 ? 'point' : 'points';
             console.log(pointsLabel + ' possible');
             var numberOfPoints = data.points + ' ' + translate(pointsLabel + ' possible');
-            $('#question-points').html(numberOfPoints);
+            $('#question-points').text(numberOfPoints);
             // show quiz progress
             var progress = translate('Question') + ' ' + (currentQuestionIndex + 1) + ' ' + translate('of') + ' ' + questions.length;
-            $('#quiz-progress').html(progress);
+            $('#quiz-progress').text(progress);
             if (isFillInQuestion(data.type)) {
                 focusFirstFillInField();
             } else {
@@ -713,10 +769,10 @@
                     var questionLength = point_map[data.points];
                 }
                 var countdownText = questionLength + ' second timer starts in ';
-                $('#countdown-text').html(countdownText);
-                $('#question-pretimer').html('10');
+                $('#countdown-text').text(countdownText);
+                $('#question-pretimer').text('10');
                 countdownTimer(questionLength);
-                $('#seconds-text').html('seconds...');
+                $('#seconds-text').text('seconds...');
             }
             else {
                 $('#countdown').remove();
@@ -755,22 +811,38 @@
             displayQuestion(currentQuestion);
         }
 
-        function addToHistory(reference, questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData) {
-            var html = '<li><ul id="history-' + history.length + '">';
+        function addToHistory(reference, questionType, questionText, answer, userAnswer, markedCorrect, pointsGained, fillInData, answerContainsSafeFillInMarkup) {
+            var $historyItem = $('<li>');
+            var $historyList = $('<ul>').attr('id', 'history-' + history.length);
             if (isFillInQuestion(questionType)) {
-                html += '<li><strong>Question:</strong> ' + translate('Fill in the blanks for') + ' ' + reference + ': ' + questionText + '</li>';
-            } else {
-                html += '<li><strong>Question:</strong> ' + questionText + '</li>';
+                var $questionItem = $('<li>');
+                $questionItem.append($('<strong>').text('Question:'));
+                $questionItem.append(document.createTextNode(
+                    ' ' + translate('Fill in the blanks for') + ' ' + reference + ': '
+                ));
+                // questionText comes from fillInText(), whose data fragments
+                // are escaped before its fixed blank markup is produced.
+                $questionItem.append(questionText);
+                $historyList.append($questionItem);
             }
-            html += '<li class="history-answer"><strong>Answer:</strong> ' + answer + '</li>';
-            html += '<li><strong>Your answer:</strong> ' + userAnswer + '</li>';
+            else {
+                appendHistoryValue($historyList, 'Question', questionText, false);
+            }
+            var $answerItem = appendHistoryValue(
+                $historyList,
+                'Answer',
+                answer,
+                answerContainsSafeFillInMarkup
+            );
+            $answerItem.addClass('history-answer');
+            appendHistoryValue($historyList, 'Your answer', userAnswer, false);
             var markedCorrectStr = markedCorrect ? 'Yes' : 'No';
-            html += '<li><strong>Marked correct?</strong> ' + markedCorrectStr + '</li>';
-            html += '<li><strong>Points gained:</strong> ' + pointsGained + '</li>';
-            html += '</ul></li>';
+            appendHistoryValue($historyList, 'Marked correct?', markedCorrectStr, false);
+            appendHistoryValue($historyList, 'Points gained', pointsGained, false);
+            $historyItem.append($historyList);
             $(historyFillInDiv).show();
             $(".no-questions-answered-yet").hide();
-            $('#history-list').append($(html));
+            $('#history-list').append($historyItem);
             // this could be improved by not storing redundant info in the history array
             // and referencing the original question object,
             // but I also like the idea of having a separate object if I need it, so...
@@ -820,7 +892,7 @@
         }
 
         function updateStatsTab(justUpdatedItem) {
-            $('#stats-quiz-progress').html(overallStats.toString());
+            $('#stats-quiz-progress').text(overallStats.toString());
             var overallBibleStats = new Stats();
             var overallCommentaryStats = new Stats();
             var bibleStats = [];
@@ -839,19 +911,19 @@
                 }
             }
 
-            var noBibleAnsweredMsg = '<em>No Bible questions have been answered yet.</em>';
-            var noCommentaryAnsweredMsg = '<em>No SDA Bible Commentary questions have been answered yet.</em>';
+            var noBibleAnsweredMsg = 'No Bible questions have been answered yet.';
+            var noCommentaryAnsweredMsg = 'No SDA Bible Commentary questions have been answered yet.';
 
             if (bibleStats.length > 0) {
-                $('#bible-stats-quiz-progress').html(overallBibleStats.toString());
+                $('#bible-stats-quiz-progress').text(overallBibleStats.toString());
             }
             else {
-                $('#bible-stats-quiz-progress').html(noBibleAnsweredMsg);
+                $('#bible-stats-quiz-progress').empty().append($('<em>').text(noBibleAnsweredMsg));
             }
             if (commentaryStats.length > 0) {
-                $('#commentary-stats-quiz-progress').html(overallCommentaryStats.toString());
+                $('#commentary-stats-quiz-progress').text(overallCommentaryStats.toString());
             } else {
-                $('#commentary-stats-quiz-progress').html(noCommentaryAnsweredMsg);
+                $('#commentary-stats-quiz-progress').empty().append($('<em>').text(noCommentaryAnsweredMsg));
             }
 
             // Ok, now have to figure out the individual stats
@@ -864,37 +936,37 @@
             $('#individual-bible-stats').empty();
             $('#individual-commentary-stats').empty();
 
-            var html = "";
             if (bibleStats.length > 0) {
                 for (var key in bibleStats) {
                     var item = bibleStats[key];
-                    html += '<li>';
-                    html += '<strong>' + translate(item.bookName) + ' ' + item.chapter + '</strong>: ' + item.stats.toString();
-                    html += '</li>';
+                    var $item = $('<li>');
+                    $item.append($('<strong>').text(translate(item.bookName) + ' ' + item.chapter));
+                    $item.append(document.createTextNode(': ' + item.stats.toString()));
+                    $('#individual-bible-stats').append($item);
                 }
-                $('#individual-bible-stats').html(html);
             }
             else {
-                $('#individual-bible-stats').html('<li>' + noBibleAnsweredMsg + '</li>');
+                $('#individual-bible-stats').append($('<li>').append($('<em>').text(noBibleAnsweredMsg)));
             }
-            html = "";
             if (commentaryStats.length > 0) {
                 for (var key in commentaryStats) {
                     var item = commentaryStats[key];
-                    html += '<li>';
-                    html += '<strong>' + translate('Volume') + ' ' + item.volume + ' (' + translate(item.topic) + ')</strong>: ' + item.stats.toString();
-                    html += '</li>';
+                    var $item = $('<li>');
+                    $item.append($('<strong>').text(
+                        translate('Volume') + ' ' + item.volume + ' (' + translate(item.topic) + ')'
+                    ));
+                    $item.append(document.createTextNode(': ' + item.stats.toString()));
+                    $('#individual-commentary-stats').append($item);
                 }
-                $('#individual-commentary-stats').html(html);
             }
             else {
-                $('#individual-commentary-stats').html('<li>' + noCommentaryAnsweredMsg + '</li>');
+                $('#individual-commentary-stats').append($('<li>').append($('<em>').text(noCommentaryAnsweredMsg)));
             }
             $('#stats-progress').show();
         }
 
         // load that quiz!
-        var questions = ({{ json_encode(quizQuestions) | raw }}).questions;
+        var questions = ({{ safeJson(quizQuestions) | raw }}).questions;
         if (questions.length > 0) {
             currentQuestionIndex = 0;
             showQuestionAtCurrentIndex();
@@ -904,16 +976,10 @@
             $(flagQuestion).hide();
             $(nextQuestion).hide();
             var urlForSetup = '{{ app.yurl('/quiz/setup') }}';
-            var error = '<p class="mb-2 mt-2">No questions available! Please try selecting some different Bible chapters, commentaries, and/or resetting your saved answers!</p><p><a class="btn btn-info" href="' + urlForSetup + '"><i class="fas fa-arrow-left"></i> Back to Quiz Setup</a></p>';
-            showQuizError(error);
+            showEmptyQuizError(urlForSetup);
             $(endQuiz).show();
         }
         $('#loading-bar').hide();
-        if (isFillInQuestion(currentQuestion.type)) {
-            focusFirstFillInField();
-        } else {
-            focusQnAField();
-        }
     });
 </script>
 

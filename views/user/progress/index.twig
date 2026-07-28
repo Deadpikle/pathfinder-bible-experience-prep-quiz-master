@@ -1,0 +1,99 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
+        {% if isAdminView %}
+            <li class="breadcrumb-item"><a href="{{ app.yurl('/admin/progress') }}">Learner Progress</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">Progress</li>
+    </ol>
+</nav>
+
+{% if progress is empty %}
+    <div class="alert alert-warning">Progress information is unavailable for this user.</div>
+{% else %}
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+        <div>
+            <h2 class="mb-1">{{ progress.user.Username }} &mdash; Progress</h2>
+            <p class="text-body-secondary mb-0">
+                {{ progress.year.year }} questions &middot; {{ progress.language ? progress.language.getDisplayName() : 'Default language' }}
+            </p>
+        </div>
+        <div class="text-end">
+            <div class="display-6">{{ progress.masteryPercent }}%</div>
+            <small>{{ progress.masteredQuestions }} of {{ progress.accessibleQuestions }} active Bible questions mastered</small>
+        </div>
+    </div>
+
+    <div class="progress mb-4" role="progressbar" aria-label="Question mastery" aria-valuenow="{{ progress.masteryPercent }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ progress.masteryPercent }}%">{{ progress.masteryPercent }}%</div>
+    </div>
+
+    <h3>Mastery by chapter</h3>
+    {% if progress.chapterMastery is empty %}
+        <p class="text-body-secondary">No active Bible questions are available in this language and question-bank scope.</p>
+    {% else %}
+        <div class="table-responsive mb-4">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Book</th>
+                        <th scope="col">Chapter</th>
+                        <th scope="col">Mastered</th>
+                        <th scope="col" style="min-width: 12rem;">Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chapter in progress.chapterMastery %}
+                        <tr>
+                            <td>{{ chapter.bookName }}</td>
+                            <td>{{ chapter.chapterNumber }}</td>
+                            <td>{{ chapter.masteredQuestions }} / {{ chapter.accessibleQuestions }}</td>
+                            <td>
+                                <div class="progress" role="progressbar"
+                                     aria-label="{{ chapter.bookName }} chapter {{ chapter.chapterNumber }} mastery"
+                                     aria-valuenow="{{ chapter.masteryPercent }}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" style="width: {{ chapter.masteryPercent }}%">{{ chapter.masteryPercent }}%</div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <h3>Completed attempts</h3>
+    {% if progress.attempts is empty %}
+        <p class="text-body-secondary">No completed quiz attempts yet.</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Completed</th>
+                        <th scope="col">Questions</th>
+                        <th scope="col">Correct</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in progress.attempts %}
+                        {% set score = attempt.PointsPossible > 0 ? ((attempt.PointsEarned / attempt.PointsPossible) * 100)|round : 0 %}
+                        <tr>
+                            <td>{{ attempt.CompletedAt|date('M j, Y g:i a') }}</td>
+                            <td>{{ attempt.QuestionCount }}</td>
+                            <td>{{ attempt.CorrectCount }}</td>
+                            <td>{{ attempt.PointsEarned }} / {{ attempt.PointsPossible }}</td>
+                            <td>{{ score }}%</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

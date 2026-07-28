@@ -20,6 +20,7 @@ use App\Models\MatchingQuestionItem;
 use App\Models\MatchingQuestionSet;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
+use App\Models\QuizAttempt;
 use App\Models\User;
 use App\Models\UserAnswer;
 use App\Models\UserFlagged;
@@ -30,10 +31,12 @@ use App\Models\Year;
 use App\Services\PDFGenerator;
 use App\Services\PowerPointGenerator;
 use App\Services\QuizGenerator;
+use App\Services\QuestionScope;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\PhpPresentation;
 use Yamf\AppConfig;
 use Yamf\Responses\Response;
+use RuntimeException;
 
 class QuizController
 {
@@ -47,6 +50,7 @@ class QuizController
     {
         if (!User::isLoggedIn()) {
             if ($request->function === 'saveQuizAnswers' ||
+                $request->function === 'completeAttempt' ||
                 $request->function === 'flagQuestion' ||
                 $request->function === 'generateMatchingQuiz') {
                 return new Response(401);
@@ -59,7 +63,12 @@ class QuizController
     public function setupQuiz(PBEAppConfig $app, Request $request): Response
     {
         $currentYear = Year::loadCurrentYear($app->db);
-        $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db); // TODO: need to only load ones with active questions!
+        $questionScope = QuestionScope::forApp($app, $app->db);
+        $commentaries = Commentary::loadCommentariesWithActiveQuestions(
+            $currentYear->yearID,
+            $app->db,
+            $questionScope
+        );
         $languages = Language::loadAllLanguages($app->db);
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
 
@@ -76,7 +85,7 @@ class QuizController
         foreach ($books as $book) {
             $booksByBookID[$book->bookID] = $book;
         }
-        $chapters = Chapter::loadChaptersWithActiveQuestions($currentYear, $app->db);
+        $chapters = Chapter::loadChaptersWithActiveQuestions($currentYear, $app->db, $questionScope);
         if ($app->isGuest) {
             // guests only get up to 2 chapters
             if (count($chapters) > 1) {
@@ -91,11 +100,17 @@ class QuizController
 
     public function checkBeforeRemovingAnswers(PBEAppConfig $app, Request $request): Response
     {
+        if ($app->isGuest) {
+            return new Redirect('/quiz/setup');
+        }
         return new TwigView('user/quiz/verify-delete-user-answers', [], 'Delete Previously Saved Answers');
     }
 
     public function removeAnswers(PBEAppConfig $app, Request $request): Response
     {
+        if ($app->isGuest) {
+            return new Response(403);
+        }
         if (CSRF::verifyToken('delete-previous-answers')) {
             UserAnswer::deleteUserAnswers(User::currentUserID(), $app->db);
             return new Redirect('/quiz/setup');
@@ -110,8 +125,17 @@ class QuizController
         $enableQuestionDistribution = Util::validateBoolean($request->post, 'enable-question-distribution');
         $year = Year::loadCurrentYear($app->db);
         $userID = User::currentUserID();
-        if ($app->isGuest && ($request->post['quiz-items'] === null || count($request->post['quiz-items']) === 0)) {
-            $chapters = Chapter::loadChaptersWithActiveQuestions($year, $app->db);
+        $quizItems = $request->post['quiz-items'] ?? [];
+        if (!is_array($quizItems)) {
+            $quizItems = [];
+        }
+        $request->post['quiz-items'] = $quizItems;
+        if ($app->isGuest && count($quizItems) === 0) {
+            $chapters = Chapter::loadChaptersWithActiveQuestions(
+                $year,
+                $app->db,
+                QuestionScope::forApp($app, $app->db)
+            );
             // guests only get up to 2 chapters
             if (count($chapters) > 1) {
                 $request->post['quiz-items'] = [
@@ -194,13 +218,24 @@ class QuizController
 
         $quizQuestions = $this->getQuizQuestions($app, $request, false, false);
         $userID = User::currentUserID();
+        $languageID = Util::validateInteger($request->post, 'language-select');
+        $attemptID = -1;
+        if (!$app->isGuest) {
+            $attemptID = QuizAttempt::start(
+                $userID,
+                Year::loadCurrentYear($app->db)->yearID,
+                $languageID > 0 ? $languageID : null,
+                $quizQuestions,
+                $app->db
+            );
+        }
         $disableQuestionTimer = Util::validateBoolean($request->post, 'disable-question-timer');
         $disableAutoShowAnswer = Util::validateBoolean($request->post, 'autoshow-answer');
         $viewFillInTheBlankAnswersInBold = Util::validateBoolean($request->post, 'flash-full-fill-in');
         $bibleNames = Util::getBibleNames();
         $userLangAbbr = User::getPreferredLanguage($app->db)->abbreviation;
         $translations = Translations::getTranslationsForLanguageAbbr($userLangAbbr);
-        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'userID', 'disableQuestionTimer', 'disableAutoShowAnswer', 'viewFillInTheBlankAnswersInBold', 'bibleNames', 'userLangAbbr', 'translations'), 'Take Quiz');
+        return new TwigView('user/quiz/take-quiz', compact('quizQuestions', 'attemptID', 'userID', 'disableQuestionTimer', 'disableAutoShowAnswer', 'viewFillInTheBlankAnswersInBold', 'bibleNames', 'userLangAbbr', 'translations'), 'Take Quiz');
     }
 
     public function generateLeftRightFlashCards(PBEAppConfig $app, Request $request)
@@ -235,16 +270,64 @@ class QuizController
 
     public function saveQuizAnswers(PBEAppConfig $app, Request $request): Response
     {
+        if ($app->isGuest || !CSRF::verifyToken('save-quiz-answers')) {
+            return new JsonStatusCodeResponse(['status' => 403], 403);
+        }
         $answers = $request->post['answers'] ?? [];
         $didSave = UserAnswer::saveUserAnswers($answers, $app->db);
         return new JsonResponse(['status' => $didSave ? 200 : 400]);
     }
 
+    public function completeAttempt(PBEAppConfig $app, Request $request): Response
+    {
+        if (!CSRF::verifyToken('complete-quiz-attempt')) {
+            return new JsonStatusCodeResponse([
+                'status' => 403,
+                'message' => 'Unable to validate request. Please reload the quiz and try again.',
+            ], 403);
+        }
+
+        $attemptID = Util::validateInteger($request->routeParams, 'attemptID');
+        $answers = $request->post['answers'] ?? [];
+        if ($attemptID <= 0 || !is_array($answers)) {
+            return new JsonStatusCodeResponse(['status' => 422, 'message' => 'Invalid attempt data.'], 422);
+        }
+
+        try {
+            $result = QuizAttempt::complete($attemptID, User::currentUserID(), $answers, $app->db);
+            return new JsonStatusCodeResponse(['status' => 200] + $result, 200);
+        } catch (RuntimeException $exception) {
+            $status = in_array($exception->getCode(), [404, 409, 422], true)
+                ? $exception->getCode()
+                : 400;
+            return new JsonStatusCodeResponse([
+                'status' => $status,
+                'message' => $exception->getMessage(),
+            ], $status);
+        }
+    }
+
     public function flagQuestion(PBEAppConfig $app, Request $request): Response
     {
+        if ($app->isGuest || !CSRF::verifyToken('flag-quiz-question')) {
+            return new JsonStatusCodeResponse(['status' => 403], 403);
+        }
         $userID = User::currentUserID();
-        $flagReason =FlagReason::validateReason(Util::validateString($request->post, 'reason'));
-        $hasFlagged = UserFlagged::addFlagIfNecessary($request->post['questionID'], $userID, $flagReason, $app->db);
+        $questionID = Util::validateInteger($request->post, 'questionID');
+        $question = Question::loadQuestionWithID($questionID, $app->db);
+        if (
+            $question === null
+            || $question->isDeleted
+            || !$question->isActive
+            || !QuestionScope::forApp($app, $app->db)->canReadBank($question->questionBankID)
+        ) {
+            return new JsonStatusCodeResponse(['status' => 404], 404);
+        }
+        $flagReason = FlagReason::validateReason(Util::validateString($request->post, 'reason'));
+        if ($flagReason === FlagReason::UNKNOWN) {
+            return new JsonStatusCodeResponse(['status' => 422], 422);
+        }
+        $hasFlagged = UserFlagged::addFlagIfNecessary($questionID, $userID, $flagReason, $app->db);
         return new JsonResponse(['status' => $hasFlagged ? 200 : 400]);
     }
 

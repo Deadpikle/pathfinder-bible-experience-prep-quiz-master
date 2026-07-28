@@ -1,0 +1,49 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Learner Progress</li>
+    </ol>
+</nav>
+
+<h2>Learner Progress</h2>
+<p class="text-body-secondary">Completed attempts and current mastery for active questions in each learner&rsquo;s default question language.</p>
+
+{% if progressSummaries is empty %}
+    <div class="alert alert-info">No learners are available in your reporting scope.</div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Learner</th>
+                    <th scope="col">Club</th>
+                    <th scope="col">Language</th>
+                    <th scope="col">Overall mastery</th>
+                    <th scope="col">Attempts</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for summary in progressSummaries %}
+                    <tr>
+                        <td>{{ summary.user.Username }}</td>
+                        <td>{{ summary.user.ClubName }}</td>
+                        <td>{{ summary.language ? summary.language.getDisplayName() : 'Default' }}</td>
+                        <td>
+                            {{ summary.masteredQuestions }} / {{ summary.accessibleQuestions }} ({{ summary.masteryPercent }}%)
+                            <small class="d-block text-body-secondary">{{ summary.chapterMastery|length }} chapters</small>
+                        </td>
+                        <td>{{ summary.attempts|length }}</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-primary" href="{{ app.yurl('/admin/progress/users/' ~ summary.user.UserID) }}">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}
