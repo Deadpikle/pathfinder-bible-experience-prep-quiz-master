@@ -1,41 +1,69 @@
 name: Run Tests
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: testing_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_NAME: testing_db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_CHARSET: utf8mb4
+      TEST_DB_DSN: mysql:host=127.0.0.1;port=3306;dbname=testing_db;charset=utf8mb4
 
     steps:
       - uses: actions/checkout@v7.0.0
 
-    # example of using PHP unit in GitHub actions:
-    # https://github.com/php-actions/example-phpunit
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_sqlite, sqlite3, mbstring, gd, zip
+          coverage: none
 
-      - name: Cache Composer dependencies
+      - name: Cache Composer packages
         uses: actions/cache@v5.0.5
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          path: ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      # https://github.com/marketplace/actions/composer-php-actions
-      # extension list:
-      # https://github.com/mlocati/docker-php-extension-installer#supported-php-extensions
-      - name: Install Composer dependencies
-        uses: php-actions/composer@v6
-        with:
-          php_version: 8.4
-          dev: yes
-          php_extensions: gd zip
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Run PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        # env:
-        #   TEST_NAME: Scarlett
-        with:
-          php_version: 8.4
-          php_extensions: gd zip
-          bootstrap: vendor/autoload.php
-          configuration: phpunit.xml
-          version: 10
-        # args: --coverage-text
+      - name: Validate project metadata and JavaScript syntax
+        run: |
+          composer validate --no-check-publish
+          node --check js/common.js
+          node --check js/i18n.js
+          node tests/js/common-security.test.js
+
+      - name: Validate PHP syntax
+        run: git ls-files -z -- '*.php' | xargs -0 -n1 php -l
+
+      - name: Migrate and seed MariaDB
+        run: |
+          vendor/bin/phinx migrate -e testing
+          vendor/bin/phinx seed:run -e testing -s DefaultSeeder
+          vendor/bin/phinx seed:run -e testing -s TestFixtureSeeder
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --configuration phpunit.xml
