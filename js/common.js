@@ -29,6 +29,21 @@ function isFillInQuestion(type) {
     return type.indexOf('-fill') !== -1;
 }
 
+// Escape database-authored text before mixing it with the small amount of
+// fixed markup used to render fill-in-the-blank questions.
+function escapeHtml(value) {
+    var entities = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(character) {
+        return entities[character];
+    });
+}
+
 // https://stackoverflow.com/a/2548133/3938401
 if (typeof String.prototype.endsWith !== 'function') {
     String.prototype.endsWith = function(suffix) {
@@ -37,8 +52,18 @@ if (typeof String.prototype.endsWith !== 'function') {
 }
 
 function createFillInInput(inputSelector, questionWords) {
-    $element = $(inputSelector);
+    var $element = $(inputSelector);
     $element.append(fillInText(questionWords));
+    initializeAutosizeInputs($element);
+}
+
+// The autosize plugin scans the document once on DOM ready. Quiz fill-in
+// inputs are created later, so initialize only the newly-rendered controls.
+function initializeAutosizeInputs($container) {
+    var $inputs = $container.find('input[data-autosize-input]');
+    if (typeof $inputs.autosizeInput === 'function') {
+        $inputs.autosizeInput();
+    }
 }
 
 // if shouldBoldWords is true, puts in answers as bold instead of as blanks
@@ -50,12 +75,12 @@ function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = fal
     for (var i = 0; i < questionWords.length; i++) {
         var wordData = questionWords[i];
         if (wordData.before !== '') {
-            output += wordData.before;
+            output += escapeHtml(wordData.before);
         }
         if (wordData.word !== '') {
             if (wordData.shouldBeBlanked) {
                 if (shouldBoldWords) {
-                    var html = '<strong>' + wordData.word + '</strong>';
+                    var html = '<strong>' + escapeHtml(wordData.word) + '</strong>';
                     output += html;
                 }
                 else if (shouldAvoidInputFields) {
@@ -67,11 +92,11 @@ function fillInText(questionWords, shouldBoldWords, shouldAvoidInputFields = fal
                 }
             }
             else {
-                output += wordData.word;
+                output += escapeHtml(wordData.word);
             }
         }
         if (wordData.after !== '') {
-            output += wordData.after;
+            output += escapeHtml(wordData.after);
         }
         if (i != questionWords.length - 1 && wordData.after !== '...'  && wordData.after !== '…') {
             output += ' ';
@@ -150,6 +175,14 @@ function showElement(element) {
 
 function hideElement(element) {
     element.classList.add('d-none');
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        escapeHtml: escapeHtml,
+        fillInText: fillInText,
+        fillInAnswerString: fillInAnswerString
+    };
 }
 /*
 $(document).ready(function() {
