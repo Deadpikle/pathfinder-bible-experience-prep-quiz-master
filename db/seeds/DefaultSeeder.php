@@ -91,6 +91,32 @@ class DefaultSeeder extends AbstractSeed
         $conferences = $this->table('Conferences');
         $conferences->insert($conferencesData)->save();
 
+        // Migrations run before this seed on a fresh environment, so the
+        // website-admin conference needs the same fixed global + overlay bank
+        // mappings that existing conferences receive during the migration.
+        $questionBanks = $this->table('QuestionBanks');
+        $questionBanks->insert([
+            [
+                'Name' => 'Website Administrators Private',
+                'IsGlobal' => false,
+                'IsDeleted' => false,
+            ],
+        ])->save();
+
+        $conferenceQuestionBanks = $this->table('ConferenceQuestionBanks');
+        $conferenceQuestionBanks->insert([
+            [
+                'ConferenceID' => 1,
+                'QuestionBankID' => 1,
+                'IsOverlay' => false,
+            ],
+            [
+                'ConferenceID' => 1,
+                'QuestionBankID' => 2,
+                'IsOverlay' => true,
+            ],
+        ])->save();
+
         $clubsData = [
             [
                 'Name' => 'Website Administrators',
@@ -161,206 +187,20 @@ class DefaultSeeder extends AbstractSeed
         $years = $this->table('Years');
         $years->insert($yearsData)->save();
 
-        $homeSectionsData = [
-            [
-                'Name' => '2018 Dates',
-                'SortOrder' => 0,
+        $englishLanguageID = (int)$this->getAdapter()->getConnection()
+            ->query("SELECT LanguageID FROM Languages WHERE Abbreviation = 'en' ORDER BY LanguageID LIMIT 1")
+            ->fetchColumn();
+        $defaultHomeMarkdown = file_get_contents(dirname(__DIR__, 2) . '/app/Content/default-home.en.md');
+        if ($englishLanguageID > 0 && $defaultHomeMarkdown !== false) {
+            $this->table('HomeContents')->insert([[
                 'YearID' => 1,
-                'ConferenceID' => 1
-            ],
-            [
-                'Name' => 'Resources',
-                'SortOrder' => 1,
-                'YearID' => 1,
-                'ConferenceID' => 1
-            ],
-            [
-                'Name' => 'Books',
-                'SortOrder' => 2,
-                'YearID' => 1,
-                'ConferenceID' => 1
-            ]
-        ];
-        $homeSections = $this->table('HomeInfoSections');
-        $homeSections->insert($homeSectionsData)->save();
-
-        $homeInfoLinesData = [
-            [
-                'Name' => '',
-                'SortOrder' => 0,
-                'HomeInfoSectionID' => 1
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 1,
-                'HomeInfoSectionID' => 1
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 2,
-                'HomeInfoSectionID' => 1
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 3,
-                'HomeInfoSectionID' => 1
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 0,
-                'HomeInfoSectionID' => 2
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 0,
-                'HomeInfoSectionID' => 2
-            ],
-            [
-                'Name' => '',
-                'SortOrder' => 1,
-                'HomeInfoSectionID' => 3
-            ],
-        ];
-        $homeInfoLines = $this->table('HomeInfoLines');
-        $homeInfoLines->insert($homeInfoLinesData)->save();
-
-        $homeInfoItemsData = [
-            [
-                'Text' => 'District',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 1
-            ],
-            [
-                'Text' => 'January 13, 2018',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 1
-            ],
-            [
-                'Text' => 'See your area coordinator for location',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 1
-            ],
-            [
-                'Text' => 'UCC',
-                'IsLink' => 1,
-                'URL' => 'uccsda.org',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 2
-            ],
-            [
-                'Text' => 'February 24, 2018',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 2
-            ],
-            [
-                'Text' => 'Location TBA (East Cascade District)',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 2
-            ],
-            [
-                'Text' => 'Union',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 3
-            ],
-            [
-                'Text' => 'March 10, 2018',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 3
-            ],
-            [
-                'Text' => 'Location TBA (Idaho Conference - Boise Area)',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 3
-            ],
-            [
-                'Text' => 'Division',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 4
-            ],
-            [
-                'Text' => 'April 20-21, 2018',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 4
-            ],
-            [
-                'Text' => 'Location: Orlando, Florida',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 4
-            ],
-            [
-                'Text' => 'Official PBE Website',
-                'IsLink' => 1,
-                'URL' => 'http://www.pathfindersonline.org/pathfinder-bible-experience',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 5
-            ],
-            [
-                'Text' => 'PBE Manual',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 6
-            ],
-            [
-                'Text' => 'Purchase Link',
-                'IsLink' => 1,
-                'URL' => 'http://www.adventsource.org/as30/store-productDetails.aspx?ID=38282',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 6
-            ],
-            [
-                'Text' => 'PDF Download',
-                'IsLink' => 1,
-                'URL' => 'http://www.pathfindersonline.org/pdf/PBE/PBE_ApplicationGuideExodus_2016.pdf',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 6
-            ],
-            [
-                'Text' => 'Pathfinder Bible NKJV',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 0,
-                'HomeInfoLineID' => 7
-            ],
-            [
-                'Text' => 'Hardback',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 1,
-                'HomeInfoLineID' => 7
-            ],
-            [
-                'Text' => 'Software',
-                'IsLink' => 0,
-                'URL' => '',
-                'SortOrder' => 2,
-                'HomeInfoLineID' => 7
-            ]
-        ];
-        $homeInfoItems = $this->table('HomeInfoItems');
-        $homeInfoItems->insert($homeInfoItemsData)->save();
+                'ConferenceID' => 1,
+                'UILanguageID' => $englishLanguageID,
+                'Markdown' => $defaultHomeMarkdown,
+                'UpdatedByUserID' => null,
+                'DateUpdated' => date('Y-m-d H:i:s'),
+            ]])->save();
+        }
 
         $blankableWordsData = [
             [

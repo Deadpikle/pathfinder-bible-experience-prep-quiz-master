@@ -1,6 +1,15 @@
 <?php
 
-require_once 'config-private.php';
+if (file_exists('config-private.php')) {
+    require_once 'config-private.php';
+}
+
+$configuredHost = $host ?? getenv('DB_HOST') ?: '127.0.0.1';
+$configuredDatabase = $db ?? getenv('DB_NAME') ?: 'testing_db';
+$configuredUser = $user ?? getenv('DB_USER') ?: 'root';
+$configuredPassword = $pass ?? getenv('DB_PASSWORD') ?: '';
+$configuredCharset = $charset ?? getenv('DB_CHARSET') ?: 'utf8mb4';
+$configuredPort = getenv('DB_PORT') ?: '3306';
 
 return
 [
@@ -13,30 +22,30 @@ return
         'default_environment' => 'development',
         'production' => [
             'adapter' => 'mysql',
-            'host' => $host,
-            'name' => $db,
-            'user' => $user,
-            'pass' => $pass,
-            'port' => '3306',
-            'charset' => $charset,
+            'host' => $configuredHost,
+            'name' => $configuredDatabase,
+            'user' => $configuredUser,
+            'pass' => $configuredPassword,
+            'port' => $configuredPort,
+            'charset' => $configuredCharset,
         ],
         'development' => [
             'adapter' => 'mysql',
-            'host' => $host,
-            'name' => $db,
-            'user' => $user,
-            'pass' => $pass,
-            'port' => '3306',
-            'charset' => $charset,
+            'host' => $configuredHost,
+            'name' => $configuredDatabase,
+            'user' => $configuredUser,
+            'pass' => $configuredPassword,
+            'port' => $configuredPort,
+            'charset' => $configuredCharset,
         ],
         'testing' => [
             'adapter' => 'mysql',
-            'host' => 'localhost',
-            'name' => 'testing_db',
-            'user' => 'root',
-            'pass' => '',
-            'port' => '3306',
-            'charset' => 'utf8',
+            'host' => getenv('DB_HOST') ?: '127.0.0.1',
+            'name' => getenv('DB_NAME') ?: 'testing_db',
+            'user' => getenv('DB_USER') ?: 'root',
+            'pass' => getenv('DB_PASSWORD') ?: '',
+            'port' => getenv('DB_PORT') ?: '3306',
+            'charset' => getenv('DB_CHARSET') ?: 'utf8mb4',
         ]
     ],
     'version_order' => 'creation'
