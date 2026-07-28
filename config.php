@@ -91,6 +91,9 @@ $app->activeYearNumber = $app->yearData->year;
 if (!isset($app->ENABLE_NKJV_RESTRICTIONS)) {
     $app->ENABLE_NKJV_RESTRICTIONS = true;
 }
+if (!isset($app->ENABLE_FILL_IN_ROTATION)) {
+    $app->ENABLE_FILL_IN_ROTATION = false;
+}
 
 date_default_timezone_set('America/New_York'); // TODO: make this user-configurable
 

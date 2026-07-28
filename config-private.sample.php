@@ -47,6 +47,7 @@ use App\Models\PBEAppConfig;
 /** @var PBEAppConfig $app */
 $app->shouldShowErrorOnExceptionThrown = false;
 $app->ENABLE_NKJV_RESTRICTIONS = true; // DO NOT DISABLE THIS UNLESS YOU HAVE THE LEGAL RIGHT TO DO SO. YOU HAVE BEEN WARNED.
+$app->ENABLE_FILL_IN_ROTATION = false; // Enable only after rights review and a successful --dry-run audit.
 $app->sessionName = 'pbe';
 $app->showCookieConsent = false;
 $app->cookieDomain = 'example.com';

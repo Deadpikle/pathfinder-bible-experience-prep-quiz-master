@@ -27,11 +27,18 @@ class BibleQnAData
     {
         $query = '
             SELECT c.ChapterID, c.Number, b.Name, COUNT(q.QuestionID) AS QuestionCount, q.LanguageID
-            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+            FROM Questions q
+                JOIN QuestionBanks qb
+                    ON qb.QuestionBankID = q.QuestionBankID
+                    AND qb.IsGlobal = 1
+                    AND qb.IsDeleted = 0
+                JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ?
                 AND q.Type = ?
+                AND q.IsDeleted = 0
+                AND q.IsActive = 1
             GROUP BY c.ChapterID, c.Number, q.LanguageID
             ORDER BY b.Name, c.Number, q.LanguageID';
         
@@ -59,49 +66,65 @@ class BibleQnAData
         return $data;
     }
 
-    public static function deleteQnAForLanguage(Year $year, int $languageID, PDO $db)
+    public static function deleteQnAForLanguage(Year $year, int $languageID, PDO $db): void
     {
-        $qnaType = Question::getBibleQnAType();
-        // the weird subquery SELECT * was due to a workaround
-        // for the error discussed here: https://stackoverflow.com/q/44970574/3938401
-        $query = 'DELETE FROM Questions
-                    WHERE QuestionID IN (
-                    SELECT q.QuestionID 
-                    FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "' . $qnaType . '" AND LanguageID = ?) q 
-                        JOIN Verses v ON q.StartVerseID = v.VerseID
-                        JOIN Chapters c ON c.ChapterID = v.ChapterID
-                        JOIN Books b ON b.BookID = c.BookID
-                    WHERE q.Type = "' . $qnaType . '"
+        // The extra derived table keeps this compatible with MariaDB's
+        // restriction on selecting directly from a table being deleted.
+        $query = '
+            DELETE FROM Questions
+            WHERE QuestionID IN (
+                SELECT scoped.QuestionID
+                FROM (
+                    SELECT q.QuestionID
+                    FROM Questions q
+                    INNER JOIN QuestionBanks qb
+                        ON qb.QuestionBankID = q.QuestionBankID
+                        AND qb.IsGlobal = 1
+                        AND qb.IsDeleted = 0
+                    INNER JOIN Verses v ON q.StartVerseID = v.VerseID
+                    INNER JOIN Chapters c ON c.ChapterID = v.ChapterID
+                    INNER JOIN Books b ON b.BookID = c.BookID
+                    WHERE q.Type = ?
+                        AND q.LanguageID = ?
                         AND b.YearID = ?
-                        AND q.LanguageID = ?)';
+                ) scoped
+            )';
         $stmt = $db->prepare($query);
         $stmt->execute([
+            Question::getBibleQnAType(),
             $languageID,
             $year->yearID,
-            $languageID
         ]);
     }
 
-    public static function deleteQnAForChapter(Year $year, int $chapterID, int $languageID, PDO $db)
+    public static function deleteQnAForChapter(Year $year, int $chapterID, int $languageID, PDO $db): void
     {
-        // the weird subquery SELECT * was due to a workaround
-        // for the error discussed here: https://stackoverflow.com/q/44970574/3938401
-        $qnaType = Question::getBibleQnAType();
-        $query = 'DELETE FROM Questions 
-                      WHERE QuestionID IN (
-                        SELECT q.QuestionID 
-                        FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "' . $qnaType . '" AND LanguageID = ?) q 
-                            JOIN Verses v ON q.StartVerseID = v.VerseID
-                            JOIN Chapters c ON c.ChapterID = v.ChapterID
-                            JOIN Books b ON b.BookID = c.BookID
-                        WHERE c.ChapterID = ? AND q.Type = "' . $qnaType . '"
-                            AND b.YearID = ? AND q.LanguageID = ?)';
+        $query = '
+            DELETE FROM Questions
+            WHERE QuestionID IN (
+                SELECT scoped.QuestionID
+                FROM (
+                    SELECT q.QuestionID
+                    FROM Questions q
+                    INNER JOIN QuestionBanks qb
+                        ON qb.QuestionBankID = q.QuestionBankID
+                        AND qb.IsGlobal = 1
+                        AND qb.IsDeleted = 0
+                    INNER JOIN Verses v ON q.StartVerseID = v.VerseID
+                    INNER JOIN Chapters c ON c.ChapterID = v.ChapterID
+                    INNER JOIN Books b ON b.BookID = c.BookID
+                    WHERE q.Type = ?
+                        AND q.LanguageID = ?
+                        AND c.ChapterID = ?
+                        AND b.YearID = ?
+                ) scoped
+            )';
         $stmt = $db->prepare($query);
         $stmt->execute([
+            Question::getBibleQnAType(),
             $languageID,
             $chapterID,
             $year->yearID,
-            $languageID
         ]);
     }
 }

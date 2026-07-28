@@ -13,6 +13,7 @@ use App\Models\CSRF;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
+use App\Models\QuestionBank;
 use App\Models\User;
 use App\Models\UserFlagged;
 use App\Models\Util;
@@ -20,6 +21,9 @@ use App\Models\ValidationStatus;
 use App\Models\Views\TwigNotFound;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use App\Services\QuestionListService;
+use App\Services\QuestionScope;
+use App\Services\FillInAvailabilityPolicy;
 use Yamf\AppConfig;
 use Yamf\Interfaces\IRequestValidator;
 use Yamf\Responses\Response;
@@ -50,8 +54,31 @@ class QuestionController implements IRequestValidator
         $bookData = Book::loadAllBookChapterVerseDataForYear($currentYear, $app->db);
         $volumes = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
-        $usersByID = User::loadAllUsersByID($app->db);
-        return new TwigView('user/questions/view-questions', compact('currentYear', 'languages', 'bookData', 'volumes', 'userLanguage', 'usersByID'), 'Questions');
+        $usersByID = [];
+        $visibleUsers = $app->isWebAdmin
+            ? User::loadAllUsers($app->db)
+            : array_filter(
+                [User::loadUserByID(User::currentUserID(), $app->db)],
+                static fn (?User $user): bool => $user !== null
+            );
+        foreach ($visibleUsers as $visibleUser) {
+            $usersByID[$visibleUser->userID] = ['username' => $visibleUser->username];
+        }
+        $scope = QuestionScope::forApp($app, $app->db);
+        $readableBankIDs = $scope->readableBankIDs();
+        $questionBanks = array_values(array_filter(
+            QuestionBank::loadAll($app->db),
+            static fn (QuestionBank $bank): bool => in_array($bank->questionBankID, $readableBankIDs, true)
+        ));
+        return new TwigView('user/questions/view-questions', compact(
+            'currentYear',
+            'languages',
+            'bookData',
+            'volumes',
+            'userLanguage',
+            'usersByID',
+            'questionBanks'
+        ), 'Questions');
     }
 
     // TODO: better response instead of echo
@@ -62,21 +89,18 @@ class QuestionController implements IRequestValidator
             return new Response(401);
         }
 
-        $questionData = Question::loadQuestionsWithFilters(
-            $request->post['questionFilter'],
-            $request->post['questionType'],
-            $request->post['bookFilter'],
-            $request->post['chapterFilter'],
-            $request->post['volumeFilter'],
-            $request->post['searchText'],
-            $request->post['pageSize'],
-            $request->post['pageOffset'],
-            $request->post['languageID'],
-            User::currentUserID(), 
-            $app,
-            $app->db
-        );
-        echo json_encode($questionData);
+        try {
+            $questionData = QuestionListService::load(
+                $request->post,
+                User::currentUserID(),
+                $app,
+                $app->db
+            );
+            echo json_encode($questionData);
+        } catch (\InvalidArgumentException $exception) {
+            http_response_code(400);
+            echo json_encode(['error' => $exception->getMessage()]);
+        }
     }
 
     private function showCreateOrEditQuestion(PBEAppConfig $app, Request $request, bool $isCreating, ?Question $question = null, string $error = ''): Response
@@ -92,8 +116,34 @@ class QuestionController implements IRequestValidator
                 : UserFlagged::isFlagged($question->questionID, User::currentUserID(), $app->db);
         }
         $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+        $scope = QuestionScope::forApp($app, $app->db);
+        $writableBankIDs = $scope->writableBankIDs();
+        $questionBanks = array_values(array_filter(
+            QuestionBank::loadAll($app->db),
+            static fn (QuestionBank $bank): bool => in_array(
+                $bank->questionBankID,
+                $writableBankIDs,
+                true
+            )
+        ));
+        $selectedQuestionBankID = $question?->questionBankID ?? $scope->defaultWriteBankID();
+        if ($selectedQuestionBankID === null || !$scope->canWriteBank($selectedQuestionBankID)) {
+            $selectedQuestionBankID = $scope->defaultWriteBankID() ?? -1;
+        }
 
-        return new TwigView('user/questions/create-edit-question', compact('bookData', 'currentYear', 'commentaries', 'languages', 'userLanguage', 'isCreating', 'question', 'error', 'isFlagged'), $isCreating ? 'Add Question' : 'Edit Question');
+        return new TwigView('user/questions/create-edit-question', compact(
+            'bookData',
+            'currentYear',
+            'commentaries',
+            'languages',
+            'userLanguage',
+            'questionBanks',
+            'selectedQuestionBankID',
+            'isCreating',
+            'question',
+            'error',
+            'isFlagged'
+        ), $isCreating ? 'Add Question' : 'Edit Question');
     }
 
     public function createNewQuestion(PBEAppConfig $app, Request $request): Response
@@ -101,16 +151,22 @@ class QuestionController implements IRequestValidator
         if ($app->isGuest || $app->isPathfinder) {
             return new Redirect('/');
         }
+        if (QuestionScope::forApp($app, $app->db)->defaultWriteBankID() === null) {
+            return new Response(403);
+        }
         return $this->showCreateOrEditQuestion($app, $request, true);
     }
 
     private function validateQuestionForm(PBEAppConfig $app, Request $request, bool $isCreating): ValidationStatus
     {
-        $totalBibleFillInQuestions = Question::getNumberOfFillInBibleQuestionsForCurrentYear($app->db);
-
         $questionType = Util::validateString($request->post, 'question-type');
         $isFillInTheBlank = Util::validateBoolean($request->post, 'question-is-fill-in-blank');
         $languageID = Util::validateInteger($request->post, 'language-select');
+        $scope = QuestionScope::forApp($app, $app->db);
+        $questionBankID = Util::validateInteger($request->post, 'question-bank-id');
+        if ($questionBankID <= 0) {
+            $questionBankID = $scope->defaultWriteBankID() ?? -1;
+        }
 
         $isInvalidType = false;
         if ($questionType == Question::getBibleQnAType()) {
@@ -154,6 +210,8 @@ class QuestionController implements IRequestValidator
         $question->commentaryStartPage = $commentaryStartPage !== 0 ? $commentaryStartPage : null;
         $question->commentaryEndPage = $commentaryEndPage !== 0 ? $commentaryEndPage : null;
         $question->languageID = $languageID;
+        $question->questionBankID = $questionBankID;
+        $dbQuestion = null;
         if ($isCreating) {
             $question->creatorID = User::currentUserID();
         } else {
@@ -161,16 +219,30 @@ class QuestionController implements IRequestValidator
             $dbQuestion = Question::loadQuestionWithID($questionID, $app->db);
             $question->questionID = $dbQuestion->questionID;
             $question->creatorID = $dbQuestion->creatorID;
+            $question->isActive = $dbQuestion->isActive;
+            $question->isDeleted = $dbQuestion->isDeleted;
         }
         if ($isInvalidType) {
             return new ValidationStatus(false, $question, 'Invalid question type');
         }
-        // validate Bible fill in
-        if ($questionType == Question::getBibleQnAFillType() && $totalBibleFillInQuestions >= 500 && $app->ENABLE_NKJV_RESTRICTIONS) {
-            if ($isCreating) {
-                return new ValidationStatus(false, $question, 'Maximum amount of Bible fill-in questions reached');
-            } else if ($dbQuestion === null || $dbQuestion->type !== Question::getBibleQnAFillType()) {
-                return new ValidationStatus(false, $question, 'Maximum amount of Bible fill-in questions reached');
+        if (!$scope->canWriteBank($questionBankID)) {
+            return new ValidationStatus(false, $question, 'You cannot write to the selected question bank');
+        }
+        $globalBank = QuestionBank::loadGlobal($app->db);
+        if (
+            $questionType === Question::getBibleQnAFillType()
+            && $questionBankID !== $globalBank?->questionBankID
+        ) {
+            return new ValidationStatus(false, $question, 'Bible fill-in questions can only be stored in the global question bank');
+        }
+        if (
+            $app->ENABLE_NKJV_RESTRICTIONS
+            && $questionType === Question::getBibleQnAFillType()
+            && ($isCreating || $dbQuestion?->isActive === true)
+        ) {
+            $audit = (new FillInAvailabilityPolicy())->auditProspectiveQuestion($question, $app->db);
+            if (!$audit['allowed']) {
+                return new ValidationStatus(false, $question, implode(' ', $audit['errors']));
             }
         }
         if (!Util::doesTextPassWordFilter($question->question)) {
@@ -180,6 +252,33 @@ class QuestionController implements IRequestValidator
             return new ValidationStatus(false, $question, 'The answer text for this Q&A has invalid text');
         }
         return new ValidationStatus(true, $question);
+    }
+
+    private function persistQuestionWithPolicy(PBEAppConfig $app, Question $question, bool $isCreating): ?string
+    {
+        $requiresPolicy = $app->ENABLE_NKJV_RESTRICTIONS
+            && $question->type === Question::getBibleQnAFillType()
+            && $question->isActive;
+        if (!$requiresPolicy) {
+            $isCreating ? $question->create($app->db) : $question->update($app->db);
+            return null;
+        }
+
+        try {
+            FillInAvailabilityPolicy::acquireLock($app->db);
+        } catch (\RuntimeException $exception) {
+            return $exception->getMessage();
+        }
+        try {
+            $audit = (new FillInAvailabilityPolicy())->auditProspectiveQuestion($question, $app->db);
+            if (!$audit['allowed']) {
+                return implode(' ', $audit['errors']);
+            }
+            $isCreating ? $question->create($app->db) : $question->update($app->db);
+            return null;
+        } finally {
+            FillInAvailabilityPolicy::releaseLock($app->db);
+        }
     }
     
     public function saveNewQuestion(PBEAppConfig $app, Request $request): Response
@@ -191,8 +290,11 @@ class QuestionController implements IRequestValidator
         if ($validation->didValidate) {
             $question = $validation->output;
             /** @var Question $question */
-            $question->create($app->db);
-            return new Redirect('/questions' . ($question->isCommentaryQnA() ? '?loadCommentaryFirst=1' : ''));
+            $policyError = $this->persistQuestionWithPolicy($app, $question, true);
+            if ($policyError === null) {
+                return new Redirect('/questions' . ($question->isCommentaryQnA() ? '?loadCommentaryFirst=1' : ''));
+            }
+            return $this->showCreateOrEditQuestion($app, $request, true, $question, $policyError);
         }
         return $this->showCreateOrEditQuestion($app, $request, true, $validation->output, $validation->error);
     }
@@ -206,6 +308,9 @@ class QuestionController implements IRequestValidator
         if ($question === null) {
             return new TwigNotFound();
         }
+        if (!QuestionScope::forApp($app, $app->db)->canWriteBank($question->questionBankID)) {
+            return new Response(403);
+        }
         return $this->showCreateOrEditQuestion($app, $request, false, $question);
     }
     
@@ -218,11 +323,17 @@ class QuestionController implements IRequestValidator
         if ($question === null) {
             return new TwigNotFound();
         }
+        if (!QuestionScope::forApp($app, $app->db)->canWriteBank($question->questionBankID)) {
+            return new Response(403);
+        }
         $validation = $this->validateQuestionForm($app, $request, false);
         if ($validation->didValidate) {
             $question = $validation->output;
             /** @var Question $question */
-            $question->update($app->db);
+            $policyError = $this->persistQuestionWithPolicy($app, $question, false);
+            if ($policyError !== null) {
+                return $this->showCreateOrEditQuestion($app, $request, false, $question, $policyError);
+            }
             // check if validated before removing flag!
             $shouldRemoveFlag = Util::validateBoolean($request->post, 'remove-question-flag');
             if ($shouldRemoveFlag) {
@@ -246,6 +357,9 @@ class QuestionController implements IRequestValidator
         if ($question === null) {
             return new TwigNotFound();
         }
+        if (!QuestionScope::forApp($app, $app->db)->canWriteBank($question->questionBankID)) {
+            return new Response(403);
+        }
         $bookDataByVerseID = Book::getBookDataIndexedByVerse(Year::loadCurrentYear($app->db), $app->db);
         $commentariesByID = Commentary::loadAllCommentariesKeyedByID($app->db);
         return new TwigView('user/questions/verify-delete-question', compact('question', 'bookDataByVerseID', 'commentariesByID'), 'Delete Question');
@@ -259,6 +373,9 @@ class QuestionController implements IRequestValidator
         $question = Question::loadQuestionWithID($request->routeParams['questionID'], $app->db);
         if ($question === null) {
             return new TwigNotFound();
+        }
+        if (!QuestionScope::forApp($app, $app->db)->canWriteBank($question->questionBankID)) {
+            return new Response(403);
         }
         if (CSRF::verifyToken('delete-question')) {
             $question->updateDeletedFlag(true, $app->db);

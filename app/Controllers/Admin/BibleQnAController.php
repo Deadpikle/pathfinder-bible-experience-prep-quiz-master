@@ -2,7 +2,6 @@
 
 namespace App\Controllers\Admin;
 
-use App\Models\BibleFillInData;
 use App\Models\BibleQnAData;
 use App\Models\Book;
 use App\Models\Chapter;
@@ -110,7 +109,7 @@ class BibleQnAController extends BaseAdminController implements IRequestValidato
             return new TwigNotFound();
         }
         if (CSRF::verifyToken('delete-language-bible-qna')) {
-            BibleFillInData::deleteFillInsForLanguage(Year::loadCurrentYear($app->db), $language->languageID, $app->db);
+            BibleQnAData::deleteQnAForLanguage(Year::loadCurrentYear($app->db), $language->languageID, $app->db);
             return new Redirect('/admin/bible-qna-questions');
         } else {
             $error = 'Unable to validate request. Please try again.';

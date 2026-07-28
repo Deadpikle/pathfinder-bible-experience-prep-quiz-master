@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FillInAvailabilityPolicy;
 use PDO;
 
 class BibleFillInData
@@ -27,11 +28,18 @@ class BibleFillInData
     {
         $query = '
             SELECT c.ChapterID, c.Number, b.Name, COUNT(q.QuestionID) AS QuestionCount, q.LanguageID
-            FROM Questions q JOIN Verses v ON q.StartVerseID = v.VerseID 
+            FROM Questions q
+                JOIN QuestionBanks qb
+                    ON qb.QuestionBankID = q.QuestionBankID
+                    AND qb.IsGlobal = 1
+                    AND qb.IsDeleted = 0
+                JOIN Verses v ON q.StartVerseID = v.VerseID
                 JOIN Chapters c ON c.ChapterID = v.ChapterID
                 JOIN Books b ON b.BookID = c.BookID
             WHERE b.YearID = ?
                 AND q.Type = ?
+                AND q.IsDeleted = 0
+                AND q.IsActive = 1
             GROUP BY c.ChapterID, c.Number, q.LanguageID
             ORDER BY b.bibleOrder, b.Name, c.Number, q.LanguageID';
         
@@ -56,49 +64,75 @@ class BibleFillInData
         return $data;
     }
 
-    public static function deleteFillInsForLanguage(Year $year, int $languageID, PDO $db)
+    public static function deleteFillInsForLanguage(Year $year, int $languageID, PDO $db): void
     {
-        $fillInType = Question::getBibleQnAFillType();
-        // the weird subquery SELECT * was due to a workaround
-        // for the error discussed here: https://stackoverflow.com/q/44970574/3938401
-        $query = 'DELETE FROM Questions
-                    WHERE QuestionID IN (
-                    SELECT q.QuestionID 
-                    FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "' . $fillInType . '" AND LanguageID = ?) q 
-                        JOIN Verses v ON q.StartVerseID = v.VerseID
-                        JOIN Chapters c ON c.ChapterID = v.ChapterID
-                        JOIN Books b ON b.BookID = c.BookID
-                    WHERE q.Type = "' . $fillInType . '"
-                        AND b.YearID = ?
-                        AND q.LanguageID = ?)';
-        $stmt = $db->prepare($query);
-        $stmt->execute([
-            $languageID,
-            $year->yearID,
-            $languageID
-        ]);
+        FillInAvailabilityPolicy::acquireLock($db);
+        try {
+            $query = '
+                UPDATE Questions
+                SET IsActive = 0, IsDeleted = 1
+                WHERE QuestionID IN (
+                    SELECT scoped.QuestionID
+                    FROM (
+                        SELECT q.QuestionID
+                        FROM Questions q
+                        INNER JOIN QuestionBanks qb
+                            ON qb.QuestionBankID = q.QuestionBankID
+                            AND qb.IsGlobal = 1
+                            AND qb.IsDeleted = 0
+                        INNER JOIN Verses v ON q.StartVerseID = v.VerseID
+                        INNER JOIN Chapters c ON c.ChapterID = v.ChapterID
+                        INNER JOIN Books b ON b.BookID = c.BookID
+                        WHERE q.Type = ?
+                            AND b.YearID = ?
+                            AND q.LanguageID = ?
+                    ) scoped
+                )';
+            $stmt = $db->prepare($query);
+            $stmt->execute([
+                Question::getBibleQnAFillType(),
+                $year->yearID,
+                $languageID,
+            ]);
+        } finally {
+            FillInAvailabilityPolicy::releaseLock($db);
+        }
     }
 
-    public static function deleteFillInsForChapter(Year $year, int $chapterID, int $languageID, PDO $db)
+    public static function deleteFillInsForChapter(Year $year, int $chapterID, int $languageID, PDO $db): void
     {
-        // the weird subquery SELECT * was due to a workaround
-        // for the error discussed here: https://stackoverflow.com/q/44970574/3938401
-        $fillInType = Question::getBibleQnAFillType();
-        $query = 'DELETE FROM Questions 
-                      WHERE QuestionID IN (
-                        SELECT q.QuestionID 
-                        FROM (SELECT QuestionID, Type, LanguageID, StartVerseID FROM Questions WHERE Type = "' . $fillInType . '" AND LanguageID = ?) q 
-                            JOIN Verses v ON q.StartVerseID = v.VerseID
-                            JOIN Chapters c ON c.ChapterID = v.ChapterID
-                            JOIN Books b ON b.BookID = c.BookID
-                        WHERE c.ChapterID = ? AND q.Type = "' . $fillInType . '"
-                            AND b.YearID = ? AND q.LanguageID = ?)';
-        $stmt = $db->prepare($query);
-        $stmt->execute([
-            $languageID,
-            $chapterID,
-            $year->yearID,
-            $languageID
-        ]);
+        FillInAvailabilityPolicy::acquireLock($db);
+        try {
+            $query = '
+                UPDATE Questions
+                SET IsActive = 0, IsDeleted = 1
+                WHERE QuestionID IN (
+                    SELECT scoped.QuestionID
+                    FROM (
+                        SELECT q.QuestionID
+                        FROM Questions q
+                        INNER JOIN QuestionBanks qb
+                            ON qb.QuestionBankID = q.QuestionBankID
+                            AND qb.IsGlobal = 1
+                            AND qb.IsDeleted = 0
+                        INNER JOIN Verses v ON q.StartVerseID = v.VerseID
+                        INNER JOIN Chapters c ON c.ChapterID = v.ChapterID
+                        INNER JOIN Books b ON b.BookID = c.BookID
+                        WHERE c.ChapterID = ?
+                            AND q.Type = ?
+                            AND b.YearID = ?
+                            AND q.LanguageID = ?
+                    ) scoped
+                )';
+            $stmt = $db->prepare($query);
+            $stmt->execute([
+                $chapterID,
+                Question::getBibleQnAFillType(),
+                $year->yearID,
+                $languageID,
+            ]);
+        } finally {
+            FillInAvailabilityPolicy::releaseLock($db);
+        }
     }
 }

@@ -29,6 +29,7 @@ class PBEAppConfig extends AppConfig
 
     public bool $loggedIn;
     public bool $ENABLE_NKJV_RESTRICTIONS;
+    public bool $ENABLE_FILL_IN_ROTATION;
 
     public string $contactToEmail;
     public string $contactFromEmail;
@@ -75,6 +76,7 @@ class PBEAppConfig extends AppConfig
         $this->footerText = '';
         $this->currentFillInChapters = '';
         $this->ENABLE_NKJV_RESTRICTIONS = false;
+        $this->ENABLE_FILL_IN_ROTATION = false;
         $this->isGuest = true;
         $this->loggedIn = false;
         $this->contactToEmail = '';
