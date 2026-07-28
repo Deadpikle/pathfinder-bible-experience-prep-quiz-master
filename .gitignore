@@ -13,3 +13,4 @@ docs/pathfinder-bible-exp-engine.mwb.bak
 package-lock.json
 pbe(1).sql
 *.mtx.php
+outputs/

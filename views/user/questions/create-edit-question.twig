@@ -78,6 +78,15 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="form-group col-sm-12 col-md-4 col-lg-3">
+                <label for="question-bank-id">Question bank</label>
+                <select class="form-control" id="question-bank-id" name="question-bank-id" required>
+                    {% for bank in questionBanks %}
+                        <option value="{{ bank.questionBankID }}" {{ bank.questionBankID == selectedQuestionBankID ? 'selected' : '' }}>{{ bank.name }}</option>
+                    {% endfor %}
+                </select>
+                <small>Conference and club administrators can contribute only to their conference bank.</small>
+            </div>
         </div>
         <div class="row mt-2" id="start-verse-div">
             <p class="mb-0">Start Reference</p>
@@ -161,8 +170,8 @@
 <script type="text/javascript">
     // http://stackoverflow.com/a/15965470/3938401
     var selectedVerse = null;
-    var books = {{ json_encode(bookData) | raw }};
-    var commentaries = {{ json_encode(commentaries) | raw }};
+    var books = {{ safeJson(bookData) | raw }};
+    var commentaries = {{ safeJson(commentaries) | raw }};
     var questionType = "{{ question.type | default('bible-qna') }}";
     var isFillInInitially = {{ question.isFillIn() ? 'true' : 'false' }};
     var startVerseID = {{ question.startVerseID | default(-1) }};

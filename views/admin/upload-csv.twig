@@ -30,19 +30,56 @@
 
 <div id="upload">
     <form method="post" enctype="multipart/form-data">
+        {{ csrf('import-questions') | raw }}
+        <div class="form-group">
+            <div class="col-sm-12 col-md-4">
+                <label for="question-bank-id">Destination question bank</label>
+                <select class="form-control" id="question-bank-id" name="question-bank-id" required>
+                    {% for bank in questionBanks %}
+                        <option value="{{ bank.questionBankID }}" {{ bank.questionBankID == selectedQuestionBankID ? 'selected' : '' }}>{{ bank.name }}</option>
+                    {% endfor %}
+                </select>
+                {% if questionBanks is empty %}
+                    <p class="text-danger mb-0">Your account does not have write access to a question bank.</p>
+                {% endif %}
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-sm-12 col-md-4">
                 <label for="csv"><em>Choose CSV File...</em></label>
                 <input class="form-control" type="file" id="csv" name="csv" accept=".csv,text/csv" required>
             </div>
         </div>
-        <button class="btn btn-primary btn-sm mt-2" type="submit" name="action"><i class="fas fa-upload"></i> Upload Questions</button>
+        <button class="btn btn-primary btn-sm mt-2" type="submit" name="action" {{ questionBanks is empty ? 'disabled' : '' }}><i class="fas fa-upload"></i> Upload Questions</button>
     </form>
 </div>
 
 <hr/> 
 
 <h4 class="mt-2">Upload Form Directions</h4>
+
+<h5>Required-field matrix</h5>
+<p>The CSV must contain all 16 headers. Individual cells are required according to the question type below.</p>
+<div class="table-responsive">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Column</th>
+                <th>Bible question</th>
+                <th>Commentary question</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for column, requirements in csvRequirementMatrix %}
+                <tr>
+                    <th scope="row">{{ column }}</th>
+                    <td>{{ requirements.bible }}</td>
+                    <td>{{ requirements.commentary }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <p>Using the upload form requires using Microsoft Excel software. Technically, other methods are possible, but they are not officially supported.</p>
 <p>The sample upload file for filling out can be downloaded by clicking the following link: <a class="btn btn-sm btn-primary" href="{{ app.yurl('/files/offline-question-sheet.xlsx') }}" target="_blank"><i class="fas fa-download"></i> Download Sample File</a></p>

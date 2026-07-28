@@ -20,10 +20,19 @@
 
 <h3>Questions</h3>
 
+{% if _get['bulkFlagged'] is defined %}
+    <div class="alert alert-success" role="alert">
+        {{ _get['bulkFlagged'] }} selected {{ _get['bulkFlagged'] == 1 ? 'question was' : 'questions were' }} flagged.
+    </div>
+{% endif %}
+
 {% if not app.isGuest and not app.isPathfinder %}
     <div id="create" class="row mb-2">
         <div class="col s12"> 
             <a class="btn btn-sm btn-primary" href="{{ app.yurl('/questions/add') }}"><i class="fas fa-plus"></i> Add Question</a>
+            {% if app.isAdmin %}
+                <button class="btn btn-sm btn-secondary" type="button" id="export-questions-csv"><i class="fas fa-download"></i> Export current bank as CSV</button>
+            {% endif %}
         </div>
     </div>
 {% endif %}
@@ -49,7 +58,7 @@
     </li>
 </ul>
 
-<div class="row pt-1" id="language-select-container">
+<div class="row pt-1" id="question-filter-container">
     <div class="form-group col-sm-6 col-md-3">
         <label for="language-select">Filter by language</label>
         <select id="language-select" class="form-control">
@@ -60,7 +69,81 @@
             {# <option value="-1">No language filter</option> #}
         </select>
     </div>
+    <div class="form-group col-sm-6 col-md-3">
+        <label for="question-bank-select">Filter by question bank</label>
+        <select id="question-bank-select" class="form-control">
+            <option value="-1">All available banks</option>
+            {% for bank in questionBanks %}
+                <option value="{{ bank.questionBankID }}">{{ bank.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-sm-6 col-md-3 bible-reference-filter">
+        <label for="book-select">Book</label>
+        <select id="book-select" class="form-control">
+            <option value="-1">All books</option>
+        </select>
+    </div>
+    <div class="form-group col-sm-6 col-md-3 bible-reference-filter">
+        <label for="chapter-select">Chapter</label>
+        <select id="chapter-select" class="form-control" disabled>
+            <option value="-1">All chapters</option>
+        </select>
+    </div>
+    <div class="form-group col-sm-6 col-md-3 bible-reference-filter">
+        <label for="verse-select">Verse</label>
+        <select id="verse-select" class="form-control" disabled>
+            <option value="-1">All verses</option>
+        </select>
+    </div>
+    <div class="form-group col-sm-6 col-md-3 commentary-filter d-none">
+        <label for="volume-select">Commentary</label>
+        <select id="volume-select" class="form-control">
+            <option value="-1">All commentaries</option>
+            {% for volume in volumes %}
+                <option value="{{ volume.commentaryID }}">Volume {{ volume.number }} — {{ volume.topicName }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-sm-8 col-md-4">
+        <label for="question-search">Question or answer text</label>
+        <input id="question-search" type="search" class="form-control" maxlength="200" placeholder="Search question text...">
+    </div>
+    <div class="form-group col-sm-4 col-md-2 d-flex align-items-end">
+        <button type="button" id="apply-question-filters" class="btn btn-sm btn-info mb-1">Apply filters</button>
+    </div>
 </div>
+
+{% if not app.isGuest %}
+    <form id="bulk-flag-form" class="row g-2 mt-2 d-none" method="post" action="{{ app.yurl('/questions/flag-range') }}">
+        {{ csrf('bulk-flag-questions') | raw }}
+        <input type="hidden" name="questionBankID" id="bulk-question-bank-id" value="-1">
+        <input type="hidden" name="bookFilter" id="bulk-book-id" value="-1">
+        <input type="hidden" name="chapterFilter" id="bulk-chapter-id" value="-1">
+        <input type="hidden" name="verseFilter" id="bulk-verse-id" value="-1">
+        <input type="hidden" name="languageID" id="bulk-language-id" value="-1">
+        <div id="bulk-selected-question-ids"></div>
+        <div class="col-sm-8 col-md-5">
+            <label for="bulk-flag-reason">Flag selected questions from this reference range</label>
+            <select class="form-control" id="bulk-flag-reason" name="reason" required>
+                <option value="">Select a reason...</option>
+                <option value="{{ getConst('FlagReason', 'CONFUSING') }}">Confusing question/answer</option>
+                <option value="{{ getConst('FlagReason', 'NEEDS_PRACTICE') }}">I need to practice these questions</option>
+                <option value="{{ getConst('FlagReason', 'INCORRECT_POINTS') }}">Incorrect number of points</option>
+                <option value="{{ getConst('FlagReason', 'NEEDS_MORE_DETAILS') }}">Needs more details</option>
+                <option value="{{ getConst('FlagReason', 'TOO_VAGUE') }}">Too vague</option>
+                <option value="{{ getConst('FlagReason', 'SAVE_FOR_LATER') }}">Save for later</option>
+                <option value="{{ getConst('FlagReason', 'SPELLING_TYPOS') }}">Typos</option>
+                <option value="{{ getConst('FlagReason', 'WRONG_REFERENCE') }}">Wrong reference</option>
+                <option value="{{ getConst('FlagReason', 'OTHER') }}">Other</option>
+            </select>
+        </div>
+        <div class="col-sm-4 col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-sm btn-info mb-1"><i class="fas fa-flag"></i> Flag selected questions</button>
+        </div>
+        <p class="form-text mb-0"><span id="selected-question-count">0 questions selected.</span> Ranges are inclusive: a question is shown when its start/end reference overlaps the selected book, chapter, or verse.</p>
+    </form>
+{% endif %}
 
 <hr/>
 
@@ -85,9 +168,9 @@
 {% block scripts %}
 
 <script type="text/javascript">
-    var books = {{ json_encode(bookData) | raw }};
-    var volumes = {{ json_encode(volumes) | raw }};
-    var usersByID = {{ json_encode(usersByID) | raw }};
+    var books = {{ safeJson(bookData) | raw }};
+    var volumes = {{ safeJson(volumes) | raw }};
+    var usersByID = {{ safeJson(usersByID) | raw }};
     var isAdmin = {{ app.isAdmin ? 'true' : 'false' }};
     var isGuestMode = {{ app.isGuest ? 'true' : 'false' }};
     var questionURLBase = '{{ app.yurl('/questions/') }}';
@@ -109,6 +192,7 @@
         var chapterIndex = 0;
         var bookFilter = -1;
         var chapterFilter = -1;
+        var verseFilter = -1;
         var volumeFilter = -1;
         var searchText = '';
         var table = null;
@@ -129,10 +213,12 @@
                     questionFilter: questionFilter,
                     pageSize: pageSize,
                     pageOffset: 0,//currentPageNumber * pageSize,
-                    bookFilter: -1,
-                    chapterFilter: -1,
-                    volumeFilter: -1,
-                    searchText: '',
+                    bookFilter: bookFilter,
+                    chapterFilter: chapterFilter,
+                    verseFilter: verseFilter,
+                    volumeFilter: volumeFilter,
+                    questionBankID: $('#question-bank-select').val(),
+                    searchText: searchText,
                     languageID: $("#language-select").val()
                 },
                 success: function(response) {
@@ -148,15 +234,27 @@
                             var totalQuestions = data.questions.length != 0 ? data.questions.length : 0;
                             maxPageNumber = totalQuestions != 0 ? Math.ceil(data.totalQuestions / pageSize) - 1 : 0;
                             
-                            {% if not app.isGuest %}
-                                datatablesProps.columnDefs = [
-                                    { orderable: false, targets: [-1, -2] }
-                                ];
-                            {% endif %}
+                            var nonOrderableColumns = [];
+                            if (shouldShowSelectionColumn(questionType)) {
+                                nonOrderableColumns.push(0);
+                            }
+                            if (isAdmin && !isGuestMode) {
+                                nonOrderableColumns.push(-1, -2);
+                            }
+                            datatablesProps.columnDefs = nonOrderableColumns.length > 0
+                                ? [{ orderable: false, targets: nonOrderableColumns }]
+                                : [];
                             datatablesProps.language = {
                                 searchPlaceholder: 'Search questions...'
                             };
-                            datatablesProps.order = [[3, 'asc'], [0, 'asc'], [4, 'asc']];
+                            var selectionOffset = shouldShowSelectionColumn(questionType) ? 1 : 0;
+                            var flagOffset = questionFilter === 'flagged' ? 2 : 0;
+                            var referenceColumn = selectionOffset + 3 + flagOffset;
+                            datatablesProps.order = [
+                                [referenceColumn, 'asc'],
+                                [selectionOffset, 'asc'],
+                                [referenceColumn + 1, 'asc']
+                            ];
                             //datatablesProps.destroy = true;
                             table = $('#questions').DataTable(datatablesProps);
                         } catch (e) {
@@ -186,41 +284,59 @@
             }
         }
 
-        function setupTableHeader(questionType) {
-            resetTable();
-            var $tableHeaderRow = $('#table-header-row');
-            $tableHeaderRow.empty();
-            var html = '';
-            if (isBibleQuestion(questionType)) {
-                html += '<th>Question</th>';
-                html += '<th>Answer</th>';
-                if (questionFilter === 'flagged') {
-                    html += '<th>Flag Date/Time</th>';
-                    html += '<th>Flag Reason</th>';
-                }
-                html += '<th class="nowrap">Fill-in?</th>';
-                html += '<th>Start</th>';
-                html += '<th>End</th>';
-                html += '<th>Points</th>';
-                html += '<th>Language</th>';
+        function shouldShowSelectionColumn(type) {
+            return !isGuestMode && isBibleQuestion(type);
+        }
+
+        function appendHeader($row, text, className) {
+            var $header = $('<th>').text(text);
+            if (className) {
+                $header.addClass(className);
             }
-            else if (isCommentaryQuestion(questionType)) {
-                html += '<th>Question</th>';
-                html += '<th>Answer</th>';
+            $row.append($header);
+        }
+
+        function setupTableHeader(type) {
+            resetTable();
+            var $tableHeaderRow = $('#table-header-row').empty();
+            if (shouldShowSelectionColumn(type)) {
+                var $selectAll = $('<input>', {
+                    type: 'checkbox',
+                    id: 'select-all-questions',
+                    title: 'Select every displayed question',
+                    'aria-label': 'Select every displayed question'
+                });
+                $tableHeaderRow.append($('<th>').append($selectAll));
+            }
+            if (isBibleQuestion(type)) {
+                appendHeader($tableHeaderRow, 'Question');
+                appendHeader($tableHeaderRow, 'Answer');
                 if (questionFilter === 'flagged') {
-                    html += '<th>Flag Date/Time</th>';
-                    html += '<th>Flag Reason</th>';
+                    appendHeader($tableHeaderRow, 'Flag Date/Time');
+                    appendHeader($tableHeaderRow, 'Flag Reason');
                 }
-                html += '<th class="nowrap">Fill-in?</th>';
-                html += '<th>Volume</th>';
-                html += '<th>Points</th>';
-                html += '<th>Language</th>';
+                appendHeader($tableHeaderRow, 'Fill-in?', 'nowrap');
+                appendHeader($tableHeaderRow, 'Start');
+                appendHeader($tableHeaderRow, 'End');
+                appendHeader($tableHeaderRow, 'Points');
+                appendHeader($tableHeaderRow, 'Language');
+            }
+            else if (isCommentaryQuestion(type)) {
+                appendHeader($tableHeaderRow, 'Question');
+                appendHeader($tableHeaderRow, 'Answer');
+                if (questionFilter === 'flagged') {
+                    appendHeader($tableHeaderRow, 'Flag Date/Time');
+                    appendHeader($tableHeaderRow, 'Flag Reason');
+                }
+                appendHeader($tableHeaderRow, 'Fill-in?', 'nowrap');
+                appendHeader($tableHeaderRow, 'Volume');
+                appendHeader($tableHeaderRow, 'Points');
+                appendHeader($tableHeaderRow, 'Language');
             }
             if (isAdmin && !isGuestMode) {
-                html += '<th></th>';
-                html += '<th></th>';
+                appendHeader($tableHeaderRow, '');
+                appendHeader($tableHeaderRow, '');
             }
-            $tableHeaderRow.append(html);
         }
 
         function emptyQuestionBody() {
@@ -228,80 +344,125 @@
             $questionsBody.empty();
         }
 
+        function appendTextCell($row, value, sortValue) {
+            var $cell = $('<td>').text(value == null ? '' : value);
+            if (sortValue !== undefined) {
+                $cell.attr('data-sort', sortValue == null ? '' : String(sortValue));
+            }
+            $row.append($cell);
+            return $cell;
+        }
+
+        function appendFlagCells($row, question, includeUser) {
+            var readableDate = question.IsFlagged && question.FlagDateTime !== ''
+                ? question.FlagReadableDateTime
+                : '';
+            var $dateCell = appendTextCell($row, readableDate, question.FlagDateTime);
+            if (includeUser && question.IsFlagged && Number(question.FlagUserID) > 0 && question.FlagUserID in usersByID) {
+                $dateCell.append($('<br>'));
+                $dateCell.append(document.createTextNode('(User: ' + usersByID[question.FlagUserID].username + ')'));
+            }
+            appendTextCell(
+                $row,
+                question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : ''
+            );
+        }
+
+        function appendAdminCells($row, question, id) {
+            if (!isAdmin || isGuestMode) {
+                return;
+            }
+            if (question.CanWrite) {
+                var encodedID = encodeURIComponent(String(id));
+                var $edit = $('<a>')
+                    .addClass('btn btn-sm btn-primary')
+                    .attr('href', questionURLBase + encodedID + '/edit')
+                    .append($('<i>').addClass('fas fa-pencil'))
+                    .append(document.createTextNode(' Edit'));
+                var $remove = $('<a>')
+                    .addClass('btn btn-sm btn-danger')
+                    .attr('href', questionURLBase + encodedID + '/delete')
+                    .append($('<i>').addClass('fas fa-trash-alt'))
+                    .append(document.createTextNode(' Delete'));
+                $row.append($('<td>').append($edit));
+                $row.append($('<td>').append($remove));
+            }
+            else {
+                $row.append($('<td>').attr('colspan', 2).append($('<span>').addClass('text-muted').text('Read only')));
+            }
+        }
+
         function setupTable(questions) {
             var $questionsBody = $("#questions-body");
             emptyQuestionBody();
 
-            var unchecked = "";
-            var checked = "(Fill-In)";
-
             for (var i = 0; i < questions.length; i++) {
                 var question = questions[i];
-                var id = question.QuestionID;
-                var html = '<tr>';
+                var id = Number(question.QuestionID);
+                if (!Number.isInteger(id) || id <= 0) {
+                    continue;
+                }
+                var $row = $('<tr>');
                 var isFillIn = isFillInQuestion(question.Type);
-                var checkboxTypeForFillIn = isFillIn ? checked : unchecked;
-                var answer = isFillIn ? "[Fill in the blanks]" : question.Answer;
-                var languageName = question.LanguageName;
-                if (question.LanguageAltName != '') {
+                var fillInLabel = isFillIn ? '(Fill-In)' : '';
+                var answer = isFillIn ? '[Fill in the blanks]' : question.Answer;
+                var languageName = question.LanguageName || '';
+                if (question.LanguageAltName) {
                     languageName += ' (' + question.LanguageAltName + ')';
                 }
+                if (shouldShowSelectionColumn(question.Type)) {
+                    var $selection = $('<input>', {
+                        type: 'checkbox',
+                        value: id,
+                        class: 'bulk-flag-question',
+                        'aria-label': 'Select question ' + id + ' for flagging'
+                    });
+                    $row.append($('<td>').append($selection));
+                }
                 if (isBibleQuestion(question.Type)) {
-                    var startVerse = question.StartBook + " " + question.StartChapter + ":" + question.StartVerse;
-                    var endVerse = "";
-                    var endVerseDataSort = "";
-                    if (typeof question.EndVerse !== 'undefined' && question.EndVerse != null && question.EndVerse != "") {
-                        endVerse = question.EndBook + " " + question.EndChapter + ":" + question.EndVerse;
-                        endVerseDataSort = padZeros(question.EndBibleOrder, 3) + '-' + question.EndBook + '-' + padZeros(question.EndChapter, 3) + 
-                            padZeros(question.EndVerse, 3);
+                    var startVerse = question.StartBook + ' ' + question.StartChapter + ':' + question.StartVerse;
+                    var endVerse = '';
+                    var endVerseDataSort = '';
+                    if (question.EndVerse != null && question.EndVerse !== '') {
+                        endVerse = question.EndBook + ' ' + question.EndChapter + ':' + question.EndVerse;
+                        endVerseDataSort = padZeros(question.EndBibleOrder, 3) + '-' + question.EndBook + '-' +
+                            padZeros(question.EndChapter, 3) + '-' + padZeros(question.EndVerse, 3);
                     }
-                    html += '<td>' + question.Question + '</td>';
-                    html += '<td>' + answer + '</td>';
+                    appendTextCell($row, question.Question);
+                    appendTextCell($row, answer);
                     if (questionFilter === 'flagged') {
-                        html += '<td data-sort="' + question.FlagDateTime + '">';
-                        html += question.IsFlagged && question.FlagDateTime !== '' 
-                            ? question.FlagReadableDateTime 
-                            : '';
-                        html += question.IsFlagged && question.FlagUserID > 0 && question.FlagUserID in usersByID 
-                            ? '<br>(User: ' + usersByID[question.FlagUserID].username + ')' 
-                            : '';
-                        html += '</td>';
-
-                        html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
+                        appendFlagCells($row, question, true);
                     }
-                    html += '<td>' + checkboxTypeForFillIn + '</td>';
-                    var startVerseDataSort = padZeros(question.StartBibleOrder, 3) + '-' + question.StartBook + '-' + 
-                        padZeros(question.StartChapter, 3) + 
-                        padZeros(question.StartVerse, 3);
-                        padZeros(question.StartVerse, 3);
-                    html += '<td data-sort="' + startVerseDataSort + '">' + startVerse + '</td>';
-                    html += '<td data-sort="' + endVerseDataSort + '">' + endVerse + '</td>';
-                    html += '<td>' + question.NumberPoints + '</td>';
-                    html += '<td>' + languageName + '</td>';
+                    appendTextCell($row, fillInLabel);
+                    var startVerseDataSort = padZeros(question.StartBibleOrder, 3) + '-' + question.StartBook + '-' +
+                        padZeros(question.StartChapter, 3) + '-' + padZeros(question.StartVerse, 3);
+                    appendTextCell($row, startVerse, startVerseDataSort);
+                    appendTextCell($row, endVerse, endVerseDataSort);
+                    appendTextCell($row, question.NumberPoints);
+                    appendTextCell($row, languageName);
                 }
                 else if (isCommentaryQuestion(question.Type)) {
-                    var volume = commentaryVolumeString(question.CommentaryVolume, question.CommentaryStartPage, question.CommentaryEndPage);
-                    volume += ' - ' + question.TopicName;
-                    html += '<td>' + question.Question + '</td>';
-                    html += '<td>' + answer + '</td>';
+                    var volume = commentaryVolumeString(
+                        question.CommentaryVolume,
+                        question.CommentaryStartPage,
+                        question.CommentaryEndPage
+                    ) + ' - ' + question.TopicName;
+                    appendTextCell($row, question.Question);
+                    appendTextCell($row, answer);
                     if (questionFilter === 'flagged') {
-                        html += '<td data-sort="' + question.FlagDateTime + '">' + (question.IsFlagged && question.FlagDateTime !== '' ? question.FlagReadableDateTime : '') + '</td>';
-                        html += '<td>' + (question.IsFlagged && question.FlagReason !== '' ? question.FlagReason : '') + '</td>';
+                        appendFlagCells($row, question, false);
                     }
-                    html += '<td>' + checkboxTypeForFillIn + '</td>';
-                    var volumeDataSort = padZeros(question.CommentaryVolume, 2) + '-' + padZeros(question.CommentaryStartPage, 3) + 
-                        padZeros(question.CommentaryEndPage, 3);
-                    html += '<td data-sort="' + volumeDataSort + '">' + volume + '</td>';
-                    html += '<td>' + question.NumberPoints + '</td>';
-                    html += '<td>' + languageName + '</td>';
+                    appendTextCell($row, fillInLabel);
+                    var volumeDataSort = padZeros(question.CommentaryVolume, 2) + '-' +
+                        padZeros(question.CommentaryStartPage, 3) + '-' + padZeros(question.CommentaryEndPage, 3);
+                    appendTextCell($row, volume, volumeDataSort);
+                    appendTextCell($row, question.NumberPoints);
+                    appendTextCell($row, languageName);
                 }
-                if (isAdmin && !isGuestMode) {
-                    html += '<td><a class="btn btn-sm btn-primary" href="' + questionURLBase + id + '/edit"><i class="fas fa-pencil"></i> Edit</a></td>';
-                    html += '<td><a class="btn btn-sm btn-danger" href="' + questionURLBase + id + '/delete"><i class="fas fa-trash-alt"></i> Delete</a></td>';
-                }
-                html += '</tr>';
-                $questionsBody.append(html);
+                appendAdminCells($row, question, id);
+                $questionsBody.append($row);
             }
+            updateSelectedQuestionCount();
             $("#questions").show();
             $("#loading-bar").hide();
         }
@@ -330,6 +491,10 @@
                 setQuestionSelectorSelected(element);
                 emptyQuestionBody();
                 setupTableHeader(questionTypeSelected);
+                var isBible = isBibleQuestion(questionTypeSelected);
+                $('.bible-reference-filter').toggleClass('d-none', !isBible);
+                $('.commentary-filter').toggleClass('d-none', isBible);
+                $('#bulk-flag-form').toggleClass('d-none', !isBible || Number($('#book-select').val()) <= 0);
                 loadQuestions();
             }
         }
@@ -380,6 +545,171 @@
             resetTable();
             loadQuestions();
         });
+
+        function findBook(bookID) {
+            for (var i = 0; i < books.length; i++) {
+                if (Number(books[i].bookID) === Number(bookID)) {
+                    return books[i];
+                }
+            }
+            return null;
+        }
+
+        function findChapter(book, chapterID) {
+            if (book === null) {
+                return null;
+            }
+            for (var i = 0; i < book.chapters.length; i++) {
+                if (Number(book.chapters[i].chapterID) === Number(chapterID)) {
+                    return book.chapters[i];
+                }
+            }
+            return null;
+        }
+
+        function resetOptions($select, label) {
+            $select.empty().append($('<option>').val(-1).text(label));
+        }
+
+        var $bookSelect = $('#book-select');
+        for (var bookNumber = 0; bookNumber < books.length; bookNumber++) {
+            $bookSelect.append($('<option>').val(books[bookNumber].bookID).text(books[bookNumber].name));
+        }
+
+        $bookSelect.change(function() {
+            bookFilter = Number(this.value);
+            chapterFilter = -1;
+            verseFilter = -1;
+            var book = findBook(bookFilter);
+            var $chapterSelect = $('#chapter-select');
+            resetOptions($chapterSelect, 'All chapters');
+            resetOptions($('#verse-select'), 'All verses');
+            $('#verse-select').prop('disabled', true);
+            if (book !== null) {
+                for (var i = 0; i < book.chapters.length; i++) {
+                    $chapterSelect.append($('<option>').val(book.chapters[i].chapterID).text(book.chapters[i].number));
+                }
+            }
+            $chapterSelect.prop('disabled', book === null);
+            $('#bulk-flag-form').toggleClass('d-none', book === null || !isBibleQuestion(questionType));
+            syncBulkFlagFields();
+        });
+
+        $('#chapter-select').change(function() {
+            chapterFilter = Number(this.value);
+            verseFilter = -1;
+            var chapter = findChapter(findBook(bookFilter), chapterFilter);
+            var $verseSelect = $('#verse-select');
+            resetOptions($verseSelect, 'All verses');
+            if (chapter !== null) {
+                for (var i = 0; i < chapter.verses.length; i++) {
+                    $verseSelect.append($('<option>').val(chapter.verses[i].verseID).text(chapter.verses[i].number));
+                }
+            }
+            $verseSelect.prop('disabled', chapter === null);
+            syncBulkFlagFields();
+        });
+
+        $('#verse-select').change(function() {
+            verseFilter = Number(this.value);
+            syncBulkFlagFields();
+        });
+
+        $('#volume-select').change(function() {
+            volumeFilter = Number(this.value);
+        });
+
+        function syncBulkFlagFields() {
+            $('#bulk-question-bank-id').val($('#question-bank-select').val());
+            $('#bulk-book-id').val(bookFilter);
+            $('#bulk-chapter-id').val(chapterFilter);
+            $('#bulk-verse-id').val(verseFilter);
+            $('#bulk-language-id').val($('#language-select').val());
+        }
+
+        function selectedQuestionIDs() {
+            return $('.bulk-flag-question:checked').map(function() {
+                return Number(this.value);
+            }).get().filter(function(id) {
+                return Number.isInteger(id) && id > 0;
+            });
+        }
+
+        function updateSelectedQuestionCount() {
+            var count = selectedQuestionIDs().length;
+            $('#selected-question-count').text(
+                count + (count === 1 ? ' question selected.' : ' questions selected.')
+            );
+            var allCount = $('.bulk-flag-question').length;
+            $('#select-all-questions').prop('checked', allCount > 0 && count === allCount);
+        }
+
+        $('#questions-body').on('change', '.bulk-flag-question', updateSelectedQuestionCount);
+        $('#table-header-row').on('change', '#select-all-questions', function() {
+            $('.bulk-flag-question').prop('checked', this.checked);
+            updateSelectedQuestionCount();
+        });
+
+        $('#question-bank-select, #language-select').change(syncBulkFlagFields);
+        $('#apply-question-filters').click(function() {
+            searchText = $('#question-search').val().trim();
+            resetTable();
+            loadQuestions();
+        });
+        $('#question-search').on('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                $('#apply-question-filters').click();
+            }
+        });
+
+        $('#bulk-flag-form').on('submit', function(event) {
+            syncBulkFlagFields();
+            var ids = selectedQuestionIDs();
+            var $selectedInputs = $('#bulk-selected-question-ids').empty();
+            for (var i = 0; i < ids.length; i++) {
+                $selectedInputs.append($('<input>', {
+                    type: 'hidden',
+                    name: 'questionIDs[]',
+                    value: ids[i]
+                }));
+            }
+            if (bookFilter <= 0) {
+                event.preventDefault();
+                alert('Select and apply at least a book filter first.');
+            }
+            else if (ids.length === 0) {
+                event.preventDefault();
+                alert('Select at least one matching question to flag.');
+            }
+            else if (!window.confirm(
+                'Flag ' + ids.length + (ids.length === 1 ? ' selected question?' : ' selected questions?')
+            )) {
+                event.preventDefault();
+            }
+        });
+
+        $('#export-questions-csv').click(function() {
+            var bankID = Number($('#question-bank-select').val());
+            if (bankID <= 0) {
+                alert('Select one question bank before exporting.');
+                return;
+            }
+            var params = new URLSearchParams({
+                bankID: bankID,
+                questionType: questionType,
+                questionFilter: questionFilter,
+                languageID: $('#language-select').val(),
+                bookFilter: bookFilter,
+                chapterFilter: chapterFilter,
+                verseFilter: verseFilter,
+                volumeFilter: volumeFilter,
+                searchText: $('#question-search').val().trim()
+            });
+            window.location.assign('{{ app.yurl('/questions/export.csv') }}?' + params.toString());
+        });
+
+        syncBulkFlagFields();
 
         // load questions
         {% if loadCommentaryFirst %}

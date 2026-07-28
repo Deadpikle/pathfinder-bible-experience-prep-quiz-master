@@ -4,20 +4,21 @@ namespace App\Controllers\Admin;
 
 use App\Helpers\Translations;
 use Yamf\Request;
-use Yamf\Responses\Redirect;
-use Yamf\Responses\View;
 
-use App\Models\Club;
 use App\Models\Commentary;
-use App\Models\Conference;
+use App\Models\CSRF;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\Question;
-use App\Models\StudyGuide;
+use App\Models\QuestionBank;
 use App\Models\User;
 use App\Models\Util;
 use App\Models\Views\TwigView;
 use App\Models\Year;
+use App\Services\QuestionCsvReader;
+use App\Services\QuestionCsvSchema;
+use App\Services\QuestionScope;
+use App\Services\FillInAvailabilityPolicy;
 use Yamf\Responses\Response;
 
 class ImportQuestionsController extends BaseAdminController
@@ -25,22 +26,34 @@ class ImportQuestionsController extends BaseAdminController
     public function viewImportPage(PBEAppConfig $app, Request $request): Response
     {
         $defaultLanguage = Language::loadDefaultLanguage($app->db);
-        return new TwigView('admin/upload-csv', compact('defaultLanguage'), 'Upload Questions');
-    }
-
-    // getHexChar from http://forums.devshed.com/php-development-5/comparing-hex-values-comprising-string-249095.html
-    private function getHexChar($hexCode): string
-    {
-        return chr(hexdec($hexCode));
+        [$questionBanks, $selectedQuestionBankID] = $this->loadWritableQuestionBanks($app);
+        $csvRequirementMatrix = QuestionCsvSchema::requirementMatrix();
+        return new TwigView('admin/upload-csv', compact(
+            'defaultLanguage',
+            'questionBanks',
+            'selectedQuestionBankID',
+            'csvRequirementMatrix'
+        ), 'Upload Questions');
     }
 
     public function saveImportedQuestions(PBEAppConfig $app, Request $request): Response
     {
-        // TODO: refactor to a model or other class to handle this
         $questionsSuccessfullyAdded = 0;
         $questionsFailedToAdd = 0;
         $errors = '';
         $allLanguages = Language::loadAllLanguages($app->db);
+        $defaultLanguage = Language::loadDefaultLanguage($app->db);
+        [$questionBanks, $defaultQuestionBankID] = $this->loadWritableQuestionBanks($app);
+        $selectedQuestionBankID = Util::validateInteger($request->post, 'question-bank-id');
+        if ($selectedQuestionBankID <= 0) {
+            $selectedQuestionBankID = $defaultQuestionBankID;
+        }
+        $scope = QuestionScope::forApp($app, $app->db);
+        if (!CSRF::verifyToken('import-questions') || !$scope->canWriteBank($selectedQuestionBankID)) {
+            return new Response(403);
+        }
+        $globalQuestionBankID = QuestionBank::loadGlobal($app->db)?->questionBankID ?? -1;
+        $csvRequirementMatrix = QuestionCsvSchema::requirementMatrix();
 
         $currentYear = Year::loadCurrentYear($app->db);
         $bibleFillIns = Question::getNumberOfFillInBibleQuestionsPerLanguage($currentYear, $app->db);
@@ -50,37 +63,31 @@ class ImportQuestionsController extends BaseAdminController
             $languagesByID[$language->languageID] = $language;
         }
 
-        $tmpName = $_FILES['csv']['tmp_name'];
-        $contents = file_get_contents($tmpName);
-        // check if UTF-8 encoded file
-        $isUTF8 = false;
-        if ($contents[0] == $this->getHexChar('EF') && $contents[1] == $this->getHexChar('BB') && $contents[2] == $this->getHexChar('BF')) {
-            $contents = substr($contents, 3);
-            $isUTF8 = true;
+        $tmpName = $_FILES['csv']['tmp_name'] ?? '';
+        if (
+            $tmpName === ''
+            || ($_FILES['csv']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+            || !is_uploaded_file($tmpName)
+        ) {
+            $didProcessUpload = true;
+            $questionsFailedToAdd = 1;
+            $errors = 'No readable CSV file was uploaded.';
+            return new TwigView('admin/upload-csv', compact(
+                'errors', 'questionsSuccessfullyAdded', 'questionsFailedToAdd', 'defaultLanguage',
+                'didProcessUpload', 'questionBanks', 'selectedQuestionBankID', 'csvRequirementMatrix'
+            ), 'Upload Questions');
         }
-        // split file by items
-        $rows = explode("\r\n", $contents);
-        if (count($rows) === 1) {
-            $rows = explode("\r", $contents);
+        try {
+            $csv = QuestionCsvReader::readFile($tmpName);
+        } catch (\RuntimeException $exception) {
+            $didProcessUpload = true;
+            $questionsFailedToAdd = 1;
+            $errors = htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            return new TwigView('admin/upload-csv', compact(
+                'errors', 'questionsSuccessfullyAdded', 'questionsFailedToAdd', 'defaultLanguage',
+                'didProcessUpload', 'questionBanks', 'selectedQuestionBankID', 'csvRequirementMatrix'
+            ), 'Upload Questions');
         }
-        if (count($rows) === 1) {
-            $rows = explode("\n", $contents);
-        }
-        // get csv data
-        $csv = [];
-        foreach ($rows as $row) {
-            $csv[] = str_getcsv($row, ',', '"', "\\");
-        }
-        // make it an associate array with csv keys => values
-        array_walk($csv, function(&$a) use ($csv) {
-            if (count($a) == count($csv[0])) {
-                $a = array_combine($csv[0], $a);
-                foreach ($a as $key => $value) {
-                    $a[trim($key)] = trim($value);
-                }
-            }
-        });
-        array_shift($csv); // remove column header (yay http://php.net/manual/en/function.str-getcsv.php)
         
         // get all the commentaries for the current year
         $commentaries = Commentary::loadCommentariesForYear($currentYear->yearID, $app->db);
@@ -117,24 +124,40 @@ class ImportQuestionsController extends BaseAdminController
             }
             $rawBooks[$bookName][$chapterNumber][$verseNumber] = $verseID;
         }
-        // get translations (yes this should be more dynamic but right now we only have 2 hardcoded languages)
+        // Match translated book/topic names using each configured language.
         $translations = [];
         foreach ($languages as $language) {
-            $translations[$language->abbreviation] = Translations::getTranslationsForLanguageAbbr('es');
+            $translations[$language->abbreviation] = Translations::getTranslationsForLanguageAbbr($language->abbreviation);
         }
         // prepare the statement
         $query = '
             INSERT INTO Questions (Type, Question, Answer, NumberPoints, LastEditedByID, StartVerseID, 
-            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsDeleted, LanguageID) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            EndVerseID, CommentaryID, CommentaryStartPage, CommentaryEndPage, CreatorID, IsDeleted, LanguageID,
+            QuestionBankID)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ';
         $stmt = $app->db->prepare($query);
         foreach ($csv as $row) {
+            $safeQuestion = htmlspecialchars(
+                $row['Question'] ?: '(question text not set)',
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+            $schemaErrors = QuestionCsvSchema::validateRow($row);
+            if ($schemaErrors !== []) {
+                $questionsFailedToAdd++;
+                $errors .= 'Unable to add question: '
+                    . $safeQuestion
+                    . ' -- '
+                    . htmlspecialchars(implode(' ', $schemaErrors), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                    . '<br>';
+                continue;
+            }
             if (!isset($row['Question']) || !isset($row['Start Book']) || !isset($row['Fill in?'])
                 || !isset($row['Start Chapter']) || !isset($row['Start Verse']) || !isset($row['Type'])) {
                 if (count($row) > 1) {
                     $questionsFailedToAdd++;
-                    $errors .= 'Unable to add question: ' . ($row['Question'] ?? '(question text not set)') . ' -- Invalid column data.<br>';
+                    $errors .= 'Unable to add question: ' . $safeQuestion . ' -- Invalid column data.<br>';
                 }
                 // else it was probably just a blank row!
                 continue; // get rid of blank rows.
@@ -153,6 +176,7 @@ class ImportQuestionsController extends BaseAdminController
             var_dump($row);
             echo ($row["Type"]);
             die();*/
+            $availabilityLockHeld = false;
             try {
                 $questionType = '';
                 if (!isset($row['Fill in?'])) {
@@ -166,9 +190,9 @@ class ImportQuestionsController extends BaseAdminController
                     continue; // bail -- question was intentionally left blank
                 }
 
-                $language = trim($row['Language'] ?? 'English');
+                $language = trim($row['Language'] ?? $defaultLanguage->name);
                 if ($language === '') {
-                    $language = 'English';
+                    $language = $defaultLanguage->name;
                 }
                 $languageID = -1;
                 foreach ($allLanguages as $availableLanguage) {
@@ -181,22 +205,19 @@ class ImportQuestionsController extends BaseAdminController
                 }
                 if ($languageID == -1) {
                     $questionsFailedToAdd++;
-                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Couldn\'t find language ' . $language . '.<br>';
+                    $errors .= 'Unable to add question: ' . $safeQuestion . ' -- Couldn\'t find language '
+                        . htmlspecialchars($language, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '.<br>';
                     continue;
                 }
-                $fillInDataFromUser = strtolower(trim($row['Fill in?']));
-                $isFillInTheBlank = 
-                    $fillInDataFromUser === 'yes' || 
-                    $fillInDataFromUser === 'true' || 
-                    $fillInDataFromUser === 1;
+                $isFillInTheBlank = QuestionCsvSchema::parseBoolean($row['Fill in?']) === true;
                 $row['Type'] = trim($row['Type']);
                 $needsToSubtractTotalBibleFillInIfFailed = false;
                 if ($row['Type'] === 'Bible') {
                     if ($isFillInTheBlank) {
-                        if ($bibleFillIns[$languageID] >= 500 && $app->ENABLE_NKJV_RESTRICTIONS) {
+                        if ($selectedQuestionBankID !== $globalQuestionBankID) {
                             $questionsFailedToAdd++;
-                            $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Reached max number of Bible questions for '
-                                . $languagesByID[$languageID]->getDisplayName() . '.<br>';
+                            $errors .= 'Unable to add question: ' . $safeQuestion
+                                . ' -- Bible fill-in questions can only be imported into the global bank.<br>';
                             continue;
                         }
                         $bibleFillIns[$languageID]++;
@@ -214,7 +235,7 @@ class ImportQuestionsController extends BaseAdminController
                 }
                 if ($questionType === '') {
                     $questionsFailedToAdd++;
-                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- Invalid question type.<br>';
+                    $errors .= 'Unable to add question: ' . $safeQuestion . ' -- Invalid question type.<br>';
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
                         $bibleFillIns[$languageID]--;
                     }
@@ -247,7 +268,7 @@ class ImportQuestionsController extends BaseAdminController
                     }
                     else {
                         $questionsFailedToAdd++;
-                        $errors .= 'Unable to add Bible question: ' . $row['Question'] . ' -- Invalid book name, chapter, and/or verse.<br>';
+                        $errors .= 'Unable to add Bible question: ' . $safeQuestion . ' -- Invalid book name, chapter, and/or verse.<br>';
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
                             $bibleFillIns[$languageID]--;
                         }
@@ -257,6 +278,15 @@ class ImportQuestionsController extends BaseAdminController
                     $chapterNumber = trim($row['End Chapter'] ?? '');
                     $verseNumber = trim($row['End Verse'] ?? '');
                     if ($bookName !== "") {
+                        if (!isset($rawBooks[$bookName])) {
+                            foreach ($translations as $translationList) {
+                                $key = array_search($bookName, $translationList, true);
+                                if ($key !== false) {
+                                    $bookName = $key;
+                                    break;
+                                }
+                            }
+                        }
                         if ($bookName !== ''
                             && $chapterNumber !== ''
                             && $verseNumber !== ''
@@ -266,7 +296,13 @@ class ImportQuestionsController extends BaseAdminController
                             $endVerseID = $rawBooks[$bookName][$chapterNumber][$verseNumber];
                         }
                         else {
-                            $endVerseID = null;
+                            $questionsFailedToAdd++;
+                            $errors .= 'Unable to add Bible question: ' . $safeQuestion
+                                . ' -- Invalid ending book, chapter, and/or verse.<br>';
+                            if ($needsToSubtractTotalBibleFillInIfFailed) {
+                                $bibleFillIns[$languageID]--;
+                            }
+                            continue;
                         }
                     }
                     else {
@@ -304,7 +340,7 @@ class ImportQuestionsController extends BaseAdminController
                         $commentaryID = $commentaryMap[$commentaryKey]->commentaryID;
                     } else {
                         $questionsFailedToAdd++;
-                        $errors .= 'Unable to add commentary question: ' . $row['Question'] . ' -- Invalid number and/or topic.<br>';
+                        $errors .= 'Unable to add commentary question: ' . $safeQuestion . ' -- Invalid number and/or topic.<br>';
                         if ($needsToSubtractTotalBibleFillInIfFailed) {
                             $bibleFillIns[$languageID]--;
                         }
@@ -347,16 +383,52 @@ class ImportQuestionsController extends BaseAdminController
                 $answerText = str_replace("\xD4", "'", $answerText);
                 $answerText = str_replace("\xD5", "'", $answerText);
 
-                if (!Util::doesTextPassWordFilter($questionText)) {
-                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- The question text has invalid text<br>';
+                $questionPassesWordFilter = Util::doesTextPassWordFilter($questionText);
+                $answerPassesWordFilter = Util::doesTextPassWordFilter($answerText);
+                if (!$questionPassesWordFilter || !$answerPassesWordFilter) {
+                    $questionsFailedToAdd++;
+                    $errors .= 'Unable to add question: '
+                        . $safeQuestion
+                        . ' -- The ' . (!$questionPassesWordFilter ? 'question' : 'answer') . ' text has invalid text.<br>';
                     if ($needsToSubtractTotalBibleFillInIfFailed) {
                         $bibleFillIns[$languageID]--;
                     }
+                    continue;
                 }
-                if (!Util::doesTextPassWordFilter($answerText)) {
-                    $errors .= 'Unable to add question: ' . $row['Question'] . ' -- The answer text has invalid text<br>';
-                    if ($needsToSubtractTotalBibleFillInIfFailed) {
-                        $bibleFillIns[$languageID]--;
+
+                if ($app->ENABLE_NKJV_RESTRICTIONS && $questionType === Question::getBibleQnAFillType()) {
+                    try {
+                        FillInAvailabilityPolicy::acquireLock($app->db);
+                        $availabilityLockHeld = true;
+                    } catch (\RuntimeException $exception) {
+                        $questionsFailedToAdd++;
+                        $errors .= 'Unable to add question: ' . $safeQuestion . ' -- '
+                            . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                            . '<br>';
+                        if ($needsToSubtractTotalBibleFillInIfFailed) {
+                            $bibleFillIns[$languageID]--;
+                        }
+                        continue;
+                    }
+                    $prospectiveQuestion = new Question(-1);
+                    $prospectiveQuestion->type = $questionType;
+                    $prospectiveQuestion->question = $questionText;
+                    $prospectiveQuestion->answer = $answerText;
+                    $prospectiveQuestion->numberPoints = (int)$points;
+                    $prospectiveQuestion->startVerseID = $startVerseID;
+                    $prospectiveQuestion->endVerseID = $endVerseID;
+                    $prospectiveQuestion->languageID = $languageID;
+                    $prospectiveQuestion->questionBankID = $selectedQuestionBankID;
+                    $audit = (new FillInAvailabilityPolicy())->auditProspectiveQuestion($prospectiveQuestion, $app->db);
+                    if (!$audit['allowed']) {
+                        $questionsFailedToAdd++;
+                        $errors .= 'Unable to add question: ' . $safeQuestion . ' -- '
+                            . htmlspecialchars(implode(' ', $audit['errors']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                            . '<br>';
+                        if ($needsToSubtractTotalBibleFillInIfFailed) {
+                            $bibleFillIns[$languageID]--;
+                        }
+                        continue;
                     }
                 }
 
@@ -373,7 +445,8 @@ class ImportQuestionsController extends BaseAdminController
                     $commentaryEndPage,
                     User::currentUserID(),
                     (int)false, // IsDeleted
-                    $languageID
+                    $languageID,
+                    $selectedQuestionBankID
                 ];
                 //print_r($params);
                 //die();
@@ -381,7 +454,9 @@ class ImportQuestionsController extends BaseAdminController
                 $questionsSuccessfullyAdded++;
             }
             catch (\PDOException $e) {
-                $errors .= 'Error inserting question ' . $row['Question'] . ': ' . $e->getMessage() . '<br>';
+                $errors .= 'Error inserting question '
+                    . $safeQuestion
+                    . ': The database rejected the row.<br>';
                 $questionsFailedToAdd++;
                 if (isset($needsToSubtractTotalBibleFillInIfFailed) && $needsToSubtractTotalBibleFillInIfFailed) {
                     $bibleFillIns[$languageID]--;
@@ -389,10 +464,35 @@ class ImportQuestionsController extends BaseAdminController
                 //print_r($e);
                 //die();
             }
+            finally {
+                if ($availabilityLockHeld) {
+                    FillInAvailabilityPolicy::releaseLock($app->db);
+                }
+            }
         }
 
-        $defaultLanguage = Language::loadDefaultLanguage($app->db);
         $didProcessUpload = true;
-        return new TwigView('admin/upload-csv', compact('errors', 'questionsSuccessfullyAdded', 'questionsFailedToAdd', 'defaultLanguage', 'didProcessUpload'), 'Upload Questions');
+        return new TwigView('admin/upload-csv', compact(
+            'errors',
+            'questionsSuccessfullyAdded',
+            'questionsFailedToAdd',
+            'defaultLanguage',
+            'didProcessUpload',
+            'questionBanks',
+            'selectedQuestionBankID',
+            'csvRequirementMatrix'
+        ), 'Upload Questions');
+    }
+
+    /** @return array{0:array<QuestionBank>,1:int} */
+    private function loadWritableQuestionBanks(PBEAppConfig $app): array
+    {
+        $scope = QuestionScope::forApp($app, $app->db);
+        $writableBankIDs = $scope->writableBankIDs();
+        $banks = array_values(array_filter(
+            QuestionBank::loadAll($app->db),
+            static fn (QuestionBank $bank): bool => in_array($bank->questionBankID, $writableBankIDs, true)
+        ));
+        return [$banks, $scope->defaultWriteBankID() ?? -1];
     }
 }
