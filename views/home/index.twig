@@ -4,180 +4,47 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Home</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ t('home.title') }}</li>
     </ol>
 </nav>
 
-<h3 class="">Welcome back, {{ currentUsername() }}!</h3>
+<h3>{{ t('home.welcome', {'username': currentUsername()}) }}</h3>
 
 {% if app.isGuest %}
-    <h4>You are currently browsing the site in guest mode. You will be limited to viewing 100 questions, will not be able to view all questions for all Bible books, and will be unable to add, edit, or delete questions. Non-guests have access to all questions for the current PBE year.</h4>
+    <div class="alert alert-info" role="status">{{ t('home.guest_notice') }}</div>
 {% endif %}
 
-<div id="user-links">
-    <div class="row">
-        <div class="col-sm-12 col-md-4">
-            <div class="d-grid ml-1 mb-1 col-md-8 col-sm-10 col-10">
-                <a class="btn btn-info mb-1" href="{{ app.yurl('/questions') }}"><i class="fas fa-question"></i> Question List</a>
-                <a class="btn btn-primary mb-1" href="{{ app.yurl('/quiz/setup') }}"><i class="fas fa-award"></i> Quiz me!</a>
-                <a class="btn btn-tertiary mb-1" href="{{ app.yurl('/matching-quiz') }}"><i class="fas fa-list"></i>  Matching Quiz</a>
-                <a class="btn btn-info mb-1" href="{{ app.yurl('/active-clubs') }}"><i class="fas fa-hiking"></i> Active Clubs</a>
-                <a class="btn btn-primary mb-1" href="{{ app.yurl('/stats') }}"><i class="fas fa-glasses"></i>  Question Stats</a>
-                <a class="btn btn-tertiary mb-1" href="{{ app.yurl('/study-guides') }}"><i class="fas fa-file-pdf"></i> Study Guides</a>
-                <a class="btn btn-info" href="{{ app.yurl('/settings') }}"><i class="fas fa-gear"></i> Settings</a>
-            </div>
-            {# <p><em>We are still learning how to write great PBE questions, so please feel free to contact us and/or use the Flag feature on confusing questions when taking a Quiz to alert us to questions that need improvement! Thank you for your patience and for using the website! We are thankful for all of you!</em></p> #}
-        </div>
-        <div class="col">
-            {# {% include "includes/home-info-sections.twig" with {'sections': sections, 'isOnAdmin': false, 'selectedConferenceID': webAdminConferenceID(app) } %} #}
-            <p class="mb-0">Thank you for using the PBE Prep &amp; Quiz Master website! We're happy you're here.</p>
-            <p class="mb-2 pe-5"><small>As you use this site, please remember that some Bible questions that only cover one or two isolated verses might sound a little weird in question or answer. This website is a memorization tool to help you remember key points of verses, and we can't always bring in all the context into a question. For better overall Scriptural knowledge and theological understanding, always remember to study the surrounding verses and context for more understanding! And if you have any questions, ask your PBE leader, pastor, or someone else who can help.</small></p>
-            <h5 class="mb-1">2026-2027 Dates</h5>
-            <ul class="section-items col-12 col-md-12 mb-2">
-                <li>**If you want your conference data displayed here, please email it to <a href="mailto:admin@pbeprep.com">admin@pbeprep.com</a>**</li>
-                <li>The dates for the 2027 NAD PBE Division Finals are April 23-24, 2027.</li>
-            </ul>
-            {# <div class="row">
-                <div class="col s12 m6">
-                    <strong>Oregon Conference</strong>
-                    <ul class="ml-2">
-                        <li>District Level: January 14, 2023</li>
-                        <li>Conference Level: February 11, 2023</li>
-                        <li>Union Level: March 11, 2023</li>
-                    </ul>
-                </div>
-                <div class="col s12 m6">
-                    <strong>Pennsylvania Conference</strong>
-                    <ul class="ml-2">
-                        <li>Area Level: January 28, 2023</li>
-                        <li>Conference Level: February 11, 2023</li>
-                        <li>Union Level: March 11, 2023</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 m6">
-                    <strong>Gulf States Conference</strong>
-                    <ul class="ml-2">
-                        <li>Conference Level: February 18, 2023</li>
-                        <li>Southern Union Level: March 25, 2023</li>
-                    </ul>
-                </div>
-            </div> #}
-            <h5 class="mb-1">Fill in the Blank Questions</h5>
-            <ul class="section-items col-12 col-md-10 mb-1">
-                <li>Because of NKJV copyrights, we can only have up to 500 verses of the NKJV text up at one time. Note that this ONLY APPLIES TO FILL-IN-THE-BLANK questions. This does NOT apply to normal Q&amp;A-style questions, which make up the majority of the content on this site!! </li>
-                <li>Right now, {{ app.currentFillInChapters }} are available for fill-in-the-blank quizzes and flash cards. This will change every month or so, or upon request.</li>
-            </ul>
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="mb-1">Resources</h5>
-                    <ul class="ps-4">
-                        <li>
-                            <a href="https://nadpbe.org/" target="_blank">Official PBE Website</a>
-                        </li>
-                        <li>
-                            <a href="http://www.adventsource.org/as30/store-productDetails.aspx?ID=38282" target="_blank">PBE Manual - Purchase</a>
-                        </li>
-                        <li>
-                            <a href="https://nadpbe.org/wp-content/uploads/2023/11/How-to-Bible-Experience-2023-24.pdf" target="_blank">PBE How-to Guide</a>
-                        </li>
-                        <li>
-                            <a href="https://adventistbookcenter.com/catalogsearch/result/?q=Pathfinder+Bible+NKJV" target="_blank">English NKJV Pathfinder Bible</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="mb-1">Other PBE Study Materials</h5>
-                    <p class="mb-0"><em>These materials were not created by the makers of this website.</em></p>
-                    <ul class="ps-4">
-                        <li>
-                            <a href="https://readyanswers.org/PathfinderBibleExperience/P26/P26.html" target="_blank">Ready Answers Bible Memorization Curriculum</a>
-                        </li>
-                        <li>
-                            <a href="https://pbequizengine.com/" target="_blank">PBE Quiz Engine by Tony Phillips</a>
-                        </li>
-                        <li>
-                            <a href="https://pbe-scores.wooleys.us/" target="_blank">Score Keeper</a>
-                        </li>
-                        <li>
-                            <a href="https://pbe.wooleys.us/" target="_blank">PBE Fill-in-the-blank Generator</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div id="user-links" class="row">
+    <div class="col-sm-12 col-md-4">
+        <div class="d-grid ml-1 mb-3 col-md-9 col-sm-10 col-10">
+            <a class="btn btn-info mb-1" href="{{ app.yurl('/questions') }}"><i class="fas fa-question" aria-hidden="true"></i> {{ t('home.questions') }}</a>
+            <a class="btn btn-primary mb-1" href="{{ app.yurl('/quiz/setup') }}"><i class="fas fa-award" aria-hidden="true"></i> {{ t('home.quiz') }}</a>
+            <a class="btn btn-tertiary mb-1" href="{{ app.yurl('/matching-quiz') }}"><i class="fas fa-list" aria-hidden="true"></i> {{ t('home.matching_quiz') }}</a>
+            <a class="btn btn-info mb-1" href="{{ app.yurl('/active-clubs') }}"><i class="fas fa-hiking" aria-hidden="true"></i> {{ t('home.active_clubs') }}</a>
+            <a class="btn btn-primary mb-1" href="{{ app.yurl('/stats') }}"><i class="fas fa-glasses" aria-hidden="true"></i> {{ t('home.question_stats') }}</a>
+            <a class="btn btn-tertiary mb-1" href="{{ app.yurl('/study-guides') }}"><i class="fas fa-file-pdf" aria-hidden="true"></i> {{ t('home.study_guides') }}</a>
+            {% if not app.isGuest %}
+                <a class="btn btn-info mb-1" href="{{ app.yurl('/progress') }}"><i class="fas fa-chart-line" aria-hidden="true"></i> {{ t('home.progress') }}</a>
+            {% endif %}
+            <a class="btn btn-info" href="{{ app.yurl('/settings') }}"><i class="fas fa-gear" aria-hidden="true"></i> {{ t('home.settings') }}</a>
         </div>
     </div>
-</div>
-
-<div id="extra-home-info">
-    <h4>News</h4>
-    <div class="row">
-        <div class="col-8">
-            <p class="mb-0"><strong>June 2, 2026</strong></p>
-            <ul class="">
-                <li>The 2026-2027 PBE year is now active! 1 Peter and 2 Peter already have all their questions available since those were written for a prior PBE year. Questions for other books are still pending.</li>
-            </ul>
-            <p class="mb-0"><strong>June 23, 2025</strong></p>
-            <ul class="">
-                <li>The 2025-2026 PBE year is now active! We have a few chapters of questions ready to go along with study guides and fill-in-the-blank style questions, too. More chapters, questions, etc. available as we have them! Enjoy, and may God bless your studies this year!</li>
-            </ul>
-            <p class="mb-0"><strong>May 1, 2024</strong></p>
-            <ul class="">
-                <li>The PBE website has been given a new facelift! Things will still be in generally the same place as before, but they will run a little bit more smoothly and look a bit more modern. You'll also see icons in various places to help you distinguish buttons by more than text. Behind the scenes, many smaller bugs and issues have been fixed, and things are easier to update and change for the website maintainers.</li>
-                <li>New feature: this website now has a dark mode (light text on a dark background rather than the other way around). You can opt-in to this website style via the Settings page.</li>
-            </ul>
-            <p class="mb-0"><strong>January 14, 2024</strong></p>
-            <ul class="">
-                <li>We've fixed several issues with sequential question output and also refined the ratio of fill-in-the-blank questions to Q&amp;A questions. You can now define the maximum ratio of fill-in-the-blank questions to Q&amp;A questions yourself. (The default ratio is 10%.)</li>
-            </ul>
-            <p class="mb-0"><strong>January 7, 2024</strong></p>
-            <ul class="">
-                <li><strong>We've added more compatibility with Spanish and French questions.</strong> Although we don't have Spanish or French questions in the system yet, we're now set up for using them in the quiz section of the website, study PDFs, etc. However, Spanish First Letter PDFs are now available!</li>
-            </ul>
-            <p class="mb-0"><strong>May 7, 2023</strong></p>
-            <ul class="">
-                <li><strong>We've started writing questions for the 2023-2024 PBE season! Congrats to all who placed in 2023!</strong></li>
-            </ul>
-            <p class="mb-0"><strong>February 13, 2023</strong></p>
-            <ul class="">
-                <li><strong>Fixed bug on the Matching Quiz page that marked all answers as correct (even if they were wrong)</strong></li>
-            </ul>
-            <p class="mb-0"><strong>November 20, 2022</strong></p>
-            <ul class="">
-                <li><strong>You can now create PowerPoint presentations from the "Quiz Me!" section of this website!</strong></li>
-                <li>When flagging a question, you can now set the reason for flagging the question (typos, too vague, etc.)</li>
-                <li>Questions for all chapters of John are now available along with commentary questions!</li>
-                <li>Rearranged quiz setup page slightly</li>
-                <li>Made question generation more intelligent</li>
-                <li>New website favicon</li>
-            </ul>
-            <p class="mb-0"><strong>August 28, 2022</strong></p>
-            <ul class="">
-                <li><strong>Study guides for the first letters of each verse word are now available!</strong></li>
-                <li>We are admittedly behind on adding questions for the 2022-2023 PBE year. Please be patient with us — we are working on them! Thank you for your patience and support.</li>
-            </ul>
-            <p class="mb-0"><strong>February 2, 2022</strong></p>
-            <ul class="">
-                <li><strong>309 commentary questions, a contribution from a club in MD, are now available! Kudos to that club for contributing!</strong></li>
-            </ul>
-            <p class="mb-0"><strong>January 29, 2022</strong></p>
-            <ul class="">
-                <li><strong>New feature!</strong> You can now fill out a <a href="{{ app.yurl('/contact') }}">Contact Form</a> directly on this website to get in touch with us!</li>
-            </ul>
-            <p class="mb-0"><strong>January 9, 2022</strong></p>
-            <ul class="">
-                <li><strong>New feature!</strong> There are now matching question quizzes, separate from the main quiz engine, to help you learn and memorize information! These include topical matching quizzes and matching verse references with the Bible text. Have a set of matching questions you'd like to see? Create a set and email it to us at <a href="mailto:admin@pbeprep.com">admin@pbeprep.com</a>! (Right now, only admins can set these up. This will likely change in the future as we continue to refine the feature.)</li>
-            </ul>
-            <p class="mb-0"><strong>October 28, 2021</strong></p>
-            <ul class="">
-                <li><strong>All Q&amp;A questions for all chapters are now complete!! Feel free to add more of your own, but with around 3,500 questions in the system for this PBE year, there is lots to learn and grow with! Enjoy! :)</strong></li>
-            </ul>
-            <p class="mb-0"><strong>August 22, 2021</strong></p>
-            <ul class="">
-                <li>Today, we launch the official 2021-2022 PBE year!</strong> We also fixed a long-standing issue where quizzes in sequential order were not generated in Bible book order and made some improvements to the admin interfaces.</li>
-            </ul>
-        </div>
+    <div class="col">
+        {% for renderedContent in renderedHomeContents %}
+            {% if not renderedContent.isGlobal %}
+                <h4>{{ t('home.conference_content') }}</h4>
+            {% endif %}
+            {% if renderedContent.isLanguageFallback %}
+                <div class="alert alert-secondary py-2" role="status">
+                    <i class="fas fa-language" aria-hidden="true"></i>
+                    {{ t('home.translation_fallback') }}
+                </div>
+            {% endif %}
+            <section class="home-markdown-content{{ renderedContent.isGlobal ? ' home-markdown-global' : ' home-markdown-conference' }}">
+                {{ renderedContent.html|raw }}
+            </section>
+            {% if not loop.last %}<hr>{% endif %}
+        {% endfor %}
     </div>
 </div>
 

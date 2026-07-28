@@ -5,6 +5,7 @@
 namespace App\ViewExtensions;
 
 use App\Helpers\Translations;
+use App\Helpers\Localization;
 use App\Models\AFMAppConfig;
 use App\Models\Conference;
 use App\Models\CSRF;
@@ -124,6 +125,41 @@ class AppViewExtension extends AbstractExtension
         return Translations::t($str, $languageAbbreviation);
     }
 
+    /** @param array<string, scalar|null> $parameters */
+    function t(string $key, array $parameters = [], ?string $locale = null): string
+    {
+        return Localization::translate($key, $parameters, $locale);
+    }
+
+    function uiLocale(): string
+    {
+        return Localization::currentLocale();
+    }
+
+    function formatUIDate(?string $date): string
+    {
+        return Localization::formatDate($date);
+    }
+
+    function formatUINumber(int|float $number): string
+    {
+        return Localization::formatNumber($number);
+    }
+
+    function uiJavascriptCatalog(): string
+    {
+        return Localization::javascriptCatalogJson();
+    }
+
+    function safeJson(mixed $value): string
+    {
+        return json_encode(
+            $value,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+        );
+    }
+
     function getUserLanguageAbbr(PDO $db): string
     {
         return User::getPreferredLanguage($db)->abbreviation ?? 'en';
@@ -151,14 +187,18 @@ class AppViewExtension extends AbstractExtension
             new TwigFunction('currentUserID', [$this, 'currentUserID']),
             new TwigFunction('addYearsToDate', [$this, 'addYearsToDate']),
             new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
-            new TwigFunction('strEndsWith', [$this, 'strEndsWith']),
             new TwigFunction('requestURI', [$this, 'requestURI']),
-            new TwigFunction('outputHomeSections', [$this, 'outputHomeSections']),
             new TwigFunction('currentUsername', [$this, 'currentUsername']),
             new TwigFunction('currentConferenceID', [$this, 'currentConferenceID']),
             new TwigFunction('webAdminConferenceID', [$this, 'webAdminConferenceID']),
             new TwigFunction('getConst', [$this, 'getConst']),
             new TwigFunction('translate', [$this, 'translate']),
+            new TwigFunction('t', [$this, 't']),
+            new TwigFunction('uiLocale', [$this, 'uiLocale']),
+            new TwigFunction('formatUIDate', [$this, 'formatUIDate']),
+            new TwigFunction('formatUINumber', [$this, 'formatUINumber']),
+            new TwigFunction('uiJavascriptCatalog', [$this, 'uiJavascriptCatalog']),
+            new TwigFunction('safeJson', [$this, 'safeJson']),
             new TwigFunction('getUserLanguageAbbr', [$this, 'getUserLanguageAbbr']),
             new TwigFunction('prefersDarkMode', [$this, 'prefersDarkMode']),
         ];

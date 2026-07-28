@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Localization;
 use Yamf\Request;
 use Yamf\Responses\Redirect;
 use Yamf\Responses\View;
@@ -9,7 +10,8 @@ use Yamf\Responses\View;
 use App\Models\Club;
 use App\Models\Conference;
 use App\Models\ContactFormSubmission;
-use App\Models\HomeInfoSection;
+use App\Models\CSRF;
+use App\Models\HomeContent;
 use App\Models\Language;
 use App\Models\PBEAppConfig;
 use App\Models\StudyGuide;
@@ -20,6 +22,7 @@ use App\Models\Views\TwigErrorMessage;
 use App\Models\Views\TwigView;
 use App\Models\Year;
 use App\Services\StatsLoader;
+use App\Services\QuestionScope;
 use ReCaptcha\ReCaptcha;
 use Yamf\Responses\Response;
 
@@ -30,10 +33,43 @@ class HomeController
         if (!$app->loggedIn) {
             return new Redirect('/login');
         }
-        $conference = Conference::loadAdminConference($app->db);
-        $conferenceID = $conference->conferenceID ?? $_SESSION['ConferenceID'];
-        $sections = HomeInfoSection::loadSections(Year::loadCurrentYear($app->db), $conferenceID, $app->db);
-        return new TwigView('home/index', compact('sections'), 'Home');
+        $globalConference = Conference::loadAdminConference($app->db);
+        $conferenceID = User::currentConferenceID();
+        $year = Year::loadCurrentYear($app->db);
+        $uiLanguage = User::getUILanguage($app->db);
+        $englishLanguage = Language::loadEnglishLanguage($app->db);
+        $homeContents = [];
+        if ($globalConference !== null && $year !== null) {
+            $homeContents = HomeContent::loadForHome(
+                $year->yearID,
+                $conferenceID,
+                $globalConference->conferenceID,
+                $uiLanguage->languageID,
+                $englishLanguage->languageID,
+                $app->db
+            );
+        }
+
+        if ($homeContents === []) {
+            $defaultContent = new HomeContent();
+            $defaultContent->markdown = HomeContent::defaultEnglishMarkdown();
+            $defaultContent->isGlobal = true;
+            $defaultContent->isLanguageFallback = $uiLanguage->abbreviation !== 'en';
+            $homeContents[] = $defaultContent;
+        }
+
+        $renderedHomeContents = [];
+        foreach ($homeContents as $content) {
+            $renderedHomeContents[] = [
+                'html' => $content->render([
+                    'year' => $year?->year ?? $app->activeYearNumber,
+                    'fillInChapters' => $app->currentFillInChapters,
+                ]),
+                'isGlobal' => $content->isGlobal,
+                'isLanguageFallback' => $content->isLanguageFallback,
+            ];
+        }
+        return new TwigView('home/index', compact('renderedHomeContents'), Localization::translate('home.title'));
     }
 
     public function message(PBEAppConfig $app, Request $request)
@@ -57,7 +93,7 @@ class HomeController
         // TODO: this code needs to be refactored to models
         $query = '
             SELECT UserID, Username, ut.Type AS UserType, c.ClubID AS ClubID, c.Name AS ClubName,
-                conf.ConferenceID, conf.Name AS ConferenceName, u.PreferredLanguageID
+                conf.ConferenceID, conf.Name AS ConferenceName, u.PreferredLanguageID, u.UILanguageID
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID
                 LEFT JOIN Conferences conf ON c.ConferenceID = conf.ConferenceID
@@ -80,6 +116,10 @@ class HomeController
             $_SESSION['ConferenceID'] = $row['ConferenceID'] != null ? $row['ConferenceID'] : -1;
             $_SESSION['ConferenceName'] = $row['ConferenceName'];
             $_SESSION['PreferredLanguageID'] = $row['PreferredLanguageID'];
+            $uiLanguage = Language::loadEnabledUILanguageWithID((int)$row['UILanguageID'], $app->db)
+                ?? Language::loadDefaultUILanguage($app->db);
+            $_SESSION['UILanguageID'] = $uiLanguage->languageID;
+            $_SESSION['UILanguageAbbreviation'] = $uiLanguage->abbreviation;
             return new Redirect('/');
         } else {
             $error = 'Invalid access code';
@@ -148,10 +188,19 @@ class HomeController
             return new Redirect('/login');
         }
         $languages = Language::loadAllLanguages($app->db);
-        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+        $uiLanguages = Language::loadUIEnabledLanguages($app->db);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages)
+            ?? Language::loadDefaultLanguage($app->db);
+        $userUILanguage = Language::findLanguageWithID(User::getUILanguageID(), $uiLanguages)
+            ?? Language::loadDefaultUILanguage($app->db);
 
         $didUpdate = false;
-        return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+        $error = '';
+        return new TwigView(
+            'home/settings',
+            compact('languages', 'uiLanguages', 'userLanguage', 'userUILanguage', 'didUpdate', 'error'),
+            Localization::translate('home.settings')
+        );
     }
 
     public function updateSettings(PBEAppConfig $app, Request $request): Response
@@ -160,17 +209,53 @@ class HomeController
             return new Redirect('/login');
         }
         $languages = Language::loadAllLanguages($app->db);
-        $languageIDToUse = $request->post['language-select'];
-        User::updatePreferredLanguage(User::currentUserID(), $languageIDToUse, $app->db);
-        
-        $_SESSION['PreferredLanguageID'] = $languageIDToUse; // TODO: refactor to User somewhere
-        
-        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages);
+        $uiLanguages = Language::loadUIEnabledLanguages($app->db);
+        $userLanguage = Language::findLanguageWithID(User::getPreferredLanguageID(), $languages)
+            ?? Language::loadDefaultLanguage($app->db);
+        $userUILanguage = Language::findLanguageWithID(User::getUILanguageID(), $uiLanguages)
+            ?? Language::loadDefaultUILanguage($app->db);
+        $didUpdate = false;
+        $error = '';
+
+        if (!CSRF::verifyToken('user-settings')) {
+            $error = Localization::translate('settings.invalid_request');
+            return new TwigView(
+                'home/settings',
+                compact('languages', 'uiLanguages', 'userLanguage', 'userUILanguage', 'didUpdate', 'error'),
+                Localization::translate('home.settings')
+            );
+        }
+
+        $languageIDToUse = (int)($request->post['language-select'] ?? 0);
+        $uiLanguageIDToUse = (int)($request->post['ui-language-select'] ?? 0);
+        $requestedQuestionLanguage = Language::findLanguageWithID($languageIDToUse, $languages);
+        $requestedUILanguage = Language::findLanguageWithID($uiLanguageIDToUse, $uiLanguages);
+        if ($requestedQuestionLanguage === null || $requestedUILanguage === null) {
+            $error = Localization::translate('settings.invalid_language');
+            return new TwigView(
+                'home/settings',
+                compact('languages', 'uiLanguages', 'userLanguage', 'userUILanguage', 'didUpdate', 'error'),
+                Localization::translate('home.settings')
+            );
+        }
+
+        User::updatePreferredLanguage(User::currentUserID(), $requestedQuestionLanguage->languageID, $app->db);
+        User::updateUILanguage(User::currentUserID(), $requestedUILanguage->languageID, $app->db);
+        $_SESSION['PreferredLanguageID'] = $requestedQuestionLanguage->languageID;
+        $_SESSION['UILanguageID'] = $requestedUILanguage->languageID;
+        $_SESSION['UILanguageAbbreviation'] = $requestedUILanguage->abbreviation;
+        $userLanguage = $requestedQuestionLanguage;
+        $userUILanguage = $requestedUILanguage;
+
         $prefersDarkMode = Util::validateBoolean($request->post, 'prefers-dark-mode');
         User::updateDarkModePreference(User::currentUserID(), $prefersDarkMode, $app->db);
 
         $didUpdate = true;
-        return new TwigView('home/settings', compact('languages', 'userLanguage', 'didUpdate'), 'Settings');
+        return new TwigView(
+            'home/settings',
+            compact('languages', 'uiLanguages', 'userLanguage', 'userUILanguage', 'didUpdate', 'error'),
+            Localization::translate('home.settings')
+        );
     }
 
     public function currentYearStats(PBEAppConfig $app, Request $request): Response
@@ -180,10 +265,11 @@ class HomeController
         }
         $languagesByID = Language::loadAllLanguagesByID($app->db);
         $year = Year::loadCurrentYear($app->db);
+        $questionScope = QuestionScope::forApp($app, $app->db);
 
-        $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db);
-        $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db);
-        $commentaryStats = StatsLoader::loadCommentaryQuestionsByYear($year->yearID, $app->db);
+        $chapterStats = StatsLoader::loadQnAQuestionsByChapterInYear($year->yearID, $app->db, $questionScope);
+        $verseStats = StatsLoader::loadQnAQuestionsByChapterAndVerseInYear($year->yearID, $app->db, $questionScope);
+        $commentaryStats = StatsLoader::loadCommentaryQuestionsByYear($year->yearID, $app->db, $questionScope);
 
         $chapterStatsByLanguageID = [];
         foreach ($chapterStats as $chapterStat) {

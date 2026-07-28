@@ -83,8 +83,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var questionSet = {{ json_encode(questionSet) | raw }};
-        var currentYear = {{ json_encode(currentYear) | raw }};
+        var questionSet = {{ safeJson(questionSet) | raw }};
+        var currentYear = {{ safeJson(currentYear) | raw }};
         if (questionSet === null) {
             $('#language').val('');
             $('#year').val(currentYear.yearID);

@@ -1,0 +1,77 @@
+{% extends "layouts/main.twig" %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">{{ t('nav.home') }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/admin') }}">{{ t('nav.admin') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ t('admin.home_content') }}</li>
+    </ol>
+</nav>
+
+<h2>{{ t('admin.home_content_title') }}</h2>
+<p>
+    <strong>{{ t('admin.scope') }}:</strong> {{ conference.name|e }}
+    {% if globalConference and conference.conferenceID == globalConference.conferenceID %}
+        <span class="badge text-bg-primary">{{ t('home.global_content') }}</span>
+    {% else %}
+        <span class="badge text-bg-secondary">{{ t('home.conference_content') }}</span>
+    {% endif %}
+</p>
+
+{% if didSave %}
+    <div class="alert alert-success" role="status">{{ t('admin.content_saved') }}</div>
+{% endif %}
+{% if didPreview %}
+    <div class="alert alert-info" role="status">{{ t('admin.preview_not_saved') }}</div>
+{% endif %}
+{% if error %}
+    <div class="alert alert-danger" role="alert">{{ error|e }}</div>
+{% endif %}
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-5 col-md-3">
+        <label for="year-filter" class="form-label">{{ t('admin.year') }}</label>
+        <select id="year-filter" name="year" class="form-select">
+            {% for availableYear in years %}
+                <option value="{{ availableYear.yearID }}" {{ availableYear.yearID == year.yearID ? 'selected' : '' }}>{{ availableYear.year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-5 col-md-4">
+        <label for="language-filter" class="form-label">{{ t('admin.language') }}</label>
+        <select id="language-filter" name="language" class="form-select">
+            {% for availableLanguage in languages %}
+                <option value="{{ availableLanguage.languageID }}" {{ availableLanguage.languageID == language.languageID ? 'selected' : '' }}>
+                    {{ availableLanguage.getDisplayName()|e }}{{ availableLanguage.isUIEnabled ? '' : ' — draft, disabled' }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-primary" type="submit">{{ t('common.update') }}</button>
+    </div>
+</form>
+
+<form method="post">
+    {{ csrf('home-content')|raw }}
+    <input type="hidden" name="year" value="{{ year.yearID }}">
+    <input type="hidden" name="language" value="{{ language.languageID }}">
+    <div class="mb-3">
+        <label for="home-markdown" class="form-label">{{ t('admin.markdown') }}</label>
+        <textarea id="home-markdown" name="markdown" class="form-control font-monospace" rows="22" maxlength="200000">{{ content.markdown|e }}</textarea>
+        <div class="form-text">{{ t('admin.markdown_help') }}</div>
+    </div>
+    <button class="btn btn-primary" type="submit" name="action" value="save"><i class="fas fa-save" aria-hidden="true"></i> {{ t('common.save') }}</button>
+    <button class="btn btn-outline-secondary" type="submit" name="action" value="preview"><i class="fas fa-eye" aria-hidden="true"></i> {{ t('common.preview') }}</button>
+</form>
+
+{% if renderedPreview %}
+    <hr>
+    <section class="home-markdown-preview border rounded p-3" aria-label="{{ t('common.preview') }}">
+        {{ renderedPreview|raw }}
+    </section>
+{% endif %}
+
+{% endblock %}

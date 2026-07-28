@@ -69,8 +69,11 @@
         '/study-guides' => ['HomeController', 'studyGuides'],
         '/settings' => [['GET', 'HomeController', 'viewSettings'],
                         ['POST', 'HomeController', 'updateSettings']],
+        '/progress' => ['GET', 'User/ProgressController', 'viewProgress'],
         '/questions' => ['User/QuestionController', 'viewQuestions'],
         '/questions/load' => ['POST', 'User/QuestionController', 'loadQuestions'],
+        '/questions/export.csv' => ['GET', 'Admin/QuestionExportController', 'exportCsv'],
+        '/questions/flag-range' => ['POST', 'User/QuestionBulkFlagController', 'bulkFlag'],
 
         '/questions/add' => [['GET', 'User/QuestionController', 'createNewQuestion'],
                              ['POST', 'User/QuestionController', 'saveNewQuestion']],
@@ -88,10 +91,15 @@
         '/quiz/answers/remove' => [['GET', 'User/QuizController', 'checkBeforeRemovingAnswers'],
                                    ['POST', 'User/QuizController', 'removeAnswers']],
         '/quiz/answers/save' => ['POST', 'User/QuizController', 'saveQuizAnswers'],
+        '/quiz/attempts/{attemptID}/complete' => ['POST', 'User/QuizController', 'completeAttempt'],
         '/quiz/questions/flag' => ['POST', 'User/QuizController', 'flagQuestion'],
         // // // // // admin // // // //
         '/admin' => ['Admin/AdminController', 'index'],
         '/admin/help' => ['Admin/AdminController', 'help'],
+        '/admin/home-content/{conferenceID}' => [['GET', 'Admin/HomeContentController', 'edit'],
+                                                 ['POST', 'Admin/HomeContentController', 'save']],
+        '/admin/progress' => ['GET', 'Admin/ProgressController', 'index'],
+        '/admin/progress/users/{userID}' => ['GET', 'Admin/ProgressController', 'viewUser'],
         '/admin/upload-csv' => [['GET', 'Admin/ImportQuestionsController', 'viewImportPage'],
                                 ['POST', 'Admin/ImportQuestionsController', 'saveImportedQuestions']],
         '/admin/contact-submissions' => ['Admin/ContactSubmissionController', 'viewContactSubmissions'],
@@ -212,36 +220,4 @@
         '/admin/years/add' => ['POST', 'Admin/YearController', 'addYear'],
         '/admin/years/{yearID}/make-current' => [['GET', 'Admin/YearController', 'verifyMakeYearCurrent'],
                                                  ['POST', 'Admin/YearController', 'makeYearCurrent']],
-        // home sections
-        '/admin/home-sections/{conferenceID}/sections' => ['GET', 'Admin/HomeSectionController', 'viewHomeSections'],
-        '/admin/home-sections/{conferenceID}/sections/create' => ['POST', 'Admin/HomeSectionController', 'createHomeSection'],
-        '/admin/home-sections/{conferenceID}/sections/change' => ['POST', 'Admin/HomeSectionController', 'changeHomeSectionConference'],
-        '/admin/home-sections/{conferenceID}/sections/sort' => ['POST', 'Admin/HomeSectionController', 'saveSectionSorting'],
-        '/admin/home-sections/{conferenceID}/sections/import-from-conference' => ['POST', 'Admin/HomeSectionController', 'copyFromYear'],
-        '/admin/home-sections/{conferenceID}/sections/import-from-admin' => ['POST', 'Admin/HomeSectionController', 'copyFromAdmin'],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/edit' => 
-            [['GET', 'Admin/HomeSectionController', 'editHomeSection'],
-            ['POST', 'Admin/HomeSectionController', 'saveHomeSectionUpdates']],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/delete' => 
-            [['GET', 'Admin/HomeSectionController', 'verifyDeleteHomeSection'],
-            ['POST', 'Admin/HomeSectionController', 'deleteHomeSection']],
-
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines' => ['GET', 'Admin/HomeSectionController', 'viewLines'],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/sort' => 
-            ['POST', 'Admin/HomeSectionController', 'saveLineSorting'],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/create' => 
-            ['POST', 'Admin/HomeSectionController', 'createNewLine'],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/{lineID}/delete' => 
-            [['GET', 'Admin/HomeSectionController', 'verifyDeleteLine'],
-            ['POST', 'Admin/HomeSectionController', 'deleteLine']],
-
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/{lineID}/items/create' => 
-            [['GET', 'Admin/HomeSectionController', 'createLineItem'],
-            ['POST', 'Admin/HomeSectionController', 'saveNewLineItem']],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/{lineID}/items/{itemID}/edit' => 
-            [['GET', 'Admin/HomeSectionController', 'editLineItem'],
-            ['POST', 'Admin/HomeSectionController', 'saveLineItemUpdates']],
-        '/admin/home-sections/{conferenceID}/sections/{sectionID}/lines/{lineID}/items/{itemID}/delete' => 
-            [['GET', 'Admin/HomeSectionController', 'verifyDeleteLineItem'],
-            ['POST', 'Admin/HomeSectionController', 'deleteLineItem']],
     ];

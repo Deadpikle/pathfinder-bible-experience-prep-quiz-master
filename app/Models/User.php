@@ -16,6 +16,7 @@ class User
     public int $clubID;
     public int $createdByID;
     public int $defaultLanguageID;
+    public int $uiLanguageID;
     public bool $prefersDarkMode;
 
     public int $wasDeleted;
@@ -30,6 +31,7 @@ class User
         $this->clubID = -1;
         $this->createdByID = -1;
         $this->defaultLanguageID = -1;
+        $this->uiLanguageID = -1;
         $this->prefersDarkMode = false;
         $this->wasDeleted = false;
     }
@@ -74,12 +76,18 @@ class User
         ]);
     }
 
+    public static function updateUILanguage(int $userID, int $languageID, PDO $db): void
+    {
+        $stmt = $db->prepare('UPDATE Users SET UILanguageID = ? WHERE UserID = ?');
+        $stmt->execute([$languageID, $userID]);
+    }
+
     /** @return array<User> */
     private static function loadUsers(string $whereClause, array $whereParams, PDO $db): array
     {
         $query = '
             SELECT UserID, Username, EntryCode, ut.UserTypeID, ut.Type, ut.DisplayName AS UserTypeDisplayName, 
-                    u.ClubID, u.LastLoginDate, u.PrefersDarkMode
+                    u.ClubID, u.LastLoginDate, u.PrefersDarkMode, u.PreferredLanguageID, u.UILanguageID
             FROM Users u JOIN UserTypes ut ON u.UserTypeID = ut.UserTypeID
                 LEFT JOIN Clubs c ON u.ClubID = c.ClubID 
             ' . $whereClause . '
@@ -95,6 +103,8 @@ class User
             $user->type = new UserType($row['UserTypeID'], $row['Type']);
             $user->type->displayName = $row['UserTypeDisplayName'];
             $user->clubID = $row['ClubID'];
+            $user->defaultLanguageID = (int)$row['PreferredLanguageID'];
+            $user->uiLanguageID = (int)$row['UILanguageID'];
             $user->prefersDarkMode = $row['PrefersDarkMode'];
             $output[] = $user;
         }
@@ -263,5 +273,16 @@ class User
     public static function getPreferredLanguage(PDO $db): ?Language
     {
         return Language::loadLanguageWithID(self::getPreferredLanguageID(), $db);
+    }
+
+    public static function getUILanguageID(): ?int
+    {
+        return isset($_SESSION['UILanguageID']) ? (int)$_SESSION['UILanguageID'] : null;
+    }
+
+    public static function getUILanguage(PDO $db): Language
+    {
+        return Language::loadEnabledUILanguageWithID(self::getUILanguageID(), $db)
+            ?? Language::loadDefaultUILanguage($db);
     }
 }

@@ -5,60 +5,72 @@
 {% endblock %}
 
 {% block content %}
-   
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Settings</li>
+        <li class="breadcrumb-item"><a href="{{ app.yurl('/') }}">{{ t('nav.home') }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ t('home.settings') }}</li>
     </ol>
 </nav>
 
-<h3>User Settings</h3>
+<h3>{{ t('settings.title') }}</h3>
 
 {% if didUpdate %}
     <div class="row">
         <div class="col-sm-12 col-md-8">
-            <div class="alert alert-success mb-2" role="alert">
-                Settings successfully updated!
-            </div>
+            <div class="alert alert-success mb-2" role="status">{{ t('common.settings_saved') }}</div>
+        </div>
+    </div>
+{% endif %}
+{% if error %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="alert alert-danger mb-2" role="alert">{{ error|e }}</div>
         </div>
     </div>
 {% endif %}
 
 <form method="post">
-    <div class="row">
-        <div class="form-group col-12 col-md-4">
-            <label for="language-select">Default Question Language</label>
+    {{ csrf('user-settings')|raw }}
+    <div class="row g-3">
+        <div class="form-group col-12 col-md-5">
+            <label for="language-select">{{ t('settings.question_language') }}</label>
             <select id="language-select" name="language-select" class="form-control">
                 {% for language in languages %}
-                    {% set selected = language.languageID == userLanguage.languageID ? 'selected' : '' %}
-                    <option value="{{ language.languageID }}" {{ selected }}>{{ language.getDisplayName() }}</option>
+                    <option value="{{ language.languageID }}" {{ language.languageID == userLanguage.languageID ? 'selected' : '' }}>{{ language.getDisplayName()|e }}</option>
                 {% endfor %}
             </select>
         </div>
-    </div>
-    <div class="row mt-2">
-        <div class="form-group col-sm-12">
-            <input type="checkbox" id="prefers-dark-mode" name="prefers-dark-mode" {{ prefersDarkMode(app) ? 'checked' : '' }}>
-            <label for="prefers-dark-mode">Enable dark mode (light text on dark background)</label>
+        <div class="form-group col-12 col-md-5">
+            <label for="ui-language-select">{{ t('settings.ui_language') }}</label>
+            <select id="ui-language-select" name="ui-language-select" class="form-control" aria-describedby="ui-language-help">
+                {% for language in uiLanguages %}
+                    <option value="{{ language.languageID }}" {{ language.languageID == userUILanguage.languageID ? 'selected' : '' }}>{{ language.getDisplayName()|e }}</option>
+                {% endfor %}
+            </select>
+            <small id="ui-language-help" class="form-text text-muted">{{ t('settings.ui_language_help') }}</small>
         </div>
     </div>
-    <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save"></i> Save</button>
+    <div class="row mt-3">
+        <div class="form-group col-sm-12">
+            <input type="checkbox" id="prefers-dark-mode" name="prefers-dark-mode" {{ prefersDarkMode(app) ? 'checked' : '' }}>
+            <label for="prefers-dark-mode">{{ t('settings.dark_mode') }}</label>
+        </div>
+    </div>
+    <button class="btn btn-sm btn-primary mt-2" type="submit" name="action"><i class="fas fa-save" aria-hidden="true"></i> {{ t('common.save') }}</button>
 </form>
 
 {% endblock %}
 
 {% block scripts %}
-
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#language-select').select2({
+        $('#language-select, #ui-language-select').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Select language...',
-            searchInputPlaceholder: 'Search languages...',
+            placeholder: window.PBEI18n.t('common.select_language'),
+            searchInputPlaceholder: window.PBEI18n.t('common.search'),
             allowClear: false
         });
     });
 </script>
-
 {% endblock %}
