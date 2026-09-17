@@ -8,7 +8,7 @@
     "packages": [
         {
             "name": "cakephp/core",
-            "version": "4.6.3",
+            "version": "4.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/core.git",
@@ -68,16 +68,16 @@
         },
         {
             "name": "cakephp/database",
-            "version": "4.6.3",
+            "version": "4.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/database.git",
-                "reference": "7de9cbfc19fa202fdfab54352f94e49aaf15c300"
+                "reference": "bf6ee82ce031033eb6b0d5f2ef97c5990ed85cc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/database/zipball/7de9cbfc19fa202fdfab54352f94e49aaf15c300",
-                "reference": "7de9cbfc19fa202fdfab54352f94e49aaf15c300",
+                "url": "https://api.github.com/repos/cakephp/database/zipball/bf6ee82ce031033eb6b0d5f2ef97c5990ed85cc4",
+                "reference": "bf6ee82ce031033eb6b0d5f2ef97c5990ed85cc4",
                 "shasum": ""
             },
             "require": {
@@ -120,11 +120,11 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/database"
             },
-            "time": "2025-10-30T02:41:56+00:00"
+            "time": "2026-07-03T20:53:51+00:00"
         },
         {
             "name": "cakephp/datasource",
-            "version": "4.6.3",
+            "version": "4.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/datasource.git",
@@ -182,7 +182,7 @@
         },
         {
             "name": "cakephp/utility",
-            "version": "4.6.3",
+            "version": "4.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/utility.git",
